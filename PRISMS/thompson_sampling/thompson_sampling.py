@@ -8,11 +8,11 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from tqdm.auto import tqdm
 
-from disallow_tracker import DisallowTracker
-from reagent import Reagent
-from ts_logger import get_logger
-from ts_utils import read_reagents
-from evaluators import DBEvaluator
+from .disallow_tracker import DisallowTracker
+from .reagent import Reagent
+from .ts_logger import get_logger
+from .ts_utils import read_reagents
+from .evaluators import DBEvaluator
 
 
 

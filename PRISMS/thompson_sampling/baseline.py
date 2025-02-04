@@ -10,8 +10,8 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from tqdm.auto import tqdm
 
-from ts_main import read_input, parse_input_dict
-from ts_utils import read_reagents
+from .ts_main import read_input, parse_input_dict
+from .ts_utils import read_reagents
 
 
 def keep_largest(items, n):

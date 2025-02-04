@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from disallow_tracker import DisallowTracker
+from .disallow_tracker import DisallowTracker
 
 To_Fill = DisallowTracker.To_Fill
 Empty = DisallowTracker.Empty

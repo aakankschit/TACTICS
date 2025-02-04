@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from reagent import Reagent
+from .reagent import Reagent
 
 
 def create_reagents(filename: str, num_to_select: Optional[int] = None) -> List[Reagent]:

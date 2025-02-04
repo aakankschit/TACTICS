@@ -8,8 +8,8 @@ from timeit import default_timer as timer
 
 import pandas as pd
 
-from thompson_sampling import ThompsonSampler
-from ts_logger import get_logger
+from .thompson_sampling import ThompsonSampler
+from .ts_logger import get_logger
 
 
 def read_input(json_filename: str) -> dict:
