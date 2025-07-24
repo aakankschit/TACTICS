@@ -1,4 +1,4 @@
-# PRISMS: Probabilistic Rapid Intelligent Screening of Molecular Space
+# TACTICS: Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery
 
 A comprehensive library for Thompson Sampling-based optimization of chemical combinatorial libraries, featuring modern Pydantic configuration and improved package organization.
 
@@ -15,7 +15,7 @@ A comprehensive library for Thompson Sampling-based optimization of chemical com
 ## 📦 Package Structure
 
 ```
-PRISMS/
+TACTICS/
 ├── thompson_sampling/
 │   ├── config.py          # Pydantic configuration models
 │   ├── main.py            # Main execution interface
@@ -36,7 +36,7 @@ PRISMS/
 ### Standard Thompson Sampling (Greedy Selection)
 
 ```python
-from PRISMS.thompson_sampling import StandardSamplerConfig, run_ts
+from TACTICS.thompson_sampling import StandardSamplerConfig, run_ts
 
 # Create configuration using Pydantic models
 config = StandardSamplerConfig(
@@ -58,7 +58,7 @@ results_df = run_ts(config)
 ### Random Baseline Sampling
 
 ```python
-from PRISMS.thompson_sampling import RandomBaselineConfig, run_random_baseline
+from TACTICS.thompson_sampling import RandomBaselineConfig, run_random_baseline
 
 # Create configuration for random baseline
 config = RandomBaselineConfig(
@@ -82,7 +82,7 @@ results_df = run_random_baseline(config)
 ### Enhanced Thompson Sampling (Thermal Cycling)
 
 ```python
-from PRISMS.thompson_sampling import EnhancedSamplerConfig
+from TACTICS.thompson_sampling import EnhancedSamplerConfig
 
 config = EnhancedSamplerConfig(
     sampler_type="enhanced",
@@ -110,7 +110,7 @@ results_df = run_ts(config)
 The package uses Pydantic for robust configuration validation:
 
 ```python
-from PRISMS.thompson_sampling import StandardSamplerConfig, EnhancedSamplerConfig, RandomBaselineConfig
+from TACTICS.thompson_sampling import StandardSamplerConfig, EnhancedSamplerConfig, RandomBaselineConfig
 
 # Automatic validation and type checking
 config = StandardSamplerConfig(
@@ -156,21 +156,21 @@ pytest tests/
 pytest tests/test_config_validation.py -v
 
 # Run with coverage
-pytest tests/ --cov=PRISMS --cov-report=html
+pytest tests/ --cov=TACTICS --cov-report=html
 ```
 
 ## 📚 Documentation
 
 - **API Documentation**: See `docs/` for detailed API documentation
 - **Examples**: Check `examples/` for usage examples
-- **Configuration Guide**: See `PRISMS/README.md` for detailed configuration options
+- **Configuration Guide**: See `TACTICS/README.md` for detailed configuration options
 
 ## 🛠️ Installation
 
 ```bash
 # Clone repository
-git clone https://github.com/your-org/PRISMS.git
-cd PRISMS
+git clone https://github.com/your-org/TACTICS.git
+cd TACTICS
 
 # Install dependencies
 pip install -r requirements.txt
@@ -205,14 +205,14 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📖 Citation
 
-If you use PRISMS in your research, please cite:
+If you use TACTICS in your research, please cite:
 
 ```bibtex
-@software{prisms,
-    title={PRISMS: Probabilistic Rapid Intelligent Screening of Molecular Space},
+@software{tactics,
+    title={TACTICS: Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery},
     author={Your Name},
     year={2024},
-    url={https://github.com/your-org/PRISMS}
+    url={https://github.com/your-org/TACTICS}
 }
 ```
 
