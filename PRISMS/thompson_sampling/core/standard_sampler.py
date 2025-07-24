@@ -8,23 +8,24 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from tqdm.auto import tqdm
 
-from .disallow_tracker import DisallowTracker
-from .reagent import Reagent
-from .ts_logger import get_logger
-from .ts_utils import read_reagents
-from .evaluators import DBEvaluator
+from ..legacy.disallow_tracker import DisallowTracker
+from ..legacy.reagent import Standard_TS_Reagent
+from ..utils.ts_logger import get_logger
+from ..utils.ts_utils import read_reagents
+from .evaluators import DBEvaluator, LookupEvaluator
 
 
 
-class ThompsonSampler:
+class StandardThompsonSampler:
     def __init__(self, mode="maximize", log_filename: Optional[str] = None):
         """
         Basic init
         :param mode: maximize or minimize
         :param log_filename: Optional filename to write logging to. If None, logging will be output to stdout
+        :param temperature: Temperature parameter for Boltzmann reweighting (only used in Boltzmann modes)
         """
         # A list of lists of Reagents. Each component in the reaction will have one list of Reagents in this list
-        self.reagent_lists: List[List[Reagent]] = []
+        self.reagent_lists: List[List[Standard_TS_Reagent]] = []
         self.reaction = None
         self.evaluator = None
         self.num_prods = 0
@@ -40,11 +41,11 @@ class ThompsonSampler:
             self._top_func = min
         elif self._mode == "maximize_boltzmann":
             # See documentation for _boltzmann_reweighted_pick
-            self.pick_function = functools.partial(self._boltzmann_reweighted_pick)
+            self.pick_function = self._boltzmann_reweighted_pick
             self._top_func = max
         elif self._mode == "minimize_boltzmann":
             # See documentation for _boltzmann_reweighted_pick
-            self.pick_function = functools.partial(self._boltzmann_reweighted_pick)
+            self.pick_function = self._boltzmann_reweighted_pick
             self._top_func = min
         else:
             raise ValueError(f"{mode} is not a supported argument")
@@ -60,10 +61,13 @@ class ThompsonSampler:
         This method implements one of those, namely a Boltzmann style probability distribution
         from the sampled values. The reagent is chosen based on that distribution rather than
         simply the max sample.
+
+        :param scores: Array of scores to choose from
         """
         if self._mode == "minimize_boltzmann":
             scores = -scores
-        exp_terms = np.exp(scores / self._warmup_std)
+        # Scale the scores by temperature
+        exp_terms = np.exp(scores / (self._warmup_std))
         probs = exp_terms / np.nansum(exp_terms)
         probs[np.isnan(probs)] = 0.0
         return np.random.choice(probs.shape[0], p=probs)
@@ -82,7 +86,7 @@ class ThompsonSampler:
         :param num_to_select: Max number of reagents to select from the reagents file (for dev purposes only)
         :return: None
         """
-        self.reagent_lists = read_reagents(reagent_file_list, num_to_select)
+        self.reagent_lists = read_reagents(reagent_file_list, ts_mode = "standard", num_to_select=num_to_select)
         self.num_prods = math.prod([len(x) for x in self.reagent_lists])
         self.logger.info(f"{self.num_prods:.2e} possible products")
         self._disallow_tracker = DisallowTracker([len(x) for x in self.reagent_lists])
@@ -124,12 +128,15 @@ class ThompsonSampler:
         if prod:
             prod_mol = prod[0][0]  # RunReactants returns Tuple[Tuple[Mol]]
             Chem.SanitizeMol(prod_mol)
-            product_smiles = Chem.MolToSmiles(prod_mol)
+            product_smiles = Chem.MolToSmiles(prod_mol, isomericSmiles=True)
             if isinstance(self.evaluator, DBEvaluator):
                 res = self.evaluator.evaluate(product_name)
                 res = float(res)
+            elif isinstance(self.evaluator, LookupEvaluator):
+                # The product code is a better key for looking up values than SMILES
+                res = self.evaluator.evaluate(product_name)
             else:
-                res = self.evaluator.evaluate(prod_mol)
+                res = self.evaluator.evaluate(prod_mol) # Changing to product name for testing purposes
             if np.isfinite(res):
                 [reagent.add_score(res) for reagent in selected_reagents]
         return product_smiles, product_name, res
@@ -165,7 +172,7 @@ class ThompsonSampler:
                             disallow_mask = self._disallow_tracker.get_disallowed_selection_mask(current_list)
                             selection_scores = np.random.uniform(size=reagent_count_list[p])
                             # null out the disallowed ones
-                            selection_scores[list(disallow_mask)] = np.NaN
+                            selection_scores[list(disallow_mask)] = np.nan
                             # and select a random one
                             current_list[p] = np.nanargmax(selection_scores).item(0)
                         self._disallow_tracker.update(current_list)
@@ -213,7 +220,7 @@ class ThompsonSampler:
                 mu = np.array([r.current_mean for r in reagent_list])
                 choice_row = rng.normal(size=len(reagent_list)) * stds + mu
                 if disallow_mask:
-                    choice_row[np.array(list(disallow_mask))] = np.NaN
+                    choice_row[np.array(list(disallow_mask))] = np.nan
                 selected_reagents[cycle_id] = self.pick_function(choice_row)
             self._disallow_tracker.update(selected_reagents)
             # Select a reagent for each component, according to the choice function

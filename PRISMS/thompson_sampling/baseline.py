@@ -2,16 +2,20 @@
 
 import heapq
 import math
+import json
 from itertools import product
+from typing import Optional
 
 import numpy as np
 import pandas as pd
+import polars as pl
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from tqdm.auto import tqdm
 
-from .ts_main import read_input, parse_input_dict
-from .ts_utils import read_reagents
+from .config import RandomBaselineConfig
+from .utils import get_logger
+from .utils.ts_utils import create_reagents
 
 
 def keep_largest(items, n):
@@ -30,29 +34,145 @@ def keep_largest(items, n):
     return heap
 
 
-def unpack_input_dict(input_dict, num_to_select=None):
-    """ Unpack the input dictionary and create the Evaluator object
-    :param input_dict:
-    :param num_to_select:
-    :return:
+def setup_baseline_from_config(config: RandomBaselineConfig):
+    """Setup baseline components from Pydantic config.
+    
+    Args:
+        config: RandomBaselineConfig object
+        
+    Returns:
+        tuple: (evaluator, reaction, reagent_lists)
     """
-    if input_dict.get("evaluator_class") is None:
-        parse_input_dict(input_dict)
-    evaluator = input_dict["evaluator_class"]
-    reaction_smarts = input_dict["reaction_smarts"]
-    reagent_file_list = input_dict["reagent_file_list"]
-    rxn = AllChem.ReactionFromSmarts(reaction_smarts)
-    reagent_lists = read_reagents(reagent_file_list, num_to_select)
+    import importlib
+    
+    # Create evaluator
+    module = importlib.import_module("PRISMS.thompson_sampling.core.evaluators")
+    class_ = getattr(module, config.evaluator_class_name)
+    
+    # Handle evaluator_arg - convert dict to JSON string if needed
+    evaluator_arg = config.evaluator_arg
+    if isinstance(evaluator_arg, dict):
+        evaluator_arg = json.dumps(evaluator_arg)
+    
+    evaluator = class_(evaluator_arg)
+    
+    # Create reaction
+    rxn = AllChem.ReactionFromSmarts(config.reaction_smarts)
+    
+    # Create reagent lists
+    reagent_lists = []
+    for reagent_filename in config.reagent_file_list:
+        reagent_list = create_reagents(filename=reagent_filename, num_to_select=None, ts_mode="standard")
+        reagent_lists.append(reagent_list)
+    
     return evaluator, rxn, reagent_lists
 
 
-def enumerate_library(json_filename, outfile_name, num_to_select):
-    _, rxn, reagent_lists = setup_baseline(json_filename, num_to_select)
+def run_random_baseline(config: RandomBaselineConfig, hide_progress: bool = False) -> pl.DataFrame:
+    """Run random baseline sampling using Pydantic configuration.
+    
+    Args:
+        config: RandomBaselineConfig object
+        hide_progress: hide the progress bar
+        
+    Returns:
+        pl.DataFrame: Results dataframe with scores, SMILES, and names
+    """
+    # Setup components
+    evaluator, rxn, reagent_lists = setup_baseline_from_config(config)
+    
+    # Setup logging
+    log_filename = getattr(config, "log_filename", None)
+    logger = get_logger(__name__, filename=log_filename)
+    
+    # Calculate total products
+    num_reagents = len(reagent_lists)
     len_list = [len(x) for x in reagent_lists]
     total_prods = math.prod(len_list)
-    print(f"{total_prods:.2e} products")
-    product_list = []
-    for reagents in tqdm(product(*reagent_lists), total=total_prods):
+    
+    if not hide_progress:
+        print(f"{total_prods:.2e} products")
+    
+    # Run random sampling
+    score_list = []
+    for i in tqdm(range(0, config.num_trials), disable=hide_progress):
+        reagent_mol_list = []
+        reagent_name_list = []
+        
+        for j in range(0, num_reagents):
+            reagent_idx = np.random.randint(0, len_list[j] - 1)
+            reagent_mol_list.append(reagent_lists[j][reagent_idx].mol)
+            reagent_name_list.append(reagent_lists[j][reagent_idx].reagent_name)
+        
+        prod = rxn.RunReactants(reagent_mol_list)
+        if len(prod):
+            product_mol = prod[0][0]
+            Chem.SanitizeMol(product_mol)
+            product_smiles = Chem.MolToSmiles(product_mol)
+            product_name = "_".join(reagent_name_list)
+            score = evaluator.evaluate(product_name)  # Using the name here for the lookup evaluator
+            score_list = keep_largest(score_list + [[score, product_smiles, product_name]], config.num_to_save)
+    
+    # Create results dataframe
+    score_df = pl.DataFrame(score_list, schema=["score", "SMILES", "Name"], orient="row")
+    
+    # Sort results
+    if config.ascending_output:
+        score_df = score_df.sort("score", descending=False)
+    else:
+        score_df = score_df.sort("score", descending=True)
+    
+    # Save results if filename provided
+    if config.outfile_name is not None:
+        score_df.write_csv(config.outfile_name)
+        logger.info(f"Saved results to: {config.outfile_name}")
+    
+    # Log summary
+    total_evaluations = evaluator.counter
+    percent_searched = total_evaluations / total_prods * 100
+    logger.info(f"{total_evaluations} evaluations | {percent_searched:.3f}% of total")
+    
+    if not hide_progress:
+        print(score_df.head(10))
+    
+    return score_df
+
+
+def run_exhaustive_baseline(config: RandomBaselineConfig, num_to_select: Optional[int] = None, hide_progress: bool = False) -> pl.DataFrame:
+    """Run exhaustive baseline sampling using Pydantic configuration.
+    
+    Args:
+        config: RandomBaselineConfig object
+        num_to_select: Number of reagents to use per file (None for all)
+        hide_progress: hide the progress bar
+        
+    Returns:
+        pl.DataFrame: Results dataframe with scores, SMILES, and names
+    """
+    # Setup components
+    evaluator, rxn, reagent_lists = setup_baseline_from_config(config)
+    
+    # Setup logging
+    log_filename = getattr(config, "log_filename", None)
+    logger = get_logger(__name__, filename=log_filename)
+    
+    # Create reagent lists with selection if specified
+    if num_to_select is not None:
+        reagent_lists = []
+        for reagent_filename in config.reagent_file_list:
+            reagent_list = create_reagents(filename=reagent_filename, num_to_select=num_to_select, ts_mode="standard")
+            reagent_lists.append(reagent_list)
+    
+    # Calculate total products
+    len_list = [len(x) for x in reagent_lists]
+    total_prods = math.prod(len_list)
+    
+    if not hide_progress:
+        print(f"{total_prods:.2e} products")
+    
+    # Run exhaustive sampling
+    score_list = []
+    for reagents in tqdm(product(*reagent_lists), total=total_prods, disable=hide_progress):
         reagent_mol_list = [x.mol for x in reagents]
         prod = rxn.RunReactants(reagent_mol_list)
         if len(prod):
@@ -60,89 +180,47 @@ def enumerate_library(json_filename, outfile_name, num_to_select):
             Chem.SanitizeMol(product_mol)
             product_smiles = Chem.MolToSmiles(product_mol)
             product_name = "_".join([x.reagent_name for x in reagents])
-            product_list.append([product_smiles, product_name])
-    product_df = pd.DataFrame(product_list, columns=["SMILES", "Name"])
-    product_df.to_csv(outfile_name, index=False)
-
-
-def setup_baseline(json_filename, num_to_select=None):
-    """ Common code for baseline methods, reads JSON input and creates necessary objects
-    :param json_filename: JSON file with configuration options
-    :param num_to_select: number of reagents to use with exhaustive search. Set to a lower values for development.
-    Setting to None uses all reagents.
-    :return: evaluator class, RDKit reaction, list of lists with reagents
-    """
-    input_dict = read_input(json_filename)
-    return unpack_input_dict(input_dict, num_to_select=num_to_select)
-
-
-def random_baseline(input_dict, num_trials, outfile_name="random_scores.csv", num_to_save=100, ascending_output=False):
-    """ Randomly combine reagents
-    :param input_dict: dictionary with parameters from the JSON file
-    :param outfile_name: output filename
-    :param num_trials: number of molecules to generate
-    :param num_to_save: number of molecules to save to the output csv file
-    :param ascending_output: save the output in ascending order
-    """
-    score_list = []
-    evaluator, rxn, reagent_lists = unpack_input_dict(input_dict)
-    num_reagents = len(reagent_lists)
-    len_list = [len(x) for x in reagent_lists]
-    total_prods = math.prod(len_list)
-    print(f"{total_prods:.2e} products")
-    for i in tqdm(range(0, num_trials)):
-        reagent_mol_list = []
-        reagen_name_list = []
-        for j in range(0, num_reagents):
-            reagent_idx = np.random.randint(0, len_list[j] - 1)
-            reagent_mol_list.append(reagent_lists[j][reagent_idx].mol)
-            reagen_name_list.append(reagent_lists[j][reagent_idx].reagent_name)
-        prod = rxn.RunReactants(reagent_mol_list)
-        if len(prod):
-            product_mol = prod[0][0]
-            Chem.SanitizeMol(product_mol)
-            score = evaluator.evaluate(product_mol)
-            product_smiles = Chem.MolToSmiles(product_mol)
-            product_name = "_".join(reagen_name_list)
-            score_list = keep_largest(score_list + [[product_smiles, product_name, score]], num_to_save)
-    score_df = pd.DataFrame(score_list, columns=["SMILES", "Name", "score"]).round(3)
-    score_df.sort_values(by="score", ascending=ascending_output).to_csv(outfile_name, index=False)
-
-
-def exhaustive_baseline(input_dict, num_to_select=None, num_to_save=100, invert_score=False):
-    """ Exhaustively combine all reagents
-    :param input_dict: parameters from the input JSON file
-    :param num_to_select: Number of reagents to use, set to a lower number for development.  Set to None to use all.
-    :param num_to_save: number of molecules to save to the output csv file
-    :param invert_score: set to True when more negative values are better
-    """
-    score_list = []
-    evaluator, rxn, reagent_lists = unpack_input_dict(input_dict, num_to_select)
-    len_list = [len(x) for x in reagent_lists]
-    total_prods = math.prod(len_list)
-    print(f"{total_prods:.2e} products")
-    for reagents in tqdm(product(*reagent_lists), total=total_prods):
-        reagent_mol_list = [x.mol for x in reagents]
-        prod = rxn.RunReactants(reagent_mol_list)
-        if len(prod):
-            product_mol = prod[0][0]
-            Chem.SanitizeMol(product_mol)
-            product_smiles = Chem.MolToSmiles(product_mol)
-            score = evaluator.evaluate(product_mol)
-            if invert_score:
-                score = score * -1.0
-            score_list = keep_largest(score_list + [[score, product_smiles]], num_to_save)
-    score_df = pd.DataFrame(score_list, columns=["score", "SMILES"])
-    score_df.sort_values(by="score", ascending=False).to_csv("exhaustive_scores.csv", index=False)
+            score = evaluator.evaluate(product_name)
+            score_list = keep_largest(score_list + [[score, product_smiles, product_name]], config.num_to_save)
+    
+    # Create results dataframe
+    score_df = pl.DataFrame(score_list, schema=["score", "SMILES", "Name"], orient="row")
+    
+    # Sort results
+    if config.ascending_output:
+        score_df = score_df.sort("score", descending=False)
+    else:
+        score_df = score_df.sort("score", descending=True)
+    
+    # Save results if filename provided
+    if config.outfile_name is not None:
+        score_df.write_csv(config.outfile_name)
+        logger.info(f"Saved results to: {config.outfile_name}")
+    
+    # Log summary
+    total_evaluations = evaluator.counter
+    percent_searched = total_evaluations / total_prods * 100
+    logger.info(f"{total_evaluations} evaluations | {percent_searched:.3f}% of total")
+    
+    if not hide_progress:
+        print(score_df.head(10))
+    
+    return score_df
 
 
 def main():
-    num_to_select = -1
-    input_dict = read_input("examples/quinazoline_fp_sim.json")
-    # exhaustive_baseline(input_dict, num_to_select=num_to_select)
-    # enumerate 50K random molecules
-    random_baseline(input_dict, num_trials=50000, num_to_save=50000)
+    """CLI entry point for Random Baseline."""
+    import sys
+    
+    # For CLI usage: load config from JSON file and parse with Pydantic
+    json_filename = sys.argv[1]
+    
+    with open(json_filename, "r") as f:
+        data = json.load(f)
+    
+    config = RandomBaselineConfig.model_validate(data)
+    run_random_baseline(config)
 
 
 if __name__ == "__main__":
-    main()
+    main() 

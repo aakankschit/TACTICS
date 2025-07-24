@@ -1,2 +1,5 @@
-from .generate_products import apply_reaction, apply_reaction_wrapper, combine_building_blocks, get_bb_data, generate_reactant_combinations_parallel
+from .generate_products import LibraryEnumerator
 from .enumeration_utils import write_products_to_files
+from .multiprocessing_utils import initializer
+
+__all__ = ['LibraryEnumerator', 'initializer']

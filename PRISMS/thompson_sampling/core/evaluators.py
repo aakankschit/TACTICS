@@ -132,18 +132,24 @@ class LookupEvaluator(Evaluator):
 
     def __init__(self, input_dictionary):
         self.num_evaluations = 0
+        
+        # Handle both dictionary and JSON string inputs
+        if isinstance(input_dictionary, str):
+            import json
+            input_dictionary = json.loads(input_dictionary)
+        
         ref_filename = input_dictionary['ref_filename']
         ref_df = pd.read_csv(ref_filename)
-        self.ref_dict = dict([(a, b) for a, b in ref_df[['SMILES', 'val']].values])
+        self.ref_dict = dict([(a, b) for a, b in ref_df[['Product_Code', 'Scores']].values])
 
     @property
     def counter(self):
         return self.num_evaluations
 
-    def evaluate(self, mol):
+    def evaluate(self, product_name):
         self.num_evaluations += 1
-        smi = Chem.MolToSmiles(mol)
-        return self.ref_dict[smi]
+        # smi = Chem.MolToSmiles(mol)
+        return self.ref_dict[product_name] # Changed to product code for easier lookup
 
 class DBEvaluator(Evaluator):
     """A simple evaluator class that looks up values from a database.
