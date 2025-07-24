@@ -1,7 +1,7 @@
 import pytest
 import tempfile
 import os
-from PRISMS.thompson_sampling import StandardSamplerConfig, EnhancedSamplerConfig
+from TACTICS.thompson_sampling import StandardSamplerConfig, EnhancedSamplerConfig
 from pydantic import ValidationError
 
 class TestConfigValidation:

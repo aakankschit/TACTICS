@@ -3,10 +3,10 @@ import sys
 import os
 
 # Add the legacy directory to the path so we can import the config module directly
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'PRISMS', 'thompson_sampling', 'legacy'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'TACTICS', 'thompson_sampling', 'legacy'))
 
 # Import the config module directly
-from PRISMS.thompson_sampling import StandardSamplerConfig, EnhancedSamplerConfig
+from TACTICS.thompson_sampling import StandardSamplerConfig, EnhancedSamplerConfig
 from pydantic import ValidationError
 
 # Test StandardSamplerConfig with valid input
