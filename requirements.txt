@@ -1,0 +1,19 @@
+pydantic>=2.0
+pytest
+pytest-cov
+polars
+pandas
+numpy
+rdkit
+tqdm
+sqlitedict
+seaborn
+matplotlib
+altair
+joblib
+dill
+# Optional: For Jupyter/IPython notebook support
+ipython
+ipykernel
+# Optional: For OpenEye toolkits (commercial, only if you use ROCSEvaluator/FredEvaluator)
+# openeye-toolkits
