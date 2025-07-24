@@ -1,5 +1,5 @@
 Library Analysis Module
-========================
+=======================
 
 The Library Analysis module provides tools for analyzing chemical libraries and their building blocks, 
 as well as visualization capabilities for chemical analysis and Thompson Sampling benchmark results.
@@ -10,7 +10,7 @@ LibraryAnalysis Class
 The LibraryAnalysis class provides tools for analyzing chemical libraries and their building blocks,
 including identification of top building blocks and overlap analysis between different cutoffs.
 
-.. autoclass:: PRISMS.library_analysis.library_analysis.LibraryAnalysis
+.. autoclass:: TACTICS.library_analysis.library_analysis.LibraryAnalysis
    :members:
    :undoc-members:
    :show-inheritance:
@@ -39,7 +39,7 @@ including identification of top building blocks and overlap analysis between dif
       :returns: List of tuples containing overlap information for each position
       :rtype: list
 
-   .. method:: visualize_top_building_blocks(show_overlap=False, mols_per_row=5, sub_img_size=(300, 300), comparison_analysis=None, top_n=20)
+   
       
       Visualize top building blocks using RDKit molecular drawings.
       
@@ -59,12 +59,12 @@ including identification of top building blocks and overlap analysis between dif
       :rtype: list
 
 LibraryVisualization Class
----------------------------
+--------------------------
 
 The LibraryVisualization class provides tools for creating visualizations from LibraryAnalysis instances,
 including chemical structure visualization and comparative analysis plots.
 
-.. autoclass:: PRISMS.library_analysis.visualization.LibraryVisualization
+.. autoclass:: TACTICS.library_analysis.visualization.LibraryVisualization
    :members:
    :undoc-members:
    :show-inheritance:
@@ -109,13 +109,13 @@ initialization, making it extremely user-friendly with a simple one-step setup p
 
 **Key Features:**
 
-* **🤖 Automatic Data Generation**: All datasets generated during initialization - no manual steps required
-* **🎨 Consistent Color Schemes**: Unified colors across all plot types for professional appearance
-* **📊 Multi-cycle Analysis**: Compare different TS methods across multiple cycles with comprehensive statistics
-* **📈 Reference Comparison**: Benchmark against ground truth reference data with detailed performance metrics
-* **🎯 Multiple Visualization Types**: Strip plots, bar plots, and line plots with error bars
-* **⚙️ Configurable Parameters**: Customizable top_n, sort_type, and analysis points via constructor
-* **🧹 Clean Output**: Organized summaries with emojis and comprehensive statistics
+* 🤖 Automatic Data Generation: All datasets generated during initialization - no manual steps required
+* 🎨 Consistent Color Schemes: Unified colors across all plot types for professional appearance
+* 📊 Multi-cycle Analysis: Compare different TS methods across multiple cycles with comprehensive statistics
+* 📈 Reference Comparison: Benchmark against ground truth reference data with detailed performance metrics
+* 🎯 Multiple Visualization Types: Strip plots, bar plots, and line plots with error bars
+* ⚙️ Configurable Parameters: Customizable top_n, sort_type, and analysis points via constructor
+* 🧹 Clean Output: Organized summaries with emojis and comprehensive statistics
 
 **New Simplified Workflow:**
 
@@ -127,13 +127,13 @@ initialization, making it extremely user-friendly with a simple one-step setup p
 
 **Major Improvements:**
 
-* **🚀 Streamlined Usage**: No more manual data generation calls - everything happens in ``__init__``
-* **🔧 Enhanced Constructor**: Support for custom ``top_n``, ``sort_type``, and ``top_ns`` parameters
-* **📊 Pre-calculated Statistics**: Grouped statistics and error bar data generated during initialization
-* **🎨 Color Consistency**: Same method gets same color across stripplot, bar plot, and line plot
-* **✨ Better User Experience**: Clear progress indicators and comprehensive summaries
+* 🚀 Streamlined Usage: No more manual data generation calls - everything happens in ``__init__``
+* 🔧 Enhanced Constructor: Support for custom ``top_n``, ``sort_type``, and ``top_ns`` parameters
+* 📊 Pre-calculated Statistics: Grouped statistics and error bar data generated during initialization
+* 🎨 Color Consistency: Same method gets same color across stripplot, bar plot, and line plot
+* ✨ Better User Experience: Clear progress indicators and comprehensive summaries
 
-.. autoclass:: PRISMS.library_analysis.visualization.TS_Benchmarks
+.. autoclass:: TACTICS.library_analysis.visualization.TS_Benchmarks
    :members:
    :undoc-members:
    :show-inheritance:
@@ -168,7 +168,7 @@ initialization, making it extremely user-friendly with a simple one-step setup p
       :returns: Altair chart object or None
       :rtype: altair.Chart or None
 
-   .. method:: plot_barplot_TS_results(width=None, height=None, save_path=None, show_plot=True)
+   
       
       📊 Create a grouped bar plot showing reference hit recovery by method and cycle.
       **Data is pre-generated during initialization** - ready to plot immediately!
@@ -277,7 +277,7 @@ These methods are automatically called during initialization but can be accessed
    print(f"Methods analyzed: {ts_benchmarks.actual_methods}")
    print(f"Performance range: {ts_benchmarks.grouped_stats['mean'].min():.3f} to {ts_benchmarks.grouped_stats['mean'].max():.3f}")
    
-   # 🎯 Get comprehensive summary
+   # 🏆 Get comprehensive summary
    summary = ts_benchmarks.get_performance_summary()
 
 **Migration from Old Usage:**

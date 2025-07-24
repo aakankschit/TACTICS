@@ -11,7 +11,7 @@ The package provides two main Thompson Sampling strategies:
 Configuration Models
 -------------------
 
-.. autoclass:: PRISMS.thompson_sampling.config.StandardSamplerConfig
+.. autoclass:: TACTICS.thompson_sampling.config.StandardSamplerConfig
    :members:
    :undoc-members:
    :show-inheritance:
@@ -29,7 +29,7 @@ The StandardSamplerConfig is used for basic Thompson Sampling with greedy select
 * **results_filename**: Optional output file path
 * **log_filename**: Optional log file path
 
-.. autoclass:: PRISMS.thompson_sampling.config.EnhancedSamplerConfig
+.. autoclass:: TACTICS.thompson_sampling.config.EnhancedSamplerConfig
    :members:
    :undoc-members:
    :show-inheritance:
@@ -46,13 +46,13 @@ The EnhancedSamplerConfig uses thermal cycling for improved exploration:
 Main Interface
 -------------
 
-.. autofunction:: PRISMS.thompson_sampling.main.run_ts
+.. autofunction:: TACTICS.thompson_sampling.main.run_ts
    :noindex:
 
 Core Samplers
 -------------
 
-.. autoclass:: PRISMS.thompson_sampling.core.standard_sampler.StandardThompsonSampler
+.. autoclass:: TACTICS.thompson_sampling.core.standard_sampler.StandardThompsonSampler
    :members:
    :undoc-members:
    :show-inheritance:
@@ -69,7 +69,7 @@ Core Samplers
    * Suitable for straightforward optimization problems
    * Lower computational overhead
 
-.. autoclass:: PRISMS.thompson_sampling.core.enhanced_sampler.EnhancedThompsonSampler
+.. autoclass:: TACTICS.thompson_sampling.core.enhanced_sampler.EnhancedThompsonSampler
    :members:
    :undoc-members:
    :show-inheritance:
@@ -91,17 +91,17 @@ Core Samplers
 Evaluator Classes
 ----------------
 
-.. autoclass:: PRISMS.thompson_sampling.core.evaluators.LookupEvaluator
+.. autoclass:: TACTICS.thompson_sampling.core.evaluators.LookupEvaluator
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: PRISMS.thompson_sampling.core.evaluators.ROCSEvaluator
+.. autoclass:: TACTICS.thompson_sampling.core.evaluators.ROCSEvaluator
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: PRISMS.thompson_sampling.core.evaluators.DBEvaluator
+.. autoclass:: TACTICS.thompson_sampling.core.evaluators.DBEvaluator
    :members:
    :undoc-members:
    :show-inheritance:
@@ -109,36 +109,36 @@ Evaluator Classes
 Utility Functions
 ----------------
 
-.. autofunction:: PRISMS.thompson_sampling.utils.ts_utils.read_reagents
-.. autofunction:: PRISMS.thompson_sampling.utils.ts_utils.create_reagents
-.. autofunction:: PRISMS.thompson_sampling.utils.ts_logger.get_logger
+.. autofunction:: TACTICS.thompson_sampling.utils.ts_utils.read_reagents
+.. autofunction:: TACTICS.thompson_sampling.utils.ts_utils.create_reagents
+.. autofunction:: TACTICS.thompson_sampling.utils.ts_logger.get_logger
 
 Legacy Interface
----------------
+----------------
 
 For backward compatibility, the legacy interface is still available:
 
-.. autofunction:: PRISMS.thompson_sampling.legacy.ts_main.run_ts
+.. autofunction:: TACTICS.thompson_sampling.legacy.ts_main.run_ts
    :noindex:
 
-.. autoclass:: PRISMS.thompson_sampling.legacy.standard_thompson_sampling.StandardThompsonSampler
+.. autoclass:: TACTICS.thompson_sampling.legacy.standard_thompson_sampling.StandardThompsonSampler
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: PRISMS.thompson_sampling.legacy.enhanced_thompson_sampling.EnhancedThompsonSampler
+.. autoclass:: TACTICS.thompson_sampling.legacy.enhanced_thompson_sampling.EnhancedThompsonSampler
    :members:
    :undoc-members:
    :show-inheritance:
 
 Usage Examples
--------------
+--------------
 
 Standard Thompson Sampling (Greedy Selection):
 
 .. code-block:: python
 
-    from PRISMS.thompson_sampling import StandardSamplerConfig, run_ts
+    from TACTICS.thompson_sampling import StandardSamplerConfig, run_ts
 
     # Create configuration for greedy selection
     config = StandardSamplerConfig(
@@ -160,7 +160,7 @@ Enhanced Thompson Sampling (Thermal Cycling):
 
 .. code-block:: python
 
-    from PRISMS.thompson_sampling import EnhancedSamplerConfig
+    from TACTICS.thompson_sampling import EnhancedSamplerConfig
 
     # Create configuration for thermal cycling
     config = EnhancedSamplerConfig(

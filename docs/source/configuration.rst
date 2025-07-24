@@ -1,7 +1,7 @@
 Configuration System
-===================
+====================
 
-The PRISMS package uses Pydantic for robust configuration management with automatic validation and type checking.
+The TACTICS package uses Pydantic for robust configuration management with automatic validation and type checking.
 
 Overview
 --------
@@ -18,9 +18,9 @@ Configuration Models
 -------------------
 
 Standard Sampler Configuration (Greedy Selection)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: PRISMS.thompson_sampling.config.StandardSamplerConfig
+.. autoclass:: TACTICS.thompson_sampling.config.StandardSamplerConfig
    :members:
    :undoc-members:
    :show-inheritance:
@@ -39,9 +39,9 @@ The StandardSamplerConfig is used for basic Thompson Sampling with greedy select
 * **log_filename**: Optional log file path
 
 Enhanced Sampler Configuration (Thermal Cycling)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: PRISMS.thompson_sampling.config.EnhancedSamplerConfig
+.. autoclass:: TACTICS.thompson_sampling.config.EnhancedSamplerConfig
    :members:
    :undoc-members:
    :show-inheritance:
@@ -59,11 +59,11 @@ Validation Examples
 ------------------
 
 Type Validation
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
-    from PRISMS.thompson_sampling import StandardSamplerConfig
+    from TACTICS.thompson_sampling import StandardSamplerConfig
     from pydantic import ValidationError
 
     # Valid configuration
@@ -94,7 +94,7 @@ Constraint Validation
 
 .. code-block:: python
 
-    from PRISMS.thompson_sampling import EnhancedSamplerConfig
+    from TACTICS.thompson_sampling import EnhancedSamplerConfig
 
     # Invalid constraints raise ValidationError
     try:
@@ -124,14 +124,14 @@ Enumeration Validation
         print(f"Enumeration error: {e}")
 
 Usage Patterns
--------------
+--------------
 
 Direct Configuration
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
-    from PRISMS.thompson_sampling import StandardSamplerConfig, run_ts
+    from TACTICS.thompson_sampling import StandardSamplerConfig, run_ts
 
     # Create configuration directly
     config = StandardSamplerConfig(
@@ -149,12 +149,12 @@ Direct Configuration
     results = run_ts(config)
 
 JSON Configuration
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
     import json
-    from PRISMS.thompson_sampling import StandardSamplerConfig
+    from TACTICS.thompson_sampling import StandardSamplerConfig
 
     # Load from JSON file
     with open("config.json", "r") as f:
@@ -183,7 +183,7 @@ Example JSON configuration:
     }
 
 Configuration Best Practices
---------------------------
+---------------------------
 
 1. **Use Type Hints**: Always specify types for better IDE support
 2. **Validate Early**: Catch configuration errors before running expensive computations
@@ -192,7 +192,7 @@ Configuration Best Practices
 5. **Test Configurations**: Include configuration tests in your test suite
 
 Error Handling
--------------
+--------------
 
 The configuration system provides detailed error messages:
 

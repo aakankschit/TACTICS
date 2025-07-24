@@ -10,7 +10,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
-project = 'PRISMS'
+project = 'TACTICS'
 copyright = '2024, Aakankschit Nandkeolyar'
 author = 'Aakankschit Nandkeolyar'
 
