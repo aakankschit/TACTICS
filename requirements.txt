@@ -12,6 +12,7 @@ matplotlib
 altair
 joblib
 dill
+useful_rdkit_utils
 # Optional: For Jupyter/IPython notebook support
 ipython
 ipykernel
