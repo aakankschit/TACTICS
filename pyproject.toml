@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "TACTICS"
+version = "0.1.0"
+description = "Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+  {name = "Aakankschit Nandkeolyar", email = "anandkeo@uci.edu"}
+  {name = "Remco L. van den Broek", email = "r.l.van.den.broek@lacdr.leidenuniv.nl"}
+  {name = "Willem Jespers", email = "w.jespers@rug.nl"}
+]
+requires-python = ">=3.8"
+dependencies = [
+    "pydantic",
+    "rdkit-pypi",
+    "numpy",
+    "pandas",
+    "polars",
+    "tqdm"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["TACTICS*"]
