@@ -41,10 +41,9 @@ notebook = [
     "ipykernel"
 ]
 
-# Uncomment if you use OpenEye toolkits
-# openeye = [
-#     "openeye-toolkits"
-# ]
+openeye = [
+    "openeye-toolkits"
+]
 
 [tool.setuptools.packages.find]
 where = ["."]
