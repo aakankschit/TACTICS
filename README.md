@@ -172,9 +172,6 @@ pytest tests/ --cov=TACTICS --cov-report=html
 git clone https://github.com/your-org/TACTICS.git
 cd TACTICS
 
-# Install dependencies
-pip install -r requirements.txt
-
 # Install package in development mode
 pip install -e .
 ```
