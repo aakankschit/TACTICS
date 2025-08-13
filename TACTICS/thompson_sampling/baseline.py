@@ -46,7 +46,7 @@ def setup_baseline_from_config(config: RandomBaselineConfig):
     import importlib
     
     # Create evaluator
-    module = importlib.import_module("PRISMS.thompson_sampling.core.evaluators")
+    module = importlib.import_module("TACTICS.thompson_sampling.core.evaluators")
     class_ = getattr(module, config.evaluator_class_name)
     
     # Handle evaluator_arg - convert dict to JSON string if needed

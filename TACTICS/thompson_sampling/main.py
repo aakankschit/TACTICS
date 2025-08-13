@@ -25,7 +25,7 @@ def run_ts(config: TSConfig, hide_progress: bool = False) -> pl.DataFrame:
         pl.DataFrame: Results dataframe with scores, SMILES, and names
     """
     # Dynamically import evaluator class
-    module = importlib.import_module("PRISMS.thompson_sampling.core.evaluators")
+    module = importlib.import_module("TACTICS.thompson_sampling.core.evaluators")
     class_ = getattr(module, config.evaluator_class_name)
     
     # Handle evaluator_arg - convert dict to JSON string if needed
