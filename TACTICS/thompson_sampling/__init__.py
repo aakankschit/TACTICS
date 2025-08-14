@@ -1,5 +1,5 @@
 """
-Thompson Sampling package for PRISMS.
+Thompson Sampling package for TACTICS.
 
 This package provides Thompson Sampling implementations for combinatorial library screening.
 """

@@ -36,7 +36,7 @@ def parse_input_dict(input_dict):
     input_dict["config"] = config
     
     # Create evaluator class dynamically
-    module = importlib.import_module("PRISMS.thompson_sampling.legacy.evaluators")
+    module = importlib.import_module("TACTICS.thompson_sampling.legacy.evaluators")
     class_ = getattr(module, config.evaluator_class_name)
     
     # Handle evaluator_arg - convert dict to JSON string if needed
@@ -60,7 +60,7 @@ def run_ts(config_or_dict, hide_progress: bool = False) -> pl.DataFrame:
     if isinstance(config_or_dict, (StandardSamplerConfig, EnhancedSamplerConfig)):
         config = config_or_dict
         # Dynamically import evaluator class
-        module = importlib.import_module("PRISMS.thompson_sampling.legacy.evaluators")
+        module = importlib.import_module("TACTICS.thompson_sampling.legacy.evaluators")
         class_ = getattr(module, config.evaluator_class_name)
         
         # Handle evaluator_arg - convert dict to JSON string if needed
