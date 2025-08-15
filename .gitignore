@@ -133,6 +133,7 @@ build/
 dist/
 
 # Temporary files
+/tmp
 *.tmp
 *.temp
 *.log
