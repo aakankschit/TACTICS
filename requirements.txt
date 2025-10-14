@@ -1,20 +1,3 @@
-pydantic>=2.0
-pytest
-pytest-cov
-polars
-pandas
-numpy
-rdkit
-tqdm
-sqlitedict
-seaborn
-matplotlib
-altair
-joblib
-dill
-useful_rdkit_utils
-# Optional: For Jupyter/IPython notebook support
-ipython
-ipykernel
-# Optional: For OpenEye toolkits (commercial, only if you use ROCSEvaluator/FredEvaluator)
-# openeye-toolkits
+version https://git-lfs.github.com/spec/v1
+oid sha256:4b7b3e5c73dfc23fa2b3d61c5d3aa939ba7eb358a2a8ec8bbae89253d9d454da
+size 307
