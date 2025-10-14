@@ -152,3 +152,6 @@ env/
 .vscode/
 *.sublime-project
 *.sublime-workspace
+
+# macOS Finder settings file
+.DS_Store

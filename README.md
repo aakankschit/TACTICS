@@ -168,26 +168,14 @@ pytest tests/ --cov=TACTICS --cov-report=html
 ## 🛠️ Installation
 
 ```bash
-# Clone repository
-git clone https://github.com/your-org/TACTICS.git
-cd TACTICS
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Install package in development mode
-pip install -e .
+# Clone repository and install package in development mode
+git clone https://github.com/aakankschit/TACTICS.git
+cd TACTICS; pip install -e .
 ```
 
 ## 📋 Requirements
 
-- Python 3.8+
-- Pydantic
-- RDKit
-- NumPy
-- Pandas
-- Polars
-- tqdm
+- Python 3.11+
 - Multiprocessing support
 
 ## 🤝 Contributing
@@ -225,4 +213,4 @@ For questions and support:
 ---
 
 **This work is based on [previous work](https://pubs.acs.org/doi/10.1021/acs.jcim.3c01790) by Patrick Walters.**
-**This project is a collaboration between the University of California Irvine and Leiden University.**
+**This project is a collaboration between the University of California Irvine, Leiden University and Groningen University.**
