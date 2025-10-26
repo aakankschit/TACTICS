@@ -20,6 +20,7 @@ class EnhancedThompsonSampler:
                  percent_lib: float,
                  search_stop: int,
                  min_cpds_per_core: int,
+                 results_filename: Optional[str] = None,
                  log_filename: Optional[str] = None):
         """
         Basic init
@@ -35,6 +36,7 @@ class EnhancedThompsonSampler:
         self.percent_lib = percent_lib
         self.search_stop = search_stop
         self.min_cpds_per_core = min_cpds_per_core
+        self.results_filename = results_filename
         self.hide_progress = False
         self.num_warmup = None
         self.alpha = 0.1
@@ -105,7 +107,7 @@ class EnhancedThompsonSampler:
               score = self.evaluator.evaluate(prod_mol)
         return [score, product_smiles, product_name]
 
-    def warm_up(self, num_warmup_trials=3, results_filename="results.csv"):
+    def warm_up(self, num_warmup_trials=3):
         """
         Warm-up phase by stochastic parallel pairing repeated for num_warmup_trials
         :param num_warmup_trials: number of warm-up cycles
@@ -160,7 +162,7 @@ class EnhancedThompsonSampler:
 
         # write the results to disk
         out_df = pl.DataFrame(results, schema=["score", "SMILES", "Name"], orient="row") # Change from pandas to polars
-        out_df.write_csv(results_filename, null_value='nan')
+        out_df.write_csv(self.results_filename, null_value='nan')
         # logging
         self.logger.info(
             f"warmup score stats: "
@@ -176,8 +178,7 @@ class EnhancedThompsonSampler:
 
     def search(self, percent_of_library: float, 
                stop: int,
-               min_cpds_per_core:int,
-               results_filename="results.csv"):
+               min_cpds_per_core:int):
         """
         Run the search with roulette wheel selection 
         :param: min_cpds_per_core: the minimum number of compounds collected for scoring per core per iteration
@@ -272,7 +273,7 @@ class EnhancedThompsonSampler:
             # Polars doesn't support append mode, so we use pandas for this operation
             import pandas as pd
             out_df_pandas = out_df.to_pandas()
-            out_df_pandas.to_csv(results_filename, mode='a', header=False, index=False, na_rep='nan')
+            out_df_pandas.to_csv(self.results_filename, mode='a', header=False, index=False, na_rep='nan')
             # logging
             if count % 100 == 0:
                 if self.scaling > 0:

@@ -93,7 +93,8 @@ def run_ts(config_or_dict, hide_progress: bool = False) -> pl.DataFrame:
             scaling=config.scaling,
             percent_lib=config.percent_of_library,
             search_stop=config.stopping_criteria,
-            min_cpds_per_core=config.minimum_no_of_compounds_per_core
+            min_cpds_per_core=config.minimum_no_of_compounds_per_core,
+            results_filename=config.results_filename
         )
     else:
         raise ValueError(f"Unknown sampler_type: {config.sampler_type}")
@@ -110,7 +111,6 @@ def run_ts(config_or_dict, hide_progress: bool = False) -> pl.DataFrame:
             percent_of_library=config.percent_of_library,
             stop=config.stopping_criteria,
             min_cpds_per_core=config.minimum_no_of_compounds_per_core,
-            results_filename=result_filename
         )
     total_evaluations = evaluator.counter
     percent_searched = total_evaluations / ts.get_num_prods() * 100

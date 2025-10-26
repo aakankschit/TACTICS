@@ -171,6 +171,9 @@ pytest tests/ --cov=TACTICS --cov-report=html
 # Clone repository and install package in development mode
 git clone https://github.com/aakankschit/TACTICS.git
 cd TACTICS; pip install -e .
+
+# for usage of the notebook tutorials:
+cd TACTICS; pip install -e .[notebook]
 ```
 
 ## 📋 Requirements
