@@ -6,47 +6,54 @@
 Welcome to TACTICS documentation!
 =================================
 
-TACTICS (Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery) is a comprehensive Python package for Thompson Sampling-based optimization of chemical combinatorial libraries, featuring modern Pydantic configuration and improved package organization.
+TACTICS (Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery) is a comprehensive Python package for Thompson Sampling-based optimization of chemical combinatorial libraries with a unified, flexible architecture.
 
 Key Features
 ------------
 
-* **Modern Configuration**: Pydantic-based configuration with type safety and validation
-* **Two Thompson Sampling Strategies**: Standard (greedy selection) and Enhanced (thermal cycling)
+* **Unified Thompson Sampler**: Single sampler class that accepts different selection strategies
+* **Multiple Selection Strategies**: Greedy, Roulette Wheel (thermal cycling), UCB, Epsilon-Greedy
+* **Flexible Warmup Strategies**: Standard, Stratified, Enhanced, Latin Hypercube sampling
+* **Multiple Evaluators**: Lookup, Database, Fingerprint, ML models, ROCS, FRED docking
+* **Parallel Evaluation**: Built-in multiprocessing support for expensive evaluators
+* **Extensible Design**: Easy integration of custom strategies, warmup methods, and evaluators
 * **Library Enumeration**: Efficient generation of combinatorial reaction products
 * **Library Analysis**: Comprehensive analysis and visualization tools
-* **Advanced Search Methods**: Including DisallowTracker-enhanced strategies for guaranteed uniqueness
-* **Clean Package Structure**: Well-organized modules with clear separation of concerns
 
 Quick Start
 -----------
 
 .. code-block:: python
 
-    from TACTICS.thompson_sampling import StandardSamplerConfig, run_ts
+    from TACTICS.thompson_sampling.core.sampler import ThompsonSampler
+    from TACTICS.thompson_sampling.strategies import GreedySelection
+    from TACTICS.thompson_sampling.core.evaluators import LookupEvaluator
 
-    # Create configuration using Pydantic models
-    config = StandardSamplerConfig(
-        sampler_type="standard",
-        ts_mode="maximize",
-        evaluator_class_name="DBEvaluator",
-        evaluator_arg="scores.csv",
-        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-        num_ts_iterations=100,
-        reagent_file_list=["aldehydes.smi", "amines.smi"],
-        num_warmup_trials=3,
-        results_filename="results.csv"
-    )
+    # Create selection strategy
+    strategy = GreedySelection(mode="maximize")
 
-    # Run Thompson Sampling
-    results_df = run_ts(config)
+    # Create sampler
+    sampler = ThompsonSampler(selection_strategy=strategy)
+
+    # Setup
+    sampler.read_reagents(["reagents1.smi", "reagents2.smi"])
+    sampler.set_reaction("[C:1]=[O:2]>>[C:1][O:2]")
+    sampler.set_evaluator(LookupEvaluator({"ref_filename": "scores.csv"}))
+
+    # Run optimization
+    warmup_results = sampler.warm_up(num_warmup_trials=3)
+    search_results = sampler.search(num_cycles=100)
+
+    # Cleanup
+    sampler.close()
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   configuration
    thompson_sampling
+   api_reference
+   configuration
    library_enumeration
    library_analysis
 

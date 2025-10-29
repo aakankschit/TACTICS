@@ -5,12 +5,12 @@ This package provides Thompson Sampling implementations for combinatorial librar
 """
 
 # Import configuration
-from .config import StandardSamplerConfig, EnhancedSamplerConfig, RandomBaselineConfig, TSConfig
+from .config import ThompsonSamplingConfig, RandomBaselineConfig
 
 # Import core functionality
 from .core import (
-    StandardThompsonSampler,
-    EnhancedThompsonSampler,
+    ThompsonSampler,
+    Reagent,
     ROCSEvaluator,
     LookupEvaluator,
     DBEvaluator,
@@ -18,6 +18,24 @@ from .core import (
     FPEvaluator,
     MWEvaluator,
     MLClassifierEvaluator
+)
+
+# Import strategies
+from .strategies import (
+    SelectionStrategy,
+    GreedySelection,
+    RouletteWheelSelection,
+    UCBSelection,
+    EpsilonGreedySelection
+)
+
+# Import warmup strategies
+from .warmup import (
+    WarmupStrategy,
+    StandardWarmup,
+    StratifiedWarmup,
+    EnhancedWarmup,
+    LatinHypercubeWarmup
 )
 
 # Import utilities
@@ -31,22 +49,34 @@ from .baseline import run_random_baseline, run_exhaustive_baseline
 
 __all__ = [
     # Configuration
-    'StandardSamplerConfig',
-    'EnhancedSamplerConfig',
+    'ThompsonSamplingConfig',
     'RandomBaselineConfig',
-    'TSConfig',
-    
+
     # Main function
     'run_ts',
-    
+
     # Baseline functions
     'run_random_baseline',
     'run_exhaustive_baseline',
-    
-    # Core samplers
-    'StandardThompsonSampler',
-    'EnhancedThompsonSampler',
-    
+
+    # Core classes
+    'ThompsonSampler',
+    'Reagent',
+
+    # Selection strategies
+    'SelectionStrategy',
+    'GreedySelection',
+    'RouletteWheelSelection',
+    'UCBSelection',
+    'EpsilonGreedySelection',
+
+    # Warmup strategies
+    'WarmupStrategy',
+    'StandardWarmup',
+    'StratifiedWarmup',
+    'EnhancedWarmup',
+    'LatinHypercubeWarmup',
+
     # Evaluators
     'ROCSEvaluator',
     'LookupEvaluator',
@@ -55,7 +85,7 @@ __all__ = [
     'FPEvaluator',
     'MWEvaluator',
     'MLClassifierEvaluator',
-    
+
     # Utilities
     'get_logger',
     'read_reagents',
