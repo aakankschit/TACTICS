@@ -1,132 +1,95 @@
 import pytest
-import sys
-import os
-
-# Add the legacy directory to the path so we can import the config module directly
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'TACTICS', 'thompson_sampling', 'legacy'))
-
-# Import the config module directly
-from TACTICS.thompson_sampling import StandardSamplerConfig, EnhancedSamplerConfig
+from TACTICS.thompson_sampling import ThompsonSamplingConfig, RandomBaselineConfig
 from pydantic import ValidationError
 
-# Test StandardSamplerConfig with valid input
-def test_standard_sampler_config_valid():
+# Test ThompsonSamplingConfig with valid input
+def test_thompson_sampling_config_valid():
     """
-    This test checks that a valid StandardSamplerConfig can be created without errors.
+    This test checks that a valid ThompsonSamplingConfig can be created without errors.
     Inputs:
         - All required fields with correct types and values.
     Outputs:
-        - A StandardSamplerConfig instance is created.
+        - A ThompsonSamplingConfig instance is created.
     """
-    config = StandardSamplerConfig(
-        sampler_type="standard",
-        ts_mode="maximize",
+    config = ThompsonSamplingConfig(
         evaluator_class_name="DBEvaluator",
         evaluator_arg="some_arg",
         reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
         num_ts_iterations=10,
         reagent_file_list=["file1.smi", "file2.smi"],
-        num_warmup_trials=2
+        num_warmup_trials=2,
+        selection_strategy="greedy",
+        mode="maximize"
     )
-    assert config.sampler_type == "standard"
-    assert config.ts_mode == "maximize"
+    assert config.selection_strategy == "greedy"
+    assert config.mode == "maximize"
 
-# Test EnhancedSamplerConfig with valid input
-def test_enhanced_sampler_config_valid():
+# Test ThompsonSamplingConfig with roulette wheel strategy
+def test_thompson_sampling_config_roulette_wheel():
     """
-    This test checks that a valid EnhancedSamplerConfig can be created without errors.
+    This test checks that a valid ThompsonSamplingConfig with roulette_wheel strategy can be created.
     Inputs:
-        - All required fields with correct types and values.
+        - Valid config with roulette_wheel strategy and parameters.
     Outputs:
-        - An EnhancedSamplerConfig instance is created.
+        - A ThompsonSamplingConfig instance is created with strategy parameters.
     """
-    config = EnhancedSamplerConfig(
-        sampler_type="enhanced",
-        processes=2,
-        scaling=1.0,
-        percent_of_library=0.5,
-        minimum_no_of_compounds_per_core=1,
-        stopping_criteria=10,
+    config = ThompsonSamplingConfig(
         evaluator_class_name="DBEvaluator",
         evaluator_arg="some_arg",
         reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
         num_ts_iterations=10,
         reagent_file_list=["file1.smi", "file2.smi"],
-        num_warmup_trials=2
+        num_warmup_trials=2,
+        selection_strategy="roulette_wheel",
+        mode="maximize",
+        strategy_params={"alpha": 0.1, "beta": 0.1, "scaling": 1.0},
+        processes=2
     )
-    assert config.sampler_type == "enhanced"
+    assert config.selection_strategy == "roulette_wheel"
     assert config.processes == 2
 
-# Test StandardSamplerConfig with missing required field
-def test_standard_sampler_config_missing_field():
+# Test ThompsonSamplingConfig with missing required field
+def test_thompson_sampling_config_missing_field():
     """
     This test checks that missing a required field raises a ValidationError.
     Inputs:
-        - Missing 'ts_mode' field.
+        - Missing 'evaluator_class_name' field.
     Outputs:
         - ValidationError is raised.
     """
     with pytest.raises(ValidationError):
-        StandardSamplerConfig(
-            sampler_type="standard",
-            # ts_mode missing
-            evaluator_class_name="DBEvaluator",
+        ThompsonSamplingConfig(
+            # evaluator_class_name missing
             evaluator_arg="some_arg",
             reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
             num_ts_iterations=10,
             reagent_file_list=["file1.smi", "file2.smi"],
-            num_warmup_trials=2
+            num_warmup_trials=2,
+            selection_strategy="greedy",
+            mode="maximize"
         )
 
-# Test EnhancedSamplerConfig with invalid percent_of_library
-def test_enhanced_sampler_config_invalid_percent():
+# Test ThompsonSamplingConfig with invalid selection_strategy
+def test_thompson_sampling_config_invalid_strategy():
     """
-    This test checks that percent_of_library outside (0,1] raises a ValidationError.
+    This test checks that an invalid selection_strategy raises a ValidationError.
     Inputs:
-        - percent_of_library=1.5 (invalid)
+        - selection_strategy="invalid_strategy" (invalid)
     Outputs:
         - ValidationError is raised.
     """
     with pytest.raises(ValidationError):
-        EnhancedSamplerConfig(
-            sampler_type="enhanced",
-            processes=2,
-            scaling=1.0,
-            percent_of_library=1.5,  # invalid
-            minimum_no_of_compounds_per_core=1,
-            stopping_criteria=10,
+        ThompsonSamplingConfig(
             evaluator_class_name="DBEvaluator",
             evaluator_arg="some_arg",
             reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
             num_ts_iterations=10,
             reagent_file_list=["file1.smi", "file2.smi"],
-            num_warmup_trials=2
+            num_warmup_trials=2,
+            selection_strategy="invalid_strategy",  # invalid
+            mode="maximize"
         )
 
-# Test EnhancedSamplerConfig with negative processes
-def test_enhanced_sampler_config_negative_processes():
-    """
-    This test checks that a negative value for 'processes' raises a ValidationError.
-    Inputs:
-        - processes=-1 (invalid)
-    Outputs:
-        - ValidationError is raised.
-    """
-    with pytest.raises(ValidationError):
-        EnhancedSamplerConfig(
-            sampler_type="enhanced",
-            processes=-1,  # invalid
-            scaling=1.0,
-            percent_of_library=0.5,
-            minimum_no_of_compounds_per_core=1,
-            stopping_criteria=10,
-            evaluator_class_name="DBEvaluator",
-            evaluator_arg="some_arg",
-            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-            num_ts_iterations=10,
-            reagent_file_list=["file1.smi", "file2.smi"],
-            num_warmup_trials=2
-        )
 
 # Test config model field validation
 def test_config_field_types():
@@ -139,15 +102,15 @@ def test_config_field_types():
     """
     # Test that string for int field raises error
     with pytest.raises(ValidationError):
-        StandardSamplerConfig(
-            sampler_type="standard",
-            ts_mode="maximize",
+        ThompsonSamplingConfig(
             evaluator_class_name="DBEvaluator",
             evaluator_arg="some_arg",
             reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
             num_ts_iterations="not_an_integer",  # invalid type
             reagent_file_list=["file1.smi", "file2.smi"],
-            num_warmup_trials=2
+            num_warmup_trials=2,
+            selection_strategy="greedy",
+            mode="maximize"
         )
 
 # Test config model with optional fields
@@ -157,18 +120,85 @@ def test_config_optional_fields():
     Inputs:
         - Config without optional fields
     Outputs:
-        - Config is created successfully with None values for optional fields
+        - Config is created successfully with default values for optional fields
     """
-    config = StandardSamplerConfig(
-        sampler_type="standard",
-        ts_mode="maximize",
+    config = ThompsonSamplingConfig(
         evaluator_class_name="DBEvaluator",
         evaluator_arg="some_arg",
         reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
         num_ts_iterations=10,
         reagent_file_list=["file1.smi", "file2.smi"],
-        num_warmup_trials=2
-        # results_filename and log_filename are optional
+        num_warmup_trials=2,
+        selection_strategy="greedy",
+        mode="maximize"
+        # results_filename has default value "results.csv"
+        # log_filename is optional (None)
     )
-    assert config.results_filename is None
-    assert config.log_filename is None 
+    assert config.results_filename == "results.csv"  # default value
+    assert config.log_filename is None
+
+# Test RandomBaselineConfig
+def test_random_baseline_config_valid():
+    """
+    Test that RandomBaselineConfig can be created with valid data.
+    Inputs:
+        - All required fields with correct types and values.
+    Outputs:
+        - A RandomBaselineConfig instance is created.
+    """
+    config = RandomBaselineConfig(
+        evaluator_class_name="LookupEvaluator",
+        evaluator_arg={"ref_filename": "scores.csv"},
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["file1.smi", "file2.smi"],
+        num_trials=100,
+        num_to_save=10
+    )
+    assert config.num_trials == 100
+    assert config.num_to_save == 10
+
+# Test all valid selection strategies
+def test_all_selection_strategies():
+    """
+    Test that all valid selection strategies can be configured.
+    Inputs:
+        - Configurations with each valid strategy
+    Outputs:
+        - All configs created successfully
+    """
+    strategies = ["greedy", "roulette_wheel", "ucb", "epsilon_greedy", "boltzmann"]
+
+    for strategy in strategies:
+        config = ThompsonSamplingConfig(
+            evaluator_class_name="DBEvaluator",
+            evaluator_arg="test_arg",
+            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            num_ts_iterations=10,
+            reagent_file_list=["file1.smi"],
+            num_warmup_trials=3,
+            selection_strategy=strategy,
+            mode="maximize"
+        )
+        assert config.selection_strategy == strategy
+
+# Test dict evaluator_arg
+def test_dict_evaluator_arg():
+    """
+    Test that evaluator_arg can be a dictionary.
+    Inputs:
+        - Configuration with dict evaluator_arg
+    Outputs:
+        - Config created with dict arg
+    """
+    config = ThompsonSamplingConfig(
+        evaluator_class_name="LookupEvaluator",
+        evaluator_arg={"ref_filename": "scores.csv", "ref_colname": "Score"},
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        num_ts_iterations=10,
+        reagent_file_list=["file1.smi"],
+        num_warmup_trials=3,
+        selection_strategy="greedy",
+        mode="maximize"
+    )
+    assert isinstance(config.evaluator_arg, dict)
+    assert config.evaluator_arg["ref_filename"] == "scores.csv"

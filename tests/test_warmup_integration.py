@@ -146,7 +146,7 @@ class TestWarmupIntegration:
 
     def test_latin_hypercube_warmup_integration(self):
         """Test that LatinHypercubeWarmup integrates with ThompsonSampler"""
-        warmup_strategy = LatinHypercubeWarmup(n_samples=10)
+        warmup_strategy = LatinHypercubeWarmup()
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
@@ -206,7 +206,7 @@ class TestWarmupIntegration:
             StandardWarmup(),
             StratifiedWarmup(),
             EnhancedWarmup(),
-            LatinHypercubeWarmup(n_samples=10)
+            LatinHypercubeWarmup()
         ]
 
         for warmup_strategy in strategies:
@@ -234,7 +234,7 @@ class TestWarmupIntegration:
             StandardWarmup(),
             StratifiedWarmup(),
             EnhancedWarmup(),
-            LatinHypercubeWarmup(n_samples=10)
+            LatinHypercubeWarmup()
         ]
 
         for warmup_strategy in strategies:
@@ -294,7 +294,7 @@ class TestWarmupIntegration:
             StandardWarmup(),
             StratifiedWarmup(),
             EnhancedWarmup(),
-            LatinHypercubeWarmup(n_samples=10)
+            LatinHypercubeWarmup()
         ]
 
         for warmup_strategy in warmup_strategies:
@@ -355,7 +355,7 @@ class TestWarmupIntegration:
             StandardWarmup(),
             StratifiedWarmup(),
             EnhancedWarmup(),
-            LatinHypercubeWarmup(n_samples=10)
+            LatinHypercubeWarmup()
         ]
 
         for warmup_strategy in warmup_strategies:
