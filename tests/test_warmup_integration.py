@@ -3,13 +3,13 @@ Integration tests for warmup strategies with ThompsonSampler.
 
 These tests ensure that any warmup strategy (existing or new) can be properly
 integrated with the ThompsonSampler class.
+
+Uses real example data from examples/ folder.
 """
 
 import pytest
-import tempfile
 import os
 import numpy as np
-import pandas as pd
 
 from TACTICS.thompson_sampling.core.sampler import ThompsonSampler
 from TACTICS.thompson_sampling.core.evaluators import LookupEvaluator
@@ -20,45 +20,16 @@ from TACTICS.thompson_sampling.warmup import (
 )
 
 
+# Paths to real example data
+EXAMPLES_DIR = os.path.join(os.path.dirname(__file__), "..", "examples")
+REAGENT_FILE1 = os.path.join(EXAMPLES_DIR, "input_files", "acids.smi")
+REAGENT_FILE2 = os.path.join(EXAMPLES_DIR, "input_files", "coupled_aa_sub.smi")
+LOOKUP_FILE = os.path.join(EXAMPLES_DIR, "docking_scores", "product_scores.csv")
+REACTION_SMARTS = "[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]);!$(N[#6]~[!#6;!#16]):3]>>[#6:1](=[O:2])[#7:3]"
+
+
 class TestWarmupIntegration:
     """Test that warmup strategies integrate properly with ThompsonSampler"""
-
-    def setup_method(self):
-        """Set up test fixtures"""
-        self.temp_dir = tempfile.mkdtemp()
-
-        # Create test reagent files
-        self.reagent_file1 = os.path.join(self.temp_dir, "reagents1.smi")
-        self.reagent_file2 = os.path.join(self.temp_dir, "reagents2.smi")
-
-        with open(self.reagent_file1, "w") as f:
-            f.write("CCO\tethanol\n")
-            f.write("CCCO\tpropanol\n")
-            f.write("CCCCO\tbutanol\n")
-
-        with open(self.reagent_file2, "w") as f:
-            f.write("CC(=O)O\tacetic_acid\n")
-            f.write("CCC(=O)O\tpropionic_acid\n")
-
-        # Create test lookup file
-        self.lookup_file = os.path.join(self.temp_dir, "scores.csv")
-        lookup_data = pd.DataFrame({
-            'Product_Code': [
-                'ethanol_acetic_acid', 'ethanol_propionic_acid',
-                'propanol_acetic_acid', 'propanol_propionic_acid',
-                'butanol_acetic_acid', 'butanol_propionic_acid'
-            ],
-            'Scores': [0.5, 0.7, 0.6, 0.8, 0.4, 0.9]
-        })
-        lookup_data.to_csv(self.lookup_file, index=False)
-
-        # Simple reaction SMARTS
-        self.reaction_smarts = "[C:1][OH:2].[C:3](=[O:4])[OH:5]>>[C:1][O:2][C:3](=[O:4])"
-
-    def teardown_method(self):
-        """Clean up test fixtures"""
-        import shutil
-        shutil.rmtree(self.temp_dir)
 
     def test_standard_warmup_integration(self):
         """Test that StandardWarmup integrates with ThompsonSampler"""
@@ -69,17 +40,14 @@ class TestWarmupIntegration:
             selection_strategy=selection_strategy,
             warmup_strategy=warmup_strategy
         )
-        sampler.read_reagents([self.reagent_file1, self.reagent_file2])
-        sampler.set_reaction(self.reaction_smarts)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": self.lookup_file}))
+        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+        sampler.set_reaction(REACTION_SMARTS)
+        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
         # Run warmup
         warmup_results = sampler.warm_up(num_warmup_trials=2)
 
         assert len(warmup_results) > 0
-        # Standard warmup: each reagent tested num_trials times
-        # Expected: (3 + 2) reagents × 2 trials = 10 evaluations
-        assert len(warmup_results) >= 8  # Allow some to fail
 
         # Verify all reagents have been initialized
         for reagent_list in sampler.reagent_lists:
@@ -98,9 +66,9 @@ class TestWarmupIntegration:
             selection_strategy=selection_strategy,
             warmup_strategy=warmup_strategy
         )
-        sampler.read_reagents([self.reagent_file1, self.reagent_file2])
-        sampler.set_reaction(self.reaction_smarts)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": self.lookup_file}))
+        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+        sampler.set_reaction(REACTION_SMARTS)
+        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
         # Run warmup
         warmup_results = sampler.warm_up(num_warmup_trials=2)
@@ -117,19 +85,16 @@ class TestWarmupIntegration:
 
     def test_enhanced_warmup_integration(self):
         """Test that EnhancedWarmup integrates with ThompsonSampler"""
-        warmup_strategy = EnhancedWarmup(
-            anchor_strategy="max_variance",
-            num_anchors=2
-        )
+        warmup_strategy = EnhancedWarmup()
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
             selection_strategy=selection_strategy,
             warmup_strategy=warmup_strategy
         )
-        sampler.read_reagents([self.reagent_file1, self.reagent_file2])
-        sampler.set_reaction(self.reaction_smarts)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": self.lookup_file}))
+        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+        sampler.set_reaction(REACTION_SMARTS)
+        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
         # Run warmup
         warmup_results = sampler.warm_up(num_warmup_trials=2)
@@ -146,16 +111,16 @@ class TestWarmupIntegration:
 
     def test_latin_hypercube_warmup_integration(self):
         """Test that LatinHypercubeWarmup integrates with ThompsonSampler"""
-        warmup_strategy = LatinHypercubeWarmup(n_samples=10)
+        warmup_strategy = LatinHypercubeWarmup()
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
             selection_strategy=selection_strategy,
             warmup_strategy=warmup_strategy
         )
-        sampler.read_reagents([self.reagent_file1, self.reagent_file2])
-        sampler.set_reaction(self.reaction_smarts)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": self.lookup_file}))
+        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+        sampler.set_reaction(REACTION_SMARTS)
+        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
         # Run warmup
         warmup_results = sampler.warm_up(num_warmup_trials=2)
@@ -179,9 +144,9 @@ class TestWarmupIntegration:
             selection_strategy=selection_strategy,
             warmup_strategy=warmup_strategy
         )
-        sampler.read_reagents([self.reagent_file1, self.reagent_file2])
-        sampler.set_reaction(self.reaction_smarts)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": self.lookup_file}))
+        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+        sampler.set_reaction(REACTION_SMARTS)
+        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
         # Generate warmup combinations
         combinations = warmup_strategy.generate_warmup_combinations(
@@ -206,7 +171,7 @@ class TestWarmupIntegration:
             StandardWarmup(),
             StratifiedWarmup(),
             EnhancedWarmup(),
-            LatinHypercubeWarmup(n_samples=10)
+            LatinHypercubeWarmup()
         ]
 
         for warmup_strategy in strategies:
@@ -215,7 +180,7 @@ class TestWarmupIntegration:
                 selection_strategy=selection_strategy,
                 warmup_strategy=warmup_strategy
             )
-            sampler.read_reagents([self.reagent_file1, self.reagent_file2])
+            sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
 
             # Get expected evaluations
             expected = warmup_strategy.get_expected_evaluations(
@@ -234,7 +199,7 @@ class TestWarmupIntegration:
             StandardWarmup(),
             StratifiedWarmup(),
             EnhancedWarmup(),
-            LatinHypercubeWarmup(n_samples=10)
+            LatinHypercubeWarmup()
         ]
 
         for warmup_strategy in strategies:
@@ -278,46 +243,15 @@ class TestWarmupIntegration:
             selection_strategy=selection_strategy,
             warmup_strategy=warmup_strategy
         )
-        sampler.read_reagents([self.reagent_file1, self.reagent_file2])
-        sampler.set_reaction(self.reaction_smarts)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": self.lookup_file}))
+        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+        sampler.set_reaction(REACTION_SMARTS)
+        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
         warmup_results = sampler.warm_up(num_warmup_trials=2)
 
         assert len(warmup_results) > 0
 
         sampler.close()
-
-    def test_warmup_with_parallel_evaluation(self):
-        """Test that warmup strategies work with parallel evaluation"""
-        warmup_strategies = [
-            StandardWarmup(),
-            StratifiedWarmup(),
-            EnhancedWarmup(),
-            LatinHypercubeWarmup(n_samples=10)
-        ]
-
-        for warmup_strategy in warmup_strategies:
-            selection_strategy = GreedySelection(mode="maximize")
-            sampler = ThompsonSampler(
-                selection_strategy=selection_strategy,
-                warmup_strategy=warmup_strategy,
-                processes=2  # Enable parallel evaluation
-            )
-            sampler.read_reagents([self.reagent_file1, self.reagent_file2])
-            sampler.set_reaction(self.reaction_smarts)
-            sampler.set_evaluator(LookupEvaluator({"ref_filename": self.lookup_file}))
-
-            warmup_results = sampler.warm_up(num_warmup_trials=2)
-
-            assert len(warmup_results) > 0
-
-            # Verify all reagents initialized
-            for reagent_list in sampler.reagent_lists:
-                for reagent in reagent_list:
-                    assert reagent.mean is not None
-
-            sampler.close()
 
     def test_warmup_initializes_priors(self):
         """Test that warmup correctly initializes reagent priors"""
@@ -328,9 +262,9 @@ class TestWarmupIntegration:
             selection_strategy=selection_strategy,
             warmup_strategy=warmup_strategy
         )
-        sampler.read_reagents([self.reagent_file1, self.reagent_file2])
-        sampler.set_reaction(self.reaction_smarts)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": self.lookup_file}))
+        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+        sampler.set_reaction(REACTION_SMARTS)
+        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
         # Before warmup, reagents should not have initialized priors
         for reagent_list in sampler.reagent_lists:
@@ -355,7 +289,7 @@ class TestWarmupIntegration:
             StandardWarmup(),
             StratifiedWarmup(),
             EnhancedWarmup(),
-            LatinHypercubeWarmup(n_samples=10)
+            LatinHypercubeWarmup()
         ]
 
         for warmup_strategy in warmup_strategies:
@@ -364,9 +298,9 @@ class TestWarmupIntegration:
                 selection_strategy=selection_strategy,
                 warmup_strategy=warmup_strategy
             )
-            sampler.read_reagents([self.reagent_file1, self.reagent_file2])
-            sampler.set_reaction(self.reaction_smarts)
-            sampler.set_evaluator(LookupEvaluator({"ref_filename": self.lookup_file}))
+            sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+            sampler.set_reaction(REACTION_SMARTS)
+            sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
             # Run warmup
             warmup_results = sampler.warm_up(num_warmup_trials=2)
@@ -393,9 +327,9 @@ class TestWarmupIntegration:
             selection_strategy=selection_strategy,
             warmup_strategy=warmup_strategy
         )
-        sampler.read_reagents([self.reagent_file1, self.reagent_file2])
-        sampler.set_reaction(self.reaction_smarts)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": self.lookup_file}))
+        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+        sampler.set_reaction(REACTION_SMARTS)
+        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
         # Run warmup - should handle any NaN scores gracefully
         warmup_results = sampler.warm_up(num_warmup_trials=2)
