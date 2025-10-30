@@ -16,7 +16,8 @@ class Standard_TS_Reagent:
         "known_var",
         "current_mean",
         "current_std",
-        "current_phase"
+        "current_phase",
+        "n_samples"
     ]
 
     def __init__(self, reagent_name: str, smiles: str):
@@ -33,6 +34,7 @@ class Standard_TS_Reagent:
         self.current_phase = "warmup"
         self.current_mean = 0
         self.current_std = 0
+        self.n_samples = 0  # Track number of times this reagent has been sampled
 
     def add_score(self, score: float):
         """
@@ -41,6 +43,7 @@ class Standard_TS_Reagent:
         :param score: New score collected for the reagent
         :return: None
         """
+        self.n_samples += 1  # Increment sample count
         if self.current_phase == "search":
             current_var = self.current_std ** 2
             # Then do the bayesian update
@@ -125,11 +128,12 @@ class Enhanced_TS_Reagent:
         self.mol = Chem.MolFromSmiles(self.smiles)
         self.scores_batch = []
         # Will be initialized during init_given_prior
-        self.var_score_known = None  
+        self.var_score_known = None
         self.std_score_known = None
         self.posterior_mean = None
         self.posterior_std = None
         self.sum_w = None
+        self.n_samples = 0  # Track number of times this reagent has been sampled
 
     def init_prior(self, prior_mean_score: float, prior_std_score: float):
         """
@@ -158,6 +162,7 @@ class Enhanced_TS_Reagent:
         self.posterior_std = np.sqrt(numerator / denominator)
         
     def add_score(self, score: float):
+        self.n_samples += 1  # Increment sample count
         self.scores_batch.append(score)
 
     def multiple_update(self):

@@ -1,11 +1,11 @@
 """
 Core Thompson Sampling functionality.
 
-This package contains the main Thompson Sampling implementations and evaluators.
+This package contains the main Thompson Sampling implementation and evaluators.
 """
 
-from .standard_sampler import StandardThompsonSampler
-from .enhanced_sampler import EnhancedThompsonSampler
+from .sampler import ThompsonSampler
+from .reagent import Reagent
 from .evaluators import (
     ROCSEvaluator,
     LookupEvaluator,
@@ -17,8 +17,8 @@ from .evaluators import (
 )
 
 __all__ = [
-    'StandardThompsonSampler',
-    'EnhancedThompsonSampler',
+    'ThompsonSampler',
+    'Reagent',
     'ROCSEvaluator',
     'LookupEvaluator',
     'DBEvaluator',

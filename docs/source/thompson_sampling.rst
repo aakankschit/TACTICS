@@ -1,92 +1,148 @@
 Thompson Sampling Module
 ========================
 
-The Thompson Sampling module implements Thompson sampling algorithms for chemical library exploration, featuring modern Pydantic configuration and improved package organization.
+The Thompson Sampling module implements a unified, flexible Thompson sampling framework for chemical library exploration with support for multiple selection strategies, evaluators, and warmup approaches.
 
-The package provides two main Thompson Sampling strategies:
+Overview
+--------
 
-* **Standard Thompson Sampler**: Uses greedy selection mode for straightforward optimization
-* **Enhanced Thompson Sampler**: Uses thermal cycling for better exploration/exploitation balance
+The package provides a **unified ThompsonSampler** that accepts different strategies:
 
-Configuration Models
+* **Selection Strategies**: Control how reagents are selected (greedy, roulette wheel, UCB, epsilon-greedy)
+* **Warmup Strategies**: Determine how reagent priors are initialized (standard, stratified, enhanced, Latin hypercube)
+* **Evaluators**: Score compounds using different methods (lookup, database, fingerprint, ML models, docking)
+
+This modular design allows easy experimentation with different optimization approaches and simple integration of custom strategies.
+
+Core Sampler
+------------
+
+.. autoclass:: TACTICS.thompson_sampling.core.sampler.ThompsonSampler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   .. automethod:: __init__
+   .. automethod:: warm_up
+   .. automethod:: search
+   .. automethod:: evaluate
+   .. automethod:: evaluate_batch
+   .. automethod:: close
+
+   The ThompsonSampler is the main class for Thompson Sampling optimization:
+
+   * **Flexible Strategy System**: Use any selection strategy by passing a SelectionStrategy instance
+   * **Parallel Evaluation**: Built-in support for multiprocessing (processes > 1)
+   * **Batch Sampling**: Sample multiple compounds per cycle (batch_size > 1)
+   * **Warmup Strategies**: Initialize priors using different sampling approaches
+   * **Progress Tracking**: Optional progress bars and logging
+
+Selection Strategies
 -------------------
 
-.. autoclass:: TACTICS.thompson_sampling.config.StandardSamplerConfig
+Selection strategies determine how reagents are chosen during the search phase.
+
+.. autoclass:: TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy
    :members:
    :undoc-members:
    :show-inheritance:
 
-The StandardSamplerConfig is used for basic Thompson Sampling with greedy selection:
-
-* **sampler_type**: Must be "standard"
-* **ts_mode**: One of "maximize", "minimize", "maximize_boltzmann", "minimize_boltzmann"
-* **evaluator_class_name**: Name of the evaluator class to use
-* **evaluator_arg**: Argument passed to the evaluator constructor
-* **reaction_smarts**: SMARTS string defining the reaction
-* **num_ts_iterations**: Number of Thompson Sampling iterations
-* **reagent_file_list**: List of reagent file paths
-* **num_warmup_trials**: Number of warmup trials
-* **results_filename**: Optional output file path
-* **log_filename**: Optional log file path
-
-.. autoclass:: TACTICS.thompson_sampling.config.EnhancedSamplerConfig
+.. autoclass:: TACTICS.thompson_sampling.strategies.greedy_selection.GreedySelection
    :members:
    :undoc-members:
    :show-inheritance:
 
-The EnhancedSamplerConfig uses thermal cycling for improved exploration:
+   Simple greedy selection (argmax/argmin of sampled scores):
 
-* **sampler_type**: Must be "enhanced"
-* **processes**: Number of parallel processes (must be > 0)
-* **scaling**: Scaling factor for scores
-* **percent_of_library**: Fraction of library to search (0 < x ≤ 1)
-* **minimum_no_of_compounds_per_core**: Minimum compounds per core (must be > 0)
-* **stopping_criteria**: Stopping criteria threshold (must be > 0)
-
-Main Interface
--------------
-
-.. autofunction:: TACTICS.thompson_sampling.main.run_ts
-   :noindex:
-
-Core Samplers
--------------
-
-.. autoclass:: TACTICS.thompson_sampling.core.standard_sampler.StandardThompsonSampler
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-   .. automethod:: __init__
-   .. automethod:: warm_up
-   .. automethod:: search
-   .. automethod:: evaluate
-
-   The StandardThompsonSampler implements basic Thompson Sampling with greedy selection:
-   
-   * Simple greedy selection based on sampled scores
    * Direct optimization toward best-performing reagents
-   * Suitable for straightforward optimization problems
-   * Lower computational overhead
+   * Fastest convergence but may get stuck in local optima
+   * Best for: Simple optimization landscapes, limited computational budgets
 
-.. autoclass:: TACTICS.thompson_sampling.core.enhanced_sampler.EnhancedThompsonSampler
+.. autoclass:: TACTICS.thompson_sampling.strategies.roulette_wheel.RouletteWheelSelection
    :members:
    :undoc-members:
    :show-inheritance:
 
-   .. automethod:: __init__
-   .. automethod:: warm_up
-   .. automethod:: search
-   .. automethod:: evaluate
+   Roulette wheel selection with adaptive thermal cycling:
 
-   The EnhancedThompsonSampler implements thermal cycling for better exploration:
-   
-   * Thermal cycling for exploration/exploitation balance
-   * Parallel processing support
-   * Adaptive temperature control
-   * Batch processing optimization
-   * Enhanced progress tracking
-   * Better for complex, multi-modal search landscapes
+   * Better exploration/exploitation balance via thermal cycling
+   * Adaptive temperature control based on sampling efficiency
+   * Component rotation for systematic exploration
+   * Best for: Complex multi-modal landscapes, large libraries
+
+.. autoclass:: TACTICS.thompson_sampling.strategies.ucb_selection.UCBSelection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   Upper Confidence Bound (UCB) selection:
+
+   * Balances exploitation and exploration via confidence bounds
+   * Deterministic selection based on UCB values
+   * Best for: Situations where deterministic behavior is preferred
+
+.. autoclass:: TACTICS.thompson_sampling.strategies.epsilon_greedy.EpsilonGreedy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   Epsilon-greedy selection:
+
+   * Simple exploration strategy: random selection with probability ε
+   * Greedy selection with probability 1-ε
+   * Best for: Baseline comparisons, simple exploration needs
+
+Warmup Strategies
+-----------------
+
+Warmup strategies determine how reagent combinations are sampled to initialize posteriors.
+
+.. autoclass:: TACTICS.thompson_sampling.warmup.base.WarmupStrategy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: TACTICS.thompson_sampling.warmup.standard.StandardWarmup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   Standard warmup: Each reagent tested num_trials times with random partners
+
+   * Simple and straightforward
+   * Ensures all reagents are evaluated
+   * Expected evaluations: (sum of reagents) × num_trials
+
+.. autoclass:: TACTICS.thompson_sampling.warmup.stratified.StratifiedWarmup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   Stratified warmup: Ensures balanced coverage across all components
+
+   * More uniform coverage than standard warmup
+   * Reduces bias from component imbalances
+
+.. autoclass:: TACTICS.thompson_sampling.warmup.enhanced.EnhancedWarmup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   Enhanced warmup: Anchor-based approach for better diversity
+
+   * Uses anchor compounds to explore diverse regions
+   * Multiple anchor strategies (random, max_variance, etc.)
+   * Better for complex libraries
+
+.. autoclass:: TACTICS.thompson_sampling.warmup.latin_hypercube.LatinHypercubeWarmup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   Latin hypercube sampling for space-filling warmup
+
+   * Ensures even coverage of the search space
+   * Particularly useful for large combinatorial libraries
 
 Evaluator Classes
 ----------------
@@ -134,79 +190,143 @@ For backward compatibility, the legacy interface is still available:
 Usage Examples
 --------------
 
-Standard Thompson Sampling (Greedy Selection):
+Basic Thompson Sampling with Greedy Selection:
 
 .. code-block:: python
 
-    from TACTICS.thompson_sampling import StandardSamplerConfig, run_ts
+    from TACTICS.thompson_sampling.core.sampler import ThompsonSampler
+    from TACTICS.thompson_sampling.strategies import GreedySelection
+    from TACTICS.thompson_sampling.core.evaluators import LookupEvaluator
 
-    # Create configuration for greedy selection
-    config = StandardSamplerConfig(
-        sampler_type="standard",
-        ts_mode="maximize",
-        evaluator_class_name="DBEvaluator",
-        evaluator_arg="scores.csv",
-        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-        num_ts_iterations=100,
-        reagent_file_list=["aldehydes.smi", "amines.smi"],
-        num_warmup_trials=3,
-        results_filename="results.csv"
+    # Create greedy selection strategy
+    strategy = GreedySelection(mode="maximize")
+
+    # Create sampler
+    sampler = ThompsonSampler(selection_strategy=strategy)
+
+    # Setup
+    sampler.read_reagents(["reagents1.smi", "reagents2.smi"])
+    sampler.set_reaction("[C:1]=[O:2]>>[C:1][O:2]")
+    sampler.set_evaluator(LookupEvaluator({"ref_filename": "scores.csv"}))
+
+    # Run optimization
+    warmup_results = sampler.warm_up(num_warmup_trials=3)
+    search_results = sampler.search(num_cycles=100)
+
+    # Cleanup
+    sampler.close()
+
+Roulette Wheel Selection with Thermal Cycling:
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling.strategies import RouletteWheelSelection
+
+    # Create roulette wheel strategy with thermal cycling
+    strategy = RouletteWheelSelection(
+        mode="maximize",
+        alpha=0.1,          # Initial heating temperature
+        beta=0.1,           # Initial cooling temperature
+        scaling=1.0
     )
 
-    # Run Thompson Sampling with greedy selection
-    results_df = run_ts(config)
-
-Enhanced Thompson Sampling (Thermal Cycling):
-
-.. code-block:: python
-
-    from TACTICS.thompson_sampling import EnhancedSamplerConfig
-
-    # Create configuration for thermal cycling
-    config = EnhancedSamplerConfig(
-        sampler_type="enhanced",
-        processes=4,
-        scaling=1.0,
-        percent_of_library=0.1,
-        minimum_no_of_compounds_per_core=10,
-        stopping_criteria=1000,
-        evaluator_class_name="DBEvaluator",
-        evaluator_arg="scores.csv",
-        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-        num_ts_iterations=100,
-        reagent_file_list=["aldehydes.smi", "amines.smi"],
-        num_warmup_trials=3
+    sampler = ThompsonSampler(
+        selection_strategy=strategy,
+        batch_size=10,      # Sample 10 compounds per cycle
+        processes=4         # Use 4 CPU cores for parallel evaluation
     )
 
-    # Run Thompson Sampling with thermal cycling
-    results_df = run_ts(config)
+    # Setup and run as before
+    sampler.read_reagents(["reagents1.smi", "reagents2.smi"])
+    sampler.set_reaction("[C:1]=[O:2]>>[C:1][O:2]")
+    sampler.set_evaluator(LookupEvaluator({"ref_filename": "scores.csv"}))
 
-Configuration Validation:
+    warmup_results = sampler.warm_up(num_warmup_trials=3)
+    search_results = sampler.search(num_cycles=100)
+
+    sampler.close()
+
+Custom Warmup Strategy:
 
 .. code-block:: python
 
-    from pydantic import ValidationError
+    from TACTICS.thompson_sampling.warmup import EnhancedWarmup
 
-    try:
-        config = StandardSamplerConfig(
-            sampler_type="invalid",  # ❌ ValidationError
-            ts_mode="maximize",
-            # ...
-        )
-    except ValidationError as e:
-        print(f"Configuration error: {e}")
+    # Use enhanced warmup with anchor compounds
+    warmup_strategy = EnhancedWarmup(
+        anchor_strategy="max_variance",
+        num_anchors=5
+    )
+
+    strategy = GreedySelection(mode="maximize")
+
+    sampler = ThompsonSampler(
+        selection_strategy=strategy,
+        warmup_strategy=warmup_strategy  # Use custom warmup
+    )
+
+    # Run as usual
+    sampler.read_reagents(["reagents1.smi", "reagents2.smi"])
+    sampler.set_reaction("[C:1]=[O:2]>>[C:1][O:2]")
+    sampler.set_evaluator(LookupEvaluator({"ref_filename": "scores.csv"}))
+
+    warmup_results = sampler.warm_up(num_warmup_trials=3)
+    search_results = sampler.search(num_cycles=100)
+
+    sampler.close()
+
+Creating Custom Strategies:
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling.strategies.base_strategy import SelectionStrategy
+    import numpy as np
+
+    class MyCustomStrategy(SelectionStrategy):
+        """Custom selection strategy"""
+
+        def select_reagent(self, reagent_list, disallow_mask=None, **kwargs):
+            rng = kwargs.get('rng', np.random.default_rng())
+
+            # Sample from posterior distributions
+            scores = self.prepare_scores(reagent_list, rng)
+
+            # Apply custom selection logic
+            # ... your implementation ...
+
+            # Apply disallow mask
+            if disallow_mask:
+                scores[np.array(list(disallow_mask))] = np.nan
+
+            # Return selected index
+            if self.mode in ["maximize", "maximize_boltzmann"]:
+                return np.nanargmax(scores)
+            else:
+                return np.nanargmin(scores)
+
+    # Use custom strategy
+    strategy = MyCustomStrategy(mode="maximize")
+    sampler = ThompsonSampler(selection_strategy=strategy)
 
 Strategy Selection Guide
 -----------------------
 
-**Use Standard Thompson Sampling (Greedy Selection) when:**
-* You have a straightforward optimization problem
-* Computational resources are limited
-* You want direct, greedy optimization
-* The search landscape is relatively simple
+**GreedySelection:**
+* Best for: Simple optimization landscapes, limited budgets
+* Pros: Fast convergence, simple
+* Cons: Can get stuck in local optima
 
-**Use Enhanced Thompson Sampling (Thermal Cycling) when:**
-* You have complex, multi-modal search landscapes
-* You want better exploration/exploitation balance
-* You have access to parallel processing
-* The search space has many local optima 
+**RouletteWheelSelection:**
+* Best for: Complex multi-modal landscapes, large libraries
+* Pros: Better exploration/exploitation balance, adaptive
+* Cons: More complex, requires parameter tuning
+
+**UCBSelection:**
+* Best for: Deterministic optimization needs
+* Pros: Theoretically grounded, good exploration
+* Cons: Less stochastic exploration than Thompson Sampling
+
+**EpsilonGreedy:**
+* Best for: Baseline comparisons, simple needs
+* Pros: Very simple, easy to understand
+* Cons: Less sophisticated than other methods 
