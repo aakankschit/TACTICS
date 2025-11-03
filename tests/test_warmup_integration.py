@@ -302,19 +302,22 @@ class TestWarmupIntegration:
             sampler.set_reaction(REACTION_SMARTS)
             sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
-            # Run warmup
-            warmup_results = sampler.warm_up(num_warmup_trials=2)
-            assert len(warmup_results) > 0
+            # Run warmup (returns polars DataFrame)
+            warmup_df = sampler.warm_up(num_warmup_trials=2)
+            assert len(warmup_df) > 0
 
-            # Run search
-            search_results = sampler.search(num_cycles=5)
-            assert len(search_results) > 0
+            # Run search (returns polars DataFrame)
+            search_df = sampler.search(num_cycles=5)
+            assert len(search_df) > 0
 
             # Verify search results have valid scores
-            for result in search_results:
-                score, smiles, name = result
+            scores = search_df["score"].to_list()
+            smiles_list = search_df["SMILES"].to_list()
+            names_list = search_df["Name"].to_list()
+
+            for score, smiles, name in zip(scores, smiles_list, names_list):
                 assert isinstance(score, (int, float))
-                assert not np.isnan(score)
+                assert np.isfinite(score)
 
             sampler.close()
 
@@ -331,15 +334,15 @@ class TestWarmupIntegration:
         sampler.set_reaction(REACTION_SMARTS)
         sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
-        # Run warmup - should handle any NaN scores gracefully
-        warmup_results = sampler.warm_up(num_warmup_trials=2)
+        # Run warmup - should handle any NaN scores gracefully (returns polars DataFrame)
+        warmup_df = sampler.warm_up(num_warmup_trials=2)
 
         # Should have some valid results
-        assert len(warmup_results) > 0
+        assert len(warmup_df) > 0
 
         # All returned results should have finite scores
-        for result in warmup_results:
-            score = result[0]
+        scores = warmup_df["score"].to_list()
+        for score in scores:
             assert np.isfinite(score)
 
         sampler.close()

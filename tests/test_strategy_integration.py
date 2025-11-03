@@ -107,14 +107,15 @@ class TestStrategyIntegration:
         sampler.set_reaction(REACTION_SMARTS)
         sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
-        # Run warmup and search
+        # Run warmup and search (now returns polars DataFrame)
         sampler.warm_up(num_warmup_trials=2)
-        results = sampler.search(num_cycles=10)
+        results_df = sampler.search(num_cycles=10)
 
         # Verify results contain scores
-        scores = [r[0] for r in results]
-        assert len(scores) > 0
+        assert len(results_df) > 0
+        scores = results_df["score"].to_list()
         assert all(isinstance(s, (int, float)) for s in scores)
+        assert all(np.isfinite(s) for s in scores)
 
         sampler.close()
 
@@ -126,14 +127,15 @@ class TestStrategyIntegration:
         sampler.set_reaction(REACTION_SMARTS)
         sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
-        # Run warmup and search
+        # Run warmup and search (now returns polars DataFrame)
         sampler.warm_up(num_warmup_trials=2)
-        results = sampler.search(num_cycles=10)
+        results_df = sampler.search(num_cycles=10)
 
         # Verify results contain scores
-        scores = [r[0] for r in results]
-        assert len(scores) > 0
+        assert len(results_df) > 0
+        scores = results_df["score"].to_list()
         assert all(isinstance(s, (int, float)) for s in scores)
+        assert all(np.isfinite(s) for s in scores)
 
         sampler.close()
 
