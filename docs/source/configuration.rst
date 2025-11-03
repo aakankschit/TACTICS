@@ -1,7 +1,7 @@
 Configuration System
 ====================
 
-The TACTICS package uses Pydantic for robust configuration management with automatic validation and type checking.
+The TACTICS package uses Pydantic v2 for robust configuration management with automatic validation and type checking.
 
 Overview
 --------
@@ -9,187 +9,489 @@ Overview
 The configuration system provides:
 
 * **Type Safety**: Automatic type checking and conversion
-* **Validation**: Constraint validation for all parameters
+* **Validation**: Constraint validation for all parameters with detailed error messages
+* **Nested Configs**: Hierarchical configuration with strategy, warmup, and evaluator configs
 * **Documentation**: Self-documenting configuration models
 * **IDE Support**: Full autocompletion and error detection
-* **Error Handling**: Clear error messages for invalid configurations
+* **Presets**: Pre-configured setups for common use cases
+* **Backward Compatibility**: Legacy string-based configs still supported
+
+Modern Configuration Approach
+------------------------------
+
+The modern configuration system uses nested Pydantic models for each component:
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling import ThompsonSampler
+    from TACTICS.thompson_sampling.config import ThompsonSamplingConfig
+    from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
+    from TACTICS.thompson_sampling.warmup.config import StratifiedWarmupConfig
+    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+    # Create nested configuration
+    config = ThompsonSamplingConfig(
+        reaction_smarts="[#6:1](=[O:2])[OH].[#7:3]>>[#6:1](=[O:2])[#7:3]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        num_ts_iterations=1000,
+        num_warmup_trials=3,
+        strategy_config=RouletteWheelConfig(
+            mode="maximize",
+            alpha=0.1,
+            beta=0.1
+        ),
+        warmup_config=StratifiedWarmupConfig(),
+        evaluator_config=LookupEvaluatorConfig(
+            ref_filename="scores.csv",
+            ref_colname="Scores"
+        ),
+        batch_size=1,
+        processes=1
+    )
+
+    # Create sampler from config
+    sampler = ThompsonSampler.from_config(config)
+    sampler.set_reaction(config.reaction_smarts)
+    sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+    results = sampler.search(num_cycles=config.num_ts_iterations)
 
 Configuration Models
--------------------
+--------------------
 
-Standard Sampler Configuration (Greedy Selection)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Main Configuration
+~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: TACTICS.thompson_sampling.config.StandardSamplerConfig
+.. autoclass:: TACTICS.thompson_sampling.config.ThompsonSamplingConfig
    :members:
    :undoc-members:
    :show-inheritance:
 
-The StandardSamplerConfig is used for basic Thompson Sampling with greedy selection:
+The main configuration class supports both modern (nested configs) and legacy (string-based) approaches:
 
-* **sampler_type**: Must be "standard"
-* **ts_mode**: One of "maximize", "minimize", "maximize_boltzmann", "minimize_boltzmann"
-* **evaluator_class_name**: Name of the evaluator class to use
-* **evaluator_arg**: Argument passed to the evaluator constructor
-* **reaction_smarts**: SMARTS string defining the reaction
-* **num_ts_iterations**: Number of Thompson Sampling iterations
-* **reagent_file_list**: List of reagent file paths
-* **num_warmup_trials**: Number of warmup trials
-* **results_filename**: Optional output file path
-* **log_filename**: Optional log file path
+* **Modern**: Use strategy_config, warmup_config, evaluator_config
+* **Legacy**: Use selection_strategy, evaluator_class_name, evaluator_arg
 
-Enhanced Sampler Configuration (Thermal Cycling)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Strategy Configurations
+~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: TACTICS.thompson_sampling.config.EnhancedSamplerConfig
+.. autoclass:: TACTICS.thompson_sampling.strategies.config.GreedyConfig
    :members:
    :undoc-members:
    :show-inheritance:
 
-The EnhancedSamplerConfig uses thermal cycling for improved exploration:
+.. autoclass:: TACTICS.thompson_sampling.strategies.config.RouletteWheelConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-* **sampler_type**: Must be "enhanced"
-* **processes**: Number of parallel processes (must be > 0)
-* **scaling**: Scaling factor for scores
-* **percent_of_library**: Fraction of library to search (0 < x ≤ 1)
-* **minimum_no_of_compounds_per_core**: Minimum compounds per core (must be > 0)
-* **stopping_criteria**: Stopping criteria threshold (must be > 0)
+.. autoclass:: TACTICS.thompson_sampling.strategies.config.UCBConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: TACTICS.thompson_sampling.strategies.config.EpsilonGreedyConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Warmup Configurations
+~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: TACTICS.thompson_sampling.warmup.config.StandardWarmupConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: TACTICS.thompson_sampling.warmup.config.StratifiedWarmupConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: TACTICS.thompson_sampling.warmup.config.EnhancedWarmupConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: TACTICS.thompson_sampling.warmup.config.LatinHypercubeWarmupConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Evaluator Configurations
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: TACTICS.thompson_sampling.core.evaluator_config.LookupEvaluatorConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: TACTICS.thompson_sampling.core.evaluator_config.DBEvaluatorConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: TACTICS.thompson_sampling.core.evaluator_config.FPEvaluatorConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: TACTICS.thompson_sampling.core.evaluator_config.ROCSEvaluatorConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: TACTICS.thompson_sampling.core.evaluator_config.FredEvaluatorConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Configuration Presets
+---------------------
+
+TACTICS provides pre-configured setups for common use cases:
+
+.. autoclass:: TACTICS.thompson_sampling.presets.ConfigPresets
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autofunction:: TACTICS.thompson_sampling.presets.get_preset
+
+Preset Examples
+~~~~~~~~~~~~~~~
+
+Fast Exploration
+^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling.presets import ConfigPresets
+    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+    config = ConfigPresets.fast_exploration(
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
+        num_iterations=1000
+    )
+
+    sampler = ThompsonSampler.from_config(config)
+
+Parallel Batch Processing
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+    config = ConfigPresets.parallel_batch(
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        evaluator_config=ROCSEvaluatorConfig(query_molfile="ref.sdf"),
+        batch_size=100,
+        processes=8
+    )
+
+Conservative Exploitation
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+    config = ConfigPresets.conservative_exploit(
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        evaluator_config=DBEvaluatorConfig(
+            db_filename="scores.db",
+            db_prefix="compound_"
+        )
+    )
+
+Diverse Coverage
+^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+    config = ConfigPresets.diverse_coverage(
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
+    )
+
+Minimize Mode (for Docking)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+    config = ConfigPresets.minimize_mode(
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        evaluator_config=FredEvaluatorConfig(design_unit_file="receptor.oedu"),
+        strategy="roulette_wheel"
+    )
+
+Using get_preset
+^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling.presets import get_preset
+
+    config = get_preset(
+        "balanced_sampling",
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
+    )
+
+Factory Functions
+-----------------
+
+.. autofunction:: TACTICS.thompson_sampling.factories.create_strategy
+.. autofunction:: TACTICS.thompson_sampling.factories.create_warmup
+.. autofunction:: TACTICS.thompson_sampling.factories.create_evaluator
+
+Factory Usage
+~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling.factories import (
+        create_strategy,
+        create_warmup,
+        create_evaluator
+    )
+    from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
+    from TACTICS.thompson_sampling.warmup.config import LatinHypercubeWarmupConfig
+    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+    # Create components from configs
+    strategy = create_strategy(RouletteWheelConfig(mode="maximize", alpha=0.1))
+    warmup = create_warmup(LatinHypercubeWarmupConfig())
+    evaluator = create_evaluator(LookupEvaluatorConfig(ref_filename="scores.csv"))
+
+    # Use with sampler
+    sampler = ThompsonSampler(
+        selection_strategy=strategy,
+        warmup_strategy=warmup
+    )
+    sampler.set_evaluator(evaluator)
 
 Validation Examples
-------------------
+-------------------
 
 Type Validation
 ~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
-    from TACTICS.thompson_sampling import StandardSamplerConfig
+    from TACTICS.thompson_sampling.config import ThompsonSamplingConfig
+    from TACTICS.thompson_sampling.strategies.config import GreedyConfig
+    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
     from pydantic import ValidationError
 
     # Valid configuration
-    config = StandardSamplerConfig(
-        sampler_type="standard",
-        ts_mode="maximize",
-        evaluator_class_name="DBEvaluator",
-        evaluator_arg="scores.csv",
+    config = ThompsonSamplingConfig(
         reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
         num_ts_iterations=100,
-        reagent_file_list=["aldehydes.smi", "amines.smi"],
-        num_warmup_trials=3
+        strategy_config=GreedyConfig(mode="maximize"),
+        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
     )
 
     # Invalid type raises ValidationError
     try:
-        config = StandardSamplerConfig(
-            sampler_type="standard",
-            ts_mode="maximize",
+        config = ThompsonSamplingConfig(
+            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            reagent_file_list=["acids.smi"],
             num_ts_iterations="not_an_integer",  # ❌ Invalid type
-            # ...
+            strategy_config=GreedyConfig(),
+            evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
         )
     except ValidationError as e:
         print(f"Type error: {e}")
 
 Constraint Validation
-~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    from TACTICS.thompson_sampling import EnhancedSamplerConfig
-
-    # Invalid constraints raise ValidationError
-    try:
-        config = EnhancedSamplerConfig(
-            sampler_type="enhanced",
-            processes=-1,  # ❌ Must be > 0
-            percent_of_library=1.5,  # ❌ Must be ≤ 1
-            minimum_no_of_compounds_per_core=0,  # ❌ Must be > 0
-            # ...
-        )
-    except ValidationError as e:
-        print(f"Constraint error: {e}")
-
-Enumeration Validation
 ~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
-    # Invalid enumeration values raise ValidationError
+    from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
+
+    # Invalid constraints raise ValidationError
     try:
-        config = StandardSamplerConfig(
-            sampler_type="invalid",  # ❌ Must be "standard"
-            ts_mode="invalid_mode",  # ❌ Must be valid mode
-            # ...
+        config = RouletteWheelConfig(
+            mode="maximize",
+            alpha=-0.1,  # ❌ Must be > 0
+            efficiency_threshold=1.5  # ❌ Must be ≤ 1
         )
     except ValidationError as e:
-        print(f"Enumeration error: {e}")
+        print(f"Constraint error: {e}")
 
-Usage Patterns
---------------
-
-Direct Configuration
-~~~~~~~~~~~~~~~~~~~~
+Nested Config Validation
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
-    from TACTICS.thompson_sampling import StandardSamplerConfig, run_ts
+    try:
+        # Cannot mix modern and legacy configs
+        config = ThompsonSamplingConfig(
+            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            reagent_file_list=["acids.smi"],
+            num_ts_iterations=100,
+            # Modern
+            strategy_config=GreedyConfig(mode="maximize"),
+            # Legacy (conflicts!)
+            evaluator_class_name="LookupEvaluator",
+            evaluator_arg="{}"
+        )
+    except ValueError as e:
+        print(f"Config conflict: {e}")
 
-    # Create configuration directly
-    config = StandardSamplerConfig(
-        sampler_type="standard",
-        ts_mode="maximize",
-        evaluator_class_name="DBEvaluator",
-        evaluator_arg="scores.csv",
-        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-        num_ts_iterations=100,
-        reagent_file_list=["aldehydes.smi", "amines.smi"],
-        num_warmup_trials=3
-    )
+JSON/YAML Configuration
+-----------------------
 
-    # Run with configuration
-    results = run_ts(config)
-
-JSON Configuration
-~~~~~~~~~~~~~~~~~~
+Save Configuration to JSON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
     import json
-    from TACTICS.thompson_sampling import StandardSamplerConfig
+    from TACTICS.thompson_sampling.config import ThompsonSamplingConfig
+    from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
+    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+    config = ThompsonSamplingConfig(
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        num_ts_iterations=1000,
+        strategy_config=RouletteWheelConfig(mode="maximize", alpha=0.1),
+        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
+    )
+
+    # Save to JSON
+    with open("config.json", "w") as f:
+        json.dump(config.model_dump(), f, indent=2)
+
+Load Configuration from JSON
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    import json
+    from TACTICS.thompson_sampling.config import ThompsonSamplingConfig
 
     # Load from JSON file
     with open("config.json", "r") as f:
         data = json.load(f)
 
     # Parse with validation
-    config = StandardSamplerConfig.parse_obj(data)
+    config = ThompsonSamplingConfig.model_validate(data)
 
-    # Run with configuration
-    results = run_ts(config)
+    # Use configuration
+    sampler = ThompsonSampler.from_config(config)
 
-Example JSON configuration:
+Example JSON Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: json
 
     {
-        "sampler_type": "standard",
-        "ts_mode": "maximize",
-        "evaluator_class_name": "DBEvaluator",
-        "evaluator_arg": "scores.csv",
-        "reaction_smarts": "[C:1]=[O:2]>>[C:1][O:2]",
-        "num_ts_iterations": 100,
-        "reagent_file_list": ["aldehydes.smi", "amines.smi"],
+        "reaction_smarts": "[#6:1](=[O:2])[OH].[#7:3]>>[#6:1](=[O:2])[#7:3]",
+        "reagent_file_list": ["acids.smi", "amines.smi"],
+        "num_ts_iterations": 1000,
         "num_warmup_trials": 3,
+        "strategy_config": {
+            "strategy_type": "roulette_wheel",
+            "mode": "maximize",
+            "alpha": 0.1,
+            "beta": 0.1,
+            "scaling": 1.0,
+            "alpha_increment": 0.01,
+            "beta_increment": 0.001,
+            "efficiency_threshold": 0.1
+        },
+        "warmup_config": {
+            "warmup_type": "stratified"
+        },
+        "evaluator_config": {
+            "evaluator_type": "lookup",
+            "ref_filename": "scores.csv",
+            "ref_colname": "Scores"
+        },
+        "batch_size": 100,
+        "processes": 4,
         "results_filename": "results.csv"
     }
 
-Configuration Best Practices
----------------------------
+Legacy Configuration (Backward Compatibility)
+----------------------------------------------
 
-1. **Use Type Hints**: Always specify types for better IDE support
-2. **Validate Early**: Catch configuration errors before running expensive computations
-3. **Document Parameters**: Use docstrings to explain parameter purposes
-4. **Provide Defaults**: Use sensible defaults for optional parameters
-5. **Test Configurations**: Include configuration tests in your test suite
+The legacy string-based configuration is still supported for backward compatibility:
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling.config import ThompsonSamplingConfig
+
+    # Legacy approach (still works)
+    config = ThompsonSamplingConfig(
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        num_ts_iterations=100,
+        evaluator_class_name="LookupEvaluator",
+        evaluator_arg='{"ref_filename": "scores.csv"}',
+        selection_strategy="greedy",
+        mode="maximize"
+    )
+
+    sampler = ThompsonSampler.from_config(config)
+
+Configuration Best Practices
+-----------------------------
+
+1. **Use Modern Configs**: Prefer nested configs for better validation and type safety
+2. **Use Presets**: Start with presets and customize as needed
+3. **Validate Early**: Catch configuration errors before running expensive computations
+4. **Save Configs**: Save configurations to JSON for reproducibility
+5. **Document Parameters**: Use clear parameter names and add comments
+6. **Test Configurations**: Include configuration tests in your test suite
+
+Preset Selection Guide
+----------------------
+
+Choose the right preset for your use case:
+
+**fast_exploration**
+    * Quick initial screening
+    * Fast evaluators (Lookup, Database)
+    * Epsilon-greedy strategy
+    * Single-compound mode
+
+**parallel_batch**
+    * Slow evaluators (ROCS, Fred, ML)
+    * Large-scale screening
+    * Multi-core systems
+    * Batch processing
+
+**conservative_exploit**
+    * Hit optimization
+    * Focus on best reagents
+    * Well-characterized space
+    * Greedy strategy
+
+**balanced_sampling**
+    * General-purpose screening
+    * Theoretical guarantees
+    * UCB strategy
+    * Diverse exploration
+
+**diverse_coverage**
+    * Maximum diversity
+    * Reagents ordered by properties
+    * Latin Hypercube warmup
+    * Exploration-heavy
+
+**minimize_mode**
+    * Docking scores (lower is better)
+    * Binding energies
+    * Any minimization problem
 
 Error Handling
 --------------
@@ -198,21 +500,29 @@ The configuration system provides detailed error messages:
 
 .. code-block:: python
 
+    from pydantic import ValidationError
+
     try:
-        config = StandardSamplerConfig(
-            sampler_type="invalid",
-            ts_mode="maximize",
-            # ... other required fields
+        config = ThompsonSamplingConfig(
+            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            reagent_file_list=["acids.smi"],
+            num_ts_iterations=-100,  # Invalid: must be positive
+            batch_size=0,  # Invalid: must be > 0
+            processes=0,  # Invalid: must be > 0
+            strategy_config=GreedyConfig(mode="invalid_mode"),  # Invalid mode
+            evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
         )
     except ValidationError as e:
         print("Configuration errors:")
         for error in e.errors():
-            print(f"  {error['loc']}: {error['msg']}")
-            print(f"    Input: {error['input']}")
-            print(f"    Type: {error['type']}")
+            print(f"  Field: {error['loc']}")
+            print(f"  Error: {error['msg']}")
+            print(f"  Input: {error['input']}")
+            print(f"  Type: {error['type']}")
 
 This will output detailed error information including:
-* Field location in the configuration
-* Error message
+
+* Field location in the configuration hierarchy
+* Clear error message
 * Invalid input value
-* Expected type 
+* Error type for programmatic handling

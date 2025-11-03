@@ -23,6 +23,7 @@ Core Sampler
    :show-inheritance:
 
    .. automethod:: __init__
+   .. automethod:: from_config
    .. automethod:: warm_up
    .. automethod:: search
    .. automethod:: evaluate
@@ -36,6 +37,7 @@ Core Sampler
    * **Batch Sampling**: Sample multiple compounds per cycle (batch_size > 1)
    * **Warmup Strategies**: Initialize priors using different sampling approaches
    * **Progress Tracking**: Optional progress bars and logging
+   * **Config-based Setup**: Create sampler from Pydantic configs using ``from_config()``
 
 Selection Strategies
 -------------------
@@ -186,6 +188,187 @@ For backward compatibility, the legacy interface is still available:
    :members:
    :undoc-members:
    :show-inheritance:
+
+Configuration-Based Approach
+-----------------------------
+
+The modern way to use Thompson Sampling is through Pydantic configuration:
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling import ThompsonSampler
+    from TACTICS.thompson_sampling.config import ThompsonSamplingConfig
+    from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
+    from TACTICS.thompson_sampling.warmup.config import StratifiedWarmupConfig
+    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+    # Create configuration
+    config = ThompsonSamplingConfig(
+        reaction_smarts="[#6:1](=[O:2])[OH].[#7:3]>>[#6:1](=[O:2])[#7:3]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        num_ts_iterations=1000,
+        num_warmup_trials=3,
+        strategy_config=RouletteWheelConfig(mode="maximize", alpha=0.1, beta=0.1),
+        warmup_config=StratifiedWarmupConfig(),
+        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
+    )
+
+    # Create sampler from config (handles all setup automatically)
+    sampler = ThompsonSampler.from_config(config)
+    sampler.set_reaction(config.reaction_smarts)
+
+    # Run optimization
+    warmup_results = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+    search_results = sampler.search(num_cycles=config.num_ts_iterations)
+    sampler.close()
+
+Using Configuration Presets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For common use cases, use pre-configured presets:
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling.presets import get_preset
+    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+    # Use a preset configuration
+    config = get_preset(
+        "parallel_batch",  # Fast exploration, parallel batch, etc.
+        reaction_smarts="[#6:1](=[O:2])[OH].[#7:3]>>[#6:1](=[O:2)][#7:3]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
+        batch_size=100,
+        processes=4
+    )
+
+    sampler = ThompsonSampler.from_config(config)
+    sampler.set_reaction(config.reaction_smarts)
+    warmup_results = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+    search_results = sampler.search(num_cycles=config.num_ts_iterations)
+    sampler.close()
+
+Convenience Function: run_ts()
+-------------------------------
+
+For the simplest out-of-the-box usage, use the ``run_ts()`` convenience wrapper:
+
+.. autofunction:: TACTICS.thompson_sampling.main.run_ts
+
+The ``run_ts()`` function provides automatic setup, logging, file saving, and cleanup:
+
+Simple Usage with Presets
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling import run_ts, get_preset
+    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+    # 1. Create evaluator config
+    evaluator = LookupEvaluatorConfig(ref_filename="scores.csv")
+
+    # 2. Get preset
+    config = get_preset(
+        "fast_exploration",
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        evaluator_config=evaluator,
+        mode="minimize"  # For docking scores
+    )
+
+    # 3. Run and get results (returns polars DataFrame)
+    results_df = run_ts(config)
+
+With Warmup Results
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling import run_ts, get_preset
+    from TACTICS.thompson_sampling.core.evaluator_config import DBEvaluatorConfig
+
+    evaluator = DBEvaluatorConfig(db_filename="scores.db")
+    config = get_preset(
+        "balanced_sampling",
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        evaluator_config=evaluator,
+        num_iterations=1000
+    )
+
+    # Get both search and warmup results
+    search_df, warmup_df = run_ts(config, return_warmup=True)
+
+    # Analyze warmup phase
+    print(warmup_df.head())
+
+    # Analyze search results
+    print(search_df.sort("score").head(10))
+
+Parallel Batch Processing
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling import run_ts, get_preset
+    from TACTICS.thompson_sampling.core.evaluator_config import FredEvaluatorConfig
+
+    # For slow evaluators (docking, ML models)
+    evaluator = FredEvaluatorConfig(design_unit_file="receptor.oedu")
+
+    config = get_preset(
+        "parallel_batch",
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        evaluator_config=evaluator,
+        mode="minimize",  # Docking scores
+        batch_size=100,   # Sample 100 per cycle
+        processes=8       # Use 8 CPU cores
+    )
+
+    results_df = run_ts(config)
+
+Custom Configuration
+~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    from TACTICS.thompson_sampling import ThompsonSamplingConfig, run_ts
+    from TACTICS.thompson_sampling.strategies.config import EpsilonGreedyConfig
+    from TACTICS.thompson_sampling.warmup.config import StratifiedWarmupConfig
+    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+    config = ThompsonSamplingConfig(
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        num_ts_iterations=1000,
+        num_warmup_trials=5,
+        strategy_config=EpsilonGreedyConfig(mode="maximize", epsilon=0.2, decay=0.995),
+        warmup_config=StratifiedWarmupConfig(),
+        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
+        results_filename="results.csv",
+        log_filename="run.log"
+    )
+
+    results_df = run_ts(config)
+
+Benefits of run_ts()
+~~~~~~~~~~~~~~~~~~~~
+
+The ``run_ts()`` function provides several benefits:
+
+* **Automatic logging**: Sets up logging from config
+* **Automatic file saving**: Saves results if filename provided
+* **Progress display**: Shows top results unless hidden
+* **Resource cleanup**: Automatically closes multiprocessing pools
+* **Simple API**: 3-line workflow for common cases
+* **Flexible**: Works with presets or custom configs
+* **Polars DataFrames**: Returns efficient polars DataFrames
+
+For maximum flexibility and control, use ``ThompsonSampler`` directly instead of ``run_ts()``.
+
+See the :doc:`configuration` page for more details on configuration options and presets.
 
 Usage Examples
 --------------
