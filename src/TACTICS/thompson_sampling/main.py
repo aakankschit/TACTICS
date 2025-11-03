@@ -1,90 +1,145 @@
 #!/usr/bin/env python
 
-import importlib
 import sys
 import json
 from datetime import timedelta
 from timeit import default_timer as timer
+from typing import Tuple, Optional
 
 import polars as pl
 
 from .config import ThompsonSamplingConfig
 from .core import ThompsonSampler
-from .strategies import GreedySelection, RouletteWheelSelection
 from .utils import get_logger
 
 
-def run_ts(config: ThompsonSamplingConfig, hide_progress: bool = False) -> pl.DataFrame:
+def run_ts(
+    config: ThompsonSamplingConfig,
+    hide_progress: bool = False,
+    return_warmup: bool = False
+) -> pl.DataFrame | Tuple[pl.DataFrame, pl.DataFrame]:
     """
-    Perform a Thompson sampling run using a Pydantic config object.
+    Convenience wrapper for running Thompson Sampling with automatic logging and file saving.
+
+    This function provides an "out-of-the-box" interface that handles all setup automatically.
+    It works seamlessly with preset configurations and supports all selection strategies,
+    warmup strategies, and evaluators via the modern Pydantic config system.
+
+    For maximum flexibility, use ThompsonSampler.from_config() directly instead.
 
     Args:
-        config: Pydantic config object (ThompsonSamplingConfig)
-        hide_progress: hide the progress bar
+        config: ThompsonSamplingConfig (works with both modern and legacy format)
+            - Modern (recommended): Use nested configs (strategy_config, warmup_config, evaluator_config)
+            - Legacy: Use string-based configs (selection_strategy, evaluator_class_name, etc.)
+        hide_progress: Hide progress bars during execution
+        return_warmup: If True, return tuple of (search_results, warmup_results)
 
     Returns:
-        pl.DataFrame: Results dataframe with scores, SMILES, and names
+        pl.DataFrame: Search results with columns ["score", "SMILES", "Name"]
+        OR Tuple[pl.DataFrame, pl.DataFrame]: (search_results, warmup_results) if return_warmup=True
+
+    Example with Presets (Recommended):
+        >>> from TACTICS.thompson_sampling import run_ts, get_preset
+        >>> from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+        >>>
+        >>> # 1. Create evaluator config
+        >>> evaluator = LookupEvaluatorConfig(ref_filename="scores.csv")
+        >>>
+        >>> # 2. Get preset configuration
+        >>> config = get_preset(
+        ...     "fast_exploration",
+        ...     reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        ...     reagent_file_list=["acids.smi", "amines.smi"],
+        ...     evaluator_config=evaluator,
+        ...     mode="minimize"  # For docking scores
+        ... )
+        >>>
+        >>> # 3. Run and get results
+        >>> results = run_ts(config)
+
+    Example with Custom Config:
+        >>> from TACTICS.thompson_sampling import ThompsonSamplingConfig, run_ts
+        >>> from TACTICS.thompson_sampling.strategies.config import EpsilonGreedyConfig
+        >>> from TACTICS.thompson_sampling.warmup.config import StratifiedWarmupConfig
+        >>> from TACTICS.thompson_sampling.core.evaluator_config import DBEvaluatorConfig
+        >>>
+        >>> config = ThompsonSamplingConfig(
+        ...     reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        ...     reagent_file_list=["acids.smi", "amines.smi"],
+        ...     num_ts_iterations=1000,
+        ...     strategy_config=EpsilonGreedyConfig(mode="maximize", epsilon=0.2),
+        ...     warmup_config=StratifiedWarmupConfig(),
+        ...     evaluator_config=DBEvaluatorConfig(db_filename="scores.db"),
+        ...     results_filename="results.csv"
+        ... )
+        >>> results = run_ts(config)
+
+    Available Presets:
+        - "fast_exploration": Epsilon-greedy strategy, quick screening
+        - "parallel_batch": Roulette wheel with batch processing and multiprocessing
+        - "conservative_exploit": Greedy strategy, focus on best reagents
+        - "balanced_sampling": UCB strategy, theoretical guarantees
+        - "diverse_coverage": Roulette wheel with maximum diversity
     """
-    # Dynamically import evaluator class
-    module = importlib.import_module("TACTICS.thompson_sampling.core.evaluators")
-    class_ = getattr(module, config.evaluator_class_name)
+    # Override hide_progress if specified in config
+    if hasattr(config, 'hide_progress') and config.hide_progress:
+        hide_progress = True
 
-    # Handle evaluator_arg - convert dict to JSON string if needed
-    evaluator_arg = config.evaluator_arg
-    if isinstance(evaluator_arg, dict):
-        evaluator_arg = json.dumps(evaluator_arg)
-
-    evaluator = class_(evaluator_arg)
-    result_filename = getattr(config, "results_filename", None)
+    # Set up logging
     log_filename = getattr(config, "log_filename", None)
     logger = get_logger(__name__, filename=log_filename)
 
-    # Create selection strategy based on config
-    if config.selection_strategy == "greedy":
-        strategy = GreedySelection(mode=config.mode)
-    elif config.selection_strategy == "roulette_wheel":
-        strategy = RouletteWheelSelection(mode=config.mode)
-    else:
-        raise ValueError(f"Unknown selection_strategy: {config.selection_strategy}")
+    # Create sampler from config (handles both modern and legacy formats)
+    sampler = ThompsonSampler.from_config(config)
+    sampler.set_hide_progress(hide_progress)
 
-    # Create unified Thompson sampler with strategy injection
-    ts = ThompsonSampler(
-        selection_strategy=strategy,
-        warmup_strategy=GreedySelection(mode=config.mode),
-        log_filename=log_filename,
-        batch_size=getattr(config, "batch_size", 1),
-        max_resamples=getattr(config, "max_resamples", None),
-        processes=getattr(config, "processes", 1),
-        min_cpds_per_core=getattr(config, "min_cpds_per_core", 10)
-    )
+    # Set up reaction
+    sampler.set_reaction(config.reaction_smarts)
 
-    ts.set_hide_progress(hide_progress)
-    ts.set_evaluator(evaluator)
-    ts.read_reagents(reagent_file_list=config.reagent_file_list, num_to_select=None)
-    ts.set_reaction(config.reaction_smarts)
-    ts.warm_up(num_warmup_trials=config.num_warmup_trials)
+    # Run warmup
+    logger.info("Starting warmup phase...")
+    warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
 
     # Run search
-    out_list = ts.search(num_cycles=config.num_ts_iterations)
+    logger.info("Starting search phase...")
+    search_df = sampler.search(num_cycles=config.num_ts_iterations)
 
+    # Log statistics
+    evaluator = sampler.evaluator
     total_evaluations = evaluator.counter
-    percent_searched = total_evaluations / ts.get_num_prods() * 100
+    percent_searched = total_evaluations / sampler.get_num_prods() * 100
     logger.info(f"{total_evaluations} evaluations | {percent_searched:.3f}% of total")
 
-    # write the results to disk
-    out_df = pl.DataFrame(out_list, schema=["score", "SMILES", "Name"], orient="row")
+    # Save results to disk if filename provided
+    result_filename = getattr(config, "results_filename", None)
     if result_filename is not None:
-        out_df.write_csv(result_filename)
+        search_df.write_csv(result_filename)
         logger.info(f"Saved results to: {result_filename}")
 
+    # Display top results (unless hidden)
     if not hide_progress:
-        # Sort based on mode
-        if config.mode in ["maximize", "maximize_boltzmann"]:
-            print(out_df.sort("score", descending=True).unique(subset="SMILES").head(10))
+        # Determine sort direction from strategy config or legacy mode
+        if hasattr(config, 'strategy_config') and config.strategy_config is not None:
+            mode = config.strategy_config.mode
         else:
-            print(out_df.sort("score", descending=False).unique(subset="SMILES").head(10))
+            mode = getattr(config, 'mode', 'maximize')
 
-    return out_df
+        # Sort and display
+        if mode in ["maximize", "maximize_boltzmann"]:
+            print("\nTop 10 results (highest scores):")
+            print(search_df.sort("score", descending=True).unique(subset="SMILES").head(10))
+        else:
+            print("\nTop 10 results (lowest scores):")
+            print(search_df.sort("score", descending=False).unique(subset="SMILES").head(10))
+
+    # Clean up multiprocessing resources
+    sampler.close()
+
+    # Return results
+    if return_warmup:
+        return search_df, warmup_df
+    else:
+        return search_df
 
 
 def main():

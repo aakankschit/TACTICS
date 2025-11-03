@@ -47,6 +47,9 @@ from .main import run_ts
 # Import baseline functionality
 from .baseline import run_random_baseline, run_exhaustive_baseline
 
+# Import presets for easy access
+from .presets import ConfigPresets, get_preset
+
 __all__ = [
     # Configuration
     'ThompsonSamplingConfig',
@@ -54,6 +57,10 @@ __all__ = [
 
     # Main function
     'run_ts',
+
+    # Presets
+    'ConfigPresets',
+    'get_preset',
 
     # Baseline functions
     'run_random_baseline',

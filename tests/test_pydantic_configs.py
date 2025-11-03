@@ -1,0 +1,385 @@
+"""Tests for Pydantic configuration models."""
+
+import pytest
+import tempfile
+import os
+from pydantic import ValidationError
+
+from TACTICS.thompson_sampling.strategies.config import (
+    GreedyConfig,
+    RouletteWheelConfig,
+    UCBConfig,
+    EpsilonGreedyConfig,
+    BoltzmannConfig
+)
+from TACTICS.thompson_sampling.warmup.config import (
+    StandardWarmupConfig,
+    EnhancedWarmupConfig,
+    StratifiedWarmupConfig,
+    LatinHypercubeWarmupConfig
+)
+from TACTICS.thompson_sampling.core.evaluator_config import (
+    LookupEvaluatorConfig,
+    DBEvaluatorConfig,
+    FPEvaluatorConfig,
+    MWEvaluatorConfig,
+    ROCSEvaluatorConfig,
+    FredEvaluatorConfig,
+    MLClassifierEvaluatorConfig
+)
+from TACTICS.thompson_sampling.factories import (
+    create_strategy,
+    create_warmup,
+    create_evaluator
+)
+from TACTICS.thompson_sampling.config import ThompsonSamplingConfig
+from TACTICS.thompson_sampling.presets import ConfigPresets, get_preset
+
+
+class TestStrategyConfigs:
+    """Tests for selection strategy configuration models."""
+
+    def test_greedy_config_creation(self):
+        """Test GreedyConfig can be created with valid data."""
+        config = GreedyConfig(mode="maximize")
+        assert config.strategy_type == "greedy"
+        assert config.mode == "maximize"
+
+    def test_roulette_wheel_config_creation(self):
+        """Test RouletteWheelConfig with all parameters."""
+        config = RouletteWheelConfig(
+            mode="minimize",
+            alpha=0.2,
+            beta=0.15,
+            scaling=2.0,
+            alpha_increment=0.02,
+            beta_increment=0.002,
+            efficiency_threshold=0.15
+        )
+        assert config.strategy_type == "roulette_wheel"
+        assert config.alpha == 0.2
+        assert config.beta == 0.15
+
+    def test_roulette_wheel_validation(self):
+        """Test RouletteWheelConfig validates positive values."""
+        with pytest.raises(ValidationError):
+            RouletteWheelConfig(mode="maximize", alpha=-0.1)  # Negative alpha
+
+        with pytest.raises(ValidationError):
+            RouletteWheelConfig(mode="maximize", efficiency_threshold=1.5)  # > 1
+
+    def test_ucb_config_creation(self):
+        """Test UCBConfig creation."""
+        config = UCBConfig(mode="maximize", c=3.0)
+        assert config.strategy_type == "ucb"
+        assert config.c == 3.0
+
+    def test_epsilon_greedy_config(self):
+        """Test EpsilonGreedyConfig creation and validation."""
+        config = EpsilonGreedyConfig(epsilon=0.3, decay=0.99)
+        assert config.epsilon == 0.3
+        assert config.decay == 0.99
+
+        with pytest.raises(ValidationError):
+            EpsilonGreedyConfig(epsilon=1.5)  # > 1
+
+
+class TestWarmupConfigs:
+    """Tests for warmup strategy configuration models."""
+
+    def test_standard_warmup_config(self):
+        """Test StandardWarmupConfig creation."""
+        config = StandardWarmupConfig()
+        assert config.warmup_type == "standard"
+
+    def test_stratified_warmup_config(self):
+        """Test StratifiedWarmupConfig creation."""
+        config = StratifiedWarmupConfig()
+        assert config.warmup_type == "stratified"
+
+    def test_latin_hypercube_warmup_config(self):
+        """Test LatinHypercubeWarmupConfig creation."""
+        config = LatinHypercubeWarmupConfig()
+        assert config.warmup_type == "latin_hypercube"
+
+
+class TestEvaluatorConfigs:
+    """Tests for evaluator configuration models."""
+
+    def test_lookup_evaluator_config(self):
+        """Test LookupEvaluatorConfig creation."""
+        config = LookupEvaluatorConfig(
+            ref_filename="scores.csv",
+            ref_colname="Score"
+        )
+        assert config.evaluator_type == "lookup"
+        assert config.ref_filename == "scores.csv"
+        assert config.ref_colname == "Score"
+
+    def test_db_evaluator_config(self):
+        """Test DBEvaluatorConfig creation."""
+        config = DBEvaluatorConfig(
+            db_filename="scores.db",
+            db_prefix="test_"
+        )
+        assert config.evaluator_type == "db"
+        assert config.db_filename == "scores.db"
+
+    def test_rocs_evaluator_config(self):
+        """Test ROCSEvaluatorConfig creation and validation."""
+        config = ROCSEvaluatorConfig(
+            query_molfile="ref.sdf",
+            max_confs=100
+        )
+        assert config.evaluator_type == "rocs"
+        assert config.max_confs == 100
+
+        with pytest.raises(ValidationError):
+            ROCSEvaluatorConfig(query_molfile="ref.sdf", max_confs=-10)
+
+
+class TestFactories:
+    """Tests for factory functions."""
+
+    def test_create_strategy_greedy(self):
+        """Test creating GreedySelection from config."""
+        config = GreedyConfig(mode="maximize")
+        strategy = create_strategy(config)
+        from TACTICS.thompson_sampling.strategies import GreedySelection
+        assert isinstance(strategy, GreedySelection)
+        assert strategy.mode == "maximize"
+
+    def test_create_strategy_roulette_wheel(self):
+        """Test creating RouletteWheelSelection from config."""
+        config = RouletteWheelConfig(mode="minimize", alpha=0.15, beta=0.1)
+        strategy = create_strategy(config)
+        from TACTICS.thompson_sampling.strategies import RouletteWheelSelection
+        assert isinstance(strategy, RouletteWheelSelection)
+        assert strategy.alpha == 0.15
+
+    def test_create_warmup_stratified(self):
+        """Test creating StratifiedWarmup from config."""
+        config = StratifiedWarmupConfig()
+        warmup = create_warmup(config)
+        from TACTICS.thompson_sampling.warmup import StratifiedWarmup
+        assert isinstance(warmup, StratifiedWarmup)
+
+    def test_create_evaluator_mw(self):
+        """Test creating MWEvaluator from config."""
+        config = MWEvaluatorConfig()
+        evaluator = create_evaluator(config)
+        from TACTICS.thompson_sampling.core.evaluators import MWEvaluator
+        assert isinstance(evaluator, MWEvaluator)
+
+
+class TestThompsonSamplingConfig:
+    """Tests for unified ThompsonSamplingConfig."""
+
+    def setup_method(self):
+        """Set up test fixtures."""
+        self.temp_dir = tempfile.mkdtemp()
+        self.reagent_file1 = os.path.join(self.temp_dir, "reagents1.smi")
+        self.reagent_file2 = os.path.join(self.temp_dir, "reagents2.smi")
+
+        with open(self.reagent_file1, "w") as f:
+            f.write("CCO\tethanol\n")
+        with open(self.reagent_file2, "w") as f:
+            f.write("CC(=O)O\tacetic_acid\n")
+
+    def teardown_method(self):
+        """Clean up test fixtures."""
+        import shutil
+        shutil.rmtree(self.temp_dir)
+
+    def test_modern_config_creation(self):
+        """Test creating config with modern nested configs."""
+        config = ThompsonSamplingConfig(
+            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            reagent_file_list=[self.reagent_file1, self.reagent_file2],
+            num_ts_iterations=100,
+            strategy_config=GreedyConfig(mode="maximize"),
+            evaluator_config=MWEvaluatorConfig()
+        )
+        assert config.strategy_config is not None
+        assert config.num_ts_iterations == 100
+
+    def test_legacy_config_creation(self):
+        """Test creating config with legacy string-based format."""
+        config = ThompsonSamplingConfig(
+            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            reagent_file_list=[self.reagent_file1],
+            num_ts_iterations=100,
+            evaluator_class_name="MWEvaluator",
+            evaluator_arg="{}",
+            selection_strategy="greedy",
+            mode="maximize"
+        )
+        assert config.selection_strategy == "greedy"
+        assert config.evaluator_class_name == "MWEvaluator"
+
+    def test_mixed_config_error(self):
+        """Test that mixing modern and legacy configs raises error."""
+        with pytest.raises(ValueError, match="Cannot mix modern"):
+            ThompsonSamplingConfig(
+                reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+                reagent_file_list=[self.reagent_file1],
+                num_ts_iterations=100,
+                # Modern
+                strategy_config=GreedyConfig(mode="maximize"),
+                # Legacy
+                evaluator_class_name="MWEvaluator",
+                evaluator_arg="{}"
+            )
+
+    def test_batch_size_validation(self):
+        """Test batch_size validation."""
+        with pytest.raises(ValidationError):
+            ThompsonSamplingConfig(
+                reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+                reagent_file_list=[self.reagent_file1],
+                num_ts_iterations=100,
+                batch_size=0,  # Invalid
+                strategy_config=GreedyConfig(),
+                evaluator_config=MWEvaluatorConfig()
+            )
+
+    def test_processes_validation(self):
+        """Test processes validation."""
+        with pytest.raises(ValidationError):
+            ThompsonSamplingConfig(
+                reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+                reagent_file_list=[self.reagent_file1],
+                num_ts_iterations=100,
+                processes=0,  # Invalid
+                strategy_config=GreedyConfig(),
+                evaluator_config=MWEvaluatorConfig()
+            )
+
+
+class TestPresets:
+    """Tests for configuration presets."""
+
+    def setup_method(self):
+        """Set up test fixtures."""
+        self.temp_dir = tempfile.mkdtemp()
+        self.reagent_file = os.path.join(self.temp_dir, "reagents.smi")
+        with open(self.reagent_file, "w") as f:
+            f.write("CCO\tethanol\n")
+
+    def teardown_method(self):
+        """Clean up."""
+        import shutil
+        shutil.rmtree(self.temp_dir)
+
+    def test_fast_exploration_preset(self):
+        """Test fast_exploration preset."""
+        config = ConfigPresets.fast_exploration(
+            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            reagent_file_list=[self.reagent_file],
+            evaluator_config=MWEvaluatorConfig(),
+            num_iterations=500
+        )
+        assert config.num_ts_iterations == 500
+        assert isinstance(config.strategy_config, EpsilonGreedyConfig)
+        assert config.strategy_config.mode == "maximize"
+        assert config.batch_size == 1
+
+    def test_fast_exploration_minimize_mode(self):
+        """Test fast_exploration preset with minimize mode."""
+        config = ConfigPresets.fast_exploration(
+            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            reagent_file_list=[self.reagent_file],
+            evaluator_config=MWEvaluatorConfig(),
+            mode="minimize"
+        )
+        assert config.strategy_config.mode == "minimize"
+        assert isinstance(config.strategy_config, EpsilonGreedyConfig)
+
+    def test_parallel_batch_preset(self):
+        """Test parallel_batch preset."""
+        config = ConfigPresets.parallel_batch(
+            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            reagent_file_list=[self.reagent_file],
+            evaluator_config=MWEvaluatorConfig(),
+            batch_size=50,
+            processes=8
+        )
+        assert config.batch_size == 50
+        assert config.processes == 8
+        assert isinstance(config.strategy_config, RouletteWheelConfig)
+        assert config.strategy_config.mode == "maximize"
+
+    def test_parallel_batch_minimize_mode(self):
+        """Test parallel_batch preset with minimize mode for docking."""
+        config = ConfigPresets.parallel_batch(
+            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            reagent_file_list=[self.reagent_file],
+            evaluator_config=MWEvaluatorConfig(),
+            mode="minimize",
+            batch_size=100,
+            processes=4
+        )
+        assert config.strategy_config.mode == "minimize"
+        assert config.batch_size == 100
+        assert config.processes == 4
+
+    def test_all_presets_support_mode(self):
+        """Test that all presets support mode parameter."""
+        presets = [
+            "fast_exploration",
+            "parallel_batch",
+            "conservative_exploit",
+            "balanced_sampling",
+            "diverse_coverage"
+        ]
+
+        for preset_name in presets:
+            # Test maximize
+            config = get_preset(
+                preset_name,
+                reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+                reagent_file_list=[self.reagent_file],
+                evaluator_config=MWEvaluatorConfig(),
+                mode="maximize"
+            )
+            assert config.strategy_config.mode == "maximize"
+
+            # Test minimize
+            config = get_preset(
+                preset_name,
+                reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+                reagent_file_list=[self.reagent_file],
+                evaluator_config=MWEvaluatorConfig(),
+                mode="minimize"
+            )
+            assert config.strategy_config.mode == "minimize"
+
+    def test_get_preset_function(self):
+        """Test get_preset convenience function."""
+        config = get_preset(
+            "balanced_sampling",
+            reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            reagent_file_list=[self.reagent_file],
+            evaluator_config=MWEvaluatorConfig()
+        )
+        assert isinstance(config.strategy_config, UCBConfig)
+
+    def test_get_preset_invalid_name(self):
+        """Test get_preset with invalid name."""
+        with pytest.raises(ValueError, match="Unknown preset"):
+            get_preset(
+                "nonexistent_preset",
+                reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+                reagent_file_list=[self.reagent_file],
+                evaluator_config=MWEvaluatorConfig()
+            )
+
+    def test_minimize_mode_removed(self):
+        """Test that minimize_mode preset is removed (no longer needed)."""
+        with pytest.raises(ValueError, match="Unknown preset"):
+            get_preset(
+                "minimize_mode",
+                reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+                reagent_file_list=[self.reagent_file],
+                evaluator_config=MWEvaluatorConfig()
+            )
