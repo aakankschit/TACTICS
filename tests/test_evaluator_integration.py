@@ -83,18 +83,21 @@ class TestEvaluatorIntegration:
         evaluator = LookupEvaluator({"ref_filename": LOOKUP_FILE})
         sampler.set_evaluator(evaluator)
 
-        # Run warmup
-        warmup_results = sampler.warm_up(num_warmup_trials=2)
+        # Run warmup (returns polars DataFrame)
+        warmup_df = sampler.warm_up(num_warmup_trials=2)
 
         # Verify warmup ran and evaluator was called
-        assert len(warmup_results) > 0
+        assert len(warmup_df) > 0
         assert evaluator.counter > 0
 
         # All warmup results should have valid scores
-        for result in warmup_results:
-            score, smiles, name = result
+        scores = warmup_df["score"].to_list()
+        smiles_list = warmup_df["SMILES"].to_list()
+        names_list = warmup_df["Name"].to_list()
+
+        for score, smiles, name in zip(scores, smiles_list, names_list):
             assert isinstance(score, (int, float))
-            assert not np.isnan(score)
+            assert np.isfinite(score)
 
         sampler.close()
 
