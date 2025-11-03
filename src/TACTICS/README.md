@@ -229,8 +229,8 @@ If you use TACTICS in your research, please cite:
 ```bibtex
 @software{tactics,
     title={TACTICS: Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery},
-    author={Your Name},
-    year={2024},
+    author={Aakankschit Nandkeolyar},
+    year={2025},
     url={https://github.com/your-org/TACTICS}
 }
 ```
@@ -239,7 +239,7 @@ If you use TACTICS in your research, please cite:
 
 For questions and support:
 - Open an issue on GitHub
-- Contact: your-email@institution.edu
+- Contact: anandkeo@uci.edu
 
 ---
 
