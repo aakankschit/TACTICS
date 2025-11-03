@@ -1,16 +1,24 @@
 # TACTICS: Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery
 
-A comprehensive library for Thompson Sampling-based optimization of chemical combinatorial libraries, featuring modern Pydantic configuration and improved package organization.
+A comprehensive library for Thompson Sampling-based optimization of chemical combinatorial libraries, featuring a unified architecture with flexible strategy selection, modern Pydantic configuration, and preset configurations for out-of-the-box usage.
 
 ## 🚀 Key Features
 
-- **Modern Configuration**: Pydantic-based configuration with type safety and validation
-- **Two Thompson Sampling Strategies**: Standard (greedy selection) and Enhanced (thermal cycling)
-- **Random Baseline Sampling**: Configurable random sampling for comparison studies
+- **Unified Thompson Sampling Framework**: Single `ThompsonSampler` with pluggable selection strategies
+- **Multiple Selection Strategies**:
+  - Greedy (pure exploitation)
+  - Roulette Wheel (adaptive thermal cycling)
+  - UCB (Upper Confidence Bound)
+  - Epsilon-Greedy (balanced exploration/exploitation)
+  - Boltzmann (temperature-based selection)
+- **Advanced Warmup Strategies**: Standard, Stratified, Enhanced, Latin Hypercube
+- **Preset Configurations**: 5 ready-to-use presets for common use cases
+- **Modern Pydantic Configuration**: Type-safe configuration with full validation
+- **Parallel Processing**: Batch mode with multiprocessing for expensive evaluators
+- **Multiple Evaluators**: Lookup, Database, ROCS, Fred, ML classifiers, and more
 - **Library Enumeration**: Efficient generation of combinatorial reaction products
 - **Library Analysis**: Comprehensive analysis and visualization tools
-- **Advanced Search Methods**: Including DisallowTracker-enhanced strategies for guaranteed uniqueness
-- **Clean Package Structure**: Well-organized modules with clear separation of concerns
+- **Polars DataFrames**: Fast, efficient data handling throughout
 
 ## 📦 Package Structure
 
@@ -18,40 +26,108 @@ A comprehensive library for Thompson Sampling-based optimization of chemical com
 TACTICS/
 ├── thompson_sampling/
 │   ├── config.py          # Pydantic configuration models
-│   ├── main.py            # Main execution interface
-│   ├── core/              # Core sampling algorithms
-│   │   ├── standard_sampler.py
-│   │   ├── enhanced_sampler.py
-│   │   └── evaluators.py
-│   ├── utils/             # Utility functions
-│   │   ├── ts_logger.py
-│   │   └── ts_utils.py
-│   └── legacy/            # Original modules (backward compatibility)
+│   ├── main.py            # run_ts() convenience wrapper
+│   ├── presets.py         # Preset configurations
+│   ├── core/              # Core unified sampler
+│   │   ├── sampler.py         # ThompsonSampler (unified)
+│   │   ├── evaluators.py      # All evaluator classes
+│   │   └── evaluator_config.py # Evaluator Pydantic configs
+│   ├── strategies/        # Selection strategies
+│   │   ├── greedy.py
+│   │   ├── roulette_wheel.py
+│   │   ├── ucb.py
+│   │   ├── epsilon_greedy.py
+│   │   └── config.py      # Strategy Pydantic configs
+│   ├── warmup/            # Warmup strategies
+│   │   └── config.py      # Warmup Pydantic configs
+│   ├── baseline.py        # Random baseline sampling
+│   └── legacy/            # Legacy code (deprecated)
 ├── library_enumeration/   # Library generation tools
 └── library_analysis/      # Analysis and visualization
 ```
 
 ## 🎯 Quick Start
 
-### Standard Thompson Sampling (Greedy Selection)
+### Simple Out-of-the-Box Usage with Presets (Recommended)
+
+The easiest way to get started is using presets - just provide your reaction and reagents:
 
 ```python
-from TACTICS.thompson_sampling import StandardSamplerConfig, run_ts
+from TACTICS.thompson_sampling import run_ts, get_preset
+from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
-# Create configuration using Pydantic models
-config = StandardSamplerConfig(
-    sampler_type="standard",
-    ts_mode="maximize",
-    evaluator_class_name="DBEvaluator",
-    evaluator_arg="scores.csv",
+# 1. Create evaluator config
+evaluator = LookupEvaluatorConfig(ref_filename="scores.csv")
+
+# 2. Get a preset configuration
+config = get_preset(
+    "fast_exploration",  # Quick screening with epsilon-greedy
     reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-    num_ts_iterations=100,
     reagent_file_list=["aldehydes.smi", "amines.smi"],
-    num_warmup_trials=3,
-    results_filename="results.csv"
+    evaluator_config=evaluator,
+    mode="minimize",  # Use "minimize" for docking scores
+    num_iterations=1000
 )
 
-# Run Thompson Sampling with greedy selection
+# 3. Run and get results
+results_df = run_ts(config)
+```
+
+**Available Presets:**
+- `"fast_exploration"` - Epsilon-greedy strategy, quick screening
+- `"parallel_batch"` - Batch processing with multiprocessing (for slow evaluators)
+- `"conservative_exploit"` - Greedy strategy, focus on best reagents
+- `"balanced_sampling"` - UCB strategy with theoretical guarantees
+- `"diverse_coverage"` - Maximum diversity exploration
+
+### Parallel Batch Processing (for Expensive Evaluators)
+
+For slow evaluators (docking, ML models), use batch mode with multiprocessing:
+
+```python
+from TACTICS.thompson_sampling import run_ts, get_preset
+from TACTICS.thompson_sampling.core.evaluator_config import FredEvaluatorConfig
+
+# Configure slow evaluator
+evaluator = FredEvaluatorConfig(design_unit_file="receptor.oedu")
+
+# Get parallel batch preset
+config = get_preset(
+    "parallel_batch",
+    reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+    reagent_file_list=["aldehydes.smi", "amines.smi"],
+    evaluator_config=evaluator,
+    mode="minimize",  # Docking scores
+    num_iterations=1000,
+    batch_size=100,   # Sample 100 compounds per cycle
+    processes=8       # Use 8 CPU cores
+)
+
+results_df = run_ts(config)
+```
+
+### Custom Configuration (Advanced)
+
+For full control, create custom configurations:
+
+```python
+from TACTICS.thompson_sampling import ThompsonSamplingConfig, run_ts
+from TACTICS.thompson_sampling.strategies.config import EpsilonGreedyConfig
+from TACTICS.thompson_sampling.warmup.config import StratifiedWarmupConfig
+from TACTICS.thompson_sampling.core.evaluator_config import DBEvaluatorConfig
+
+config = ThompsonSamplingConfig(
+    reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+    reagent_file_list=["aldehydes.smi", "amines.smi"],
+    num_ts_iterations=1000,
+    num_warmup_trials=5,
+    strategy_config=EpsilonGreedyConfig(mode="maximize", epsilon=0.2, decay=0.995),
+    warmup_config=StratifiedWarmupConfig(),
+    evaluator_config=DBEvaluatorConfig(db_filename="scores.db"),
+    results_filename="results.csv",
+    log_filename="run.log"
+)
+
 results_df = run_ts(config)
 ```
 
@@ -60,13 +136,9 @@ results_df = run_ts(config)
 ```python
 from TACTICS.thompson_sampling import RandomBaselineConfig, run_random_baseline
 
-# Create configuration for random baseline
 config = RandomBaselineConfig(
     evaluator_class_name="LookupEvaluator",
-    evaluator_arg={
-        "ref_filename": "scores.csv",
-        "ref_colname": "Score"
-    },
+    evaluator_arg={"ref_filename": "scores.csv"},
     reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
     reagent_file_list=["aldehydes.smi", "amines.smi"],
     num_trials=1000,
@@ -75,32 +147,7 @@ config = RandomBaselineConfig(
     outfile_name="random_results.csv"
 )
 
-# Run random baseline sampling
 results_df = run_random_baseline(config)
-```
-
-### Enhanced Thompson Sampling (Thermal Cycling)
-
-```python
-from TACTICS.thompson_sampling import EnhancedSamplerConfig
-
-config = EnhancedSamplerConfig(
-    sampler_type="enhanced",
-    processes=4,
-    scaling=1.0,
-    percent_of_library=0.1,
-    minimum_no_of_compounds_per_core=10,
-    stopping_criteria=1000,
-    evaluator_class_name="DBEvaluator",
-    evaluator_arg="scores.csv",
-    reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-    num_ts_iterations=100,
-    reagent_file_list=["aldehydes.smi", "amines.smi"],
-    num_warmup_trials=3
-)
-
-# Run Thompson Sampling with thermal cycling
-results_df = run_ts(config)
 ```
 
 ## 🔧 Configuration
@@ -201,8 +248,8 @@ If you use TACTICS in your research, please cite:
 ```bibtex
 @software{tactics,
     title={TACTICS: Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery},
-    author={Your Name},
-    year={2024},
+    author={Aakankschit Nandkeolyar},
+    year={2025},
     url={https://github.com/your-org/TACTICS}
 }
 ```
@@ -211,7 +258,7 @@ If you use TACTICS in your research, please cite:
 
 For questions and support:
 - Open an issue on GitHub
-- Contact: your-email@institution.edu
+- Contact: anandkeo@uci.edu
 
 ---
 

@@ -22,6 +22,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.githubpages',  # Automatically creates .nojekyll for GitHub Pages
 ]
 
 # Mock imports for packages that may not be available during doc build

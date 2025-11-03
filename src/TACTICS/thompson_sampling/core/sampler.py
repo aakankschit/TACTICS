@@ -1,7 +1,8 @@
 import random
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, TYPE_CHECKING
 import math
 import numpy as np
+import polars as pl
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from tqdm.auto import tqdm
@@ -14,6 +15,9 @@ from ..utils.ts_utils import read_reagents
 from .evaluators import DBEvaluator, LookupEvaluator
 from .parallel_evaluator import ParallelEvaluator
 from ..warmup import WarmupStrategy, StandardWarmup
+
+if TYPE_CHECKING:
+    from ..config import ThompsonSamplingConfig
 
 
 class ThompsonSampler:
@@ -74,6 +78,96 @@ class ThompsonSampler:
             self.logger.info(f"Multiprocessing enabled: {self.processes} processes, "
                            f"min_cpds_per_core={self.min_cpds_per_core}, "
                            f"batch_threshold={self.processes * self.min_cpds_per_core}")
+
+    @classmethod
+    def from_config(cls, config: 'ThompsonSamplingConfig') -> 'ThompsonSampler':
+        """
+        Create a ThompsonSampler from a Pydantic configuration.
+
+        This factory method supports both legacy and modern config formats.
+
+        Args:
+            config: ThompsonSamplingConfig with either:
+                - Modern: strategy_config, warmup_config, evaluator_config
+                - Legacy: selection_strategy, evaluator_class_name, etc.
+
+        Returns:
+            ThompsonSampler: Configured sampler instance
+
+        Example (Modern):
+            >>> from TACTICS.thompson_sampling import ThompsonSamplingConfig
+            >>> from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
+            >>> from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+            >>>
+            >>> config = ThompsonSamplingConfig(
+            ...     reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+            ...     reagent_file_list=["acids.smi", "amines.smi"],
+            ...     num_ts_iterations=1000,
+            ...     strategy_config=RouletteWheelConfig(mode="maximize", alpha=0.1),
+            ...     evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
+            ... )
+            >>> sampler = ThompsonSampler.from_config(config)
+        """
+        from ..factories import create_strategy, create_warmup, create_evaluator
+        from ..config import ThompsonSamplingConfig
+
+        # Determine if using modern or legacy config
+        use_modern = config.strategy_config is not None
+
+        if use_modern:
+            # Modern approach: Use factories
+            strategy = create_strategy(config.strategy_config)
+            warmup = create_warmup(config.warmup_config) if config.warmup_config else StandardWarmup()
+            evaluator = create_evaluator(config.evaluator_config)
+        else:
+            # Legacy approach: Import and instantiate from strings
+            import importlib
+            import json
+            from ..strategies import GreedySelection, RouletteWheelSelection, UCBSelection, EpsilonGreedySelection
+
+            # Create strategy from string
+            if config.selection_strategy == "greedy":
+                strategy = GreedySelection(mode=config.mode)
+            elif config.selection_strategy == "roulette_wheel":
+                params = config.strategy_params or {}
+                strategy = RouletteWheelSelection(mode=config.mode, **params)
+            elif config.selection_strategy == "ucb":
+                params = config.strategy_params or {}
+                strategy = UCBSelection(mode=config.mode, **params)
+            elif config.selection_strategy == "epsilon_greedy":
+                params = config.strategy_params or {}
+                strategy = EpsilonGreedySelection(mode=config.mode, **params)
+            else:
+                raise ValueError(f"Unknown selection_strategy: {config.selection_strategy}")
+
+            # Create evaluator from class name
+            module = importlib.import_module("TACTICS.thompson_sampling.core.evaluators")
+            evaluator_class = getattr(module, config.evaluator_class_name)
+            evaluator_arg = config.evaluator_arg
+            if isinstance(evaluator_arg, dict):
+                evaluator_arg = json.dumps(evaluator_arg)
+            evaluator = evaluator_class(evaluator_arg)
+
+            # Default warmup
+            warmup = StandardWarmup()
+
+        # Create sampler instance
+        sampler = cls(
+            selection_strategy=strategy,
+            warmup_strategy=warmup,
+            log_filename=config.log_filename,
+            batch_size=config.batch_size,
+            max_resamples=config.max_resamples,
+            processes=config.processes,
+            min_cpds_per_core=config.min_cpds_per_core
+        )
+
+        # Set up sampler
+        sampler.set_evaluator(evaluator)
+        sampler.read_reagents(config.reagent_file_list)
+        sampler.set_hide_progress(config.hide_progress)
+
+        return sampler
 
     def set_hide_progress(self, hide_progress: bool) -> None:
         """Hide the progress bars"""
@@ -185,7 +279,7 @@ class ThompsonSampler:
             num_warmup_trials: Number of trials per reagent
 
         Returns:
-            List of warmup results [[score, smiles, name], ...]
+            pl.DataFrame: Warmup results with columns ["score", "SMILES", "Name"]
         """
         warmup_results = []
 
@@ -266,7 +360,9 @@ class ThompsonSampler:
 
         self.logger.info(f"Top score found during warmup: {best_warmup_score:.3f}")
 
-        return warmup_results
+        # Convert to polars DataFrame
+        warmup_df = pl.DataFrame(warmup_results, schema=["score", "SMILES", "Name"], orient="row")
+        return warmup_df
 
     def search(self, num_cycles=100):
         """
@@ -285,6 +381,9 @@ class ThompsonSampler:
 
         Now supports thermal cycling component rotation, adaptive temperature control,
         and uniqueness tracking for RouletteWheelSelection strategy.
+
+        Returns:
+            pl.DataFrame: Search results with columns ["score", "SMILES", "Name"]
         """
         out_list = []
         rng = np.random.default_rng()
@@ -358,7 +457,9 @@ class ThompsonSampler:
                     best_score = min(scores)
                 self.logger.info(f"Iteration {i}: Best score = {best_score:.3f}")
 
-        return out_list
+        # Convert to polars DataFrame
+        search_df = pl.DataFrame(out_list, schema=["score", "SMILES", "Name"], orient="row")
+        return search_df
 
     def _search_batch(self, num_cycles):
         """
@@ -366,6 +467,9 @@ class ThompsonSampler:
 
         Implements uniqueness tracking, adaptive temperature control,
         and parallel evaluation for efficiency.
+
+        Returns:
+            pl.DataFrame: Search results with columns ["score", "SMILES", "Name"]
         """
         out_list = []
         rng = np.random.default_rng()
@@ -483,4 +587,6 @@ class ThompsonSampler:
             cycle += 1
 
         pbar.close()
-        return out_list
+        # Convert to polars DataFrame
+        search_df = pl.DataFrame(out_list, schema=["score", "SMILES", "Name"], orient="row")
+        return search_df
