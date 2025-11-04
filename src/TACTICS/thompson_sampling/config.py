@@ -5,7 +5,8 @@ from .strategies.config import (
     RouletteWheelConfig,
     UCBConfig,
     EpsilonGreedyConfig,
-    BoltzmannConfig
+    BoltzmannConfig,
+    BayesUCBConfig
 )
 from .warmup.config import (
     StandardWarmupConfig,
@@ -29,7 +30,8 @@ StrategyConfigType = Union[
     RouletteWheelConfig,
     UCBConfig,
     EpsilonGreedyConfig,
-    BoltzmannConfig
+    BoltzmannConfig,
+    BayesUCBConfig
 ]
 
 WarmupConfigType = Union[
@@ -80,7 +82,8 @@ class ThompsonSamplingConfig(BaseModel):
         "roulette_wheel",
         "ucb",
         "epsilon_greedy",
-        "boltzmann"
+        "boltzmann",
+        "bayes_ucb"
     ]] = None
     mode: Optional[Literal["maximize", "minimize"]] = None
     strategy_params: Optional[dict] = Field(default_factory=dict)

@@ -8,13 +8,15 @@ from .strategies.config import (
     RouletteWheelConfig,
     UCBConfig,
     EpsilonGreedyConfig,
-    BoltzmannConfig
+    BoltzmannConfig,
+    BayesUCBConfig
 )
 from .strategies import (
     GreedySelection,
     RouletteWheelSelection,
     UCBSelection,
-    EpsilonGreedySelection
+    EpsilonGreedySelection,
+    BayesUCBSelection
 )
 from .strategies.base_strategy import SelectionStrategy
 
@@ -59,7 +61,8 @@ StrategyConfig = Union[
     RouletteWheelConfig,
     UCBConfig,
     EpsilonGreedyConfig,
-    BoltzmannConfig
+    BoltzmannConfig,
+    BayesUCBConfig
 ]
 
 WarmupConfig = Union[
@@ -118,6 +121,18 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             mode=config.mode,
             epsilon=config.epsilon,
             decay=config.decay
+        )
+
+    elif isinstance(config, BayesUCBConfig):
+        return BayesUCBSelection(
+            mode=config.mode,
+            initial_p_high=config.initial_p_high,
+            initial_p_low=config.initial_p_low,
+            efficiency_threshold=config.efficiency_threshold,
+            p_high_bounds=config.p_high_bounds,
+            p_low_bounds=config.p_low_bounds,
+            delta_high=config.delta_high,
+            delta_low=config.delta_low
         )
 
     elif isinstance(config, BoltzmannConfig):

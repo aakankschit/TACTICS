@@ -26,7 +26,8 @@ from .strategies import (
     GreedySelection,
     RouletteWheelSelection,
     UCBSelection,
-    EpsilonGreedySelection
+    EpsilonGreedySelection,
+    BayesUCBSelection
 )
 
 # Import warmup strategies
@@ -76,6 +77,7 @@ __all__ = [
     'RouletteWheelSelection',
     'UCBSelection',
     'EpsilonGreedySelection',
+    'BayesUCBSelection',
 
     # Warmup strategies
     'WarmupStrategy',

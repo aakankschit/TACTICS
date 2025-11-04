@@ -123,7 +123,13 @@ class ThompsonSampler:
             # Legacy approach: Import and instantiate from strings
             import importlib
             import json
-            from ..strategies import GreedySelection, RouletteWheelSelection, UCBSelection, EpsilonGreedySelection
+            from ..strategies import (
+                GreedySelection,
+                RouletteWheelSelection,
+                UCBSelection,
+                EpsilonGreedySelection,
+                BayesUCBSelection
+            )
 
             # Create strategy from string
             if config.selection_strategy == "greedy":
@@ -137,6 +143,9 @@ class ThompsonSampler:
             elif config.selection_strategy == "epsilon_greedy":
                 params = config.strategy_params or {}
                 strategy = EpsilonGreedySelection(mode=config.mode, **params)
+            elif config.selection_strategy == "bayes_ucb":
+                params = config.strategy_params or {}
+                strategy = BayesUCBSelection(mode=config.mode, **params)
             else:
                 raise ValueError(f"Unknown selection_strategy: {config.selection_strategy}")
 

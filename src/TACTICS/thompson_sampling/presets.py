@@ -1,6 +1,7 @@
 """Configuration presets for common Thompson Sampling use cases."""
 
-from typing import Literal
+from typing import Literal, Optional
+from pathlib import Path
 from .config import ThompsonSamplingConfig
 from .strategies.config import (
     GreedyConfig,
@@ -32,7 +33,8 @@ class ConfigPresets:
         reagent_file_list: list[str],
         evaluator_config,
         num_iterations: int = 1000,
-        mode: Literal["maximize", "minimize"] = "maximize"
+        mode: Literal["maximize", "minimize"] = "maximize",
+        output_dir: Optional[str] = None
     ) -> ThompsonSamplingConfig:
         """
         Fast exploration with epsilon-greedy strategy.
@@ -54,7 +56,18 @@ class ConfigPresets:
             evaluator_config: Evaluator configuration
             num_iterations: Number of Thompson sampling iterations
             mode: "maximize" for highest scores, "minimize" for lowest scores (e.g., docking)
+            output_dir: Directory to save output files (optional). If specified, results and logs
+                       will be saved to this directory with preset-specific names.
         """
+        # Set output filenames if output_dir is specified
+        results_filename = None
+        log_filename = None
+        if output_dir is not None:
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+            results_filename = str(output_path / "fast_exploration_results.csv")
+            log_filename = str(output_path / "fast_exploration.log")
+
         return ThompsonSamplingConfig(
             reaction_smarts=reaction_smarts,
             reagent_file_list=reagent_file_list,
@@ -69,7 +82,9 @@ class ConfigPresets:
             evaluator_config=evaluator_config,
             batch_size=1,
             processes=1,
-            min_cpds_per_core=10
+            min_cpds_per_core=10,
+            results_filename=results_filename,
+            log_filename=log_filename
         )
 
     @staticmethod
@@ -80,7 +95,8 @@ class ConfigPresets:
         num_iterations: int = 1000,
         batch_size: int = 100,
         processes: int = 4,
-        mode: Literal["maximize", "minimize"] = "maximize"
+        mode: Literal["maximize", "minimize"] = "maximize",
+        output_dir: Optional[str] = None
     ) -> ThompsonSamplingConfig:
         """
         Parallel batch processing for computationally expensive evaluators.
@@ -104,7 +120,18 @@ class ConfigPresets:
             batch_size: Number of compounds to sample per cycle
             processes: Number of CPU cores for parallel evaluation
             mode: "maximize" for highest scores, "minimize" for lowest scores (e.g., docking)
+            output_dir: Directory to save output files (optional). If specified, results and logs
+                       will be saved to this directory with preset-specific names.
         """
+        # Set output filenames if output_dir is specified
+        results_filename = None
+        log_filename = None
+        if output_dir is not None:
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+            results_filename = str(output_path / "parallel_batch_results.csv")
+            log_filename = str(output_path / "parallel_batch.log")
+
         return ThompsonSamplingConfig(
             reaction_smarts=reaction_smarts,
             reagent_file_list=reagent_file_list,
@@ -124,7 +151,9 @@ class ConfigPresets:
             batch_size=batch_size,
             max_resamples=1000,
             processes=processes,
-            min_cpds_per_core=10
+            min_cpds_per_core=10,
+            results_filename=results_filename,
+            log_filename=log_filename
         )
 
     @staticmethod
@@ -133,7 +162,8 @@ class ConfigPresets:
         reagent_file_list: list[str],
         evaluator_config,
         num_iterations: int = 1000,
-        mode: Literal["maximize", "minimize"] = "maximize"
+        mode: Literal["maximize", "minimize"] = "maximize",
+        output_dir: Optional[str] = None
     ) -> ThompsonSamplingConfig:
         """
         Conservative exploitation with greedy strategy.
@@ -155,7 +185,18 @@ class ConfigPresets:
             evaluator_config: Evaluator configuration
             num_iterations: Number of Thompson sampling iterations
             mode: "maximize" for highest scores, "minimize" for lowest scores (e.g., docking)
+            output_dir: Directory to save output files (optional). If specified, results and logs
+                       will be saved to this directory with preset-specific names.
         """
+        # Set output filenames if output_dir is specified
+        results_filename = None
+        log_filename = None
+        if output_dir is not None:
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+            results_filename = str(output_path / "conservative_exploit_results.csv")
+            log_filename = str(output_path / "conservative_exploit.log")
+
         return ThompsonSamplingConfig(
             reaction_smarts=reaction_smarts,
             reagent_file_list=reagent_file_list,
@@ -166,7 +207,9 @@ class ConfigPresets:
             evaluator_config=evaluator_config,
             batch_size=1,
             processes=1,
-            min_cpds_per_core=10
+            min_cpds_per_core=10,
+            results_filename=results_filename,
+            log_filename=log_filename
         )
 
     @staticmethod
@@ -175,7 +218,8 @@ class ConfigPresets:
         reagent_file_list: list[str],
         evaluator_config,
         num_iterations: int = 1000,
-        mode: Literal["maximize", "minimize"] = "maximize"
+        mode: Literal["maximize", "minimize"] = "maximize",
+        output_dir: Optional[str] = None
     ) -> ThompsonSamplingConfig:
         """
         Balanced exploration and exploitation with UCB strategy.
@@ -197,7 +241,18 @@ class ConfigPresets:
             evaluator_config: Evaluator configuration
             num_iterations: Number of Thompson sampling iterations
             mode: "maximize" for highest scores, "minimize" for lowest scores (e.g., docking)
+            output_dir: Directory to save output files (optional). If specified, results and logs
+                       will be saved to this directory with preset-specific names.
         """
+        # Set output filenames if output_dir is specified
+        results_filename = None
+        log_filename = None
+        if output_dir is not None:
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+            results_filename = str(output_path / "balanced_sampling_results.csv")
+            log_filename = str(output_path / "balanced_sampling.log")
+
         return ThompsonSamplingConfig(
             reaction_smarts=reaction_smarts,
             reagent_file_list=reagent_file_list,
@@ -208,7 +263,9 @@ class ConfigPresets:
             evaluator_config=evaluator_config,
             batch_size=1,
             processes=1,
-            min_cpds_per_core=10
+            min_cpds_per_core=10,
+            results_filename=results_filename,
+            log_filename=log_filename
         )
 
     @staticmethod
@@ -217,7 +274,8 @@ class ConfigPresets:
         reagent_file_list: list[str],
         evaluator_config,
         num_iterations: int = 1000,
-        mode: Literal["maximize", "minimize"] = "maximize"
+        mode: Literal["maximize", "minimize"] = "maximize",
+        output_dir: Optional[str] = None
     ) -> ThompsonSamplingConfig:
         """
         Maximum diversity with roulette wheel and Latin Hypercube warmup.
@@ -239,7 +297,18 @@ class ConfigPresets:
             evaluator_config: Evaluator configuration
             num_iterations: Number of Thompson sampling iterations
             mode: "maximize" for highest scores, "minimize" for lowest scores (e.g., docking)
+            output_dir: Directory to save output files (optional). If specified, results and logs
+                       will be saved to this directory with preset-specific names.
         """
+        # Set output filenames if output_dir is specified
+        results_filename = None
+        log_filename = None
+        if output_dir is not None:
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+            results_filename = str(output_path / "diverse_coverage_results.csv")
+            log_filename = str(output_path / "diverse_coverage.log")
+
         return ThompsonSamplingConfig(
             reaction_smarts=reaction_smarts,
             reagent_file_list=reagent_file_list,
@@ -258,7 +327,9 @@ class ConfigPresets:
             evaluator_config=evaluator_config,
             batch_size=1,
             processes=1,
-            min_cpds_per_core=10
+            min_cpds_per_core=10,
+            results_filename=results_filename,
+            log_filename=log_filename
         )
 
 
@@ -283,6 +354,7 @@ def get_preset(
             - num_iterations: Number of iterations
             - batch_size: (parallel_batch only)
             - processes: (parallel_batch only)
+            - output_dir: Directory to save results and logs (all presets)
 
     Returns:
         ThompsonSamplingConfig: Configured preset
@@ -299,7 +371,7 @@ def get_preset(
         ...     evaluator_config=evaluator
         ... )
         >>>
-        >>> # Minimize mode for docking
+        >>> # Minimize mode for docking with output directory
         >>> config = get_preset(
         ...     "parallel_batch",
         ...     reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
@@ -307,7 +379,8 @@ def get_preset(
         ...     evaluator_config=FredEvaluatorConfig(design_unit_file="receptor.oedu"),
         ...     mode="minimize",
         ...     batch_size=100,
-        ...     processes=8
+        ...     processes=8,
+        ...     output_dir="./results"
         ... )
     """
     presets = {

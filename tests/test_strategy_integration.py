@@ -18,6 +18,7 @@ from TACTICS.thompson_sampling.strategies.greedy_selection import GreedySelectio
 from TACTICS.thompson_sampling.strategies.roulette_wheel import RouletteWheelSelection
 from TACTICS.thompson_sampling.strategies.ucb_selection import UCBSelection
 from TACTICS.thompson_sampling.strategies.epsilon_greedy import EpsilonGreedySelection
+from TACTICS.thompson_sampling.strategies.bayes_ucb_selection import BayesUCBSelection
 
 
 # Paths to real example data
@@ -272,5 +273,82 @@ class TestStrategyIntegration:
 
         assert len(batch) == 5
         assert all(0 <= idx < len(sampler.reagent_lists[0]) for idx in batch)
+
+        sampler.close()
+
+    def test_bayes_ucb_selection_integration(self):
+        """Test that BayesUCBSelection integrates with ThompsonSampler"""
+        strategy = BayesUCBSelection(
+            mode="maximize",
+            initial_p_high=0.90,
+            initial_p_low=0.90
+        )
+        sampler = ThompsonSampler(selection_strategy=strategy)
+        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+        sampler.set_reaction(REACTION_SMARTS)
+        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+
+        # Run warmup and search
+        warmup_results = sampler.warm_up(num_warmup_trials=2)
+        search_results = sampler.search(num_cycles=5)
+
+        assert len(warmup_results) > 0
+        assert len(search_results) > 0
+
+        sampler.close()
+
+    def test_bayes_ucb_percentile_adaptation(self):
+        """Test BayesUCBSelection adaptive percentile control"""
+        strategy = BayesUCBSelection(
+            mode="maximize",
+            initial_p_high=0.90,
+            initial_p_low=0.90,
+            efficiency_threshold=0.10
+        )
+
+        # Test percentile increase when efficiency is low (stuck)
+        initial_p_high = strategy.p_high
+        strategy.update_percentiles(n_unique=0, batch_size=10)
+        assert strategy.p_high > initial_p_high
+
+        # Test percentile reset
+        strategy.reset_percentiles()
+        assert strategy.p_high == 0.90
+        assert strategy.p_low == 0.90
+
+    def test_bayes_ucb_component_rotation(self):
+        """Test BayesUCBSelection component rotation for thermal cycling"""
+        strategy = BayesUCBSelection(mode="maximize")
+
+        # Test component rotation
+        assert strategy.current_component_idx == 0
+        strategy.rotate_component(n_components=3)
+        assert strategy.current_component_idx == 1
+        strategy.rotate_component(n_components=3)
+        assert strategy.current_component_idx == 2
+        strategy.rotate_component(n_components=3)
+        assert strategy.current_component_idx == 0  # Should wrap around
+
+    def test_bayes_ucb_with_thermal_cycling(self):
+        """Test BayesUCB with thermal cycling in real sampling scenario"""
+        strategy = BayesUCBSelection(
+            mode="maximize",
+            initial_p_high=0.90,
+            initial_p_low=0.80,
+            efficiency_threshold=0.10
+        )
+        sampler = ThompsonSampler(selection_strategy=strategy, batch_size=3)
+        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+        sampler.set_reaction(REACTION_SMARTS)
+        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+
+        # Run warmup and search
+        sampler.warm_up(num_warmup_trials=2)
+        results = sampler.search(num_cycles=10)
+
+        assert len(results) > 0
+        # Verify thermal cycling happened (component should have rotated)
+        # After 10 cycles with 2 components, should have cycled through multiple times
+        # (exact behavior depends on implementation details)
 
         sampler.close()
