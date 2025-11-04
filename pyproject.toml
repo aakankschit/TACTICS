@@ -18,6 +18,7 @@ dependencies = [
     "pydantic>=2.0",
     "rdkit",
     "numpy",
+    "scipy",
     "pandas",
     "polars",
     "tqdm",
@@ -28,6 +29,23 @@ dependencies = [
     "joblib",
     "dill",
     "useful_rdkit_utils"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = [
+    "thompson-sampling",
+    "drug-discovery",
+    "combinatorial-chemistry",
+    "optimization",
+    "cheminformatics"
 ]
 
 [project.optional-dependencies]
@@ -45,31 +63,18 @@ openeye = [
     "openeye-toolkits"
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["TACTICS*"]
-
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering :: Chemistry",
-    "Topic :: Scientific/Engineering :: Bio-Informatics",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-]
-
-keywords = [
-    "thompson-sampling",
-    "drug-discovery", 
-    "combinatorial-chemistry",
-    "optimization",
-    "cheminformatics"
-]
-
 [project.urls]
 Homepage = "https://github.com/aakankschit/TACTICS"
 Documentation = "https://aakankschit.github.io/TACTICS/"
 Repository = "https://github.com/aakankschit/TACTICS"
 Issues = "https://github.com/aakankschit/TACTICS/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["TACTICS*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
