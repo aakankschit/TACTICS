@@ -89,6 +89,21 @@ Strategy Configurations
    :undoc-members:
    :show-inheritance:
 
+.. autoclass:: TACTICS.thompson_sampling.strategies.config.BayesUCBConfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   Configuration for Adaptive Bayes-UCB selection with thermal cycling:
+
+   * **initial_p_high**: Initial percentile for heated component (default: 0.90)
+   * **initial_p_low**: Initial percentile for cooled components (default: 0.90)
+   * **efficiency_threshold**: Sampling efficiency threshold for adaptation (default: 0.10)
+   * **p_high_bounds**: Bounds for p_high percentile (default: (0.85, 0.995))
+   * **p_low_bounds**: Bounds for p_low percentile (default: (0.50, 0.90))
+   * **delta_high**: Step size for increasing p_high when stuck (default: 0.01)
+   * **delta_low**: Step size for decreasing p_low when progressing (default: 0.005)
+
 .. autoclass:: TACTICS.thompson_sampling.strategies.config.EpsilonGreedyConfig
    :members:
    :undoc-members:

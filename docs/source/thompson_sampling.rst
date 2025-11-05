@@ -8,7 +8,7 @@ Overview
 
 The package provides a **unified ThompsonSampler** that accepts different strategies:
 
-* **Selection Strategies**: Control how reagents are selected (greedy, roulette wheel, UCB, epsilon-greedy)
+* **Selection Strategies**: Control how reagents are selected (greedy, roulette wheel, UCB, Bayes-UCB, epsilon-greedy)
 * **Warmup Strategies**: Determine how reagent priors are initialized (standard, stratified, enhanced, Latin hypercube)
 * **Evaluators**: Score compounds using different methods (lookup, database, fingerprint, ML models, docking)
 
@@ -82,6 +82,25 @@ Selection strategies determine how reagents are chosen during the search phase.
    * Balances exploitation and exploration via confidence bounds
    * Deterministic selection based on UCB values
    * Best for: Situations where deterministic behavior is preferred
+
+.. autoclass:: TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   Adaptive Bayes-UCB selection with thermal cycling:
+
+   * Theoretically grounded Bayesian confidence bounds using Student-t quantiles
+   * Adaptive percentile parameters for dynamic exploration/exploitation control
+   * Component-based thermal cycling for systematic search space exploration
+   * Efficiency-based adaptation: automatically increases exploration when stuck
+   * Best for: Complex multi-modal landscapes, escaping local optima, theoretical guarantees
+   * Requires: scipy for Student-t distribution
+
+   The percentile parameters serve as an analog to temperature in thermal cycling:
+   - Higher percentile (p_high) → wider confidence bounds → more exploration
+   - Lower percentile (p_low) → tighter bounds → more exploitation
+   - Adapts based on sampling efficiency to maintain search progress
 
 .. autoclass:: TACTICS.thompson_sampling.strategies.epsilon_greedy.EpsilonGreedy
    :members:
@@ -239,7 +258,8 @@ For common use cases, use pre-configured presets:
         reagent_file_list=["acids.smi", "amines.smi"],
         evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
         batch_size=100,
-        processes=4
+        processes=4,
+        output_dir="./results"  # Optional: save results to directory
     )
 
     sampler = ThompsonSampler.from_config(config)
@@ -247,6 +267,23 @@ For common use cases, use pre-configured presets:
     warmup_results = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
     search_results = sampler.search(num_cycles=config.num_ts_iterations)
     sampler.close()
+
+Available Presets
+~~~~~~~~~~~~~~~~~
+
+The following presets are available:
+
+* **fast_exploration**: Epsilon-greedy for quick screening (ε=0.2, decay=0.995)
+* **parallel_batch**: Roulette wheel with thermal cycling for parallel batch processing
+* **conservative_exploit**: Greedy strategy for pure exploitation
+* **balanced_sampling**: UCB for balanced exploration/exploitation
+* **diverse_coverage**: Roulette wheel with high exploration (α=0.2, β=0.2)
+
+All presets support:
+
+* **mode**: "maximize" or "minimize" optimization direction
+* **output_dir**: Optional directory to save results and logs (with preset-specific filenames)
+* Additional preset-specific parameters (batch_size, processes, num_iterations, etc.)
 
 Convenience Function: run_ts()
 -------------------------------
@@ -508,6 +545,11 @@ Strategy Selection Guide
 * Best for: Deterministic optimization needs
 * Pros: Theoretically grounded, good exploration
 * Cons: Less stochastic exploration than Thompson Sampling
+
+**BayesUCBSelection:**
+* Best for: Complex multi-modal landscapes, theoretical guarantees
+* Pros: Bayesian confidence bounds, adaptive exploration, thermal cycling, escapes local optima
+* Cons: Requires scipy, more complex than simple UCB
 
 **EpsilonGreedy:**
 * Best for: Baseline comparisons, simple needs
