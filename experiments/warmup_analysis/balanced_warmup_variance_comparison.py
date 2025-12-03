@@ -34,6 +34,14 @@ from scipy import stats
 
 # Import current implementation
 from TACTICS.thompson_sampling import (
+
+# Add project root to path to import experiment_utils
+import sys
+from pathlib import Path
+project_root = Path(__file__).resolve().parents[2]
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
     ThompsonSampler,
     RouletteWheelSelection,
     LookupEvaluator
@@ -50,24 +58,24 @@ from TACTICS.thompson_sampling.legacy.evaluators import LookupEvaluator as Legac
 
 # 2-component Thrombin library
 REAGENT_FILES = [
-    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/acids.smi",
-    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/coupled_aa_sub.smi"
+    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/acids.smi",
+    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/coupled_aa_sub.smi"
 ]
 
 # Evaluator configs
 CURRENT_EVALUATOR_CONFIG = {
-    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/docking_scores/product_scores.csv",
+    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/scores/thrombin/product_scores.csv",
     "compound_col": "Product_Code",
     "score_col": "Scores"
 }
 
 LEGACY_EVALUATOR_CONFIG = {
-    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/docking_scores/product_scores.csv",
+    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/scores/thrombin/product_scores.csv",
     "ref_colname": "Scores",
     "compound_col": "Product_Code"
 }
 
-REFERENCE_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/docking_scores/product_scores.csv"
+REFERENCE_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/scores/thrombin/product_scores.csv"
 
 # Experiment parameters
 OBSERVATIONS_PER_REAGENT = 5  # K parameter for BalancedWarmup

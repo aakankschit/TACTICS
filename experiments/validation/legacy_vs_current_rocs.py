@@ -20,6 +20,14 @@ from tqdm import tqdm
 
 # Import current implementation
 from TACTICS.thompson_sampling import (
+
+# Add project root to path to import experiment_utils
+import sys
+from pathlib import Path
+project_root = Path(__file__).resolve().parents[2]
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
     ThompsonSampler,
     GreedySelection,
     RouletteWheelSelection,
@@ -41,21 +49,21 @@ import os
 
 # 3-component Quinazoline library
 REAGENT_FILES = [
-    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski_reagent_0.smi",
-    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski_reagent_1.smi",
-    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski_reagent_2.smi"
+    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski_reagent_0.smi",
+    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski_reagent_1.smi",
+    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski_reagent_2.smi"
 ]
 
 # NOTE: No reaction SMARTS needed (uses product codes)
 
 EVALUATOR_CONFIG = {
-    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski.parquet",
+    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski.parquet",
     "compound_col": "Name",
     "score_col": "query_001"
 }
 
 # Reference data for recovery calculation
-REFERENCE_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski.parquet"
+REFERENCE_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski.parquet"
 
 # Experiment parameters
 NUM_WARMUP_TRIALS = 5

@@ -38,7 +38,7 @@ REACTION_SMARTS = "[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]);!$(N[
 
 # Reference scores (adjust path to your data)
 EVALUATOR_CONFIG = {
-    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TS_Chem_Space/Thrombin/Linear_amide/docking_scores/product_scores.csv"
+    "ref_filename": "data/scores/thrombin/product_scores.csv"
 }
 
 # Experiment parameters

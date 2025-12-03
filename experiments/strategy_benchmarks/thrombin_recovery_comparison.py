@@ -41,7 +41,7 @@ REAGENT_FILES = [
 REACTION_SMARTS = "[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]);!$(N[#6]~[!#6;!#16]):3]>>[#6:1](=[O:2])[#7:3]"
 
 EVALUATOR_CONFIG = {
-    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TS_Chem_Space/Thrombin/Linear_amide/docking_scores/product_scores.csv"
+    "ref_filename": "data/scores/thrombin/product_scores.csv"
 }
 
 # Match legacy parameters
@@ -51,7 +51,7 @@ NUM_CYCLES = 10             # Run 10 replicates like legacy
 BATCH_SIZE = 1              # Single compound mode
 
 # Load reference (brute force) scores
-REFERENCE_FILE = "/Users/aakankschitnandkeolyar/Desktop/TS_Chem_Space/Thrombin/Linear_amide/docking_scores/product_scores.csv"
+REFERENCE_FILE = "data/scores/thrombin/product_scores.csv"
 
 # ============================================================================
 # Strategy Configurations

@@ -37,6 +37,14 @@ from scipy import stats
 
 # Import current implementation
 from TACTICS.thompson_sampling import (
+
+# Add project root to path to import experiment_utils
+import sys
+from pathlib import Path
+project_root = Path(__file__).resolve().parents[2]
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
     ThompsonSampler,
     RouletteWheelSelection,
     LookupEvaluator
@@ -53,25 +61,25 @@ from TACTICS.thompson_sampling.legacy.evaluators import LookupEvaluator as Legac
 
 # 3-component Quinazoline library (larger, more complex than Thrombin)
 REAGENT_FILES = [
-    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski_reagent_0.smi",
-    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski_reagent_1.smi",
-    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski_reagent_2.smi"
+    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski_reagent_0.smi",
+    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski_reagent_1.smi",
+    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski_reagent_2.smi"
 ]
 
 # Evaluator configs - ROCS similarity (maximize)
 CURRENT_EVALUATOR_CONFIG = {
-    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski.parquet",
+    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski.parquet",
     "compound_col": "Name",
     "score_col": "query_001"
 }
 
 LEGACY_EVALUATOR_CONFIG = {
-    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski.parquet",
+    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski.parquet",
     "compound_col": "Name",
     "ref_colname": "query_001"
 }
 
-REFERENCE_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski.parquet"
+REFERENCE_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski.parquet"
 
 # Experiment parameters
 OBSERVATIONS_PER_REAGENT = 5  # K parameter for BalancedWarmup

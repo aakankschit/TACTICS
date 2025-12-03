@@ -45,18 +45,18 @@ from TACTICS.thompson_sampling.warmup import StandardWarmup
 # ============================================================================
 
 REAGENT_FILES = [
-    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski_reagent_0.smi",
-    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski_reagent_1.smi",
-    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski_reagent_2.smi"
+    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski_reagent_0.smi",
+    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski_reagent_1.smi",
+    "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski_reagent_2.smi"
 ]
 
 EVALUATOR_CONFIG = {
-    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski.parquet",
+    "ref_filename": "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski.parquet",
     "compound_col": "Name",
     "score_col": "query_001"
 }
 
-REFERENCE_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/examples/input_files/quinazoline/niementowski.parquet"
+REFERENCE_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/quinazoline/niementowski.parquet"
 
 # Experiment parameters
 NUM_WARMUP_TRIALS = 5
