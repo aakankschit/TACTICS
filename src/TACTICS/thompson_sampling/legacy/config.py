@@ -1,32 +1,36 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional, Literal, Union
+"""
+This module defines the Pydantic models for configuration management.
+"""
 
-class StandardSamplerConfig(BaseModel):
-    sampler_type: Literal["standard"]
-    ts_mode: Literal["maximize", "minimize", "maximize_boltzmann", "minimize_boltzmann"]
-    evaluator_class_name: str
-    evaluator_arg: str
+from typing import List, Dict, Any, Optional
+from pydantic import BaseModel, FilePath, PositiveInt, PositiveFloat
+
+
+class EvaluatorArgs(BaseModel):
+    ref_filename: FilePath
+    ref_colname: str
+
+
+class BaseConfig(BaseModel):
+    reagent_file_list: List[FilePath]
     reaction_smarts: str
-    num_ts_iterations: int
-    reagent_file_list: List[str]
-    num_warmup_trials: int
-    results_filename: Optional[str] = None
-    log_filename: Optional[str] = None
-
-class EnhancedSamplerConfig(BaseModel):
-    sampler_type: Literal["enhanced"]
-    processes: int = Field(..., gt=0)
-    scaling: float
-    percent_of_library: float = Field(..., gt=0, le=1)
-    minimum_no_of_compounds_per_core: int = Field(..., gt=0)
-    stopping_criteria: int = Field(..., gt=0)
     evaluator_class_name: str
-    evaluator_arg: str
-    reaction_smarts: str
-    num_ts_iterations: int
-    reagent_file_list: List[str]
-    num_warmup_trials: int
-    results_filename: Optional[str] = None
+    evaluator_arg: EvaluatorArgs
     log_filename: Optional[str] = None
+    results_filename: Optional[str] = None
+    hide_progress: bool = False
 
-TSConfig = Union[StandardSamplerConfig, EnhancedSamplerConfig] 
+
+class TSConfig(BaseConfig):
+    num_warmup_trials: PositiveInt = 5
+    num_ts_iterations: PositiveInt = 10000
+    ts_mode: str = "maximize"
+
+
+class RWSConfig(BaseConfig):
+    nprocesses: PositiveInt = 1
+    min_cpds_per_core: PositiveInt = 50
+    num_warmup_trials: PositiveInt = 5
+    percent_of_library: PositiveFloat = 0.02
+    scaling: int = 1
+    stop: PositiveInt = 6000

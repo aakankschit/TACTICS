@@ -23,14 +23,12 @@ from .strategies.base_strategy import SelectionStrategy
 from .warmup.config import (
     StandardWarmupConfig,
     EnhancedWarmupConfig,
-    StratifiedWarmupConfig,
-    LatinHypercubeWarmupConfig
+    BalancedWarmupConfig
 )
 from .warmup import (
     StandardWarmup,
     EnhancedWarmup,
-    StratifiedWarmup,
-    LatinHypercubeWarmup
+    BalancedWarmup
 )
 from .warmup.base import WarmupStrategy
 
@@ -68,8 +66,7 @@ StrategyConfig = Union[
 WarmupConfig = Union[
     StandardWarmupConfig,
     EnhancedWarmupConfig,
-    StratifiedWarmupConfig,
-    LatinHypercubeWarmupConfig
+    BalancedWarmupConfig
 ]
 
 EvaluatorConfig = Union[
@@ -107,6 +104,7 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             mode=config.mode,
             alpha=config.alpha,
             beta=config.beta,
+            alpha_max=config.alpha_max,
             scaling=config.scaling,
             alpha_increment=config.alpha_increment,
             beta_increment=config.beta_increment,
@@ -152,15 +150,15 @@ def create_warmup(config: WarmupConfig) -> WarmupStrategy:
     Create a warmup strategy from a Pydantic config.
 
     Args:
-        config: Warmup configuration (StandardWarmupConfig, StratifiedWarmupConfig, etc.)
+        config: Warmup configuration (BalancedWarmupConfig, StandardWarmupConfig, etc.)
 
     Returns:
         WarmupStrategy: Instantiated warmup strategy object
 
     Example:
-        >>> config = StratifiedWarmupConfig()
+        >>> config = BalancedWarmupConfig(observations_per_reagent=5)
         >>> warmup = create_warmup(config)
-        >>> isinstance(warmup, StratifiedWarmup)
+        >>> isinstance(warmup, BalancedWarmup)
         True
     """
     if isinstance(config, StandardWarmupConfig):
@@ -169,11 +167,13 @@ def create_warmup(config: WarmupConfig) -> WarmupStrategy:
     elif isinstance(config, EnhancedWarmupConfig):
         return EnhancedWarmup()
 
-    elif isinstance(config, StratifiedWarmupConfig):
-        return StratifiedWarmup()
-
-    elif isinstance(config, LatinHypercubeWarmupConfig):
-        return LatinHypercubeWarmup()
+    elif isinstance(config, BalancedWarmupConfig):
+        return BalancedWarmup(
+            observations_per_reagent=config.observations_per_reagent,
+            seed=config.seed,
+            use_per_reagent_variance=config.use_per_reagent_variance,
+            shrinkage_strength=config.shrinkage_strength
+        )
 
     else:
         raise ValueError(f"Unknown warmup config type: {type(config)}")
@@ -202,7 +202,8 @@ def create_evaluator(config: EvaluatorConfig) -> Evaluator:
         # LookupEvaluator expects a JSON string or dict
         input_dict = {
             "ref_filename": config.ref_filename,
-            "ref_colname": config.ref_colname
+            "ref_colname": config.score_col,  # Map score_col to ref_colname
+            "compound_col": config.compound_col
         }
         return LookupEvaluator(json.dumps(input_dict))
 

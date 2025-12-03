@@ -14,7 +14,8 @@ class LookupEvaluatorConfig(BaseModel):
 
     evaluator_type: Literal["lookup"] = "lookup"
     ref_filename: str = Field(..., description="Path to CSV file with pre-computed scores")
-    ref_colname: str = Field(default="Scores", description="Column name for scores in CSV")
+    compound_col: str = Field(default="Product_Code", description="Column name for compound identifiers")
+    score_col: str = Field(default="Scores", description="Column name for scores in CSV")
 
 
 class DBEvaluatorConfig(BaseModel):

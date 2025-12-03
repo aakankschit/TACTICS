@@ -1,5 +1,5 @@
 import random
-from typing import List, Optional, Tuple, TYPE_CHECKING
+from typing import List, Optional, Tuple, TYPE_CHECKING, Dict
 import math
 import numpy as np
 import polars as pl
@@ -18,6 +18,7 @@ from ..warmup import WarmupStrategy, StandardWarmup
 
 if TYPE_CHECKING:
     from ..config import ThompsonSamplingConfig
+    from ...library_enumeration.smarts_toolkit.reaction_sequence import ReactionSequence
 
 
 class ThompsonSampler:
@@ -57,11 +58,15 @@ class ThompsonSampler:
                  batch_size: int = 1,
                  max_resamples: int = None,
                  processes: int = 1,
-                 min_cpds_per_core: int = 10):
+                 min_cpds_per_core: int = 10,
+                 product_library_file: Optional[str] = None,
+                 cats_manager=None,
+                 use_boltzmann_weighting: bool = False):
         self.selection_strategy = selection_strategy
         self.warmup_strategy = warmup_strategy or StandardWarmup()
         self.reagent_lists = []
         self.reaction = None
+        self.reaction_sequence = None  # NEW: Support for multi-SMARTS/multi-step
         self.evaluator = None
         self.logger = get_logger(__name__, filename=log_filename)
         self._disallow_tracker = None
@@ -72,12 +77,23 @@ class ThompsonSampler:
         self.processes = processes
         self.min_cpds_per_core = min_cpds_per_core
         self.parallel_evaluator = ParallelEvaluator(processes=processes)
+        self.product_smiles_dict = None
+        self.cats_manager = cats_manager  # Optional CATS integration
+        self.use_boltzmann_weighting = use_boltzmann_weighting
+
+        # Load product library if provided
+        if product_library_file:
+            self.load_product_library(product_library_file)
 
         # Log multiprocessing configuration
         if self.processes > 1:
             self.logger.info(f"Multiprocessing enabled: {self.processes} processes, "
                            f"min_cpds_per_core={self.min_cpds_per_core}, "
                            f"batch_threshold={self.processes * self.min_cpds_per_core}")
+
+        # Log Boltzmann weighting status
+        if self.use_boltzmann_weighting:
+            self.logger.info("Using Boltzmann-weighted Bayesian updates (legacy RWS algorithm)")
 
     @classmethod
     def from_config(cls, config: 'ThompsonSamplingConfig') -> 'ThompsonSampler':
@@ -168,12 +184,25 @@ class ThompsonSampler:
             batch_size=config.batch_size,
             max_resamples=config.max_resamples,
             processes=config.processes,
-            min_cpds_per_core=config.min_cpds_per_core
+            min_cpds_per_core=config.min_cpds_per_core,
+            product_library_file=config.product_library_file,
+            use_boltzmann_weighting=config.use_boltzmann_weighting
         )
 
         # Set up sampler
         sampler.set_evaluator(evaluator)
         sampler.read_reagents(config.reagent_file_list)
+
+        # Configure reaction: advanced (ReactionSequence) or simple (SMARTS string)
+        if config.reaction_sequence_config is not None:
+            # Advanced mode: multi-SMARTS or multi-step synthesis
+            sampler.set_reaction_sequence(config.reaction_sequence_config)
+        elif config.reaction_smarts is not None:
+            # Simple mode: single SMARTS string
+            sampler.set_reaction(config.reaction_smarts)
+        else:
+            raise ValueError("Must provide either reaction_smarts or reaction_sequence_config")
+
         sampler.set_hide_progress(config.hide_progress)
 
         return sampler
@@ -196,9 +225,48 @@ class ThompsonSampler:
         """Cleanup: close parallel evaluator when sampler is garbage collected."""
         self.close()
 
+    def load_product_library(self, library_file: str) -> None:
+        """
+        Load pre-enumerated product library for testing mode.
+
+        When a product library is provided, the sampler will skip reaction synthesis
+        and directly lookup product SMILES from the library using product codes.
+        This is useful for testing on pre-enumerated libraries where synthesis is redundant.
+
+        Args:
+            library_file: Path to CSV file with 'Product_Code' and 'SMILES' columns
+
+        Raises:
+            FileNotFoundError: If library file doesn't exist
+            ValueError: If required columns are missing
+        """
+        import os
+        if not os.path.exists(library_file):
+            raise FileNotFoundError(f"Product library file not found: {library_file}")
+
+        df = pl.read_csv(library_file)
+
+        # Check for required columns
+        if 'Product_Code' not in df.columns:
+            raise ValueError("Product library must have 'Product_Code' column")
+        if 'SMILES' not in df.columns:
+            raise ValueError("Product library must have 'SMILES' column")
+
+        # Create lookup dictionary
+        self.product_smiles_dict = dict(zip(df['Product_Code'].to_list(), df['SMILES'].to_list()))
+        self.logger.info(
+            f"Loaded pre-enumerated product library with {len(self.product_smiles_dict):,} products"
+        )
+        self.logger.info("Product synthesis will be skipped; using pre-enumerated SMILES")
+
     def read_reagents(self, reagent_file_list, num_to_select: Optional[int] = None):
-        """Read reagents from file list"""
-        self.reagent_lists = read_reagents(reagent_file_list, num_to_select=num_to_select)
+        """Read reagents from file list with optional Boltzmann weighting and mode"""
+        self.reagent_lists = read_reagents(
+            reagent_file_list,
+            num_to_select=num_to_select,
+            use_boltzmann_weighting=self.use_boltzmann_weighting,
+            mode=self.selection_strategy.mode
+        )
         self.num_prods = math.prod([len(x) for x in self.reagent_lists])
         self.logger.info(f"{self.num_prods:.2e} possible products")
         self._disallow_tracker = DisallowTracker([len(x) for x in self.reagent_lists])
@@ -228,8 +296,54 @@ class ThompsonSampler:
                 )
 
     def set_reaction(self, rxn_smarts):
-        """Define the reaction"""
+        """Define the reaction (simple single SMARTS mode)"""
         self.reaction = AllChem.ReactionFromSmarts(rxn_smarts)
+
+    def set_reaction_sequence(self, config):
+        """
+        Configure reaction sequence for multi-SMARTS or multi-step synthesis.
+
+        This method enables advanced features:
+        - Multiple alternative SMARTS patterns for a single step
+        - Multi-step synthesis with intermediate tracking
+        - Reagent-specific SMARTS routing
+
+        Args:
+            config: MultiStepSynthesisConfig defining the synthesis sequence
+
+        Example:
+            >>> from TACTICS.library_enumeration.smarts_toolkit.reaction_sequence import (
+            ...     MultiStepSynthesisConfig, AlternativeSMARTSConfig, SMARTSPatternConfig
+            ... )
+            >>>
+            >>> # Single-step with alternatives
+            >>> config = MultiStepSynthesisConfig(
+            ...     alternative_smarts=AlternativeSMARTSConfig(
+            ...         primary_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+            ...         alternatives=[
+            ...             SMARTSPatternConfig(
+            ...                 pattern_id="secondary",
+            ...                 reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]"
+            ...             )
+            ...         ]
+            ...     ),
+            ...     reagent_file_list=["acids.smi", "amines.smi"]
+            ... )
+            >>> sampler.set_reaction_sequence(config)
+        """
+        from ...library_enumeration.smarts_toolkit.reaction_sequence import ReactionSequence
+
+        self.reaction_sequence = ReactionSequence(config)
+
+        # Register reagent compatibilities if reagent lists are loaded
+        if self.reagent_lists:
+            self.reaction_sequence.register_all_reagent_compatibilities(
+                self.reagent_lists
+            )
+
+        self.logger.info(
+            f"Configured reaction sequence with {self.reaction_sequence.num_steps} step(s)"
+        )
 
     def evaluate(self, choice_list: List[int]) -> Tuple[str, str, float]:
         """
@@ -248,21 +362,95 @@ class ThompsonSampler:
         for idx, choice in enumerate(choice_list):
             component_reagent_list = self.reagent_lists[idx]
             selected_reagents.append(component_reagent_list[choice])
-        prod = self.reaction.RunReactants([reagent.mol for reagent in selected_reagents])
+
         product_name = "_".join([reagent.reagent_name for reagent in selected_reagents])
         res = np.nan
         product_smiles = "FAIL"
-        if prod:
-            prod_mol = prod[0][0]
-            Chem.SanitizeMol(prod_mol)
-            product_smiles = Chem.MolToSmiles(prod_mol, isomericSmiles=True)
+        prod_mol = None
+
+        # For LookupEvaluator and DBEvaluator, skip molecule generation entirely
+        # They only need product_name for lookup
+        if isinstance(self.evaluator, (LookupEvaluator, DBEvaluator)):
+            # Evaluate directly by product code
             if isinstance(self.evaluator, DBEvaluator):
                 res = self.evaluator.evaluate(product_name)
                 res = float(res)
-            elif isinstance(self.evaluator, LookupEvaluator):
+            else:  # LookupEvaluator
                 res = self.evaluator.evaluate(product_name)
+            return product_smiles, product_name, res
+
+        # For other evaluators, we need to generate the molecule
+        # Try to get product molecule: first from library, then from synthesis
+        use_synthesis = False
+
+        # Check if using pre-enumerated product library
+        if self.product_smiles_dict is not None:
+            # Look up pre-computed SMILES from library
+            product_smiles = self.product_smiles_dict.get(product_name)
+
+            if product_smiles:
+                # Convert SMILES to mol object
+                prod_mol = Chem.MolFromSmiles(product_smiles)
+                if prod_mol:
+                    try:
+                        Chem.SanitizeMol(prod_mol)
+                    except Exception as e:
+                        self.logger.warning(
+                            f"Failed to sanitize product {product_name}: {e}"
+                        )
+                        prod_mol = None
+                else:
+                    self.logger.warning(
+                        f"Failed to parse SMILES for product {product_name}"
+                    )
             else:
-                res = self.evaluator.evaluate(prod_mol)
+                # Product not in library - try synthesis if reaction available
+                if self.reaction is not None:
+                    self.logger.debug(
+                        f"Product {product_name} not in library, falling back to synthesis"
+                    )
+                    use_synthesis = True
+                else:
+                    self.logger.warning(
+                        f"Product {product_name} not found in pre-enumerated library and no reaction set"
+                    )
+                    return "FAIL", product_name, np.nan
+        else:
+            # No product library - must use synthesis
+            use_synthesis = True
+
+        # Synthesize if needed
+        if use_synthesis:
+            if self.reaction is None and self.reaction_sequence is None:
+                self.logger.error(
+                    "No reaction SMARTS set. Call set_reaction()/set_reaction_sequence() "
+                    "or provide product_library_file."
+                )
+                return "FAIL", product_name, np.nan
+
+            # Use ReactionSequence if configured (supports multi-SMARTS and multi-step)
+            if self.reaction_sequence is not None:
+                reagent_mols = [r.mol for r in selected_reagents]
+                reagent_keys = [r.reagent_key for r in selected_reagents]
+
+                prod_mol, patterns_used = self.reaction_sequence.enumerate(
+                    reagent_mols, reagent_keys
+                )
+
+                if prod_mol is not None:
+                    product_smiles = Chem.MolToSmiles(prod_mol, isomericSmiles=True)
+            else:
+                # Fallback: use direct reaction (backward compatible)
+                prod = self.reaction.RunReactants([reagent.mol for reagent in selected_reagents])
+                if prod:
+                    prod_mol = prod[0][0]
+                    Chem.SanitizeMol(prod_mol)
+                    product_smiles = Chem.MolToSmiles(prod_mol, isomericSmiles=True)
+
+        # Evaluate if we have a valid molecule
+        if prod_mol:
+            res = self.evaluator.evaluate(prod_mol)
+
         return product_smiles, product_name, res
 
     def evaluate_batch(self, choice_lists: List[List[int]]) -> List[Tuple[str, str, float]]:
@@ -323,10 +511,11 @@ class ThompsonSampler:
             results = self.evaluate_batch(warmup_combinations)
 
             # Update reagent scores in main process after parallel evaluation
+            # NOTE: Scores are NOT scaled here - strategies handle mode logic themselves
             for combination, (product_smiles, product_name, score) in zip(warmup_combinations, results):
                 if np.isfinite(score):
                     warmup_results.append([score, product_smiles, product_name])
-                    # Add scores to reagents used in this combination
+                    # Add scores to reagents WITHOUT scaling
                     for component_idx, reagent_idx in enumerate(combination):
                         self.reagent_lists[component_idx][reagent_idx].add_score(score)
 
@@ -345,15 +534,33 @@ class ThompsonSampler:
             f"max={np.max(warmup_scores):0.4f}"
         )
 
-        # Initialize priors for all reagents
-        prior_mean = np.mean(warmup_scores)
-        prior_std = np.std(warmup_scores)
+        # Initialize priors for all reagents WITHOUT SCALING
+        # Strategies handle mode logic themselves
+        prior_mean = np.mean(warmup_scores)  # No scaling
+        prior_std = np.std(warmup_scores)  # No scaling to std
+
+        # Check if using per-reagent variance (from BalancedWarmup)
+        use_per_reagent_variance = getattr(self.warmup_strategy, 'use_per_reagent_variance', False)
+        shrinkage_strength = getattr(self.warmup_strategy, 'shrinkage_strength', 3.0)
+
+        if use_per_reagent_variance:
+            self.logger.info(
+                f"Using per-reagent variance with James-Stein shrinkage "
+                f"(shrinkage_strength={shrinkage_strength})"
+            )
 
         for i in range(0, len(self.reagent_lists)):
             for j in range(0, len(self.reagent_lists[i])):
                 reagent = self.reagent_lists[i][j]
                 try:
-                    reagent.init_prior(prior_mean=prior_mean, prior_std=prior_std)
+                    if use_per_reagent_variance:
+                        reagent.init_prior_per_reagent(
+                            global_mean=prior_mean,
+                            global_std=prior_std,
+                            shrinkage_strength=shrinkage_strength
+                        )
+                    else:
+                        reagent.init_prior(prior_mean=prior_mean, prior_std=prior_std)
                 except ValueError:
                     self.logger.info(
                         f"Skipping reagent {reagent.reagent_name} - "
@@ -373,116 +580,39 @@ class ThompsonSampler:
         warmup_df = pl.DataFrame(warmup_results, schema=["score", "SMILES", "Name"], orient="row")
         return warmup_df
 
-    def search(self, num_cycles=100):
+    def search(self, num_cycles=100, max_evaluations=None):
         """
-        Generic search loop that works with any strategy.
+        Unified search loop that works with any batch_size.
 
-        Supports both single-compound (batch_size=1) and batch mode (batch_size>1).
+        Supports batch_size=1 (single compound per cycle) or batch_size>1 (multiple compounds per cycle).
+
+        Args:
+            num_cycles: Maximum number of sampling cycles to run
+            max_evaluations: Maximum number of unique compounds to evaluate (optional)
+                            If specified, search stops after evaluating this many unique compounds
+
+        Returns:
+            pl.DataFrame: Search results with columns ["score", "SMILES", "Name"]
         """
-        if self.batch_size > 1:
-            return self._search_batch(num_cycles)
+        # Validation: warn if max_evaluations doesn't align with batch_size
+        if max_evaluations is not None and max_evaluations % self.batch_size != 0:
+            import warnings
+            warnings.warn(
+                f"max_evaluations ({max_evaluations}) is not evenly divisible by batch_size ({self.batch_size}). "
+                f"This may cause slightly more evaluations than expected. "
+                f"Recommend using max_evaluations as a multiple of batch_size.",
+                UserWarning,
+                stacklevel=2
+            )
+
+        # Calculate total cycles for CATS progressive weighting
+        if max_evaluations is not None:
+            total_cycles = max_evaluations // self.batch_size
         else:
-            return self._search_single(num_cycles)
+            total_cycles = num_cycles
 
-    def _search_single(self, num_cycles):
-        """
-        Single compound selection per cycle.
-
-        Now supports thermal cycling component rotation, adaptive temperature control,
-        and uniqueness tracking for RouletteWheelSelection strategy.
-
-        Returns:
-            pl.DataFrame: Search results with columns ["score", "SMILES", "Name"]
-        """
         out_list = []
         rng = np.random.default_rng()
-        n_components = len(self.reagent_lists)
-        unique_compounds = set()
-        n_resamples = 0
-
-        for i in tqdm(range(num_cycles), desc="Search", disable=self.hide_progress):
-            selected_reagents = [DisallowTracker.Empty] * len(self.reagent_lists)
-
-            # Select reagents for each component
-            for component_idx in random.sample(range(len(self.reagent_lists)),
-                                              len(self.reagent_lists)):
-                reagent_list = self.reagent_lists[component_idx]
-                selected_reagents[component_idx] = DisallowTracker.To_Fill
-
-                disallow_mask = self._disallow_tracker.get_disallowed_selection_mask(selected_reagents)
-
-                # Use strategy to select reagent
-                selected_idx = self.selection_strategy.select_reagent(
-                    reagent_list=reagent_list,
-                    disallow_mask=disallow_mask,
-                    rng=rng,
-                    component_idx=component_idx,
-                    iteration=i
-                )
-                selected_reagents[component_idx] = selected_idx
-
-            self._disallow_tracker.update(selected_reagents)
-
-            # Check for uniqueness (for RouletteWheel strategy)
-            comb_key = '_'.join(str(idx) for idx in selected_reagents)
-            is_unique = comb_key not in unique_compounds
-
-            if is_unique:
-                unique_compounds.add(comb_key)
-                n_resamples = 0
-            else:
-                n_resamples += 1
-
-            # Update adaptive temperature for RouletteWheel strategy
-            # Use batch_size=1 for single mode
-            if hasattr(self.selection_strategy, 'update_temperature'):
-                self.selection_strategy.update_temperature(
-                    n_unique=1 if is_unique else 0,
-                    batch_size=1
-                )
-
-            # Rotate thermal cycling component for RouletteWheel strategy
-            if hasattr(self.selection_strategy, 'rotate_component'):
-                self.selection_strategy.rotate_component(n_components)
-
-            # Check stopping criteria (if max_resamples is set)
-            if self.max_resamples and n_resamples >= self.max_resamples:
-                self.logger.info(f"Stopping: {n_resamples} consecutive resamples")
-                break
-
-            # Evaluate and update (only if unique or no uniqueness tracking)
-            smiles, name, score = self.evaluate(selected_reagents)
-            if np.isfinite(score):
-                out_list.append([score, smiles, name])
-                # Update reagent posteriors
-                for comp_idx, reagent_idx in enumerate(selected_reagents):
-                    self.reagent_lists[comp_idx][reagent_idx].add_score(score)
-
-            if i % 100 == 0 and out_list:
-                scores = [x[0] for x in out_list]
-                if self.selection_strategy.mode in ["maximize", "maximize_boltzmann"]:
-                    best_score = max(scores)
-                else:
-                    best_score = min(scores)
-                self.logger.info(f"Iteration {i}: Best score = {best_score:.3f}")
-
-        # Convert to polars DataFrame
-        search_df = pl.DataFrame(out_list, schema=["score", "SMILES", "Name"], orient="row")
-        return search_df
-
-    def _search_batch(self, num_cycles):
-        """
-        Batch selection mode: sample multiple compounds per cycle.
-
-        Implements uniqueness tracking, adaptive temperature control,
-        and parallel evaluation for efficiency.
-
-        Returns:
-            pl.DataFrame: Search results with columns ["score", "SMILES", "Name"]
-        """
-        out_list = []
-        rng = np.random.default_rng()
-        unique_compounds = set()
         n_resamples = 0
         n_components = len(self.reagent_lists)
 
@@ -490,61 +620,55 @@ class ThompsonSampler:
         compounds_to_evaluate = []
         min_cpds_per_batch = self.processes * self.min_cpds_per_core
 
-        pbar = tqdm(total=num_cycles, desc="Search", disable=self.hide_progress)
+        # Use max_evaluations as progress bar total if specified
+        pbar_total = max_evaluations if max_evaluations else num_cycles
+        pbar = tqdm(total=pbar_total, desc="Search", disable=self.hide_progress)
 
         cycle = 0
         while cycle < num_cycles:
-            # Build matrix of selected reagents (batch_size x n_components)
-            matrix = []
+            # Check if we've reached the evaluation limit
+            if max_evaluations is not None and len(out_list) >= max_evaluations:
+                self.logger.info(f"Reached max_evaluations limit: {max_evaluations} (evaluated {len(out_list)} compounds)")
+                break
 
-            for component_idx in range(n_components):
-                reagent_list = self.reagent_lists[component_idx]
-
-                # Use batch selection if available
-                if hasattr(self.selection_strategy, 'select_batch'):
-                    selected_indices = self.selection_strategy.select_batch(
-                        reagent_list=reagent_list,
-                        batch_size=self.batch_size,
-                        disallow_mask=None,  # Handled after batch generation
-                        rng=rng,
-                        component_idx=component_idx,
-                        iteration=cycle
-                    )
-                else:
-                    # Fallback to multiple single selections
-                    selected_indices = np.array([
-                        self.selection_strategy.select_reagent(
-                            reagent_list=reagent_list,
-                            disallow_mask=None,
-                            rng=rng,
-                            component_idx=component_idx,
-                            iteration=cycle
-                        )
-                        for _ in range(self.batch_size)
-                    ])
-
-                matrix.append(selected_indices)
-
-            # Transpose to get list of compound combinations
-            combinations = np.array(matrix).T
-
-            # Filter for unique combinations
+            # Generate batch_size unique combinations using DisallowTracker
+            combinations = []
             n_unique = 0
 
-            for comb in combinations:
-                comb_key = '_'.join(str(idx) for idx in comb)
+            for _ in range(self.batch_size):
+                # Build one combination iteratively, respecting DisallowTracker
+                selected_reagents = [DisallowTracker.Empty] * n_components
 
-                if comb_key not in unique_compounds:
-                    compounds_to_evaluate.append(comb)
-                    unique_compounds.add(comb_key)
-                    n_resamples = 0
-                    n_unique += 1
-                else:
-                    n_resamples += 1
+                # Randomize component selection order to avoid bias
+                selection_order = list(range(n_components))
+                random.shuffle(selection_order)
 
-            # Update adaptive temperature for RouletteWheel strategy
-            if hasattr(self.selection_strategy, 'update_temperature'):
-                self.selection_strategy.update_temperature(n_unique, self.batch_size)
+                for component_idx in selection_order:
+                    reagent_list = self.reagent_lists[component_idx]
+                    selected_reagents[component_idx] = DisallowTracker.To_Fill
+
+                    # Get disallow mask from tracker
+                    disallow_mask = self._disallow_tracker.get_disallowed_selection_mask(selected_reagents)
+
+                    # Select reagent with disallow constraint
+                    # Pass CATS context for progressive weighting
+                    selected_idx = self.selection_strategy.select_reagent(
+                        reagent_list=reagent_list,
+                        disallow_mask=disallow_mask,
+                        rng=rng,
+                        component_idx=component_idx,
+                        iteration=cycle,
+                        current_cycle=cycle,
+                        total_cycles=total_cycles
+                    )
+                    selected_reagents[component_idx] = selected_idx
+
+                # Update DisallowTracker with this combination
+                self._disallow_tracker.update(selected_reagents)
+                combinations.append(selected_reagents)
+                compounds_to_evaluate.append(selected_reagents)
+                n_unique += 1
+                n_resamples = 0
 
             # Rotate thermal cycling component
             if hasattr(self.selection_strategy, 'rotate_component'):
@@ -562,8 +686,8 @@ class ThompsonSampler:
             )
 
             if should_evaluate and compounds_to_evaluate:
-                # Convert to list of lists for evaluation
-                choice_lists = [comb.tolist() for comb in compounds_to_evaluate]
+                # compounds_to_evaluate already contains lists
+                choice_lists = compounds_to_evaluate
 
                 # Parallel evaluation
                 if self.processes > 1 and cycle % 100 == 0:
@@ -571,12 +695,13 @@ class ThompsonSampler:
                                    f"using {self.processes} processes")
                 results = self.evaluate_batch(choice_lists)
 
-                # Process results
+                # Process results WITHOUT scaling
+                # Strategies handle mode logic themselves
                 for comb, (smiles, name, score) in zip(compounds_to_evaluate, results):
                     if np.isfinite(score):
                         out_list.append([score, smiles, name])
 
-                        # Update reagent posteriors
+                        # Update reagent posteriors WITHOUT scaling
                         for comp_idx, reagent_idx in enumerate(comb):
                             self.reagent_lists[comp_idx][reagent_idx].add_score(score)
 
@@ -592,10 +717,19 @@ class ThompsonSampler:
                     f"Processes={self.processes}"
                 )
 
-            pbar.update(1)
+            # Update progress bar based on mode
+            if max_evaluations is not None:
+                # Track evaluations progress
+                pbar.n = len(out_list)
+                pbar.refresh()
+            else:
+                # Track cycles progress
+                pbar.update(1)
+
             cycle += 1
 
         pbar.close()
         # Convert to polars DataFrame
         search_df = pl.DataFrame(out_list, schema=["score", "SMILES", "Name"], orient="row")
+        return search_df
         return search_df

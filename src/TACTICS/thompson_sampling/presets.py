@@ -11,8 +11,8 @@ from .strategies.config import (
 )
 from .warmup.config import (
     StandardWarmupConfig,
-    StratifiedWarmupConfig,
-    LatinHypercubeWarmupConfig
+    BalancedWarmupConfig,
+    EnhancedWarmupConfig
 )
 from .core.evaluator_config import LookupEvaluatorConfig, DBEvaluatorConfig
 
@@ -46,7 +46,7 @@ class ConfigPresets:
 
         Configuration:
         - Strategy: Epsilon-Greedy (ε=0.2, decay=0.995)
-        - Warmup: Stratified (balanced, no duplicates)
+        - Warmup: Balanced (K=3 observations per reagent, per-reagent variance)
         - Batch: Single mode (batch_size=1)
         - Processes: 1 (sequential)
 
@@ -78,7 +78,7 @@ class ConfigPresets:
                 epsilon=0.2,
                 decay=0.995
             ),
-            warmup_config=StratifiedWarmupConfig(),
+            warmup_config=BalancedWarmupConfig(observations_per_reagent=3),
             evaluator_config=evaluator_config,
             batch_size=1,
             processes=1,
@@ -108,7 +108,7 @@ class ConfigPresets:
 
         Configuration:
         - Strategy: Roulette Wheel (adaptive thermal cycling)
-        - Warmup: Latin Hypercube (optimal space coverage)
+        - Warmup: Balanced (K=5 observations per reagent, per-reagent variance)
         - Batch: Batch mode (configurable batch_size)
         - Processes: Configurable (default=4)
 
@@ -146,7 +146,7 @@ class ConfigPresets:
                 beta_increment=0.001,
                 efficiency_threshold=0.1
             ),
-            warmup_config=LatinHypercubeWarmupConfig(),
+            warmup_config=BalancedWarmupConfig(observations_per_reagent=5),
             evaluator_config=evaluator_config,
             batch_size=batch_size,
             max_resamples=1000,
@@ -175,7 +175,7 @@ class ConfigPresets:
 
         Configuration:
         - Strategy: Greedy (pure exploitation)
-        - Warmup: Stratified (balanced initialization)
+        - Warmup: Balanced (K=5 observations per reagent, per-reagent variance)
         - Batch: Single mode (batch_size=1)
         - Processes: 1 (sequential)
 
@@ -203,7 +203,7 @@ class ConfigPresets:
             num_ts_iterations=num_iterations,
             num_warmup_trials=5,
             strategy_config=GreedyConfig(mode=mode),
-            warmup_config=StratifiedWarmupConfig(),
+            warmup_config=BalancedWarmupConfig(observations_per_reagent=5),
             evaluator_config=evaluator_config,
             batch_size=1,
             processes=1,
@@ -231,7 +231,7 @@ class ConfigPresets:
 
         Configuration:
         - Strategy: UCB (upper confidence bound, c=2.0)
-        - Warmup: Stratified (balanced initialization)
+        - Warmup: Balanced (K=3 observations per reagent, per-reagent variance)
         - Batch: Single mode (batch_size=1)
         - Processes: 1 (sequential)
 
@@ -259,7 +259,7 @@ class ConfigPresets:
             num_ts_iterations=num_iterations,
             num_warmup_trials=3,
             strategy_config=UCBConfig(mode=mode, c=2.0),
-            warmup_config=StratifiedWarmupConfig(),
+            warmup_config=BalancedWarmupConfig(observations_per_reagent=3),
             evaluator_config=evaluator_config,
             batch_size=1,
             processes=1,
@@ -278,7 +278,7 @@ class ConfigPresets:
         output_dir: Optional[str] = None
     ) -> ThompsonSamplingConfig:
         """
-        Maximum diversity with roulette wheel and Latin Hypercube warmup.
+        Maximum diversity with roulette wheel and balanced warmup.
 
         Best for:
         - Reagents ordered by properties
@@ -287,7 +287,7 @@ class ConfigPresets:
 
         Configuration:
         - Strategy: Roulette Wheel (high exploration)
-        - Warmup: Latin Hypercube (maximum space coverage)
+        - Warmup: Balanced (K=5 observations per reagent, per-reagent variance)
         - Batch: Single mode (batch_size=1)
         - Processes: 1 (sequential)
 
@@ -323,11 +323,137 @@ class ConfigPresets:
                 beta_increment=0.002,
                 efficiency_threshold=0.2
             ),
-            warmup_config=LatinHypercubeWarmupConfig(),
+            warmup_config=BalancedWarmupConfig(observations_per_reagent=5),
             evaluator_config=evaluator_config,
             batch_size=1,
             processes=1,
             min_cpds_per_core=10,
+            results_filename=results_filename,
+            log_filename=log_filename
+        )
+
+    @staticmethod
+    def legacy_rws_maximize(
+        reaction_smarts: str,
+        reagent_file_list: list[str],
+        evaluator_config,
+        num_iterations: int = 18500,
+        max_resamples: int = 6000,
+        output_dir: Optional[str] = None
+    ) -> ThompsonSamplingConfig:
+        """
+        Legacy RWS with Boltzmann weighting for maximize mode.
+
+        This preset replicates the original RWS algorithm with:
+        - Boltzmann-weighted Bayesian updates (exponential weighting of good scores)
+        - Enhanced warmup (stochastic parallel pairing)
+        - Automatic score scaling for maximize mode
+        - Adaptive thermal cycling (α=0.1, β=0.1)
+
+        Best for:
+        - Replicating published RWS results
+        - Problems with clear structure (ROCS similarity, etc.)
+        - Maximum performance on structured optimization
+
+        Expected performance: ~76±5 recovery (matching original RWS paper)
+
+        Args:
+            reaction_smarts: SMARTS string for reaction
+            reagent_file_list: List of reagent file paths
+            evaluator_config: Evaluator configuration
+            num_iterations: Number of iterations (default: 18500, matching paper)
+            max_resamples: Early stopping after consecutive duplicates (default: 6000)
+            output_dir: Directory to save output files (optional)
+        """
+        # Set output filenames if output_dir is specified
+        results_filename = None
+        log_filename = None
+        if output_dir is not None:
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+            results_filename = str(output_path / "legacy_rws_maximize_results.csv")
+            log_filename = str(output_path / "legacy_rws_maximize.log")
+
+        return ThompsonSamplingConfig(
+            reaction_smarts=reaction_smarts,
+            reagent_file_list=reagent_file_list,
+            num_ts_iterations=num_iterations,
+            num_warmup_trials=5,
+            strategy_config=RouletteWheelConfig(
+                mode="maximize",
+                alpha=0.1,
+                beta=0.1
+            ),
+            warmup_config=EnhancedWarmupConfig(),  # Stochastic parallel pairing
+            evaluator_config=evaluator_config,
+            batch_size=1,
+            max_resamples=max_resamples,
+            processes=1,
+            min_cpds_per_core=50,
+            use_boltzmann_weighting=True,  # Enable legacy RWS algorithm
+            results_filename=results_filename,
+            log_filename=log_filename
+        )
+
+    @staticmethod
+    def legacy_rws_minimize(
+        reaction_smarts: str,
+        reagent_file_list: list[str],
+        evaluator_config,
+        num_iterations: int = 18500,
+        max_resamples: int = 6000,
+        output_dir: Optional[str] = None
+    ) -> ThompsonSamplingConfig:
+        """
+        Legacy RWS with Boltzmann weighting for minimize mode (e.g., docking).
+
+        This preset replicates the original RWS algorithm with:
+        - Boltzmann-weighted Bayesian updates (exponential weighting of good scores)
+        - Enhanced warmup (stochastic parallel pairing)
+        - Automatic score scaling for minimize mode (inverts scores)
+        - Adaptive thermal cycling (α=0.1, β=0.1)
+
+        Best for:
+        - Molecular docking (minimize binding energy)
+        - Free energy calculations (minimize ΔG)
+        - Any minimize-mode structured optimization
+
+        Expected performance: ~76±5 recovery (matching original RWS paper)
+
+        Args:
+            reaction_smarts: SMARTS string for reaction
+            reagent_file_list: List of reagent file paths
+            evaluator_config: Evaluator configuration (e.g., FredEvaluatorConfig)
+            num_iterations: Number of iterations (default: 18500, matching paper)
+            max_resamples: Early stopping after consecutive duplicates (default: 6000)
+            output_dir: Directory to save output files (optional)
+        """
+        # Set output filenames if output_dir is specified
+        results_filename = None
+        log_filename = None
+        if output_dir is not None:
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+            results_filename = str(output_path / "legacy_rws_minimize_results.csv")
+            log_filename = str(output_path / "legacy_rws_minimize.log")
+
+        return ThompsonSamplingConfig(
+            reaction_smarts=reaction_smarts,
+            reagent_file_list=reagent_file_list,
+            num_ts_iterations=num_iterations,
+            num_warmup_trials=5,
+            strategy_config=RouletteWheelConfig(
+                mode="minimize",
+                alpha=0.1,
+                beta=0.1
+            ),
+            warmup_config=EnhancedWarmupConfig(),  # Stochastic parallel pairing
+            evaluator_config=evaluator_config,
+            batch_size=1,
+            max_resamples=max_resamples,
+            processes=1,
+            min_cpds_per_core=50,
+            use_boltzmann_weighting=True,  # Enable legacy RWS algorithm
             results_filename=results_filename,
             log_filename=log_filename
         )
@@ -389,6 +515,8 @@ def get_preset(
         "conservative_exploit": ConfigPresets.conservative_exploit,
         "balanced_sampling": ConfigPresets.balanced_sampling,
         "diverse_coverage": ConfigPresets.diverse_coverage,
+        "legacy_rws_maximize": ConfigPresets.legacy_rws_maximize,
+        "legacy_rws_minimize": ConfigPresets.legacy_rws_minimize,
     }
 
     if preset_name not in presets:

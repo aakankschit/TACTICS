@@ -61,15 +61,19 @@ class StandardWarmup(WarmupStrategy):
             for reagent_idx in range(reagent_counts[component_idx]):
                 # Test this reagent num_warmup_trials times
                 for trial in range(num_warmup_trials):
-                    combination = [None] * n_components
+                    # Initialize combination: fixed reagent + Empty for partners
+                    combination = [disallow_tracker.Empty] * n_components
                     combination[component_idx] = reagent_idx
 
                     # Select random partners for this trial
-                    # Note: Uses random.uniform scores + argmax like original implementation
-                    for partner_component_idx in partner_indices:
+                    # Fill partners in randomized order to satisfy DisallowTracker constraint
+                    partner_order = np.random.permutation(partner_indices).tolist()
+
+                    for partner_component_idx in partner_order:
                         partner_pool_size = reagent_counts[partner_component_idx]
 
-                        # Check what partners are disallowed for this partial combination
+                        # Mark this position as "to fill" while keeping others as Empty
+                        # This ensures exactly ONE To_Fill slot for DisallowTracker
                         combination[partner_component_idx] = disallow_tracker.To_Fill
                         disallow_mask = disallow_tracker.get_disallowed_selection_mask(combination)
 

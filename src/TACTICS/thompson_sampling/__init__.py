@@ -33,10 +33,9 @@ from .strategies import (
 # Import warmup strategies
 from .warmup import (
     WarmupStrategy,
+    BalancedWarmup,
     StandardWarmup,
-    StratifiedWarmup,
-    EnhancedWarmup,
-    LatinHypercubeWarmup
+    EnhancedWarmup
 )
 
 # Import utilities
@@ -81,10 +80,9 @@ __all__ = [
 
     # Warmup strategies
     'WarmupStrategy',
+    'BalancedWarmup',
     'StandardWarmup',
-    'StratifiedWarmup',
     'EnhancedWarmup',
-    'LatinHypercubeWarmup',
 
     # Evaluators
     'ROCSEvaluator',

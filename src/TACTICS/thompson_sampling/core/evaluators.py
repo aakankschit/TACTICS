@@ -132,15 +132,25 @@ class LookupEvaluator(Evaluator):
 
     def __init__(self, input_dictionary):
         self.num_evaluations = 0
-        
+
         # Handle both dictionary and JSON string inputs
         if isinstance(input_dictionary, str):
             import json
             input_dictionary = json.loads(input_dictionary)
-        
+
         ref_filename = input_dictionary['ref_filename']
-        ref_df = pd.read_csv(ref_filename)
-        self.ref_dict = dict([(a, b) for a, b in ref_df[['Product_Code', 'Scores']].values])
+        compound_col = input_dictionary.get('compound_col', 'Product_Code')
+        score_col = input_dictionary.get('score_col', 'Scores')
+
+        # Determine file type and read accordingly
+        if ref_filename.endswith('.parquet'):
+            ref_df = pd.read_parquet(ref_filename)
+        elif ref_filename.endswith('.csv'):
+            ref_df = pd.read_csv(ref_filename)
+        else:
+            raise ValueError(f"Unsupported file format: {ref_filename}. Supported formats: .csv, .parquet")
+
+        self.ref_dict = dict([(a, b) for a, b in ref_df[[compound_col, score_col]].values])
 
     @property
     def counter(self):
@@ -148,8 +158,8 @@ class LookupEvaluator(Evaluator):
 
     def evaluate(self, product_name):
         self.num_evaluations += 1
-        # smi = Chem.MolToSmiles(mol)
-        return self.ref_dict[product_name] # Changed to product code for easier lookup
+        # Return score from lookup, or np.nan if product not in reference
+        return self.ref_dict.get(product_name, np.nan)
 
 class DBEvaluator(Evaluator):
     """A simple evaluator class that looks up values from a database.

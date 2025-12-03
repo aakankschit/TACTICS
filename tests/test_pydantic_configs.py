@@ -15,8 +15,7 @@ from TACTICS.thompson_sampling.strategies.config import (
 from TACTICS.thompson_sampling.warmup.config import (
     StandardWarmupConfig,
     EnhancedWarmupConfig,
-    StratifiedWarmupConfig,
-    LatinHypercubeWarmupConfig
+    BalancedWarmupConfig
 )
 from TACTICS.thompson_sampling.core.evaluator_config import (
     LookupEvaluatorConfig,
@@ -92,15 +91,25 @@ class TestWarmupConfigs:
         config = StandardWarmupConfig()
         assert config.warmup_type == "standard"
 
-    def test_stratified_warmup_config(self):
-        """Test StratifiedWarmupConfig creation."""
-        config = StratifiedWarmupConfig()
-        assert config.warmup_type == "stratified"
+    def test_balanced_warmup_config(self):
+        """Test BalancedWarmupConfig creation."""
+        config = BalancedWarmupConfig()
+        assert config.warmup_type == "balanced"
+        assert config.observations_per_reagent == 5  # default
+        assert config.use_per_reagent_variance is True  # default
 
-    def test_latin_hypercube_warmup_config(self):
-        """Test LatinHypercubeWarmupConfig creation."""
-        config = LatinHypercubeWarmupConfig()
-        assert config.warmup_type == "latin_hypercube"
+    def test_balanced_warmup_config_custom(self):
+        """Test BalancedWarmupConfig with custom parameters."""
+        config = BalancedWarmupConfig(
+            observations_per_reagent=10,
+            seed=42,
+            use_per_reagent_variance=False,
+            shrinkage_strength=5.0
+        )
+        assert config.observations_per_reagent == 10
+        assert config.seed == 42
+        assert config.use_per_reagent_variance is False
+        assert config.shrinkage_strength == 5.0
 
 
 class TestEvaluatorConfigs:
@@ -157,12 +166,13 @@ class TestFactories:
         assert isinstance(strategy, RouletteWheelSelection)
         assert strategy.alpha == 0.15
 
-    def test_create_warmup_stratified(self):
-        """Test creating StratifiedWarmup from config."""
-        config = StratifiedWarmupConfig()
+    def test_create_warmup_balanced(self):
+        """Test creating BalancedWarmup from config."""
+        config = BalancedWarmupConfig(observations_per_reagent=5)
         warmup = create_warmup(config)
-        from TACTICS.thompson_sampling.warmup import StratifiedWarmup
-        assert isinstance(warmup, StratifiedWarmup)
+        from TACTICS.thompson_sampling.warmup import BalancedWarmup
+        assert isinstance(warmup, BalancedWarmup)
+        assert warmup.observations_per_reagent == 5
 
     def test_create_evaluator_mw(self):
         """Test creating MWEvaluator from config."""

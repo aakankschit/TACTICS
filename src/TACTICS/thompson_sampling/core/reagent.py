@@ -4,7 +4,9 @@ Unified Reagent class for Thompson Sampling.
 This module provides a single Reagent class that works with all selection strategies.
 """
 
+import math
 import numpy as np
+from typing import Set
 from rdkit import Chem
 
 
@@ -25,6 +27,7 @@ class Reagent:
         known_var (float): Known variance (set during initialization)
         initial_scores (list): Scores collected during warmup
         current_phase (str): Either "warmup" or "search"
+        _compatible_smarts (Set[str]): Set of SMARTS pattern IDs this reagent is compatible with
     """
 
     __slots__ = [
@@ -36,16 +39,24 @@ class Reagent:
         "n_samples",
         "known_var",
         "initial_scores",
-        "current_phase"
+        "current_phase",
+        "use_boltzmann_weighting",
+        "sum_w",
+        "std_score_known",
+        "mode",
+        "_compatible_smarts"
     ]
 
-    def __init__(self, reagent_name: str, smiles: str):
+    def __init__(self, reagent_name: str, smiles: str, use_boltzmann_weighting: bool = False, mode: str = "maximize"):
         """
         Initialize a reagent.
 
         Parameters:
             reagent_name: Unique identifier for this reagent
             smiles: SMILES string representation of the molecule
+            use_boltzmann_weighting: If True, use Boltzmann-weighted Bayesian updates (legacy RWS algorithm).
+                                    If False, use standard uniform-weighted Bayesian updates (default).
+            mode: "maximize" or "minimize" - affects Boltzmann weighting direction
         """
         self.reagent_name = reagent_name
         self.smiles = smiles
@@ -56,6 +67,12 @@ class Reagent:
         self.known_var = None
         self.initial_scores = []
         self.current_phase = "warmup"
+        self.use_boltzmann_weighting = use_boltzmann_weighting
+        self.sum_w = None
+        self.std_score_known = None
+        self.mode = mode
+        # SMARTS compatibility tracking (default: compatible with primary pattern only)
+        self._compatible_smarts: Set[str] = {"primary"}
 
     def add_score(self, score: float) -> None:
         """
@@ -86,6 +103,9 @@ class Reagent:
         This is called after warmup to set the prior mean and std,
         then replays all warmup scores as Bayesian updates.
 
+        If Boltzmann weighting is enabled, uses batch Boltzmann-weighted update.
+        Otherwise, uses sequential standard Bayesian updates.
+
         Parameters:
             prior_mean: Mean of the prior distribution (from warmup)
             prior_std: Standard deviation of the prior (from warmup)
@@ -101,14 +121,104 @@ class Reagent:
         self.std = prior_std
         self.known_var = prior_std ** 2
 
+        # For Boltzmann weighting, initialize sum_w and std_score_known
+        if self.use_boltzmann_weighting:
+            self.std_score_known = prior_std
+            # For minimize mode, negate mean so that lower (better) scores get higher weights
+            boltzmann_mean = -self.mean if self.mode == "minimize" else self.mean
+            self.sum_w = math.exp(boltzmann_mean / self.std_score_known)
+
+        # Transition to search phase
+        self.current_phase = "search"
+
+        # Replay warmup scores
+        if self.use_boltzmann_weighting:
+            # Batch Boltzmann update (legacy RWS algorithm)
+            self._batch_boltzmann_update(self.initial_scores)
+            self.initial_scores = []
+        else:
+            # Sequential standard Bayesian updates
+            warmup_scores = self.initial_scores.copy()
+            self.initial_scores = []  # Clear to avoid double-counting
+            for score in warmup_scores:
+                self.add_score(score)
+
+    def init_prior_per_reagent(
+        self,
+        global_mean: float,
+        global_std: float,
+        shrinkage_strength: float = 3.0
+    ) -> None:
+        """
+        Initialize the prior with per-reagent variance estimation using James-Stein shrinkage.
+
+        This method estimates variance per-reagent from warmup observations, then applies
+        shrinkage to regularize toward the global variance. This provides better uncertainty
+        estimates than using global variance alone, especially when reagents have different
+        inherent score distributions.
+
+        James-Stein shrinkage formula:
+            shrinkage_weight = n / (n + shrinkage_strength)
+            mean = shrinkage_weight * reagent_mean + (1 - shrinkage_weight) * global_mean
+            var = shrinkage_weight * reagent_var + (1 - shrinkage_weight) * global_var
+
+        With n=5 observations and shrinkage_strength=3:
+            weight = 5 / 8 = 0.625 (62.5% per-reagent, 37.5% global)
+
+        Parameters:
+            global_mean: Global mean from all warmup scores
+            global_std: Global standard deviation from all warmup scores
+            shrinkage_strength: Controls regularization strength. Higher = more global.
+                               Effective weight = n / (n + shrinkage_strength)
+
+        Raises:
+            ValueError: If called outside warmup phase or with no scores
+        """
+        if self.current_phase != "warmup":
+            raise ValueError(f"Reagent {self.reagent_name} has already been initialized")
+
+        if not self.initial_scores:
+            raise ValueError(f"No warmup scores for reagent {self.reagent_name}")
+
+        n = len(self.initial_scores)
+        scores = np.array(self.initial_scores)
+
+        if n >= 3:
+            # Compute per-reagent statistics
+            reagent_mean = np.mean(scores)
+            reagent_var = np.var(scores, ddof=1)  # Sample variance (unbiased)
+
+            # James-Stein shrinkage: weight depends on number of observations
+            shrinkage_weight = n / (n + shrinkage_strength)
+
+            # Shrink toward global estimates
+            self.mean = shrinkage_weight * reagent_mean + (1 - shrinkage_weight) * global_mean
+            self.known_var = shrinkage_weight * reagent_var + (1 - shrinkage_weight) * (global_std ** 2)
+            self.std = np.sqrt(self.known_var)
+        else:
+            # Insufficient observations: fall back to global estimates
+            self.mean = global_mean
+            self.std = global_std
+            self.known_var = global_std ** 2
+
+        # For Boltzmann weighting, initialize sum_w and std_score_known
+        if self.use_boltzmann_weighting:
+            self.std_score_known = self.std
+            boltzmann_mean = -self.mean if self.mode == "minimize" else self.mean
+            self.sum_w = math.exp(boltzmann_mean / self.std_score_known)
+
         # Transition to search phase
         self.current_phase = "search"
 
         # Replay warmup scores as Bayesian updates
-        warmup_scores = self.initial_scores.copy()
-        self.initial_scores = []  # Clear to avoid double-counting
-        for score in warmup_scores:
-            self.add_score(score)
+        if self.use_boltzmann_weighting:
+            self._batch_boltzmann_update(self.initial_scores)
+            self.initial_scores = []
+        else:
+            warmup_scores = self.initial_scores.copy()
+            self.initial_scores = []
+            for score in warmup_scores:
+                self.add_score(score)
 
     def sample(self) -> float:
         """
@@ -126,6 +236,9 @@ class Reagent:
         """
         Bayesian update for the posterior mean.
 
+        If Boltzmann weighting is enabled, uses Boltzmann-weighted moving average.
+        Otherwise, uses standard uniform-weighted Bayesian update.
+
         Parameters:
             current_var: Current variance
             observed_value: New observed score
@@ -133,9 +246,19 @@ class Reagent:
         Returns:
             float: Updated posterior mean
         """
-        numerator = current_var * observed_value + self.known_var * self.mean
-        denominator = current_var + self.known_var
-        return numerator / denominator
+        if self.use_boltzmann_weighting:
+            # Legacy RWS: Boltzmann-weighted moving average
+            # Better scores get exponentially higher weight
+            # For minimize mode, negate score so lower (better) values get higher weights
+            boltzmann_value = -observed_value if self.mode == "minimize" else observed_value
+            w = math.exp(boltzmann_value / self.std_score_known)
+            self.sum_w += w
+            return self.mean + (w / self.sum_w) * (observed_value - self.mean)
+        else:
+            # Standard: Uniform-weighted Bayesian update
+            numerator = current_var * observed_value + self.known_var * self.mean
+            denominator = current_var + self.known_var
+            return numerator / denominator
 
     def _update_std(self, current_var: float) -> float:
         """
@@ -150,6 +273,95 @@ class Reagent:
         numerator = current_var * self.known_var
         denominator = current_var + self.known_var
         return np.sqrt(numerator / denominator)
+
+    def _batch_boltzmann_update(self, scores: list) -> None:
+        """
+        Batch update with Boltzmann-weighted average (legacy RWS algorithm).
+
+        This method implements the Boltzmann-weighted moving average used in the
+        original RWS implementation. Better scores get exponentially higher weight,
+        creating "rich get richer" dynamics that accelerate convergence.
+
+        Parameters:
+            scores: List of scores collected during warmup
+        """
+        if not scores:
+            return
+
+        scores_array = np.array(scores)
+
+        # For minimize mode, negate scores so lower (better) values get higher weights
+        boltzmann_scores = -scores_array if self.mode == "minimize" else scores_array
+
+        # Compute Boltzmann weights: w_i = exp(score_i / std)
+        w_batch = np.exp(boltzmann_scores / self.std_score_known)
+        mean_batch = np.average(scores_array, weights=w_batch)  # Use original scores for mean
+        w_sum_batch = np.sum(w_batch)
+
+        # Update mean using Boltzmann-weighted moving average
+        self.sum_w += w_sum_batch
+        self.mean = self.mean + (w_sum_batch / self.sum_w) * (mean_batch - self.mean)
+
+        # Update std using standard Bayesian variance shrinkage
+        n = len(scores)
+        prior_var = self.std ** 2
+        denominator = n * prior_var + self.known_var
+        numerator = prior_var * self.known_var
+        self.std = np.sqrt(numerator / denominator)
+
+    # ===== SMARTS Compatibility Methods =====
+
+    @property
+    def compatible_smarts(self) -> Set[str]:
+        """
+        Get the set of SMARTS pattern IDs this reagent is compatible with.
+
+        Returns:
+            Set of pattern_id strings
+        """
+        return self._compatible_smarts.copy()
+
+    def set_compatible_smarts(self, pattern_ids: Set[str]) -> None:
+        """
+        Set the SMARTS patterns this reagent is compatible with.
+
+        Called during initialization after SMARTS toolkit validation.
+
+        Parameters:
+            pattern_ids: Set of compatible pattern IDs
+        """
+        self._compatible_smarts = set(pattern_ids)
+
+    def add_compatible_smarts(self, pattern_id: str) -> None:
+        """
+        Add a single SMARTS pattern to the compatibility set.
+
+        Parameters:
+            pattern_id: Pattern ID to add
+        """
+        self._compatible_smarts.add(pattern_id)
+
+    def is_compatible_with(self, pattern_id: str) -> bool:
+        """
+        Check if reagent is compatible with a specific SMARTS pattern.
+
+        Parameters:
+            pattern_id: Pattern ID to check
+
+        Returns:
+            True if compatible, False otherwise
+        """
+        return pattern_id in self._compatible_smarts
+
+    @property
+    def reagent_key(self) -> str:
+        """
+        Get unique key for this reagent (used in SMARTS routing).
+
+        Returns:
+            The reagent name as the unique key
+        """
+        return self.reagent_name
 
     def __repr__(self) -> str:
         return f"Reagent('{self.reagent_name}', mean={self.mean:.3f}, std={self.std:.3f}, n={self.n_samples})"

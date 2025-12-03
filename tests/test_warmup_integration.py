@@ -15,8 +15,8 @@ from TACTICS.thompson_sampling.core.sampler import ThompsonSampler
 from TACTICS.thompson_sampling.core.evaluators import LookupEvaluator
 from TACTICS.thompson_sampling.strategies.greedy_selection import GreedySelection
 from TACTICS.thompson_sampling.warmup import (
-    WarmupStrategy, StandardWarmup, StratifiedWarmup,
-    EnhancedWarmup, LatinHypercubeWarmup
+    WarmupStrategy, StandardWarmup, BalancedWarmup,
+    EnhancedWarmup
 )
 
 
@@ -57,9 +57,9 @@ class TestWarmupIntegration:
 
         sampler.close()
 
-    def test_stratified_warmup_integration(self):
-        """Test that StratifiedWarmup integrates with ThompsonSampler"""
-        warmup_strategy = StratifiedWarmup()
+    def test_balanced_warmup_integration(self):
+        """Test that BalancedWarmup integrates with ThompsonSampler"""
+        warmup_strategy = BalancedWarmup(observations_per_reagent=3)
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
@@ -71,7 +71,7 @@ class TestWarmupIntegration:
         sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
         # Run warmup
-        warmup_results = sampler.warm_up(num_warmup_trials=2)
+        warmup_results = sampler.warm_up(num_warmup_trials=3)
 
         assert len(warmup_results) > 0
 
@@ -109,9 +109,13 @@ class TestWarmupIntegration:
 
         sampler.close()
 
-    def test_latin_hypercube_warmup_integration(self):
-        """Test that LatinHypercubeWarmup integrates with ThompsonSampler"""
-        warmup_strategy = LatinHypercubeWarmup()
+    def test_balanced_warmup_per_reagent_variance(self):
+        """Test that BalancedWarmup with per-reagent variance integrates with ThompsonSampler"""
+        warmup_strategy = BalancedWarmup(
+            observations_per_reagent=5,
+            use_per_reagent_variance=True,
+            shrinkage_strength=3.0
+        )
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
@@ -123,7 +127,7 @@ class TestWarmupIntegration:
         sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
 
         # Run warmup
-        warmup_results = sampler.warm_up(num_warmup_trials=2)
+        warmup_results = sampler.warm_up(num_warmup_trials=5)
 
         assert len(warmup_results) > 0
 
@@ -169,9 +173,8 @@ class TestWarmupIntegration:
         """Test that warmup strategies report correct expected evaluations"""
         strategies = [
             StandardWarmup(),
-            StratifiedWarmup(),
-            EnhancedWarmup(),
-            LatinHypercubeWarmup()
+            BalancedWarmup(observations_per_reagent=3),
+            EnhancedWarmup()
         ]
 
         for warmup_strategy in strategies:
@@ -197,9 +200,8 @@ class TestWarmupIntegration:
         """Test that warmup strategies have descriptive names"""
         strategies = [
             StandardWarmup(),
-            StratifiedWarmup(),
-            EnhancedWarmup(),
-            LatinHypercubeWarmup()
+            BalancedWarmup(observations_per_reagent=3),
+            EnhancedWarmup()
         ]
 
         for warmup_strategy in strategies:
@@ -287,9 +289,8 @@ class TestWarmupIntegration:
         """Test complete workflow from warmup to search"""
         warmup_strategies = [
             StandardWarmup(),
-            StratifiedWarmup(),
-            EnhancedWarmup(),
-            LatinHypercubeWarmup()
+            BalancedWarmup(observations_per_reagent=3),
+            EnhancedWarmup()
         ]
 
         for warmup_strategy in warmup_strategies:

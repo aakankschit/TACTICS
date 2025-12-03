@@ -17,6 +17,8 @@ class EpsilonGreedySelection(SelectionStrategy):
 
         # Decay epsilon over time
         current_epsilon = self.initial_epsilon * (self.decay ** iteration)
+        epsilon_scaling = kwargs.get('epsilon_scaling', 1.0) 
+        current_epsilon = current_epsilon * epsilon_scaling  
 
         # Explore with probability epsilon
         if rng.random() < current_epsilon:

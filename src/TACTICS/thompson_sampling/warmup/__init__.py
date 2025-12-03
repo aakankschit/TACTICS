@@ -5,22 +5,19 @@ This module provides different strategies for the warmup phase of Thompson Sampl
 which initializes reagent posteriors before the main search begins.
 
 Available strategies:
+- BalancedWarmup: Exactly K observations per reagent with stratified partners (recommended)
 - StandardWarmup: Random partner selection with replacement (baseline)
-- StratifiedWarmup: Random selection without replacement (recommended)
 - EnhancedWarmup: Parallel pairing with shuffling (legacy)
-- LatinHypercubeWarmup: Space-filling stratified sampling (advanced)
 """
 
 from .base import WarmupStrategy
 from .standard import StandardWarmup
-from .stratified import StratifiedWarmup
 from .enhanced import EnhancedWarmup
-from .latin_hypercube import LatinHypercubeWarmup
+from .balanced import BalancedWarmup
 
 __all__ = [
     'WarmupStrategy',
+    'BalancedWarmup',
     'StandardWarmup',
-    'StratifiedWarmup',
     'EnhancedWarmup',
-    'LatinHypercubeWarmup',
 ]
