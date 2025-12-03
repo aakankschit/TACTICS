@@ -161,22 +161,24 @@ env/
 CLAUDE.md
 
 # =============================================================================
-# TACTICS Repository Reorganization - Local Files Only
+# TACTICS - Local Research Infrastructure (NOT distributed)
 # =============================================================================
 
-# Experiment outputs (regenerable, local only)
-outputs/runs/**
-!outputs/runs/.gitkeep
+# Experiment utilities (local only)
+experiment_utils.py
+experiment_template.py
 
-# Large enumerated libraries (regenerable, local only)
-data/libraries/**
-!data/libraries/.gitkeep
+# Experiments directory (local research scripts)
+experiments/
 
-# All datasets (local testing only, not tracked remotely)
-data/reagents/quinazoline/
-data/reagents/seh/
-data/reagents/adenine/
-data/scores/
+# Data directory (local datasets)
+data/
+
+# Outputs directory (generated results)
+outputs/
+
+# Reorganization planning document
+reorganization.md
 
 # Root-level generated files
 /*.png
