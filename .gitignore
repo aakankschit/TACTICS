@@ -182,3 +182,6 @@ data/scores/
 /*.png
 /*.pdf
 /*.csv
+
+# Legacy code outputs (not needed in repository)
+src/TACTICS/thompson_sampling/legacy/src/

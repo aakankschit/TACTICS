@@ -1,2 +1,4 @@
-*.smi filter=lfs diff=lfs merge=lfs -text
-*.txt filter=lfs diff=lfs merge=lfs -text
+# Only track example dataset files with LFS (thrombin reagents)
+data/reagents/thrombin/*.smi filter=lfs diff=lfs merge=lfs -text
+
+# Note: Other datasets (seh, adenine, quinazoline) are local-only and gitignored
