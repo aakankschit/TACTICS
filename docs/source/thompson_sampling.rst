@@ -123,6 +123,18 @@ Warmup strategies determine how reagent combinations are sampled to initialize p
    :undoc-members:
    :show-inheritance:
 
+.. autoclass:: TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   Balanced warmup (Recommended): Exactly K observations per reagent with stratified partners
+
+   * Guarantees uniform coverage across all reagents
+   * Uses per-reagent variance estimation with James-Stein shrinkage
+   * Reduces bias from random sampling
+   * Best for: Most use cases, especially with asymmetric component sizes
+
 .. autoclass:: TACTICS.thompson_sampling.warmup.standard.StandardWarmup
    :members:
    :undoc-members:
@@ -134,36 +146,16 @@ Warmup strategies determine how reagent combinations are sampled to initialize p
    * Ensures all reagents are evaluated
    * Expected evaluations: (sum of reagents) × num_trials
 
-.. autoclass:: TACTICS.thompson_sampling.warmup.stratified.StratifiedWarmup
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-   Stratified warmup: Ensures balanced coverage across all components
-
-   * More uniform coverage than standard warmup
-   * Reduces bias from component imbalances
-
 .. autoclass:: TACTICS.thompson_sampling.warmup.enhanced.EnhancedWarmup
    :members:
    :undoc-members:
    :show-inheritance:
 
-   Enhanced warmup: Anchor-based approach for better diversity
+   Enhanced warmup: Stochastic parallel pairing with shuffling (legacy)
 
-   * Uses anchor compounds to explore diverse regions
-   * Multiple anchor strategies (random, max_variance, etc.)
-   * Better for complex libraries
-
-.. autoclass:: TACTICS.thompson_sampling.warmup.latin_hypercube.LatinHypercubeWarmup
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-   Latin hypercube sampling for space-filling warmup
-
-   * Ensures even coverage of the search space
-   * Particularly useful for large combinatorial libraries
+   * Used in original RWS algorithm
+   * Parallel pairing of reagents across components
+   * Best for: Replicating legacy RWS results
 
 Evaluator Classes
 ----------------
@@ -218,7 +210,7 @@ The modern way to use Thompson Sampling is through Pydantic configuration:
     from TACTICS.thompson_sampling import ThompsonSampler
     from TACTICS.thompson_sampling.config import ThompsonSamplingConfig
     from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
-    from TACTICS.thompson_sampling.warmup.config import StratifiedWarmupConfig
+    from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
     from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
     # Create configuration
@@ -228,7 +220,7 @@ The modern way to use Thompson Sampling is through Pydantic configuration:
         num_ts_iterations=1000,
         num_warmup_trials=3,
         strategy_config=RouletteWheelConfig(mode="maximize", alpha=0.1, beta=0.1),
-        warmup_config=StratifiedWarmupConfig(),
+        warmup_config=BalancedWarmupConfig(observations_per_reagent=3),
         evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
     )
 
@@ -273,11 +265,18 @@ Available Presets
 
 The following presets are available:
 
+**Modern Presets** (use BalancedWarmup):
+
 * **fast_exploration**: Epsilon-greedy for quick screening (ε=0.2, decay=0.995)
 * **parallel_batch**: Roulette wheel with thermal cycling for parallel batch processing
 * **conservative_exploit**: Greedy strategy for pure exploitation
-* **balanced_sampling**: UCB for balanced exploration/exploitation
+* **balanced_sampling**: UCB for balanced exploration/exploitation (c=2.0)
 * **diverse_coverage**: Roulette wheel with high exploration (α=0.2, β=0.2)
+
+**Legacy Presets** (use EnhancedWarmup with stochastic parallel pairing):
+
+* **legacy_rws_maximize**: Original RWS algorithm with Boltzmann weighting (maximize mode)
+* **legacy_rws_minimize**: Original RWS algorithm with Boltzmann weighting (minimize mode, e.g., docking)
 
 All presets support:
 
@@ -373,7 +372,7 @@ Custom Configuration
 
     from TACTICS.thompson_sampling import ThompsonSamplingConfig, run_ts
     from TACTICS.thompson_sampling.strategies.config import EpsilonGreedyConfig
-    from TACTICS.thompson_sampling.warmup.config import StratifiedWarmupConfig
+    from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
     from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
     config = ThompsonSamplingConfig(
@@ -382,7 +381,7 @@ Custom Configuration
         num_ts_iterations=1000,
         num_warmup_trials=5,
         strategy_config=EpsilonGreedyConfig(mode="maximize", epsilon=0.2, decay=0.995),
-        warmup_config=StratifiedWarmupConfig(),
+        warmup_config=BalancedWarmupConfig(observations_per_reagent=5),
         evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
         results_filename="results.csv",
         log_filename="run.log"
@@ -532,26 +531,32 @@ Strategy Selection Guide
 -----------------------
 
 **GreedySelection:**
+
 * Best for: Simple optimization landscapes, limited budgets
 * Pros: Fast convergence, simple
 * Cons: Can get stuck in local optima
 
 **RouletteWheelSelection:**
+
 * Best for: Complex multi-modal landscapes, large libraries
-* Pros: Better exploration/exploitation balance, adaptive
+* Pros: Better exploration/exploitation balance via thermal cycling, adaptive temperature
 * Cons: More complex, requires parameter tuning
 
 **UCBSelection:**
+
 * Best for: Deterministic optimization needs
-* Pros: Theoretically grounded, good exploration
+* Pros: Theoretically grounded, principled exploration via confidence bounds
 * Cons: Less stochastic exploration than Thompson Sampling
 
 **BayesUCBSelection:**
-* Best for: Complex multi-modal landscapes, theoretical guarantees
-* Pros: Bayesian confidence bounds, adaptive exploration, thermal cycling, escapes local optima
-* Cons: Requires scipy, more complex than simple UCB
 
-**EpsilonGreedy:**
-* Best for: Baseline comparisons, simple needs
-* Pros: Very simple, easy to understand
+* Best for: Complex multi-modal landscapes, escaping local optima
+* Pros: Bayesian confidence bounds using Student-t quantiles, adaptive percentile parameters, thermal cycling
+* Cons: Requires scipy, more complex than simple UCB
+* Note: Percentile parameters control exploration (higher p_high → more exploration)
+
+**EpsilonGreedySelection:**
+
+* Best for: Baseline comparisons, quick screening
+* Pros: Very simple, easy to understand, supports decay
 * Cons: Less sophisticated than other methods 

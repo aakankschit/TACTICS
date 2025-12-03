@@ -74,11 +74,34 @@ UCB Selection
 Epsilon-Greedy Selection
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: TACTICS.thompson_sampling.strategies.epsilon_greedy.EpsilonGreedy
+.. autoclass:: TACTICS.thompson_sampling.strategies.epsilon_greedy.EpsilonGreedySelection
    :members:
    :undoc-members:
    :show-inheritance:
    :special-members: __init__
+
+Bayes-UCB Selection
+~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :special-members: __init__
+
+   Adaptive Bayes-UCB selection strategy with thermal cycling:
+
+   * Uses Student-t quantiles for Bayesian confidence bounds
+   * Adaptive percentile parameters (p_high, p_low) for exploration
+   * Thermal cycling for escaping local optima
+   * Requires scipy for quantile calculations
+
+   **Key Methods:**
+
+   .. automethod:: select_reagent
+   .. automethod:: select_batch
+   .. automethod:: update_percentiles
+   .. automethod:: rotate_component
 
 Warmup Strategies
 -----------------
@@ -98,6 +121,21 @@ Base Warmup Strategy
    .. automethod:: get_name
    .. automethod:: get_description
 
+Balanced Warmup (Recommended)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :special-members: __init__
+
+   Recommended warmup strategy with exactly K observations per reagent:
+
+   * Guarantees uniform coverage across all reagents
+   * Uses James-Stein shrinkage for per-reagent variance estimation
+   * Stratified partner selection for better prior initialization
+
 Standard Warmup
 ~~~~~~~~~~~~~~~
 
@@ -106,16 +144,8 @@ Standard Warmup
    :undoc-members:
    :show-inheritance:
 
-Stratified Warmup
-~~~~~~~~~~~~~~~~~
-
-.. autoclass:: TACTICS.thompson_sampling.warmup.stratified.StratifiedWarmup
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Enhanced Warmup
-~~~~~~~~~~~~~~~
+Enhanced Warmup (Legacy)
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: TACTICS.thompson_sampling.warmup.enhanced.EnhancedWarmup
    :members:
@@ -123,14 +153,11 @@ Enhanced Warmup
    :show-inheritance:
    :special-members: __init__
 
-Latin Hypercube Warmup
-~~~~~~~~~~~~~~~~~~~~~~
+   Legacy warmup with stochastic parallel pairing:
 
-.. autoclass:: TACTICS.thompson_sampling.warmup.latin_hypercube.LatinHypercubeWarmup
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :special-members: __init__
+   * Used in original RWS algorithm (Zhao et al. 2025)
+   * Parallel pairing of reagents across components with shuffling
+   * Required for legacy_rws_maximize and legacy_rws_minimize presets
 
 Evaluators
 ----------

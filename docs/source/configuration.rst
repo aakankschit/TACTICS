@@ -26,7 +26,7 @@ The modern configuration system uses nested Pydantic models for each component:
     from TACTICS.thompson_sampling import ThompsonSampler
     from TACTICS.thompson_sampling.config import ThompsonSamplingConfig
     from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
-    from TACTICS.thompson_sampling.warmup.config import StratifiedWarmupConfig
+    from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
     from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
     # Create nested configuration
@@ -40,7 +40,7 @@ The modern configuration system uses nested Pydantic models for each component:
             alpha=0.1,
             beta=0.1
         ),
-        warmup_config=StratifiedWarmupConfig(),
+        warmup_config=BalancedWarmupConfig(observations_per_reagent=3),
         evaluator_config=LookupEvaluatorConfig(
             ref_filename="scores.csv",
             ref_colname="Scores"
@@ -112,12 +112,18 @@ Strategy Configurations
 Warmup Configurations
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: TACTICS.thompson_sampling.warmup.config.StandardWarmupConfig
+.. autoclass:: TACTICS.thompson_sampling.warmup.config.BalancedWarmupConfig
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: TACTICS.thompson_sampling.warmup.config.StratifiedWarmupConfig
+   Recommended warmup configuration with per-reagent variance estimation:
+
+   * **observations_per_reagent**: Number of observations per reagent (default: 3)
+   * Uses James-Stein shrinkage for variance estimation
+   * Guarantees uniform coverage across all reagents
+
+.. autoclass:: TACTICS.thompson_sampling.warmup.config.StandardWarmupConfig
    :members:
    :undoc-members:
    :show-inheritance:
@@ -127,10 +133,7 @@ Warmup Configurations
    :undoc-members:
    :show-inheritance:
 
-.. autoclass:: TACTICS.thompson_sampling.warmup.config.LatinHypercubeWarmupConfig
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   Legacy warmup with stochastic parallel pairing (used by legacy_rws presets)
 
 Evaluator Configurations
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -230,16 +233,27 @@ Diverse Coverage
         evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
     )
 
-Minimize Mode (for Docking)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Legacy RWS (for Replicating Published Results)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
-    config = ConfigPresets.minimize_mode(
+    # For maximize mode (e.g., ROCS similarity)
+    config = ConfigPresets.legacy_rws_maximize(
+        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
+        reagent_file_list=["acids.smi", "amines.smi"],
+        evaluator_config=ROCSEvaluatorConfig(query_molfile="ref.sdf"),
+        num_iterations=18500,
+        max_resamples=6000
+    )
+
+    # For minimize mode (e.g., docking)
+    config = ConfigPresets.legacy_rws_minimize(
         reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
         reagent_file_list=["acids.smi", "amines.smi"],
         evaluator_config=FredEvaluatorConfig(design_unit_file="receptor.oedu"),
-        strategy="roulette_wheel"
+        num_iterations=18500,
+        max_resamples=6000
     )
 
 Using get_preset
@@ -274,12 +288,12 @@ Factory Usage
         create_evaluator
     )
     from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
-    from TACTICS.thompson_sampling.warmup.config import LatinHypercubeWarmupConfig
+    from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
     from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
     # Create components from configs
     strategy = create_strategy(RouletteWheelConfig(mode="maximize", alpha=0.1))
-    warmup = create_warmup(LatinHypercubeWarmupConfig())
+    warmup = create_warmup(BalancedWarmupConfig(observations_per_reagent=3))
     evaluator = create_evaluator(LookupEvaluatorConfig(ref_filename="scores.csv"))
 
     # Use with sampler
@@ -424,7 +438,8 @@ Example JSON Configuration
             "efficiency_threshold": 0.1
         },
         "warmup_config": {
-            "warmup_type": "stratified"
+            "warmup_type": "balanced",
+            "observations_per_reagent": 3
         },
         "evaluator_config": {
             "evaluator_type": "lookup",
@@ -473,17 +488,19 @@ Preset Selection Guide
 
 Choose the right preset for your use case:
 
+**Modern Presets** (use BalancedWarmup):
+
 **fast_exploration**
     * Quick initial screening
     * Fast evaluators (Lookup, Database)
-    * Epsilon-greedy strategy
+    * Epsilon-greedy strategy (ε=0.2, decay=0.995)
     * Single-compound mode
 
 **parallel_batch**
     * Slow evaluators (ROCS, Fred, ML)
     * Large-scale screening
     * Multi-core systems
-    * Batch processing
+    * Batch processing with Roulette Wheel
 
 **conservative_exploit**
     * Hit optimization
@@ -494,19 +511,28 @@ Choose the right preset for your use case:
 **balanced_sampling**
     * General-purpose screening
     * Theoretical guarantees
-    * UCB strategy
-    * Diverse exploration
+    * UCB strategy (c=2.0)
+    * Balanced exploration/exploitation
 
 **diverse_coverage**
     * Maximum diversity
-    * Reagents ordered by properties
-    * Latin Hypercube warmup
+    * High exploration parameters (α=0.2, β=0.2)
+    * Roulette Wheel with thermal cycling
     * Exploration-heavy
 
-**minimize_mode**
+**Legacy Presets** (use EnhancedWarmup with stochastic parallel pairing):
+
+**legacy_rws_maximize**
+    * Replicate published RWS results
+    * Boltzmann-weighted Bayesian updates
+    * Maximize mode (e.g., ROCS similarity)
+    * Expected ~76±5% recovery
+
+**legacy_rws_minimize**
     * Docking scores (lower is better)
     * Binding energies
-    * Any minimization problem
+    * Boltzmann-weighted Bayesian updates
+    * Minimize mode
 
 Error Handling
 --------------
