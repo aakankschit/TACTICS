@@ -51,7 +51,8 @@ keywords = [
 [project.optional-dependencies]
 test = [
     "pytest",
-    "pytest-cov"
+    "pytest-cov",
+    "ipython"
 ]
 
 notebook = [
