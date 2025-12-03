@@ -156,3 +156,29 @@ env/
 
 # macOS Finder settings file
 .DS_Store
+
+# Claude Code local config
+CLAUDE.md
+
+# =============================================================================
+# TACTICS Repository Reorganization - Local Files Only
+# =============================================================================
+
+# Experiment outputs (regenerable, local only)
+outputs/runs/**
+!outputs/runs/.gitkeep
+
+# Large enumerated libraries (regenerable, local only)
+data/libraries/**
+!data/libraries/.gitkeep
+
+# All datasets (local testing only, not tracked remotely)
+data/reagents/quinazoline/
+data/reagents/seh/
+data/reagents/adenine/
+data/scores/
+
+# Root-level generated files
+/*.png
+/*.pdf
+/*.csv
