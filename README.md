@@ -46,6 +46,34 @@ TACTICS/
 └── library_analysis/      # Analysis and visualization
 ```
 
+## 📁 Repository Structure
+
+```
+TACTICS/
+├── src/TACTICS/              # Core package (pip installable)
+│   ├── thompson_sampling/    # Thompson Sampling algorithms
+│   ├── library_enumeration/  # Library generation tools
+│   └── library_analysis/     # Analysis and visualization
+│
+├── data/                     # Input datasets (local only, not distributed)
+│   ├── reagents/             # Reagent SMILES files by dataset
+│   └── scores/               # Pre-computed score lookup tables
+│
+├── experiments/              # Research experiments (not distributed)
+│   ├── strategy_benchmarks/  # Strategy comparison studies
+│   ├── warmup_analysis/      # Warmup configuration analysis
+│   └── validation/           # Validation studies
+│
+├── examples/                 # User-facing examples (distributed)
+│   ├── quickstart_thrombin.py
+│   ├── bayes_ucb_example.py
+│   └── notebooks/            # Jupyter tutorial notebooks
+│
+├── outputs/                  # Generated outputs (gitignored)
+├── tests/                    # Unit and integration tests
+└── docs/                     # Documentation
+```
+
 ## 🎯 Quick Start
 
 ### Simple Out-of-the-Box Usage with Presets (Recommended)

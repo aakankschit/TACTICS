@@ -37,8 +37,8 @@ def run_bayes_ucb_example():
     config = ThompsonSamplingConfig(
         reaction_smarts="[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]);!$(N[#6]~[!#6;!#16]):3]>>[#6:1](=[O:2])[#7:3]",
         reagent_file_list=[
-            "examples/input_files/acids.smi",
-            "examples/input_files/coupled_aa_sub.smi"
+            "data/reagents/thrombin/acids.smi",
+            "data/reagents/thrombin/coupled_aa_sub.smi"
         ],
         num_ts_iterations=100,
         num_warmup_trials=3,
@@ -51,7 +51,7 @@ def run_bayes_ucb_example():
 
         # Configure evaluator
         evaluator_config=LookupEvaluatorConfig(
-            ref_filename="examples/docking_scores/product_scores.csv",
+            ref_filename="data/scores/thrombin/product_scores.csv",
             ref_colname="Score"
         ),
 
@@ -104,8 +104,8 @@ def run_bayes_ucb_legacy_example():
     config = ThompsonSamplingConfig(
         reaction_smarts="[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]);!$(N[#6]~[!#6;!#16]):3]>>[#6:1](=[O:2])[#7:3]",
         reagent_file_list=[
-            "examples/input_files/acids.smi",
-            "examples/input_files/coupled_aa_sub.smi"
+            "data/reagents/thrombin/acids.smi",
+            "data/reagents/thrombin/coupled_aa_sub.smi"
         ],
         num_ts_iterations=100,
         num_warmup_trials=3,
@@ -122,7 +122,7 @@ def run_bayes_ucb_legacy_example():
         # Legacy evaluator config
         evaluator_class_name="LookupEvaluator",
         evaluator_arg={
-            "ref_filename": "examples/docking_scores/product_scores.csv",
+            "ref_filename": "data/scores/thrombin/product_scores.csv",
             "ref_colname": "Score"
         },
 
@@ -163,14 +163,14 @@ def direct_instantiation_example():
 
     # Configure sampler
     sampler.read_reagents([
-        "examples/input_files/acids.smi",
-        "examples/input_files/coupled_aa_sub.smi"
+        "data/reagents/thrombin/acids.smi",
+        "data/reagents/thrombin/coupled_aa_sub.smi"
     ])
     sampler.set_reaction(
         "[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]);!$(N[#6]~[!#6;!#16]):3]>>[#6:1](=[O:2])[#7:3]"
     )
     sampler.set_evaluator(LookupEvaluator({
-        "ref_filename": "examples/docking_scores/product_scores.csv"
+        "ref_filename": "data/scores/thrombin/product_scores.csv"
     }))
 
     # Run sampling
