@@ -2,9 +2,13 @@
 SMARTS Toolkit - Troubleshooting, validation, and multi-SMARTS support for reaction patterns
 """
 
-from .pattern_validator import SMARTSValidator
-from .reagent_analyzer import ReagentCompatibilityAnalyzer
-from .exception_finder import ExceptionFinder
+from .pattern_validator import (
+    SMARTSValidator,
+    ValidationResult,
+    ProtectingGroupInfo,
+    DEFAULT_PROTECTING_GROUPS,
+    DEFAULT_SALT_FRAGMENTS,
+)
 from .visualization import SMARTSVisualizer
 
 # Multi-SMARTS and multi-step synthesis support
@@ -25,8 +29,10 @@ from .reaction_sequence import (
 __all__ = [
     # Validation and analysis tools
     'SMARTSValidator',
-    'ReagentCompatibilityAnalyzer',
-    'ExceptionFinder',
+    'ValidationResult',
+    'ProtectingGroupInfo',
+    'DEFAULT_PROTECTING_GROUPS',
+    'DEFAULT_SALT_FRAGMENTS',
     'SMARTSVisualizer',
     # Multi-SMARTS routing
     'SMARTSRouter',

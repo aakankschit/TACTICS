@@ -2,24 +2,37 @@
 Visualization tools for SMARTS pattern debugging
 """
 
-from typing import List, Optional, Dict, Tuple
+from typing import Tuple
 from rdkit import Chem
-from rdkit.Chem import Draw, AllChem
-from rdkit.Chem.Draw import IPythonConsole
+from rdkit.Chem import Draw
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-from IPython.display import display, HTML
-import io
-import base64
+from IPython.display import display
 
 class SMARTSVisualizer:
     """
     Visualize SMARTS patterns and their matches
     """
-    
-    def __init__(self, validator):
-        """Initialize with a SMARTSValidator instance"""
+
+    def __init__(
+        self,
+        validator,
+        img_size: Tuple[int, int] = (250, 250),
+        mols_per_row: int = 5
+    ):
+        """Initialize with a SMARTSValidator instance.
+
+        Parameters
+        ----------
+        validator : SMARTSValidator
+            Initialized validator with reaction and reagents loaded
+        img_size : Tuple[int, int]
+            Size of each molecule image in grid (width, height)
+        mols_per_row : int
+            Number of molecules per row in grid visualizations
+        """
         self.validator = validator
+        self.img_size = img_size
+        self.mols_per_row = mols_per_row
         
     def visualize_reaction(self) -> None:
         """Visualize the reaction SMARTS pattern"""
@@ -31,118 +44,125 @@ class SMARTSVisualizer:
         rxn_image = Draw.ReactionToImage(self.validator.reaction, subImgSize=(200, 200))
         display(rxn_image)
         
-    def visualize_template_matches(self, position: int, num_examples: int = 6):
-        """
-        Visualize template matching for a specific position
-        
-        Parameters:
-        -----------
+    def visualize_compatible_reagents(
+        self, position: int, max_molecules: int = 20
+    ) -> None:
+        """Display grid of compatible reagents at a position with template highlights.
+
+        Parameters
+        ----------
         position : int
-            Reaction component position
-        num_examples : int
-            Number of examples to show
+            Reaction component position (0-indexed)
+        max_molecules : int
+            Maximum number of molecules to display
         """
         result = self.validator.validate(test_reactions=False)
-        
         template = self.validator.reaction.GetReactantTemplate(position)
-        
-        # Get examples
-        compatible = result.compatible_reagents.get(position, [])[:num_examples//2]
-        incompatible = result.incompatible_reagents.get(position, [])[:num_examples//2]
-        
-        # Create grid visualization
-        all_examples = []
+
+        compatible = result.compatible_reagents.get(position, [])[:max_molecules]
+
+        if not compatible:
+            print(f"No compatible reagents found at position {position}")
+            return
+
+        mols = []
         labels = []
-        colors = []
-        
+
         for smiles, name in compatible:
             mol = Chem.MolFromSmiles(smiles)
             if mol:
-                all_examples.append(mol)
-                labels.append(f"✓ {name[:15]}")
-                colors.append('green')
-                
-        for smiles, name, reason in incompatible:
-            mol = Chem.MolFromSmiles(smiles)
-            if mol:
-                all_examples.append(mol)
-                labels.append(f"✗ {name[:15]}\n{reason[:20]}")
-                colors.append('red')
-        
-        if all_examples:
-            # Highlight matching substructure in compatible molecules
-            for i, mol in enumerate(all_examples[:len(compatible)]):
+                # Highlight matching substructure
                 matches = mol.GetSubstructMatches(template)
                 if matches:
-                    all_examples[i].__sssAtoms = matches[0]
-            
+                    mol.__sssAtoms = matches[0]
+                mols.append(mol)
+                labels.append(name[:20])
+
+        if mols:
             img = Draw.MolsToGridImage(
-                all_examples,
-                molsPerRow=3,
-                subImgSize=(250, 250),
+                mols,
+                molsPerRow=self.mols_per_row,
+                subImgSize=self.img_size,
                 legends=labels,
                 legendFontSize=10
             )
-            
             display(img)
-            print(f"\nTemplate SMARTS: {Chem.MolToSmarts(template)}")
-            print(f"Compatible: {len(compatible)}, Incompatible: {len(incompatible)}")
-    
-    def visualize_exception_patterns(self):
-        """Visualize patterns that need exception rules"""
-        from .exception_finder import ExceptionFinder
-        
-        finder = ExceptionFinder(self.validator)
-        exceptions = finder.find_exceptions()
-        
-        if not exceptions:
-            print("No exception patterns found")
-            return
-        
-        for pattern_smarts, position, exception_smarts in exceptions:
-            print(f"\n=== Position {position} ===")
-            print(f"Problem pattern: {pattern_smarts}")
-            
-            # Show examples of molecules with this pattern
-            result = self.validator.validate(test_reactions=False)
-            incompatible = result.incompatible_reagents.get(position, [])
-            
-            examples = []
-            pattern_mol = Chem.MolFromSmarts(pattern_smarts)
-            
-            for smiles, name, reason in incompatible[:6]:
-                mol = Chem.MolFromSmiles(smiles)
-                if mol and mol.HasSubstructMatch(pattern_mol):
-                    matches = mol.GetSubstructMatches(pattern_mol)
-                    if matches:
-                        mol.__sssAtoms = matches[0]
-                    examples.append(mol)
-                    
-            if examples:
-                img = Draw.MolsToGridImage(
-                    examples,
-                    molsPerRow=3,
-                    subImgSize=(200, 200),
-                    legends=[f"Has {pattern_smarts}" for _ in examples]
-                )
-                display(img)
-    
-    def generate_summary_plot(self):
-        """Generate a summary plot of compatibility statistics"""
+
+            print(f"\nPosition {position} - Compatible Reagents")
+            print(f"Template SMARTS: {Chem.MolToSmarts(template)}")
+            print(f"Showing {len(mols)} of {len(result.compatible_reagents.get(position, []))} compatible reagents")
+
+    def visualize_incompatible_reagents(
+        self, position: int, max_molecules: int = 20
+    ) -> None:
+        """Display grid of incompatible reagents at a position.
+
+        Parameters
+        ----------
+        position : int
+            Reaction component position (0-indexed)
+        max_molecules : int
+            Maximum number of molecules to display
+        """
         result = self.validator.validate(test_reactions=False)
-        
-        positions = list(range(len(self.validator.reagents)))
-        compatible_counts = [len(result.compatible_reagents.get(i, [])) for i in positions]
-        incompatible_counts = [len(result.incompatible_reagents.get(i, [])) for i in positions]
-        
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-        
-        # Bar chart of compatible vs incompatible
-        x = range(len(positions))
+        template = self.validator.reaction.GetReactantTemplate(position)
+
+        incompatible = result.incompatible_reagents.get(position, [])[:max_molecules]
+
+        if not incompatible:
+            print(f"No incompatible reagents found at position {position}")
+            return
+
+        mols = []
+        labels = []
+
+        for smiles, name in incompatible:
+            mol = Chem.MolFromSmiles(smiles)
+            if mol:
+                mols.append(mol)
+                labels.append(name[:20])
+
+        if mols:
+            img = Draw.MolsToGridImage(
+                mols,
+                molsPerRow=self.mols_per_row,
+                subImgSize=self.img_size,
+                legends=labels,
+                legendFontSize=10
+            )
+            display(img)
+
+            print(f"\nPosition {position} - Incompatible Reagents")
+            print(f"Template SMARTS: {Chem.MolToSmarts(template)}")
+            print(f"Showing {len(mols)} of {len(result.incompatible_reagents.get(position, []))} incompatible reagents")
+    
+    def generate_summary_plot(self) -> None:
+        """Generate a summary plot of compatibility statistics.
+
+        Uses the validator's compatibility_report for statistics and displays:
+        - Bar chart of compatible vs incompatible counts by position
+        - Pie charts showing compatibility percentage per position
+        """
+        report = self.validator.compatibility_report
+
+        positions = report["Position"].to_list()
+        compatible_counts = report["Compatible"].to_list()
+        incompatible_counts = report["Incompatible"].to_list()
+
+        num_positions = len(positions)
+
+        # Create figure with bar chart and pie charts
+        fig = plt.figure(figsize=(14, 5))
+
+        # Left: Bar chart of compatible vs incompatible
+        ax1 = fig.add_subplot(1, 2, 1)
+        x = range(num_positions)
         width = 0.35
-        
-        ax1.bar([i - width/2 for i in x], compatible_counts, width, label='Compatible', color='green', alpha=0.7)
-        ax1.bar([i + width/2 for i in x], incompatible_counts, width, label='Incompatible', color='red', alpha=0.7)
+
+        ax1.bar([i - width/2 for i in x], compatible_counts, width,
+                label='Compatible', color='green', alpha=0.7)
+        ax1.bar([i + width/2 for i in x], incompatible_counts, width,
+                label='Incompatible', color='red', alpha=0.7)
         ax1.set_xlabel('Reaction Position')
         ax1.set_ylabel('Number of Reagents')
         ax1.set_title('Reagent Compatibility by Position')
@@ -150,29 +170,39 @@ class SMARTSVisualizer:
         ax1.set_xticklabels([f'Pos {i}' for i in positions])
         ax1.legend()
         ax1.grid(True, alpha=0.3)
-        
-        # Coverage pie chart
-        coverage_values = [result.coverage_stats.get(i, 0) for i in positions]
-        colors_pie = ['green' if v > 75 else 'orange' if v > 50 else 'red' for v in coverage_values]
-        
-        ax2.bar(x, coverage_values, color=colors_pie, alpha=0.7)
-        ax2.set_xlabel('Reaction Position')
-        ax2.set_ylabel('Coverage (%)')
-        ax2.set_title('Template Coverage by Position')
-        ax2.set_xticks(x)
-        ax2.set_xticklabels([f'Pos {i}' for i in positions])
-        ax2.axhline(y=75, color='g', linestyle='--', alpha=0.5, label='Good (>75%)')
-        ax2.axhline(y=50, color='orange', linestyle='--', alpha=0.5, label='Fair (>50%)')
-        ax2.legend()
-        ax2.grid(True, alpha=0.3)
-        
+
+        # Right: Pie charts for each position
+        ax2 = fig.add_subplot(1, 2, 2)
+
+        # Create pie chart showing overall or per-position breakdown
+        if num_positions == 1:
+            # Single position: show one pie chart
+            sizes = [compatible_counts[0], incompatible_counts[0]]
+            labels = ['Compatible', 'Incompatible']
+            colors = ['green', 'red']
+            ax2.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%',
+                    startangle=90, explode=(0.05, 0))
+            ax2.set_title(f'Position 0 Compatibility')
+        else:
+            # Multiple positions: show stacked or individual pie charts
+            # Use a grid of small pie charts
+            ax2.axis('off')
+            for i, pos in enumerate(positions):
+                # Create small subplot for each position
+                sub_ax = fig.add_axes([0.55 + (i % 3) * 0.15,
+                                       0.55 - (i // 3) * 0.45,
+                                       0.12, 0.35])
+                sizes = [compatible_counts[i], incompatible_counts[i]]
+                if sum(sizes) == 0:
+                    sizes = [1, 0]  # Avoid empty pie
+                colors = ['green', 'red']
+                sub_ax.pie(sizes, colors=colors, autopct='%1.0f%%',
+                           startangle=90, textprops={'fontsize': 8})
+                sub_ax.set_title(f'Pos {pos}', fontsize=10)
+
         plt.tight_layout()
         plt.show()
-        
-        # Print summary statistics
-        print("\n=== Summary Statistics ===")
-        for i in positions:
-            print(f"Position {i}:")
-            print(f"  Coverage: {result.coverage_stats.get(i, 0):.1f}%")
-            print(f"  Compatible: {compatible_counts[i]}")
-            print(f"  Incompatible: {incompatible_counts[i]}")
+
+        # Print summary using the compatibility report
+        print("\n=== Compatibility Report ===")
+        print(report)

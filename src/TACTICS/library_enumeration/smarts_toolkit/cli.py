@@ -6,9 +6,6 @@ import argparse
 import json
 from pathlib import Path
 from .pattern_validator import SMARTSValidator
-from .reagent_analyzer import ReagentCompatibilityAnalyzer
-from .exception_finder import ExceptionFinder
-from .visualization import SMARTSVisualizer
 
 def main():
     parser = argparse.ArgumentParser(
@@ -31,13 +28,7 @@ def main():
         action='store_true',
         help='Run validation'
     )
-    
-    parser.add_argument(
-        '--find-exceptions',
-        action='store_true',
-        help='Find exception patterns'
-    )
-    
+
     parser.add_argument(
         '--export-compatible',
         help='Export compatible reagents to directory'
@@ -90,30 +81,7 @@ def main():
             'errors': validation_result.error_messages,
             'warnings': validation_result.warnings
         }
-    
-    if args.find_exceptions:
-        print("\nFinding exception patterns...")
-        finder = ExceptionFinder(validator)
-        exceptions = finder.find_exceptions()
-        
-        if exceptions:
-            print(f"Found {len(exceptions)} exception patterns:")
-            for pattern, position, exception_smarts in exceptions:
-                print(f"  Position {position}: {pattern}")
-                
-            # Export exceptions
-            finder.export_exceptions('exception_rules.txt')
-            results['exceptions'] = [
-                {
-                    'pattern': p,
-                    'position': pos,
-                    'exception_smarts': exc
-                }
-                for p, pos, exc in exceptions
-            ]
-        else:
-            print("No exception patterns found")
-    
+
     if args.export_compatible:
         print(f"\nExporting compatible reagents to {args.export_compatible}...")
         validator.export_compatible_reagents(args.export_compatible)
