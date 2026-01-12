@@ -1,5 +1,9 @@
 # TACTICS: Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery
 
+<p align="center">
+  <img src="docs/source/_static/images/TACTICS_logo.png" alt="TACTICS Logo" width="600">
+</p>
+
 A comprehensive library for Thompson Sampling-based optimization of chemical combinatorial libraries, featuring a unified architecture with flexible strategy selection, modern Pydantic configuration, and preset configurations for out-of-the-box usage.
 
 ## 🚀 Key Features
@@ -10,13 +14,16 @@ A comprehensive library for Thompson Sampling-based optimization of chemical com
   - Roulette Wheel (adaptive thermal cycling)
   - UCB (Upper Confidence Bound)
   - Epsilon-Greedy (balanced exploration/exploitation)
+  - Bayes-UCB (Bayesian upper confidence bound)
   - Boltzmann (temperature-based selection)
-- **Advanced Warmup Strategies**: Standard, Stratified, Enhanced, Latin Hypercube
+- **Warmup Strategies**: Balanced (recommended), Standard, Enhanced
 - **Preset Configurations**: 5 ready-to-use presets for common use cases
 - **Modern Pydantic Configuration**: Type-safe configuration with full validation
 - **Parallel Processing**: Batch mode with multiprocessing for expensive evaluators
 - **Multiple Evaluators**: Lookup, Database, ROCS, Fred, ML classifiers, and more
-- **Library Enumeration**: Efficient generation of combinatorial reaction products
+- **Synthesis Pipeline**: `SynthesisPipeline` architecture for single-step, alternative SMARTS, and multi-step reactions
+- **SMARTS Toolkit**: `ReactionDef` with built-in validation, visualization, and protecting group support
+- **Library Enumeration**: Efficient generation of combinatorial reaction products with `write_enumerated_library()`
 - **Library Analysis**: Comprehensive analysis and visualization tools
 - **Polars DataFrames**: Fast, efficient data handling throughout
 
@@ -25,25 +32,34 @@ A comprehensive library for Thompson Sampling-based optimization of chemical com
 ```
 TACTICS/
 ├── thompson_sampling/
-│   ├── config.py          # Pydantic configuration models
-│   ├── main.py            # run_ts() convenience wrapper
-│   ├── presets.py         # Preset configurations
-│   ├── core/              # Core unified sampler
+│   ├── config.py              # ThompsonSamplingConfig (Pydantic v2)
+│   ├── main.py                # run_ts() convenience wrapper
+│   ├── presets.py             # Preset configurations
+│   ├── factories.py           # Factory functions for component creation
+│   ├── core/                  # Core unified sampler
 │   │   ├── sampler.py         # ThompsonSampler (unified)
 │   │   ├── evaluators.py      # All evaluator classes
 │   │   └── evaluator_config.py # Evaluator Pydantic configs
-│   ├── strategies/        # Selection strategies
+│   ├── strategies/            # Selection strategies
 │   │   ├── greedy.py
 │   │   ├── roulette_wheel.py
 │   │   ├── ucb.py
 │   │   ├── epsilon_greedy.py
-│   │   └── config.py      # Strategy Pydantic configs
-│   ├── warmup/            # Warmup strategies
-│   │   └── config.py      # Warmup Pydantic configs
-│   ├── baseline.py        # Random baseline sampling
-│   └── legacy/            # Legacy code (deprecated)
-├── library_enumeration/   # Library generation tools
-└── library_analysis/      # Analysis and visualization
+│   │   ├── bayes_ucb.py
+│   │   └── config.py          # Strategy Pydantic configs
+│   ├── warmup/                # Warmup strategies
+│   │   └── config.py          # Warmup Pydantic configs (Balanced, Standard, Enhanced)
+│   └── baseline.py            # Random baseline sampling
+├── library_enumeration/       # Library generation tools
+│   ├── synthesis_pipeline.py  # SynthesisPipeline - main entry point
+│   ├── enumeration_utils.py   # EnumerationResult, EnumerationError
+│   ├── file_writer.py         # write_enumerated_library()
+│   ├── generate_products.py   # Product generation utilities
+│   └── smarts_toolkit/        # SMARTS validation and configuration
+│       ├── config.py          # ReactionDef, ReactionConfig, StepInput, DeprotectionSpec
+│       ├── _validator.py      # ValidationResult, internal validation
+│       └── constants.py       # Protecting groups, salt fragments
+└── library_analysis/          # Analysis and visualization
 ```
 
 ## 📁 Repository Structure
@@ -55,50 +71,51 @@ TACTICS/
 │   ├── library_enumeration/  # Library generation tools
 │   └── library_analysis/     # Analysis and visualization
 │
-├── data/                     # Input datasets (local only, not distributed)
-│   ├── reagents/             # Reagent SMILES files by dataset
-│   └── scores/               # Pre-computed score lookup tables
-│
-├── experiments/              # Research experiments (not distributed)
-│   ├── strategy_benchmarks/  # Strategy comparison studies
-│   ├── warmup_analysis/      # Warmup configuration analysis
-│   └── validation/           # Validation studies
-│
-├── examples/                 # User-facing examples (distributed)
-│   ├── quickstart_thrombin.py
-│   ├── bayes_ucb_example.py
-│   └── notebooks/            # Jupyter tutorial notebooks
-│
-├── outputs/                  # Generated outputs (gitignored)
 ├── tests/                    # Unit and integration tests
-└── docs/                     # Documentation
+├── docs/                     # Sphinx documentation
+├── notebooks/                # Jupyter tutorial notebooks
+└── outputs/                  # Generated outputs (gitignored)
 ```
 
 ## 🎯 Quick Start
 
 ### Simple Out-of-the-Box Usage with Presets (Recommended)
 
-The easiest way to get started is using presets - just provide your reaction and reagents:
+The easiest way to get started is using presets with `SynthesisPipeline`:
 
 ```python
+from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
 from TACTICS.thompson_sampling import run_ts, get_preset
 from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
-# 1. Create evaluator config
+# 1. Create synthesis pipeline (single source of truth for reactions)
+rxn_config = ReactionConfig(
+    reactions=[ReactionDef(
+        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+        step_index=0,
+        description="Amide coupling"
+    )],
+    reagent_file_list=["acids.smi", "amines.smi"]
+)
+pipeline = SynthesisPipeline(rxn_config)
+
+# 2. Create evaluator config
 evaluator = LookupEvaluatorConfig(ref_filename="scores.csv")
 
-# 2. Get a preset configuration
+# 3. Get a preset configuration
 config = get_preset(
     "fast_exploration",  # Quick screening with epsilon-greedy
-    reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-    reagent_file_list=["aldehydes.smi", "amines.smi"],
+    synthesis_pipeline=pipeline,
     evaluator_config=evaluator,
     mode="minimize",  # Use "minimize" for docking scores
     num_iterations=1000
 )
 
-# 3. Run and get results
+# 4. Run and get results (returns Polars DataFrame)
 results_df = run_ts(config)
+
+# 5. Analyze top results
+print(results_df.sort("score").head(10))
 ```
 
 **Available Presets:**
@@ -113,22 +130,30 @@ results_df = run_ts(config)
 For slow evaluators (docking, ML models), use batch mode with multiprocessing:
 
 ```python
+from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
 from TACTICS.thompson_sampling import run_ts, get_preset
 from TACTICS.thompson_sampling.core.evaluator_config import FredEvaluatorConfig
 
-# Configure slow evaluator
+# Create synthesis pipeline
+rxn_config = ReactionConfig(
+    reactions=[ReactionDef(
+        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+        step_index=0
+    )],
+    reagent_file_list=["acids.smi", "amines.smi"]
+)
+pipeline = SynthesisPipeline(rxn_config)
+
+# Configure slow evaluator (molecular docking)
 evaluator = FredEvaluatorConfig(design_unit_file="receptor.oedu")
 
 # Get parallel batch preset
 config = get_preset(
     "parallel_batch",
-    reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-    reagent_file_list=["aldehydes.smi", "amines.smi"],
+    synthesis_pipeline=pipeline,
     evaluator_config=evaluator,
-    mode="minimize",  # Docking scores
-    num_iterations=1000,
+    mode="minimize",  # Docking scores (lower is better)
     batch_size=100,   # Sample 100 compounds per cycle
-    processes=8       # Use 8 CPU cores
 )
 
 results_df = run_ts(config)
@@ -139,21 +164,43 @@ results_df = run_ts(config)
 For full control, create custom configurations:
 
 ```python
+from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
 from TACTICS.thompson_sampling import ThompsonSamplingConfig, run_ts
-from TACTICS.thompson_sampling.strategies.config import EpsilonGreedyConfig
-from TACTICS.thompson_sampling.warmup.config import StratifiedWarmupConfig
-from TACTICS.thompson_sampling.core.evaluator_config import DBEvaluatorConfig
+from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
+from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
+from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
+# Create synthesis pipeline
+rxn_config = ReactionConfig(
+    reactions=[ReactionDef(
+        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+        step_index=0
+    )],
+    reagent_file_list=["acids.smi", "amines.smi"]
+)
+pipeline = SynthesisPipeline(rxn_config)
+
+# Create fully customized configuration
 config = ThompsonSamplingConfig(
-    reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-    reagent_file_list=["aldehydes.smi", "amines.smi"],
-    num_ts_iterations=1000,
+    synthesis_pipeline=pipeline,
+    num_ts_iterations=5000,
     num_warmup_trials=5,
-    strategy_config=EpsilonGreedyConfig(mode="maximize", epsilon=0.2, decay=0.995),
-    warmup_config=StratifiedWarmupConfig(),
-    evaluator_config=DBEvaluatorConfig(db_filename="scores.db"),
-    results_filename="results.csv",
-    log_filename="run.log"
+    strategy_config=RouletteWheelConfig(
+        mode="maximize",
+        alpha=0.1,  # Initial heating temperature
+        beta=0.1,   # Initial cooling temperature
+    ),
+    warmup_config=BalancedWarmupConfig(
+        observations_per_reagent=5,
+        use_per_reagent_variance=True,
+    ),
+    evaluator_config=LookupEvaluatorConfig(
+        ref_filename="scores.csv",
+        score_col="binding_affinity"
+    ),
+    batch_size=10,
+    results_filename="my_results.csv",
+    log_filename="optimization.log"
 )
 
 results_df = run_ts(config)
@@ -162,13 +209,23 @@ results_df = run_ts(config)
 ### Random Baseline Sampling
 
 ```python
+from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
 from TACTICS.thompson_sampling import RandomBaselineConfig, run_random_baseline
+from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+# Create synthesis pipeline
+rxn_config = ReactionConfig(
+    reactions=[ReactionDef(
+        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+        step_index=0
+    )],
+    reagent_file_list=["acids.smi", "amines.smi"]
+)
+pipeline = SynthesisPipeline(rxn_config)
 
 config = RandomBaselineConfig(
-    evaluator_class_name="LookupEvaluator",
-    evaluator_arg={"ref_filename": "scores.csv"},
-    reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-    reagent_file_list=["aldehydes.smi", "amines.smi"],
+    synthesis_pipeline=pipeline,
+    evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
     num_trials=1000,
     num_to_save=100,
     ascending_output=False,
@@ -182,38 +239,45 @@ results_df = run_random_baseline(config)
 
 ### Pydantic Configuration Models
 
-The package uses Pydantic for robust configuration validation:
+The package uses Pydantic v2 for robust configuration validation:
 
 ```python
-from TACTICS.thompson_sampling import StandardSamplerConfig, EnhancedSamplerConfig, RandomBaselineConfig
+from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
+from TACTICS.thompson_sampling import ThompsonSamplingConfig
+from TACTICS.thompson_sampling.strategies.config import EpsilonGreedyConfig
+from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
+from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+# Create synthesis pipeline
+rxn_config = ReactionConfig(
+    reactions=[ReactionDef(
+        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+        step_index=0
+    )],
+    reagent_file_list=["acids.smi", "amines.smi"]
+)
+pipeline = SynthesisPipeline(rxn_config)
 
 # Automatic validation and type checking
-config = StandardSamplerConfig(
-    sampler_type="standard",  # Must be "standard"
-    ts_mode="maximize",       # Must be one of: maximize, minimize, maximize_boltzmann, minimize_boltzmann
-    processes=4,              # Must be positive integer
-    # ... other parameters
-)
-
-# Random baseline configuration
-random_config = RandomBaselineConfig(
-    evaluator_class_name="LookupEvaluator",
-    evaluator_arg={"ref_filename": "scores.csv", "ref_colname": "Score"},
-    num_trials=1000,         # Must be positive integer
-    num_to_save=100,         # Must be positive integer
-    # ... other parameters
+config = ThompsonSamplingConfig(
+    synthesis_pipeline=pipeline,  # Required: single source of truth
+    num_ts_iterations=1000,
+    strategy_config=EpsilonGreedyConfig(mode="maximize", epsilon=0.2),
+    warmup_config=BalancedWarmupConfig(),
+    evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
 )
 ```
 
 ### Configuration Validation
 
 ```python
+from pydantic import ValidationError
+
 # Invalid configuration raises ValidationError
 try:
-    config = StandardSamplerConfig(
-        sampler_type="invalid",  # ❌ ValidationError
-        ts_mode="maximize",
-        # ...
+    rxn = ReactionDef(
+        reaction_smarts="invalid-smarts",  # ValidationError: Invalid SMARTS
+        step_index=0
     )
 except ValidationError as e:
     print(f"Configuration error: {e}")

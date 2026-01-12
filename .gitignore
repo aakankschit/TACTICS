@@ -159,6 +159,7 @@ env/
 
 # Claude Code local config
 CLAUDE.md
+.claude/
 
 # =============================================================================
 # TACTICS - Local Research Infrastructure (NOT distributed)
