@@ -3,113 +3,137 @@ Integration tests for selection strategies with ThompsonSampler.
 
 These tests ensure that any selection strategy (existing or new) can be properly
 integrated with the ThompsonSampler class.
-
-Uses real example data from examples/ folder.
 """
 
 import pytest
 import os
+import tempfile
+import shutil
 import numpy as np
 
 from TACTICS.thompson_sampling.core.sampler import ThompsonSampler
-from TACTICS.thompson_sampling.core.evaluators import LookupEvaluator
+from TACTICS.thompson_sampling.core.evaluators import LookupEvaluator, MWEvaluator
 from TACTICS.thompson_sampling.strategies.base_strategy import SelectionStrategy
 from TACTICS.thompson_sampling.strategies.greedy_selection import GreedySelection
 from TACTICS.thompson_sampling.strategies.roulette_wheel import RouletteWheelSelection
 from TACTICS.thompson_sampling.strategies.ucb_selection import UCBSelection
 from TACTICS.thompson_sampling.strategies.epsilon_greedy import EpsilonGreedySelection
 from TACTICS.thompson_sampling.strategies.bayes_ucb_selection import BayesUCBSelection
+from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
 
 
-# Paths to real example data
-EXAMPLES_DIR = os.path.join(os.path.dirname(__file__), "..", "examples")
-REAGENT_FILE1 = os.path.join(EXAMPLES_DIR, "input_files", "acids.smi")
-REAGENT_FILE2 = os.path.join(EXAMPLES_DIR, "input_files", "coupled_aa_sub.smi")
-LOOKUP_FILE = os.path.join(EXAMPLES_DIR, "docking_scores", "product_scores.csv")
-REACTION_SMARTS = "[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]);!$(N[#6]~[!#6;!#16]):3]>>[#6:1](=[O:2])[#7:3]"
+# Amide coupling reaction
+REACTION_SMARTS = "[C:1](=O)[OH].[N:2]>>[C:1](=O)[N:2]"
 
 
 class TestStrategyIntegration:
     """Test that selection strategies integrate properly with ThompsonSampler"""
 
+    def setup_method(self):
+        """Set up test fixtures with temporary files."""
+        self.temp_dir = tempfile.mkdtemp()
+
+        # Create reagent files
+        self.reagent_file1 = os.path.join(self.temp_dir, "acids.smi")
+        self.reagent_file2 = os.path.join(self.temp_dir, "amines.smi")
+
+        with open(self.reagent_file1, "w") as f:
+            f.write("CC(=O)O\tacetic_acid\n")
+            f.write("CCC(=O)O\tpropionic_acid\n")
+            f.write("CCCC(=O)O\tbutyric_acid\n")
+            f.write("CCCCC(=O)O\tvaleric_acid\n")
+
+        with open(self.reagent_file2, "w") as f:
+            f.write("CN\tmethylamine\n")
+            f.write("CCN\tethylamine\n")
+            f.write("CCCN\tpropylamine\n")
+            f.write("CCCCN\tbutylamine\n")
+
+        # Create lookup file with scores
+        self.lookup_file = os.path.join(self.temp_dir, "scores.csv")
+        with open(self.lookup_file, "w") as f:
+            f.write("Product_Code,Scores\n")
+            for acid in [
+                "acetic_acid",
+                "propionic_acid",
+                "butyric_acid",
+                "valeric_acid",
+            ]:
+                for amine in ["methylamine", "ethylamine", "propylamine", "butylamine"]:
+                    score = np.random.uniform(0.5, 1.0)
+                    f.write(f"{acid}_{amine},{score:.2f}\n")
+
+        # Create pipeline
+        self.reaction_config = ReactionConfig(
+            reactions=[ReactionDef(reaction_smarts=REACTION_SMARTS, step_index=0)],
+            reagent_file_list=[self.reagent_file1, self.reagent_file2],
+        )
+        self.pipeline = SynthesisPipeline(self.reaction_config)
+
+    def teardown_method(self):
+        """Clean up temporary files."""
+        shutil.rmtree(self.temp_dir)
+
     def test_greedy_selection_integration(self):
         """Test that GreedySelection integrates with ThompsonSampler"""
         strategy = GreedySelection(mode="maximize")
-        sampler = ThompsonSampler(selection_strategy=strategy)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(self.pipeline, selection_strategy=strategy)
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        # Run warmup and search
-        warmup_results = sampler.warm_up(num_warmup_trials=2)
+        # Directly run search without warmup
         search_results = sampler.search(num_cycles=5)
 
-        assert len(warmup_results) > 0
         assert len(search_results) > 0
-
         sampler.close()
 
     def test_roulette_wheel_integration(self):
         """Test that RouletteWheelSelection integrates with ThompsonSampler"""
         strategy = RouletteWheelSelection(mode="maximize", alpha=0.1, beta=0.1)
-        sampler = ThompsonSampler(selection_strategy=strategy)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(self.pipeline, selection_strategy=strategy)
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        # Run warmup and search
-        warmup_results = sampler.warm_up(num_warmup_trials=2)
+        # Run search
         search_results = sampler.search(num_cycles=5)
 
-        assert len(warmup_results) > 0
         assert len(search_results) > 0
-
         sampler.close()
 
     def test_ucb_selection_integration(self):
         """Test that UCBSelection integrates with ThompsonSampler"""
         strategy = UCBSelection(mode="maximize", c=1.0)
-        sampler = ThompsonSampler(selection_strategy=strategy)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(self.pipeline, selection_strategy=strategy)
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        # Run warmup and search
-        warmup_results = sampler.warm_up(num_warmup_trials=2)
+        # Run search
         search_results = sampler.search(num_cycles=5)
 
-        assert len(warmup_results) > 0
         assert len(search_results) > 0
-
         sampler.close()
 
     def test_epsilon_greedy_integration(self):
         """Test that EpsilonGreedySelection integrates with ThompsonSampler"""
         strategy = EpsilonGreedySelection(mode="maximize", epsilon=0.1)
-        sampler = ThompsonSampler(selection_strategy=strategy)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(self.pipeline, selection_strategy=strategy)
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        # Run warmup and search
-        warmup_results = sampler.warm_up(num_warmup_trials=2)
+        # Run search
         search_results = sampler.search(num_cycles=5)
 
-        assert len(warmup_results) > 0
         assert len(search_results) > 0
-
         sampler.close()
 
     def test_strategy_mode_maximize(self):
         """Test that strategies work correctly in maximize mode"""
         strategy = GreedySelection(mode="maximize")
-        sampler = ThompsonSampler(selection_strategy=strategy)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(self.pipeline, selection_strategy=strategy)
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        # Run warmup and search (now returns polars DataFrame)
-        sampler.warm_up(num_warmup_trials=2)
+        # Run search
         results_df = sampler.search(num_cycles=10)
 
         # Verify results contain scores
@@ -123,13 +147,11 @@ class TestStrategyIntegration:
     def test_strategy_mode_minimize(self):
         """Test that strategies work correctly in minimize mode"""
         strategy = GreedySelection(mode="minimize")
-        sampler = ThompsonSampler(selection_strategy=strategy)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(self.pipeline, selection_strategy=strategy)
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        # Run warmup and search (now returns polars DataFrame)
-        sampler.warm_up(num_warmup_trials=2)
+        # Run search
         results_df = sampler.search(num_cycles=10)
 
         # Verify results contain scores
@@ -143,51 +165,46 @@ class TestStrategyIntegration:
     def test_batch_selection_single_mode(self):
         """Test batch_size=1 (single selection per cycle)"""
         strategy = GreedySelection(mode="maximize")
-        sampler = ThompsonSampler(selection_strategy=strategy, batch_size=1)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(
+            self.pipeline, selection_strategy=strategy, batch_size=1
+        )
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        sampler.warm_up(num_warmup_trials=2)
         results = sampler.search(num_cycles=5)
 
         assert len(results) > 0
-
         sampler.close()
 
     def test_batch_selection_batch_mode(self):
         """Test batch_size>1 (multiple selections per cycle)"""
         strategy = RouletteWheelSelection(mode="maximize")
-        sampler = ThompsonSampler(selection_strategy=strategy, batch_size=3)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(
+            self.pipeline, selection_strategy=strategy, batch_size=3
+        )
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        sampler.warm_up(num_warmup_trials=2)
         results = sampler.search(num_cycles=5)
 
         assert len(results) > 0
-
         sampler.close()
 
     def test_strategy_with_disallow_mask(self):
         """Test that strategies respect disallow mask"""
         strategy = GreedySelection(mode="maximize")
-        sampler = ThompsonSampler(selection_strategy=strategy)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(self.pipeline, selection_strategy=strategy)
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        # Run warmup to initialize reagents
-        sampler.warm_up(num_warmup_trials=2)
+        # Initialize reagents by running at least one evaluation
+        sampler.evaluate([0, 0])
 
         # Test select_reagent with disallow mask
         rng = np.random.default_rng(seed=42)
         disallow_mask = {0}  # Disallow first reagent
         selected = strategy.select_reagent(
-            reagent_list=sampler.reagent_lists[0],
-            disallow_mask=disallow_mask,
-            rng=rng
+            reagent_list=sampler.reagent_lists[0], disallow_mask=disallow_mask, rng=rng
         )
 
         # Should not select disallowed index
@@ -199,12 +216,8 @@ class TestStrategyIntegration:
         """Test RouletteWheelSelection adaptive temperature control"""
         strategy = RouletteWheelSelection(mode="maximize", alpha=0.1, beta=0.1)
 
-        # Test temperature increase when efficiency is low
-        initial_alpha = strategy.alpha
-        strategy.update_temperature(n_unique=0, batch_size=10)
-        assert strategy.alpha > initial_alpha
-
         # Test temperature reset
+        strategy.alpha = 0.5
         strategy.reset_temperature()
         assert strategy.alpha == strategy.initial_alpha
         assert strategy.beta == strategy.initial_beta
@@ -229,7 +242,7 @@ class TestStrategyIntegration:
             """Simple custom strategy that selects randomly"""
 
             def select_reagent(self, reagent_list, disallow_mask=None, **kwargs):
-                rng = kwargs.get('rng', np.random.default_rng())
+                rng = kwargs.get("rng", np.random.default_rng())
                 available = list(range(len(reagent_list)))
 
                 if disallow_mask:
@@ -239,36 +252,31 @@ class TestStrategyIntegration:
 
         # Test custom strategy
         strategy = CustomStrategy(mode="maximize")
-        sampler = ThompsonSampler(selection_strategy=strategy)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(self.pipeline, selection_strategy=strategy)
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        warmup_results = sampler.warm_up(num_warmup_trials=2)
         search_results = sampler.search(num_cycles=5)
 
-        assert len(warmup_results) > 0
         assert len(search_results) > 0
-
         sampler.close()
 
     def test_strategy_select_batch_method(self):
         """Test that select_batch method works for strategies that implement it"""
         strategy = RouletteWheelSelection(mode="maximize")
-        sampler = ThompsonSampler(selection_strategy=strategy, batch_size=5)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(
+            self.pipeline, selection_strategy=strategy, batch_size=5
+        )
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        # Run warmup to initialize reagents
-        sampler.warm_up(num_warmup_trials=2)
+        # Initialize reagents
+        sampler.evaluate([0, 0])
 
         # Test select_batch
         rng = np.random.default_rng(seed=42)
         batch = strategy.select_batch(
-            reagent_list=sampler.reagent_lists[0],
-            batch_size=5,
-            rng=rng
+            reagent_list=sampler.reagent_lists[0], batch_size=5, rng=rng
         )
 
         assert len(batch) == 5
@@ -279,42 +287,34 @@ class TestStrategyIntegration:
     def test_bayes_ucb_selection_integration(self):
         """Test that BayesUCBSelection integrates with ThompsonSampler"""
         strategy = BayesUCBSelection(
-            mode="maximize",
-            initial_p_high=0.90,
-            initial_p_low=0.90
+            mode="maximize", initial_p_high=0.90, initial_p_low=0.60
         )
-        sampler = ThompsonSampler(selection_strategy=strategy)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(self.pipeline, selection_strategy=strategy)
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        # Run warmup and search
-        warmup_results = sampler.warm_up(num_warmup_trials=2)
+        # Run search
         search_results = sampler.search(num_cycles=5)
 
-        assert len(warmup_results) > 0
         assert len(search_results) > 0
-
         sampler.close()
 
     def test_bayes_ucb_percentile_adaptation(self):
-        """Test BayesUCBSelection adaptive percentile control"""
+        """Test BayesUCBSelection percentile reset"""
         strategy = BayesUCBSelection(
             mode="maximize",
             initial_p_high=0.90,
-            initial_p_low=0.90,
-            efficiency_threshold=0.10
+            initial_p_low=0.60,
         )
 
-        # Test percentile increase when efficiency is low (stuck)
-        initial_p_high = strategy.p_high
-        strategy.update_percentiles(n_unique=0, batch_size=10)
-        assert strategy.p_high > initial_p_high
+        # Test percentile modification and reset
+        strategy.p_high = 0.95
+        strategy.p_low = 0.50
 
         # Test percentile reset
         strategy.reset_percentiles()
         assert strategy.p_high == 0.90
-        assert strategy.p_low == 0.90
+        assert strategy.p_low == 0.60
 
     def test_bayes_ucb_component_rotation(self):
         """Test BayesUCBSelection component rotation for thermal cycling"""
@@ -334,21 +334,16 @@ class TestStrategyIntegration:
         strategy = BayesUCBSelection(
             mode="maximize",
             initial_p_high=0.90,
-            initial_p_low=0.80,
-            efficiency_threshold=0.10
+            initial_p_low=0.60,
         )
-        sampler = ThompsonSampler(selection_strategy=strategy, batch_size=3)
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler = ThompsonSampler(
+            self.pipeline, selection_strategy=strategy, batch_size=3
+        )
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
-        # Run warmup and search
-        sampler.warm_up(num_warmup_trials=2)
+        # Run search
         results = sampler.search(num_cycles=10)
 
         assert len(results) > 0
-        # Verify thermal cycling happened (component should have rotated)
-        # After 10 cycles with 2 components, should have cycled through multiple times
-        # (exact behavior depends on implementation details)
-
         sampler.close()

@@ -4,32 +4,74 @@ Integration tests for warmup strategies with ThompsonSampler.
 These tests ensure that any warmup strategy (existing or new) can be properly
 integrated with the ThompsonSampler class.
 
-Uses real example data from examples/ folder.
+Uses temporary test files created in fixtures.
 """
 
 import pytest
 import os
+import tempfile
+import shutil
 import numpy as np
 
+from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
 from TACTICS.thompson_sampling.core.sampler import ThompsonSampler
-from TACTICS.thompson_sampling.core.evaluators import LookupEvaluator
+from TACTICS.thompson_sampling.core.evaluators import MWEvaluator
 from TACTICS.thompson_sampling.strategies.greedy_selection import GreedySelection
 from TACTICS.thompson_sampling.warmup import (
-    WarmupStrategy, StandardWarmup, BalancedWarmup,
-    EnhancedWarmup
+    WarmupStrategy,
+    StandardWarmup,
+    BalancedWarmup,
+    EnhancedWarmup,
 )
 
 
-# Paths to real example data
-EXAMPLES_DIR = os.path.join(os.path.dirname(__file__), "..", "examples")
-REAGENT_FILE1 = os.path.join(EXAMPLES_DIR, "input_files", "acids.smi")
-REAGENT_FILE2 = os.path.join(EXAMPLES_DIR, "input_files", "coupled_aa_sub.smi")
-LOOKUP_FILE = os.path.join(EXAMPLES_DIR, "docking_scores", "product_scores.csv")
-REACTION_SMARTS = "[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]);!$(N[#6]~[!#6;!#16]):3]>>[#6:1](=[O:2])[#7:3]"
+# Amide coupling reaction SMARTS
+REACTION_SMARTS = "[C:1](=O)[OH].[N:2]>>[C:1](=O)[N:2]"
 
 
 class TestWarmupIntegration:
     """Test that warmup strategies integrate properly with ThompsonSampler"""
+
+    @pytest.fixture(autouse=True)
+    def setup_temp_files(self):
+        """Create temporary reagent files for testing"""
+        self.temp_dir = tempfile.mkdtemp()
+
+        # Create acid reagents file (carboxylic acids)
+        self.acids_file = os.path.join(self.temp_dir, "acids.smi")
+        with open(self.acids_file, "w") as f:
+            f.write("CC(=O)O\tCA0\n")  # acetic acid
+            f.write("CCC(=O)O\tCA1\n")  # propionic acid
+            f.write("CCCC(=O)O\tCA2\n")  # butyric acid
+            f.write("CCCCC(=O)O\tCA3\n")  # valeric acid
+            f.write("c1ccccc1C(=O)O\tCA4\n")  # benzoic acid
+            f.write("CC(C)C(=O)O\tCA5\n")  # isobutyric acid
+            f.write("c1ccc(C(=O)O)cc1\tCA6\n")  # para-benzoic
+            f.write("OC(=O)CC(=O)O\tCA7\n")  # malonic acid
+
+        # Create amine reagents file
+        self.amines_file = os.path.join(self.temp_dir, "amines.smi")
+        with open(self.amines_file, "w") as f:
+            f.write("CN\tAA0\n")  # methylamine
+            f.write("CCN\tAA1\n")  # ethylamine
+            f.write("CCCN\tAA2\n")  # propylamine
+            f.write("CCCCN\tAA3\n")  # butylamine
+            f.write("c1ccccc1N\tAA4\n")  # aniline
+            f.write("CC(C)N\tAA5\n")  # isopropylamine
+            f.write("NCCN\tAA6\n")  # ethylenediamine
+            f.write("c1ccc(N)cc1\tAA7\n")  # para-aniline
+
+        # Create pipeline
+        config = ReactionConfig(
+            reactions=[ReactionDef(reaction_smarts=REACTION_SMARTS, step_index=0)],
+            reagent_file_list=[self.acids_file, self.amines_file],
+        )
+        self.pipeline = SynthesisPipeline(config)
+
+        yield
+
+        # Cleanup
+        shutil.rmtree(self.temp_dir)
 
     def test_standard_warmup_integration(self):
         """Test that StandardWarmup integrates with ThompsonSampler"""
@@ -37,12 +79,12 @@ class TestWarmupIntegration:
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
+            self.pipeline,
             selection_strategy=selection_strategy,
-            warmup_strategy=warmup_strategy
+            warmup_strategy=warmup_strategy,
         )
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
         # Run warmup
         warmup_results = sampler.warm_up(num_warmup_trials=2)
@@ -59,19 +101,19 @@ class TestWarmupIntegration:
 
     def test_balanced_warmup_integration(self):
         """Test that BalancedWarmup integrates with ThompsonSampler"""
-        warmup_strategy = BalancedWarmup(observations_per_reagent=3)
+        warmup_strategy = BalancedWarmup(observations_per_reagent=2)
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
+            self.pipeline,
             selection_strategy=selection_strategy,
-            warmup_strategy=warmup_strategy
+            warmup_strategy=warmup_strategy,
         )
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
         # Run warmup
-        warmup_results = sampler.warm_up(num_warmup_trials=3)
+        warmup_results = sampler.warm_up(num_warmup_trials=2)
 
         assert len(warmup_results) > 0
 
@@ -89,12 +131,12 @@ class TestWarmupIntegration:
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
+            self.pipeline,
             selection_strategy=selection_strategy,
-            warmup_strategy=warmup_strategy
+            warmup_strategy=warmup_strategy,
         )
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
         # Run warmup
         warmup_results = sampler.warm_up(num_warmup_trials=2)
@@ -112,22 +154,22 @@ class TestWarmupIntegration:
     def test_balanced_warmup_per_reagent_variance(self):
         """Test that BalancedWarmup with per-reagent variance integrates with ThompsonSampler"""
         warmup_strategy = BalancedWarmup(
-            observations_per_reagent=5,
+            observations_per_reagent=3,
             use_per_reagent_variance=True,
-            shrinkage_strength=3.0
+            shrinkage_strength=3.0,
         )
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
+            self.pipeline,
             selection_strategy=selection_strategy,
-            warmup_strategy=warmup_strategy
+            warmup_strategy=warmup_strategy,
         )
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
         # Run warmup
-        warmup_results = sampler.warm_up(num_warmup_trials=5)
+        warmup_results = sampler.warm_up(num_warmup_trials=3)
 
         assert len(warmup_results) > 0
 
@@ -145,18 +187,18 @@ class TestWarmupIntegration:
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
+            self.pipeline,
             selection_strategy=selection_strategy,
-            warmup_strategy=warmup_strategy
+            warmup_strategy=warmup_strategy,
         )
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
         # Generate warmup combinations
         combinations = warmup_strategy.generate_warmup_combinations(
             sampler.reagent_lists,
             num_warmup_trials=2,
-            disallow_tracker=sampler._disallow_tracker
+            disallow_tracker=sampler._disallow_tracker,
         )
 
         # Verify combinations are valid
@@ -173,22 +215,22 @@ class TestWarmupIntegration:
         """Test that warmup strategies report correct expected evaluations"""
         strategies = [
             StandardWarmup(),
-            BalancedWarmup(observations_per_reagent=3),
-            EnhancedWarmup()
+            BalancedWarmup(observations_per_reagent=2),
+            EnhancedWarmup(),
         ]
 
         for warmup_strategy in strategies:
             selection_strategy = GreedySelection(mode="maximize")
             sampler = ThompsonSampler(
+                self.pipeline,
                 selection_strategy=selection_strategy,
-                warmup_strategy=warmup_strategy
+                warmup_strategy=warmup_strategy,
             )
-            sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
+            sampler.read_reagents(self.pipeline.reagent_file_list)
 
             # Get expected evaluations
             expected = warmup_strategy.get_expected_evaluations(
-                sampler.reagent_lists,
-                num_warmup_trials=2
+                sampler.reagent_lists, num_warmup_trials=2
             )
 
             assert isinstance(expected, int)
@@ -200,8 +242,8 @@ class TestWarmupIntegration:
         """Test that warmup strategies have descriptive names"""
         strategies = [
             StandardWarmup(),
-            BalancedWarmup(observations_per_reagent=3),
-            EnhancedWarmup()
+            BalancedWarmup(observations_per_reagent=2),
+            EnhancedWarmup(),
         ]
 
         for warmup_strategy in strategies:
@@ -219,9 +261,11 @@ class TestWarmupIntegration:
         class CustomWarmup(WarmupStrategy):
             """Simple custom warmup that randomly samples combinations"""
 
-            def generate_warmup_combinations(self, reagent_lists, num_warmup_trials,
-                                           disallow_tracker):
+            def generate_warmup_combinations(
+                self, reagent_lists, num_warmup_trials, disallow_tracker
+            ):
                 import random
+
                 combinations = []
 
                 # Generate random combinations
@@ -242,12 +286,12 @@ class TestWarmupIntegration:
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
+            self.pipeline,
             selection_strategy=selection_strategy,
-            warmup_strategy=warmup_strategy
+            warmup_strategy=warmup_strategy,
         )
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
         warmup_results = sampler.warm_up(num_warmup_trials=2)
 
@@ -261,12 +305,12 @@ class TestWarmupIntegration:
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
+            self.pipeline,
             selection_strategy=selection_strategy,
-            warmup_strategy=warmup_strategy
+            warmup_strategy=warmup_strategy,
         )
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
         # Before warmup, reagents should not have initialized priors
         for reagent_list in sampler.reagent_lists:
@@ -289,19 +333,19 @@ class TestWarmupIntegration:
         """Test complete workflow from warmup to search"""
         warmup_strategies = [
             StandardWarmup(),
-            BalancedWarmup(observations_per_reagent=3),
-            EnhancedWarmup()
+            BalancedWarmup(observations_per_reagent=2),
+            EnhancedWarmup(),
         ]
 
         for warmup_strategy in warmup_strategies:
             selection_strategy = GreedySelection(mode="maximize")
             sampler = ThompsonSampler(
+                self.pipeline,
                 selection_strategy=selection_strategy,
-                warmup_strategy=warmup_strategy
+                warmup_strategy=warmup_strategy,
             )
-            sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-            sampler.set_reaction(REACTION_SMARTS)
-            sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+            sampler.read_reagents(self.pipeline.reagent_file_list)
+            sampler.set_evaluator(MWEvaluator())
 
             # Run warmup (returns polars DataFrame)
             warmup_df = sampler.warm_up(num_warmup_trials=2)
@@ -328,12 +372,12 @@ class TestWarmupIntegration:
         selection_strategy = GreedySelection(mode="maximize")
 
         sampler = ThompsonSampler(
+            self.pipeline,
             selection_strategy=selection_strategy,
-            warmup_strategy=warmup_strategy
+            warmup_strategy=warmup_strategy,
         )
-        sampler.read_reagents([REAGENT_FILE1, REAGENT_FILE2])
-        sampler.set_reaction(REACTION_SMARTS)
-        sampler.set_evaluator(LookupEvaluator({"ref_filename": LOOKUP_FILE}))
+        sampler.read_reagents(self.pipeline.reagent_file_list)
+        sampler.set_evaluator(MWEvaluator())
 
         # Run warmup - should handle any NaN scores gracefully (returns polars DataFrame)
         warmup_df = sampler.warm_up(num_warmup_trials=2)

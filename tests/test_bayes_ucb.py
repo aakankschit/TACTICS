@@ -36,7 +36,9 @@ class TestBayesUCBIndexComputation:
         # Verify calculation matches expected Student-t formula
         df = reagent.n_samples - 1
         t_quantile = stats.t.ppf(0.95, df)
-        expected_ucb = reagent.mean + reagent.std * t_quantile / np.sqrt(reagent.n_samples)
+        expected_ucb = reagent.mean + reagent.std * t_quantile / np.sqrt(
+            reagent.n_samples
+        )
         assert np.isclose(ucb_indices[0], expected_ucb)
 
     def test_ucb_index_with_insufficient_samples(self):
@@ -71,7 +73,9 @@ class TestBayesUCBIndexComputation:
         # In minimize mode, should subtract exploration bonus
         df = reagent.n_samples - 1
         t_quantile = stats.t.ppf(0.95, df)
-        expected_ucb = reagent.mean - reagent.std * t_quantile / np.sqrt(reagent.n_samples)
+        expected_ucb = reagent.mean - reagent.std * t_quantile / np.sqrt(
+            reagent.n_samples
+        )
         assert np.isclose(ucb_indices[0], expected_ucb)
 
     def test_higher_percentile_increases_exploration(self):
@@ -113,75 +117,72 @@ class TestBayesUCBIndexComputation:
         assert ucb_indices[-1] > ucb_indices[0]
 
 
-class TestPercentileAdaptation:
-    """Test adaptive percentile adjustment based on sampling efficiency."""
+class TestCATSCriticality:
+    """Test CATS criticality-based adjustment (replaces old percentile adaptation)."""
 
-    def test_percentile_increases_when_stuck(self):
-        """Test p_high increases when efficiency drops below threshold."""
+    def test_criticality_with_uniform_distribution(self):
+        """Test criticality is low (flexible) when all reagents have similar means."""
+        strategy = BayesUCBSelection(initial_p_high=0.90, initial_p_low=0.60)
+
+        # Create reagents with very similar means
+        reagents = []
+        for i in range(5):
+            r = Reagent(f"reagent_{i}", "CC")
+            r.mean = 5.0 + i * 0.01  # Nearly identical means
+            r.std = 1.0
+            r.n_samples = 10
+            reagents.append(r)
+
+        criticality = strategy._calculate_criticality(reagents)
+        # Low criticality = flexible component
+        assert criticality < 0.3
+
+    def test_criticality_with_peaked_distribution(self):
+        """Test criticality is high (critical) when one reagent dominates."""
+        strategy = BayesUCBSelection(initial_p_high=0.90, initial_p_low=0.60)
+
+        reagents = []
+        for i in range(5):
+            r = Reagent(f"reagent_{i}", "CC")
+            r.mean = 0.0 if i < 4 else 10.0  # One much better than others
+            r.std = 1.0
+            r.n_samples = 10
+            reagents.append(r)
+
+        criticality = strategy._calculate_criticality(reagents)
+        # High criticality = critical component
+        assert criticality > 0.5
+
+    def test_criticality_returns_neutral_with_insufficient_data(self):
+        """Test criticality is neutral when data is insufficient."""
         strategy = BayesUCBSelection(
-            initial_p_high=0.90,
-            initial_p_low=0.90,
-            efficiency_threshold=0.10,
-            delta_high=0.01
+            initial_p_high=0.90, initial_p_low=0.60, min_observations=5
         )
 
-        initial_p_high = strategy.p_high
+        reagents = []
+        for i in range(5):
+            r = Reagent(f"reagent_{i}", "CC")
+            r.mean = float(i)
+            r.std = 1.0
+            r.n_samples = 2  # Below min_observations
+            reagents.append(r)
 
-        # Simulate low efficiency (stuck)
-        strategy.update_percentiles(n_unique=1, batch_size=20)  # 5% efficiency
-
-        # p_high should increase (more exploration)
-        assert strategy.p_high > initial_p_high
-
-    def test_percentile_decreases_when_progressing(self):
-        """Test p_low decreases when efficiency is above threshold."""
-        strategy = BayesUCBSelection(
-            initial_p_high=0.90,
-            initial_p_low=0.90,
-            efficiency_threshold=0.10,
-            delta_low=0.005
-        )
-
-        initial_p_low = strategy.p_low
-
-        # Simulate high efficiency (making progress)
-        strategy.update_percentiles(n_unique=5, batch_size=10)  # 50% efficiency
-
-        # p_low should decrease (more exploitation)
-        assert strategy.p_low < initial_p_low
-
-    def test_percentile_bounds_enforcement(self):
-        """Test percentiles stay within specified bounds."""
-        strategy = BayesUCBSelection(
-            initial_p_high=0.90,
-            initial_p_low=0.90,
-            p_high_bounds=(0.85, 0.995),
-            p_low_bounds=(0.50, 0.90),
-            delta_high=0.5,  # Large step to test bounds
-            delta_low=0.5
-        )
-
-        # Update many times to try to exceed bounds
-        for _ in range(20):
-            strategy.update_percentiles(n_unique=0, batch_size=10)  # Force stuck
-
-        # Should be clamped within bounds
-        assert 0.85 <= strategy.p_high <= 0.995
-        assert 0.50 <= strategy.p_low <= 0.90
+        criticality = strategy._calculate_criticality(reagents)
+        assert criticality == 0.5  # Neutral
 
     def test_reset_percentiles(self):
         """Test resetting percentiles to initial values."""
-        strategy = BayesUCBSelection(initial_p_high=0.90, initial_p_low=0.85)
+        strategy = BayesUCBSelection(initial_p_high=0.90, initial_p_low=0.60)
 
         # Change percentiles
         strategy.p_high = 0.95
-        strategy.p_low = 0.60
+        strategy.p_low = 0.50
 
         # Reset
         strategy.reset_percentiles()
 
         assert strategy.p_high == 0.90
-        assert strategy.p_low == 0.85
+        assert strategy.p_low == 0.60
 
 
 class TestThermalCycling:
@@ -326,12 +327,11 @@ class TestBayesUCBConfig:
         assert config.strategy_type == "bayes_ucb"
         assert config.mode == "maximize"
         assert config.initial_p_high == 0.90
-        assert config.initial_p_low == 0.90
-        assert config.efficiency_threshold == 0.10
-        assert config.p_high_bounds == (0.85, 0.995)
-        assert config.p_low_bounds == (0.50, 0.90)
-        assert config.delta_high == 0.01
-        assert config.delta_low == 0.005
+        assert config.initial_p_low == 0.60
+        # CATS parameters (replaced old percentile adaptation parameters)
+        assert config.exploration_phase_end == 0.20
+        assert config.transition_phase_end == 0.60
+        assert config.min_observations == 5
 
     def test_config_validation(self):
         """Test configuration validation."""
@@ -339,9 +339,7 @@ class TestBayesUCBConfig:
 
         # Valid config
         config = BayesUCBConfig(
-            mode="minimize",
-            initial_p_high=0.95,
-            initial_p_low=0.80
+            mode="minimize", initial_p_high=0.95, initial_p_low=0.80
         )
         assert config.mode == "minimize"
 
@@ -359,9 +357,7 @@ class TestBayesUCBConfig:
         from TACTICS.thompson_sampling.factories import create_strategy
 
         config = BayesUCBConfig(
-            mode="maximize",
-            initial_p_high=0.95,
-            initial_p_low=0.80
+            mode="maximize", initial_p_high=0.95, initial_p_low=0.80
         )
 
         strategy = create_strategy(config)

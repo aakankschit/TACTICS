@@ -1,7 +1,8 @@
 """
 Integration tests for multi-SMARTS pattern support in Thompson Sampling.
 
-These tests demonstrate the full workflow from configuration to execution.
+These tests demonstrate the full workflow from configuration to execution,
+using the new SMARTS toolkit API with SynthesisPipeline as the single source of truth.
 """
 
 import pytest
@@ -13,10 +14,12 @@ from TACTICS.thompson_sampling import ThompsonSamplingConfig
 from TACTICS.thompson_sampling.core.sampler import ThompsonSampler
 from TACTICS.thompson_sampling.strategies.config import GreedyConfig
 from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+from TACTICS.library_enumeration import SynthesisPipeline
 from TACTICS.library_enumeration.smarts_toolkit import (
-    MultiStepSynthesisConfig,
-    AlternativeSMARTSConfig,
-    SMARTSPatternConfig
+    ReactionConfig,
+    ReactionDef,
+    StepInput,
+    InputSource,
 )
 
 
@@ -34,14 +37,14 @@ class TestMultiSMARTSIntegration:
         """Create test reagent files."""
         # Acids
         acids_file = temp_dir / "acids.smi"
-        with open(acids_file, 'w') as f:
+        with open(acids_file, "w") as f:
             f.write("CC(=O)O acetic_acid\n")
             f.write("CCC(=O)O propionic_acid\n")
             f.write("c1ccccc1C(=O)O benzoic_acid\n")
 
         # Amines (mix of primary and secondary)
         amines_file = temp_dir / "amines.smi"
-        with open(amines_file, 'w') as f:
+        with open(amines_file, "w") as f:
             f.write("CCN ethylamine\n")  # Primary
             f.write("CCCN propylamine\n")  # Primary
             f.write("CCNCC diethylamine\n")  # Secondary
@@ -52,7 +55,7 @@ class TestMultiSMARTSIntegration:
     def scores_file(self, temp_dir):
         """Create lookup scores file."""
         scores_file = temp_dir / "scores.csv"
-        with open(scores_file, 'w') as f:
+        with open(scores_file, "w") as f:
             f.write("Product_Code,Scores\n")  # Use correct column names
             # Primary amine products (higher scores)
             f.write("acetic_acid_ethylamine,10.0\n")
@@ -69,14 +72,25 @@ class TestMultiSMARTSIntegration:
         return str(scores_file)
 
     def test_backward_compatibility_simple_smarts(self, reagent_files, scores_file):
-        """Test that simple reaction_smarts still works (backward compatible)."""
-        config = ThompsonSamplingConfig(
-            reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+        """Test that simple reaction_smarts still works via SynthesisPipeline."""
+        # Create pipeline from simple SMARTS using direct construction
+        reaction_config = ReactionConfig(
+            reactions=[
+                ReactionDef(
+                    reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+                    step_index=0,
+                )
+            ],
             reagent_file_list=reagent_files,
+        )
+        pipeline = SynthesisPipeline(reaction_config)
+
+        config = ThompsonSamplingConfig(
+            synthesis_pipeline=pipeline,
             num_ts_iterations=5,
             num_warmup_trials=2,
             strategy_config=GreedyConfig(mode="maximize"),
-            evaluator_config=LookupEvaluatorConfig(ref_filename=scores_file)
+            evaluator_config=LookupEvaluatorConfig(ref_filename=scores_file),
         )
 
         sampler = ThompsonSampler.from_config(config)
@@ -85,33 +99,48 @@ class TestMultiSMARTSIntegration:
         assert len(results) > 0
         assert "score" in results.columns
         # Should only get primary amine products (secondary won't react with NH2 pattern)
-        assert all("ethylamine" in name or "propylamine" in name
-                  for name in results["Name"] if name != "FAIL")
+        assert all(
+            "ethylamine" in name or "propylamine" in name
+            for name in results["Name"]
+            if name != "FAIL"
+        )
 
     def test_single_step_with_alternative_smarts(self, reagent_files, scores_file):
         """Test single-step with alternative SMARTS patterns."""
-        # Create config with alternatives for secondary amines
-        reaction_config = MultiStepSynthesisConfig(
-            alternative_smarts=AlternativeSMARTSConfig(
-                primary_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-                alternatives=[
-                    SMARTSPatternConfig(
-                        pattern_id="secondary_amine",
-                        reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]",
-                        description="For secondary amines"
-                    )
+        # Create config with alternatives for primary and secondary amines
+        reaction_config = ReactionConfig(
+            reactions=[
+                ReactionDef(
+                    reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+                    step_index=0,
+                    pattern_id="primary_amine",
+                    description="For primary amines",
+                ),
+                ReactionDef(
+                    reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]",
+                    step_index=0,
+                    pattern_id="secondary_amine",
+                    description="For secondary amines",
+                ),
+            ],
+            reagent_file_list=reagent_files,
+            step_inputs={
+                0: [
+                    StepInput(source=InputSource.REAGENT_FILE, file_index=0),
+                    StepInput(source=InputSource.REAGENT_FILE, file_index=1),
                 ]
-            ),
-            reagent_file_list=reagent_files
+            },
+            step_modes={0: "alternative"},
         )
 
+        pipeline = SynthesisPipeline(reaction_config)
+
         config = ThompsonSamplingConfig(
-            reaction_sequence_config=reaction_config,
-            reagent_file_list=reagent_files,
+            synthesis_pipeline=pipeline,
             num_ts_iterations=5,
             num_warmup_trials=3,
             strategy_config=GreedyConfig(mode="maximize"),
-            evaluator_config=LookupEvaluatorConfig(ref_filename=scores_file)
+            evaluator_config=LookupEvaluatorConfig(ref_filename=scores_file),
         )
 
         sampler = ThompsonSampler.from_config(config)
@@ -130,25 +159,31 @@ class TestMultiSMARTSIntegration:
         # Check we got products
         assert len(product_names) > 0
 
-    def test_reaction_sequence_with_thompson_sampler(self, reagent_files, scores_file):
-        """Test that ReactionSequence integrates correctly with ThompsonSampler."""
-        reaction_config = MultiStepSynthesisConfig(
-            reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-            reagent_file_list=reagent_files
+    def test_reaction_config_with_thompson_sampler(self, reagent_files, scores_file):
+        """Test that ReactionConfig integrates correctly with ThompsonSampler."""
+        reaction_config = ReactionConfig(
+            reactions=[
+                ReactionDef(
+                    reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+                    step_index=0,
+                )
+            ],
+            reagent_file_list=reagent_files,
         )
 
+        pipeline = SynthesisPipeline(reaction_config)
+
         config = ThompsonSamplingConfig(
-            reaction_sequence_config=reaction_config,
-            reagent_file_list=reagent_files,
+            synthesis_pipeline=pipeline,
             num_ts_iterations=8,
             num_warmup_trials=3,
             strategy_config=GreedyConfig(mode="maximize"),
-            evaluator_config=LookupEvaluatorConfig(ref_filename=scores_file)
+            evaluator_config=LookupEvaluatorConfig(ref_filename=scores_file),
         )
 
         sampler = ThompsonSampler.from_config(config)
-        assert sampler.reaction_sequence is not None
-        assert sampler.reaction_sequence.num_steps == 1
+        assert sampler.synthesis_pipeline is not None
+        assert sampler.synthesis_pipeline.num_steps == 1
 
         results = sampler.search(num_cycles=8)
 
@@ -158,20 +193,26 @@ class TestMultiSMARTSIntegration:
         max_score = results["score"].max()
         assert max_score >= 8.0  # Should find some good products
 
-    def test_warmup_with_reaction_sequence(self, reagent_files, scores_file):
-        """Test warmup works correctly with ReactionSequence."""
-        reaction_config = MultiStepSynthesisConfig(
-            reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-            reagent_file_list=reagent_files
+    def test_warmup_with_synthesis_pipeline(self, reagent_files, scores_file):
+        """Test warmup works correctly with SynthesisPipeline."""
+        reaction_config = ReactionConfig(
+            reactions=[
+                ReactionDef(
+                    reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+                    step_index=0,
+                )
+            ],
+            reagent_file_list=reagent_files,
         )
 
+        pipeline = SynthesisPipeline(reaction_config)
+
         config = ThompsonSamplingConfig(
-            reaction_sequence_config=reaction_config,
-            reagent_file_list=reagent_files,
+            synthesis_pipeline=pipeline,
             num_ts_iterations=10,
             num_warmup_trials=5,
             strategy_config=GreedyConfig(mode="maximize"),
-            evaluator_config=LookupEvaluatorConfig(ref_filename=scores_file)
+            evaluator_config=LookupEvaluatorConfig(ref_filename=scores_file),
         )
 
         sampler = ThompsonSampler.from_config(config)
@@ -187,56 +228,65 @@ class TestMultiSMARTSIntegration:
         max_score = warmup_df["score"].max()
         assert max_score >= 8.0  # Should find at least one good product
 
-    def test_config_validation_requires_reaction(self, reagent_files, scores_file):
-        """Test that config validation requires either reaction_smarts or reaction_sequence_config."""
-        from pydantic_core import ValidationError
+    def test_config_validation_requires_pipeline(self, reagent_files, scores_file):
+        """Test that config validation requires synthesis_pipeline."""
+        from pydantic import ValidationError
 
-        with pytest.raises(ValueError, match="Must provide either reaction_smarts"):
-            # Missing both reaction_smarts and reaction_sequence_config
+        with pytest.raises(ValidationError):
+            # Missing synthesis_pipeline
             config = ThompsonSamplingConfig(
-                # reaction_smarts missing
-                # reaction_sequence_config missing
-                reagent_file_list=reagent_files,
+                # synthesis_pipeline missing
                 num_ts_iterations=10,
                 strategy_config=GreedyConfig(mode="maximize"),
-                evaluator_config=LookupEvaluatorConfig(ref_filename=scores_file)
+                evaluator_config=LookupEvaluatorConfig(ref_filename=scores_file),
             )
 
     def test_multiple_patterns_with_routing(self, temp_dir, reagent_files):
         """Test SMARTS routing with multiple patterns."""
         # Create simple scores
         scores_file = temp_dir / "scores.csv"
-        with open(scores_file, 'w') as f:
+        with open(scores_file, "w") as f:
             f.write("Product_Code,Scores\n")  # Use correct column names
             f.write("acetic_acid_ethylamine,10.0\n")
             f.write("acetic_acid_diethylamine,7.0\n")
 
-        reaction_config = MultiStepSynthesisConfig(
-            alternative_smarts=AlternativeSMARTSConfig(
-                primary_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-                alternatives=[
-                    SMARTSPatternConfig(
-                        pattern_id="alt_pattern",
-                        reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]"
-                    )
+        reaction_config = ReactionConfig(
+            reactions=[
+                ReactionDef(
+                    reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+                    step_index=0,
+                    pattern_id="primary",
+                ),
+                ReactionDef(
+                    reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]",
+                    step_index=0,
+                    pattern_id="secondary",
+                ),
+            ],
+            reagent_file_list=reagent_files,
+            step_inputs={
+                0: [
+                    StepInput(source=InputSource.REAGENT_FILE, file_index=0),
+                    StepInput(source=InputSource.REAGENT_FILE, file_index=1),
                 ]
-            ),
-            reagent_file_list=reagent_files
+            },
+            step_modes={0: "alternative"},
         )
 
+        pipeline = SynthesisPipeline(reaction_config)
+
         config = ThompsonSamplingConfig(
-            reaction_sequence_config=reaction_config,
-            reagent_file_list=reagent_files,
+            synthesis_pipeline=pipeline,
             num_ts_iterations=5,
             strategy_config=GreedyConfig(mode="maximize"),
-            evaluator_config=LookupEvaluatorConfig(ref_filename=str(scores_file))
+            evaluator_config=LookupEvaluatorConfig(ref_filename=str(scores_file)),
         )
 
         sampler = ThompsonSampler.from_config(config)
 
-        # Verify router was created
-        assert sampler.reaction_sequence is not None
-        assert sampler.reaction_sequence.num_steps >= 1
+        # Verify pipeline was created
+        assert sampler.synthesis_pipeline is not None
+        assert sampler.synthesis_pipeline.num_steps >= 1
 
         # Simple test that it runs
         results = sampler.search(num_cycles=5)
@@ -256,55 +306,38 @@ class TestBackwardCompatibility:
         amines.write_text("CCN eth\nCCCN prop\n")
 
         scores = tmp_path / "scores.csv"
-        scores.write_text("Product_Code,Scores\nacetic_eth,10\nacetic_prop,9\nprop_eth,8\nprop_prop,7\n")
+        scores.write_text(
+            "Product_Code,Scores\nacetic_eth,10\nacetic_prop,9\nprop_eth,8\nprop_prop,7\n"
+        )
 
-        return {
-            'reagents': [str(acids), str(amines)],
-            'scores': str(scores)
-        }
+        return {"reagents": [str(acids), str(amines)], "scores": str(scores)}
 
-    def test_old_style_config_still_works(self, simple_config):
-        """Verify old-style configs without reaction_sequence_config work."""
+    def test_direct_construction_works(self, simple_config):
+        """Verify direct SynthesisPipeline construction with ReactionConfig works."""
+        reaction_config = ReactionConfig(
+            reactions=[
+                ReactionDef(
+                    reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+                    step_index=0,
+                )
+            ],
+            reagent_file_list=simple_config["reagents"],
+        )
+
+        pipeline = SynthesisPipeline(reaction_config)
+
         config = ThompsonSamplingConfig(
-            reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-            reagent_file_list=simple_config['reagents'],
+            synthesis_pipeline=pipeline,
             num_ts_iterations=3,
             strategy_config=GreedyConfig(mode="maximize"),
             evaluator_config=LookupEvaluatorConfig(
-                ref_filename=simple_config['scores']
-            )
+                ref_filename=simple_config["scores"]
+            ),
         )
 
         sampler = ThompsonSampler.from_config(config)
 
-        # Old behavior: reaction set, no reaction_sequence
-        assert sampler.reaction is not None
-        assert sampler.reaction_sequence is None
-
-        results = sampler.search(num_cycles=3)
-        assert len(results) == 3
-
-    def test_new_style_config_works(self, simple_config):
-        """Verify new-style configs with reaction_sequence_config work."""
-        reaction_config = MultiStepSynthesisConfig(
-            reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-            reagent_file_list=simple_config['reagents']
-        )
-
-        config = ThompsonSamplingConfig(
-            reaction_sequence_config=reaction_config,
-            reagent_file_list=simple_config['reagents'],
-            num_ts_iterations=3,
-            strategy_config=GreedyConfig(mode="maximize"),
-            evaluator_config=LookupEvaluatorConfig(
-                ref_filename=simple_config['scores']
-            )
-        )
-
-        sampler = ThompsonSampler.from_config(config)
-
-        # New behavior: reaction_sequence set
-        assert sampler.reaction_sequence is not None
+        assert sampler.synthesis_pipeline is not None
 
         results = sampler.search(num_cycles=3)
         assert len(results) == 3
