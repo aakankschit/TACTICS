@@ -24,7 +24,7 @@ class RouletteWheelSelection(SelectionStrategy):
         exploration_phase_end=0.20,
         transition_phase_end=0.60,
         min_observations=5,
-        **kwargs
+        **kwargs,
     ):
         """
         Initialize Roulette Wheel Selection with CATS.
@@ -66,11 +66,17 @@ class RouletteWheelSelection(SelectionStrategy):
                 "Thermal cycling will have no effect. "
                 "For thermal cycling to work, set beta < alpha (e.g., beta=0.05, alpha=0.1).",
                 UserWarning,
-                stacklevel=2
+                stacklevel=2,
             )
 
         # Deprecated parameter warnings
-        deprecated = {'alpha_max', 'alpha_increment', 'beta_increment', 'efficiency_threshold', 'scaling'}
+        deprecated = {
+            "alpha_max",
+            "alpha_increment",
+            "beta_increment",
+            "efficiency_threshold",
+            "scaling",
+        }
         found_deprecated = deprecated & set(kwargs.keys())
         if found_deprecated:
             warnings.warn(
@@ -78,7 +84,7 @@ class RouletteWheelSelection(SelectionStrategy):
                 f"CATS now derives all parameters from alpha/beta ratio. "
                 f"Remove these parameters from your configuration.",
                 DeprecationWarning,
-                stacklevel=2
+                stacklevel=2,
             )
 
     def _calculate_criticality(self, reagent_list):
@@ -188,10 +194,14 @@ class RouletteWheelSelection(SelectionStrategy):
         """
         # Map criticality [0,1] to multiplier [cats_max, cats_min]
         # Higher criticality → lower multiplier (more exploitation)
-        multiplier = self.cats_min_mult + (self.cats_max_mult - self.cats_min_mult) * (1 - criticality)
+        multiplier = self.cats_min_mult + (self.cats_max_mult - self.cats_min_mult) * (
+            1 - criticality
+        )
         return multiplier
 
-    def _get_component_temperature(self, component_idx, reagent_list, current_cycle, total_cycles):
+    def _get_component_temperature(
+        self, component_idx, reagent_list, current_cycle, total_cycles
+    ):
         """
         Get CATS-adjusted temperature for a component.
 
@@ -210,7 +220,9 @@ class RouletteWheelSelection(SelectionStrategy):
             Final temperature value
         """
         # Step 1: Base temperature from thermal cycling
-        base_temp = self.alpha if component_idx == self.current_component_idx else self.beta
+        base_temp = (
+            self.alpha if component_idx == self.current_component_idx else self.beta
+        )
 
         # Step 2: Calculate criticality
         criticality = self._calculate_criticality(reagent_list)
@@ -245,10 +257,10 @@ class RouletteWheelSelection(SelectionStrategy):
         Returns:
             Index of selected reagent
         """
-        rng = kwargs.get('rng', np.random.default_rng())
-        component_idx = kwargs.get('component_idx', 0)
-        current_cycle = kwargs.get('current_cycle', 0)
-        total_cycles = kwargs.get('total_cycles', 1)
+        rng = kwargs.get("rng", np.random.default_rng())
+        component_idx = kwargs.get("component_idx", 0)
+        current_cycle = kwargs.get("current_cycle", 0)
+        total_cycles = kwargs.get("total_cycles", 1)
 
         # Sample base scores
         stds = np.array([r.std for r in reagent_list])
@@ -265,10 +277,15 @@ class RouletteWheelSelection(SelectionStrategy):
         )
 
         # Apply temperature via Boltzmann distribution
-        scores = np.exp((scores - np.mean(scores)) / np.std(scores) / effective_temp)
-
-        # Normalize to probabilities
-        probs = scores / np.sum(scores)
+        # Handle case where all scores are identical (std=0)
+        score_std = np.std(scores)
+        if score_std < 1e-10:
+            # All scores identical, use uniform distribution
+            probs = np.ones(len(reagent_list)) / len(reagent_list)
+        else:
+            scores = np.exp((scores - np.mean(scores)) / score_std / effective_temp)
+            # Normalize to probabilities
+            probs = scores / np.sum(scores)
 
         # Apply disallow mask
         if disallow_mask:
@@ -300,10 +317,10 @@ class RouletteWheelSelection(SelectionStrategy):
         Returns:
             Array of selected reagent indices
         """
-        rng = kwargs.get('rng', np.random.default_rng())
-        component_idx = kwargs.get('component_idx', 0)
-        current_cycle = kwargs.get('current_cycle', 0)
-        total_cycles = kwargs.get('total_cycles', 1)
+        rng = kwargs.get("rng", np.random.default_rng())
+        component_idx = kwargs.get("component_idx", 0)
+        current_cycle = kwargs.get("current_cycle", 0)
+        total_cycles = kwargs.get("total_cycles", 1)
 
         # Sample base scores
         stds = np.array([r.std for r in reagent_list])
@@ -320,10 +337,15 @@ class RouletteWheelSelection(SelectionStrategy):
         )
 
         # Apply temperature via Boltzmann distribution
-        scores = np.exp((scores - np.mean(scores)) / np.std(scores) / effective_temp)
-
-        # Normalize to probabilities
-        probs = scores / np.sum(scores)
+        # Handle case where all scores are identical (std=0)
+        score_std = np.std(scores)
+        if score_std < 1e-10:
+            # All scores identical, use uniform distribution
+            probs = np.ones(len(reagent_list)) / len(reagent_list)
+        else:
+            scores = np.exp((scores - np.mean(scores)) / score_std / effective_temp)
+            # Normalize to probabilities
+            probs = scores / np.sum(scores)
 
         # Apply disallow mask
         if disallow_mask:

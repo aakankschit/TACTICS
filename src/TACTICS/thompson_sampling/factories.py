@@ -104,11 +104,9 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             mode=config.mode,
             alpha=config.alpha,
             beta=config.beta,
-            alpha_max=config.alpha_max,
-            scaling=config.scaling,
-            alpha_increment=config.alpha_increment,
-            beta_increment=config.beta_increment,
-            efficiency_threshold=config.efficiency_threshold
+            exploration_phase_end=config.exploration_phase_end,
+            transition_phase_end=config.transition_phase_end,
+            min_observations=config.min_observations
         )
 
     elif isinstance(config, UCBConfig):
@@ -126,11 +124,9 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             mode=config.mode,
             initial_p_high=config.initial_p_high,
             initial_p_low=config.initial_p_low,
-            efficiency_threshold=config.efficiency_threshold,
-            p_high_bounds=config.p_high_bounds,
-            p_low_bounds=config.p_low_bounds,
-            delta_high=config.delta_high,
-            delta_low=config.delta_low
+            exploration_phase_end=config.exploration_phase_end,
+            transition_phase_end=config.transition_phase_end,
+            min_observations=config.min_observations
         )
 
     elif isinstance(config, BoltzmannConfig):
