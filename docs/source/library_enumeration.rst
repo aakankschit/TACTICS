@@ -1,948 +1,1431 @@
-Library Enumeration Module
-==========================
+Library Enumeration
+===================
 
-The Library Enumeration module provides tools for generating and managing chemical libraries,
-including advanced SMARTS pattern validation, multi-SMARTS routing, and multi-step synthesis support.
+The Library Enumeration module provides tools for generating combinatorial chemical products
+from reagent libraries using reaction SMARTS patterns. It supports single-step reactions,
+alternative SMARTS routing, multi-step synthesis pipelines, and protecting group deprotection.
 
-LibraryEnumerator Class
------------------------
 
-.. autoclass:: TACTICS.library_enumeration.generate_products.LibraryEnumerator
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Module Architecture
+-------------------
 
-   .. automethod:: __init__
-   .. automethod:: enumerate_library
-   .. automethod:: get_product_smiles
+The following diagram shows the class hierarchy and dependencies:
 
-Utility Functions
+.. graphviz::
+
+    digraph LibraryEnumeration {
+        rankdir=TB;
+        node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10];
+        edge [fontname="Helvetica", fontsize=9];
+        nodesep=0.2;
+        ranksep=0.4;
+
+        // Fundamental types
+        fundamental_label [label="Fundamental Types", shape=plaintext, fontname="Helvetica Bold"];
+        InputSource [label="InputSource (enum)", fillcolor="#DCDCDC"];
+        ProtectingGroupInfo [label="ProtectingGroupInfo", fillcolor="#DCDCDC"];
+        DeprotectionSpec [label="DeprotectionSpec", fillcolor="#DCDCDC"];
+        StepInput [label="StepInput", fillcolor="#DCDCDC"];
+
+        // Core reaction definition
+        core_label [label="Reaction Definition", shape=plaintext, fontname="Helvetica Bold"];
+        ReactionDef [label="ReactionDef (core class)", fillcolor="#007bff", fontcolor="white"];
+
+        // Configuration
+        config_label [label="Configuration", shape=plaintext, fontname="Helvetica Bold"];
+        ReactionConfig [label="ReactionConfig", fillcolor="#17a2b8", fontcolor="white"];
+
+        // Pipeline
+        pipeline_label [label="Pipeline", shape=plaintext, fontname="Helvetica Bold"];
+        SynthesisPipeline [label="SynthesisPipeline", fillcolor="#007bff", fontcolor="white"];
+
+        // Results
+        result_label [label="Result Types", shape=plaintext, fontname="Helvetica Bold"];
+        ValidationResult [label="ValidationResult", fillcolor="#28a745", fontcolor="white"];
+        EnumerationResult [label="EnumerationResult", fillcolor="#28a745", fontcolor="white"];
+        EnumerationError [label="EnumerationError", fillcolor="#28a745", fontcolor="white"];
+        AutoDetectionResult [label="AutoDetectionResult", fillcolor="#28a745", fontcolor="white"];
+
+        // File Utilities
+        utility_label [label="File Utilities", shape=plaintext, fontname="Helvetica Bold"];
+        WriteLibrary [label="write_enumerated_library()", fillcolor="#ffc107"];
+        ResultsDF [label="results_to_dataframe()", fillcolor="#ffc107"];
+        FailuresDF [label="failures_to_dataframe()", fillcolor="#ffc107"];
+
+        // Force vertical layout
+        fundamental_label -> InputSource [style=invis];
+        InputSource -> ProtectingGroupInfo [style=invis];
+        ProtectingGroupInfo -> DeprotectionSpec [style=invis];
+        DeprotectionSpec -> StepInput [style=invis];
+        StepInput -> core_label [style=invis];
+        core_label -> ReactionDef [style=invis];
+        ReactionDef -> config_label [style=invis];
+        config_label -> ReactionConfig [style=invis];
+        ReactionConfig -> pipeline_label [style=invis];
+        pipeline_label -> SynthesisPipeline [style=invis];
+        SynthesisPipeline -> result_label [style=invis];
+        result_label -> ValidationResult [style=invis];
+        ValidationResult -> EnumerationResult [style=invis];
+        EnumerationResult -> EnumerationError [style=invis];
+        EnumerationError -> AutoDetectionResult [style=invis];
+        AutoDetectionResult -> utility_label [style=invis];
+        utility_label -> WriteLibrary [style=invis];
+        WriteLibrary -> ResultsDF [style=invis];
+        ResultsDF -> FailuresDF [style=invis];
+
+        // Visible dependencies
+        StepInput -> InputSource [label="uses", style=dashed, constraint=false];
+        ReactionDef -> DeprotectionSpec [label="contains", style=dashed, constraint=false];
+        ReactionDef -> ValidationResult [label="returns", constraint=false];
+        ReactionConfig -> ReactionDef [label="contains 1+", style=bold, constraint=false];
+        ReactionConfig -> StepInput [label="uses", style=dashed, constraint=false];
+        ReactionConfig -> ProtectingGroupInfo [label="uses (opt)", style=dashed, constraint=false];
+        SynthesisPipeline -> ReactionConfig [label="constructed from", style=bold, constraint=false];
+        SynthesisPipeline -> EnumerationResult [label="returns", constraint=false];
+        SynthesisPipeline -> AutoDetectionResult [label="returns (opt)", constraint=false];
+        EnumerationResult -> WriteLibrary [label="input", style=dashed, constraint=false];
+        EnumerationResult -> ResultsDF [label="input", style=dashed, constraint=false];
+    }
+
+Quick Start
+-----------
+
+**Single reaction with validation:**
+
+.. code-block:: python
+   :caption: Define and validate a reaction
+
+   from TACTICS.library_enumeration import ReactionDef, ReactionConfig, SynthesisPipeline
+
+   # Define a reaction
+   rxn = ReactionDef(
+       reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+       step_index=0,
+       description="Amide coupling"
+   )
+
+   # Create configuration and pipeline
+   config = ReactionConfig(
+       reactions=[rxn],
+       reagent_file_list=["acids.smi", "amines.smi"]
+   )
+   pipeline = SynthesisPipeline(config)
+
+   # Validate against reagent files
+   result = rxn.validate_reaction(reagent_files=["acids.smi", "amines.smi"])
+   print(f"Coverage: {result.coverage_stats}")
+
+
+**Enumerate products with SynthesisPipeline:**
+
+.. code-block:: python
+   :caption: Simple enumeration
+
+   from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
+
+   # Create configuration
+   config = ReactionConfig(
+       reactions=[
+           ReactionDef(
+               reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+               step_index=0,
+               description="Amide coupling",
+           )
+       ],
+       reagent_file_list=["acids.smi", "amines.smi"]
+   )
+
+   # Create pipeline directly from config
+   pipeline = SynthesisPipeline(config)
+
+   # Enumerate a single product from SMILES
+   result = pipeline.enumerate_single_from_smiles(["CC(=O)O", "CCN"])
+
+   if result.success:
+       print(f"Product: {result.product_smiles}")  # CCNC(C)=O
+
+
+**With alternative SMARTS patterns:**
+
+.. code-block:: python
+   :caption: Auto-routing to compatible patterns
+
+   from TACTICS.library_enumeration import (
+       SynthesisPipeline, ReactionConfig, ReactionDef,
+       StepInput, InputSource
+   )
+
+   # Define primary and alternative patterns
+   config = ReactionConfig(
+       reactions=[
+           ReactionDef(
+               reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+               step_index=0,
+               pattern_id="primary",
+               description="Primary amines"
+           ),
+           ReactionDef(
+               reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]",
+               step_index=0,
+               pattern_id="secondary",
+               description="Secondary amines"
+           ),
+       ],
+       reagent_file_list=["acids.smi", "amines.smi"],
+       step_inputs={
+           0: [
+               StepInput(source=InputSource.REAGENT_FILE, file_index=0),
+               StepInput(source=InputSource.REAGENT_FILE, file_index=1)
+           ]
+       },
+       step_modes={0: "alternative"}  # Mark step 0 as having alternatives
+   )
+
+   pipeline = SynthesisPipeline(config)
+
+   # Pipeline automatically tries alternative patterns at runtime
+   result = pipeline.enumerate_single_from_smiles(["CC(=O)O", "CCN(C)C"])
+   print(f"Pattern used: {result.patterns_used}")  # {0: "secondary"}
+
+
+Fundamental Types
 -----------------
 
-.. autofunction:: TACTICS.library_enumeration.enumeration_utils.find_reactants_from_product_code
-.. autofunction:: TACTICS.library_enumeration.enumeration_utils.write_products_to_files
+These are the basic building blocks used by higher-level classes.
 
-SMARTS Toolkit
---------------
+.. _input-source:
 
-The SMARTS Toolkit (version 0.2.0) provides comprehensive tools for troubleshooting, validation, and advanced
-reaction pattern handling including multi-SMARTS routing and multi-step synthesis.
+InputSource
+~~~~~~~~~~~
 
-The toolkit is organized into several key components:
+.. rst-class:: class-fundamental
 
-- **Validation**: :class:`SMARTSValidator` for pattern validation and reagent compatibility analysis
-- **Visualization**: :class:`SMARTSVisualizer` for Jupyter-compatible debugging visualizations
-- **Multi-SMARTS Routing**: :class:`SMARTSRouter` for handling alternative reaction patterns
-- **Multi-Step Synthesis**: :class:`ReactionSequence` for orchestrating complex synthesis routes
+Enum specifying the source of an input for a reaction step.
 
-SMARTSValidator
-~~~~~~~~~~~~~~~
+.. list-table:: Values
+   :header-rows: 1
+   :widths: 30 70
 
-The core validation class for analyzing SMARTS patterns against reagent libraries.
+   * - Value
+     - Description
+   * - ``REAGENT_FILE``
+     - Input comes from a reagent file (use ``file_index`` in :ref:`StepInput <step-input>`)
+   * - ``PREVIOUS_STEP``
+     - Input comes from output of a previous step (use ``step_index`` in :ref:`StepInput <step-input>`)
 
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.SMARTSValidator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-**Key Features:**
-
-* Validates reaction SMARTS syntax and structure
-* Loads reagents from ``.smi`` and ``.csv`` files
-* Detects protecting groups and salt fragments (with customizable lists)
-* Optional import-time deprotection and desalting
-* Template matching analysis (which reagents are compatible)
-* Reaction testing with sampling
-* Coverage statistics per reagent position
-* Exports compatible reagents to files
-
-**Basic Usage Example:**
+**Example**
 
 .. code-block:: python
 
-    from TACTICS.library_enumeration.smarts_toolkit import SMARTSValidator
+   from TACTICS.library_enumeration import InputSource
 
-    # Define reaction SMARTS (amide coupling)
-    reaction_smarts = "[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]"
+   source = InputSource.REAGENT_FILE
+   source = InputSource.PREVIOUS_STEP
 
-    # Initialize validator with reagent files
-    validator = SMARTSValidator(
-        reaction_smarts=reaction_smarts,
-        reagent_files=["acids.smi", "amines.smi"]
-    )
 
-    # Run validation
-    result = validator.validate(test_reactions=True, sample_size=100)
-
-    # Check coverage statistics
-    for position, coverage in result.coverage_stats.items():
-        print(f"Position {position}: {coverage:.1f}% compatible")
-
-    # Check for errors and warnings
-    if result.error_messages:
-        print("Errors:", result.error_messages)
-    if result.warnings:
-        print("Warnings:", result.warnings)
-
-**Using Deprotection and Desalting:**
-
-.. code-block:: python
-
-    from TACTICS.library_enumeration.smarts_toolkit import SMARTSValidator
-
-    # Enable automatic deprotection and desalting during import
-    validator = SMARTSValidator(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        reagent_files=["acids.smi", "amines.smi"],
-        deprotect_on_import=True,              # Remove protecting groups
-        deprotect_groups=["Boc", "Fmoc"],      # Only these groups (None = all)
-        desalt_on_import=True                  # Remove salt counterions
-    )
-
-    result = validator.validate()
-
-    # Or deprotect/desalt individual SMILES manually
-    deprotected, removed_groups = validator.deprotect_smiles(
-        "CC(C)(C)OC(=O)NCc1ccccc1",
-        groups_to_remove=["Boc"]
-    )
-    print(f"Deprotected: {deprotected}, removed: {removed_groups}")
-
-    desalted, removed_salts = validator.desalt_smiles("CCN.[Cl-]")
-    print(f"Desalted: {desalted}, removed: {removed_salts}")
-
-**Exporting Compatible Reagents:**
-
-.. code-block:: python
-
-    from TACTICS.library_enumeration.smarts_toolkit import SMARTSValidator
-
-    validator = SMARTSValidator(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        reagent_files=["acids.smi", "amines.smi"]
-    )
-
-    # Export compatible reagents to files
-    created_files = validator.export_compatible_reagents(
-        output_dir="./compatible_reagents",
-        prefix=["acid", "amine"],  # Naming prefix per position
-        deprotect=True,            # Apply deprotection to exported SMILES
-        desalt=True                # Apply desalting to exported SMILES
-    )
-    print(f"Created files: {created_files}")
-
-**Generating Compatibility Reports:**
-
-.. code-block:: python
-
-    from TACTICS.library_enumeration.smarts_toolkit import SMARTSValidator
-
-    validator = SMARTSValidator(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        reagent_files=["acids.smi", "amines.smi"]
-    )
-
-    # Get compatibility report as Polars DataFrame
-    report = validator.generate_compatibility_report()
-    print(report)
-
-    # Or use the property shortcut
-    print(validator.compatibility_report)
-
-ValidationResult
-~~~~~~~~~~~~~~~~
-
-Container dataclass for validation results.
-
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.ValidationResult
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-**Attributes:**
-
-* ``compatible_reagents``: Dict mapping position -> list of (SMILES, name) tuples
-* ``incompatible_reagents``: Dict mapping position -> list of (SMILES, name) tuples
-* ``invalid_smiles``: Dict mapping position -> list of invalid (SMILES, name) tuples
-* ``duplicate_smiles``: Dict mapping position -> list of duplicate (SMILES, name) tuples
-* ``protected_reagents``: Dict mapping position -> list of (SMILES, name, [protecting_group_names])
-* ``multi_fragment_reagents``: Dict mapping position -> list of (SMILES, name, [detected_salt_names])
-* ``coverage_stats``: Dict mapping position -> coverage percentage (0-100)
-* ``reaction_success_rate``: Float percentage of successful test reactions
-* ``error_messages``: List of error strings
-* ``warnings``: List of warning strings
+.. _protecting-group-info:
 
 ProtectingGroupInfo
 ~~~~~~~~~~~~~~~~~~~
 
-Definition for a protecting group with detection and deprotection patterns.
+.. rst-class:: class-fundamental
 
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.ProtectingGroupInfo
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Dataclass defining a protecting group for detection and optional removal.
 
-**Example - Adding Custom Protecting Groups:**
+.. admonition:: Dependencies
+   :class: dependencies
 
-.. code-block:: python
+   None - this is a standalone dataclass.
 
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        SMARTSValidator,
-        ProtectingGroupInfo
-    )
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 22 18 10 50
 
-    # Define a custom protecting group
-    custom_pg = ProtectingGroupInfo(
-        name="MyProtectingGroup",
-        smarts="[NX3]C(=O)CC",  # Detection pattern
-        deprotection_smarts="[N:1]C(=O)CC>>[N:1]"  # Deprotection reaction
-    )
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``name``
+     - ``str``
+     - Yes
+     - Human-readable name (e.g., "Boc", "Fmoc")
+   * - ``smarts``
+     - ``str``
+     - Yes
+     - SMARTS pattern to detect the group
+   * - ``deprotection_smarts``
+     - ``str``
+     - No
+     - Reaction SMARTS for removal (optional)
 
-    validator = SMARTSValidator(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        reagent_files=["acids.smi", "amines.smi"],
-        additional_protecting_groups=[custom_pg]
-    )
-
-Default Protecting Groups and Salt Fragments
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The toolkit provides default lists of common protecting groups and salt fragments:
-
-.. autodata:: TACTICS.library_enumeration.smarts_toolkit.DEFAULT_PROTECTING_GROUPS
-
-**Default protecting groups include:** Boc, Fmoc, Cbz, Acetamide, TBS, O-Bn, Trityl, tBu-ester, Me-ester, Et-ester
-
-.. autodata:: TACTICS.library_enumeration.smarts_toolkit.DEFAULT_SALT_FRAGMENTS
-
-**Default salt fragments include:** halides (F⁻, Cl⁻, Br⁻, I⁻), common counterions (triflate, mesylate, tosylate),
-cations (Na⁺, K⁺, Li⁺), and common solvents (water, methanol, ethanol).
-
-**Example - Adding Custom Salt Fragments:**
+**Example**
 
 .. code-block:: python
 
-    from TACTICS.library_enumeration.smarts_toolkit import SMARTSValidator
+   from TACTICS.library_enumeration import ProtectingGroupInfo
 
-    custom_salts = [
-        ("[BF4-]", "tetrafluoroborate"),
-        ("[PF6-]", "hexafluorophosphate"),
-    ]
+   boc = ProtectingGroupInfo(
+       name="Boc",
+       smarts="[NX3][C](=O)OC(C)(C)C",
+       deprotection_smarts="[N:1][C](=O)OC(C)(C)C>>[N:1]"
+   )
 
-    validator = SMARTSValidator(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        reagent_files=["acids.smi", "amines.smi"],
-        additional_salt_fragments=custom_salts
-    )
 
-SMARTSVisualizer
+.. _deprotection-spec:
+
+DeprotectionSpec
 ~~~~~~~~~~~~~~~~
 
-Jupyter-compatible visualization tools for SMARTS pattern debugging.
+.. rst-class:: class-fundamental
 
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.SMARTSVisualizer
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Pydantic model specifying a deprotection to apply during synthesis.
+Deprotections can target either a reactant (before the reaction) or the product (after the reaction).
 
-**Key Methods:**
+.. admonition:: Dependencies
+   :class: dependencies
 
-* ``visualize_reaction()``: Display the reaction SMARTS pattern
-* ``visualize_compatible_reagents(position, max_molecules)``: Grid of compatible molecules with template highlighting
-* ``visualize_incompatible_reagents(position, max_molecules)``: Grid of incompatible molecules
-* ``generate_summary_plot()``: Matplotlib bar/pie charts with statistics
+   None - uses protecting group names as strings.
 
-**Usage Example (Jupyter Notebook):**
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 22 25 10 43
 
-.. code-block:: python
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``group``
+     - ``str``
+     - Yes
+     - Name of protecting group (e.g., "Boc", "Fmoc")
+   * - ``target``
+     - ``int`` or ``"product"``
+     - Yes
+     - Reactant index (int >= 0) for pre-reaction, or ``"product"`` for post-reaction
 
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        SMARTSValidator,
-        SMARTSVisualizer
-    )
+.. list-table:: Properties
+   :header-rows: 1
+   :widths: 30 20 50
 
-    # Initialize validator
-    validator = SMARTSValidator(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        reagent_files=["acids.smi", "amines.smi"]
-    )
+   * - Property
+     - Type
+     - Description
+   * - ``is_product_deprotection``
+     - ``bool``
+     - True if this deprotects the product (after reaction)
+   * - ``reactant_index``
+     - ``int | None``
+     - The reactant index if targeting a reactant, None if targeting product
 
-    # Create visualizer
-    viz = SMARTSVisualizer(
-        validator,
-        img_size=(300, 300),
-        mols_per_row=4
-    )
-
-    # Visualize the reaction SMARTS
-    viz.visualize_reaction()
-
-    # Show compatible reagents at position 0 with template highlighting
-    viz.visualize_compatible_reagents(position=0, max_molecules=20)
-
-    # Show incompatible reagents at position 1
-    viz.visualize_incompatible_reagents(position=1, max_molecules=10)
-
-    # Generate summary statistics plot
-    viz.generate_summary_plot()
-
-Multi-SMARTS Routing
---------------------
-
-For reactions where a single SMARTS pattern doesn't cover all reagent types,
-the SMARTS Router provides automatic pattern selection based on reagent compatibility.
-
-SMARTSRouter
-~~~~~~~~~~~~
-
-Routes reagent combinations to appropriate SMARTS patterns based on compatibility.
-
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.SMARTSRouter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-**Key Features:**
-
-* Manages multiple SMARTS patterns for a single reaction step (primary + alternatives)
-* Determines which SMARTS pattern to use based on reagent compatibility
-* Executes reactions with the selected SMARTS
-* Handles enumeration failures gracefully
-* Pre-compiles all reactions for efficiency
-* Caches compatibility information
-
-**Basic Usage Example:**
+**Example: Reactant Deprotection**
 
 .. code-block:: python
 
-    from rdkit import Chem
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        SMARTSRouter,
-        AlternativeSMARTSConfig,
-        SMARTSPatternConfig
-    )
+   from TACTICS.library_enumeration import DeprotectionSpec
 
-    # Configure alternative SMARTS patterns
-    # Primary handles primary amines, alternative handles secondary amines
-    config = AlternativeSMARTSConfig(
-        primary_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        alternatives=[
-            SMARTSPatternConfig(
-                pattern_id="secondary_amine",
-                reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]",
-                description="For secondary amines"
-            )
-        ]
-    )
+   # Remove Boc from the second reactant (index 1) BEFORE reaction
+   deprot = DeprotectionSpec(group="Boc", target=1)
 
-    # Create router
-    router = SMARTSRouter(config)
+   print(deprot.is_product_deprotection)  # False
+   print(deprot.reactant_index)           # 1
 
-    # Register which patterns each reagent is compatible with
-    router.register_reagent_compatibility("acetic_acid", {"primary", "secondary_amine"})
-    router.register_reagent_compatibility("methylamine", {"primary"})
-    router.register_reagent_compatibility("dimethylamine", {"secondary_amine"})
-
-    # Enumerate products - router automatically selects the right pattern
-    acid_mol = Chem.MolFromSmiles("CC(=O)O")
-    amine_mol = Chem.MolFromSmiles("CNC")  # Secondary amine
-
-    product, pattern_used = router.enumerate(
-        reagent_mols=[acid_mol, amine_mol],
-        reagent_keys=["acetic_acid", "dimethylamine"]
-    )
-
-    if product:
-        print(f"Product: {Chem.MolToSmiles(product)}")
-        print(f"Pattern used: {pattern_used}")
-
-**Finding Compatible Patterns:**
+**Example: Product Deprotection**
 
 .. code-block:: python
 
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        SMARTSRouter,
-        AlternativeSMARTSConfig,
-        SMARTSPatternConfig
-    )
+   from TACTICS.library_enumeration import DeprotectionSpec
 
-    config = AlternativeSMARTSConfig(
-        primary_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        alternatives=[
-            SMARTSPatternConfig(
-                pattern_id="secondary_amine",
-                reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]"
-            )
-        ]
-    )
+   # Remove Fmoc from the product AFTER reaction
+   deprot = DeprotectionSpec(group="Fmoc", target="product")
 
-    router = SMARTSRouter(config)
+   print(deprot.is_product_deprotection)  # True
+   print(deprot.reactant_index)           # None
 
-    # Register compatibility
-    router.register_reagent_compatibility("reagent_A", {"primary", "secondary_amine"})
-    router.register_reagent_compatibility("reagent_B", {"primary"})
-    router.register_reagent_compatibility("reagent_C", {"secondary_amine"})
 
-    # Find which pattern works for a combination
-    pattern = router.find_compatible_smarts(["reagent_A", "reagent_B"])
-    print(f"Compatible pattern: {pattern}")  # "primary"
+.. _step-input:
 
-    pattern = router.find_compatible_smarts(["reagent_A", "reagent_C"])
-    print(f"Compatible pattern: {pattern}")  # "secondary_amine"
+StepInput
+~~~~~~~~~
 
-    # Get compatibility summary
-    summary = router.get_compatibility_summary()
-    print(f"Reagents per pattern: {summary}")
+.. rst-class:: class-fundamental
 
-SMARTSPatternConfig
-~~~~~~~~~~~~~~~~~~~
+Pydantic model specifying where an input comes from for a reaction step.
 
-Configuration for a single SMARTS pattern in a router.
+.. admonition:: Dependencies
+   :class: dependencies
 
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.SMARTSPatternConfig
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   - :ref:`InputSource <input-source>` - enum specifying the source type
 
-**Attributes:**
+**Depends on:** :ref:`InputSource <input-source>`
 
-* ``pattern_id``: Unique identifier (e.g., "primary", "secondary_amine")
-* ``reaction_smarts``: The reaction SMARTS string
-* ``description``: Optional human-readable description
-* ``component_compatibility``: Optional dict mapping component_idx to list of substructure SMARTS
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 18 12 50
 
-**Example:**
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``source``
+     - ``InputSource``
+     - Yes
+     - Either ``REAGENT_FILE`` or ``PREVIOUS_STEP``
+   * - ``file_index``
+     - ``int``
+     - Conditional
+     - Index into ``reagent_file_list``. Required if source is ``REAGENT_FILE``
+   * - ``step_index``
+     - ``int``
+     - Conditional
+     - Index of previous step. Required if source is ``PREVIOUS_STEP``
+
+**Example**
 
 .. code-block:: python
 
-    from TACTICS.library_enumeration.smarts_toolkit import SMARTSPatternConfig
+   from TACTICS.library_enumeration import StepInput, InputSource
 
-    pattern = SMARTSPatternConfig(
-        pattern_id="secondary_amine",
-        reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]",
-        description="For secondary amines that lack a free NH2",
-        component_compatibility={
-            1: ["[NH]"]  # Component 1 must match this SMARTS
-        }
-    )
+   # Input from first reagent file
+   input1 = StepInput(source=InputSource.REAGENT_FILE, file_index=0)
 
-AlternativeSMARTSConfig
-~~~~~~~~~~~~~~~~~~~~~~~
+   # Input from output of step 0
+   input2 = StepInput(source=InputSource.PREVIOUS_STEP, step_index=0)
 
-Configuration for alternative SMARTS patterns (primary + fallbacks).
 
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.AlternativeSMARTSConfig
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Reaction Definition
+-------------------
 
-**Attributes:**
+.. _reaction-def:
 
-* ``primary_smarts``: The default/primary reaction SMARTS
-* ``alternatives``: Optional list of :class:`SMARTSPatternConfig` alternative patterns
+ReactionDef
+~~~~~~~~~~~
 
-**Single SMARTS (backwards compatible):**
+.. rst-class:: class-core
+
+**The core class for defining a single reaction with built-in validation and visualization.**
+
+This is the fundamental building block of the SMARTS toolkit. Each ``ReactionDef`` represents
+a single chemical reaction that can validate reagent compatibility, visualize template matches,
+and be combined into multi-step syntheses via :ref:`ReactionConfig <reaction-config>`.
+
+.. admonition:: Dependencies
+   :class: dependencies
+
+   - :ref:`DeprotectionSpec <deprotection-spec>` - for deprotections (optional)
+   - :ref:`ProtectingGroupInfo <protecting-group-info>` - used during validation (optional)
+   - Returns :ref:`ValidationResult <validation-result>` from validation methods
+
+**Depends on:** :ref:`DeprotectionSpec <deprotection-spec>` (optional), :ref:`ProtectingGroupInfo <protecting-group-info>` (optional)
+
+Constructor Parameters
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 18 10 52
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``reaction_smarts``
+     - ``str``
+     - Yes
+     - Reaction SMARTS string (validated on creation)
+   * - ``step_index``
+     - ``int``
+     - No
+     - Step in the sequence (0 = first step). Default: 0
+   * - ``pattern_id``
+     - ``str``
+     - No
+     - Identifier for alternatives (auto-generated if not provided)
+   * - ``description``
+     - ``str``
+     - No
+     - Human-readable description
+   * - ``deprotections``
+     - ``list[DeprotectionSpec]``
+     - No
+     - Deprotections to apply for this reaction. Default: []
+
+Properties
+^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 20 55
+
+   * - Property
+     - Type
+     - Description
+   * - ``num_reactants``
+     - ``int``
+     - Number of reactants in the reaction
+   * - ``is_validated``
+     - ``bool``
+     - True if ``validate_reaction()`` has been called
+   * - ``coverage_stats``
+     - ``dict[int, float]``
+     - Coverage percentage per position (0-100)
+   * - ``validation_result``
+     - ``ValidationResult``
+     - Cached validation result (None if not validated)
+
+Validation Methods
+^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Method
+     - Description
+   * - ``validate_reaction(reagent_files=None, reagent_smiles=None, ...)``
+     - Validate reaction against reagent files or SMILES lists. Returns :ref:`ValidationResult <validation-result>`
+   * - ``get_compatible_reagents(position)``
+     - Get list of ``(smiles, name)`` tuples for compatible reagents at position
+   * - ``get_incompatible_reagents(position)``
+     - Get list of ``(smiles, name)`` tuples for incompatible reagents at position
+   * - ``get_reactant_template(position)``
+     - Get RDKit Mol template for a specific position
+   * - ``summary()``
+     - Human-readable validation summary string
+
+**validate_reaction parameters:**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 18 10 50
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``reagent_files``
+     - ``list[str]``
+     - No*
+     - Paths to reagent files (.smi format)
+   * - ``reagent_smiles``
+     - ``list[list[tuple]]``
+     - No*
+     - Lists of ``(smiles, name)`` tuples per position
+   * - ``protecting_groups``
+     - ``list[ProtectingGroupInfo]``
+     - No
+     - Custom protecting groups for detection
+   * - ``deprotect``
+     - ``bool``
+     - No
+     - Apply deprotection during validation. Default: False
+   * - ``desalt``
+     - ``bool``
+     - No
+     - Remove salt fragments during validation. Default: False
+   * - ``test_reactions``
+     - ``bool``
+     - No
+     - Run test reactions to verify products form. Default: False
+
+\* Must provide either ``reagent_files`` or ``reagent_smiles``
+
+Visualization Methods
+^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 45 55
+
+   * - Method
+     - Description
+   * - ``visualize_template_match(smiles, position, ...)``
+     - Visualize which atoms in a molecule match the reaction template
+   * - ``visualize_reaction(size=(800, 200))``
+     - Visualize the reaction scheme
+
+Example
+^^^^^^^
+
+.. code-block:: python
+   :caption: Complete ReactionDef workflow
+
+   from TACTICS.library_enumeration import ReactionDef, DeprotectionSpec
+
+   # Define reaction with deprotection on reactant
+   rxn = ReactionDef(
+       reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+       step_index=0,
+       pattern_id="amide_coupling",
+       description="Amide bond formation",
+       deprotections=[DeprotectionSpec(group="Boc", target=1)]
+   )
+
+   # Validate against reagent files
+   result = rxn.validate_reaction(
+       reagent_files=["acids.smi", "amines.smi"],
+       deprotect=True,
+       test_reactions=True
+   )
+
+   # Check coverage
+   print(f"Position 0 coverage: {rxn.coverage_stats[0]:.1f}%")
+   print(f"Position 1 coverage: {rxn.coverage_stats[1]:.1f}%")
+   print(f"Reaction success rate: {result.reaction_success_rate:.1f}%")
+
+   # Get compatible reagents for position 1
+   compatible = rxn.get_compatible_reagents(1)
+   print(f"Found {len(compatible)} compatible amines")
+
+   # Troubleshoot a problematic reagent
+   img = rxn.visualize_template_match("CC(C)(C)OC(=O)NCCn", position=1)
+
+
+Configuration
+-------------
+
+.. _reaction-config:
+
+ReactionConfig
+~~~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+**Container for synthesis configuration holding one or more ReactionDef objects.**
+
+Use ``ReactionConfig`` to define complex syntheses including:
+
+- Single reactions (one ``ReactionDef``)
+- Alternative SMARTS patterns (multiple ``ReactionDef`` objects with same ``step_index``)
+- Multi-step syntheses (multiple ``ReactionDef`` objects with different ``step_index`` values)
+- Protecting group deprotections (via ``ReactionDef.deprotections``)
+
+.. admonition:: Dependencies
+   :class: dependencies
+
+   Composes multiple lower-level classes:
+
+   - :ref:`ReactionDef <reaction-def>` - one or more reaction definitions (required)
+   - :ref:`StepInput <step-input>` - input sources for multi-step synthesis (required for multi-step)
+   - :ref:`ProtectingGroupInfo <protecting-group-info>` - custom protecting groups (optional)
+
+**Depends on:** :ref:`ReactionDef <reaction-def>`, :ref:`StepInput <step-input>`, :ref:`ProtectingGroupInfo <protecting-group-info>`
+
+Constructor Parameters
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 22 10 46
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``reactions``
+     - ``list[ReactionDef]``
+     - Yes
+     - List of reaction definitions (minimum 1)
+   * - ``reagent_file_list``
+     - ``list[str]``
+     - No
+     - Paths to reagent files. Default: []
+   * - ``step_inputs``
+     - ``dict[int, list[StepInput]]``
+     - Conditional
+     - Mapping of step_index to input sources. Required if multiple reactions
+   * - ``step_modes``
+     - ``dict[int, str]``
+     - No
+     - Mark steps with alternative patterns: ``{step_index: "alternative"}``
+   * - ``protecting_groups``
+     - ``list[ProtectingGroupInfo]``
+     - No
+     - Custom protecting group definitions
+
+Properties
+^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 20 55
+
+   * - Property
+     - Type
+     - Description
+   * - ``num_steps``
+     - ``int``
+     - Number of unique steps
+   * - ``is_multi_step``
+     - ``bool``
+     - True if more than one step
+   * - ``steps_with_alternatives``
+     - ``list[int]``
+     - Step indices that have alternative patterns
+   * - ``step_indices``
+     - ``list[int]``
+     - Sorted list of all step indices
+
+Methods
+^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Method
+     - Description
+   * - ``get_reactions_for_step(step_index)``
+     - Get all ReactionDef objects for a given step
+   * - ``get_primary_reaction(step_index)``
+     - Get the primary reaction (pattern_id='primary' or first)
+   * - ``get_inputs_for_step(step_index)``
+     - Get StepInput configuration for a step
+   * - ``has_alternatives_at_step(step_index)``
+     - Check if step has alternative SMARTS patterns
+   * - ``validate_all(deprotect=False, desalt=False)``
+     - Validate all reactions, returns ``{step: {pattern_id: ValidationResult}}``
+
+Example: Single Reaction
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+   :caption: Single reaction configuration
+
+   from TACTICS.library_enumeration import ReactionDef, ReactionConfig, SynthesisPipeline
+
+   rxn = ReactionDef(
+       reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+       description="Amide coupling"
+   )
+
+   config = ReactionConfig(
+       reactions=[rxn],
+       reagent_file_list=["acids.smi", "amines.smi"]
+   )
+
+   # Create pipeline directly from config
+   pipeline = SynthesisPipeline(config)
+
+Example: Multi-Step Synthesis
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+   :caption: Two-step synthesis with intermediate
+
+   from TACTICS.library_enumeration import (
+       ReactionDef, ReactionConfig, StepInput, InputSource, DeprotectionSpec,
+       SynthesisPipeline
+   )
+
+   # Step 0: Amide coupling
+   step0 = ReactionDef(
+       reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+       step_index=0,
+       description="Amide coupling"
+   )
+
+   # Step 1: Reductive amination (with Boc deprotection on reactant)
+   step1 = ReactionDef(
+       reaction_smarts="[NH2:1].[CH:2]=O>>[NH:1][CH2:2]",
+       step_index=1,
+       description="Reductive amination",
+       deprotections=[DeprotectionSpec(group="Boc", target=0)]  # Deprotect first input
+   )
+
+   config = ReactionConfig(
+       reactions=[step0, step1],
+       reagent_file_list=["acids.smi", "amines.smi", "aldehydes.smi"],
+       step_inputs={
+           0: [
+               StepInput(source=InputSource.REAGENT_FILE, file_index=0),
+               StepInput(source=InputSource.REAGENT_FILE, file_index=1)
+           ],
+           1: [
+               StepInput(source=InputSource.PREVIOUS_STEP, step_index=0),
+               StepInput(source=InputSource.REAGENT_FILE, file_index=2)
+           ],
+       }
+   )
+
+   pipeline = SynthesisPipeline(config)
+
+Example: Alternative SMARTS
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+   :caption: Multiple patterns for the same step with runtime fallback
+
+   from TACTICS.library_enumeration import (
+       ReactionDef, ReactionConfig, StepInput, InputSource, SynthesisPipeline
+   )
+
+   # Primary pattern for primary amines
+   primary = ReactionDef(
+       reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+       step_index=0,
+       pattern_id="primary",  # Required: first alternative should be "primary"
+       description="Primary amines"
+   )
+
+   # Alternative for secondary amines
+   secondary = ReactionDef(
+       reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]",
+       step_index=0,
+       pattern_id="secondary",
+       description="Secondary amines"
+   )
+
+   config = ReactionConfig(
+       reactions=[primary, secondary],
+       reagent_file_list=["acids.smi", "amines.smi"],
+       step_inputs={
+           0: [
+               StepInput(source=InputSource.REAGENT_FILE, file_index=0),
+               StepInput(source=InputSource.REAGENT_FILE, file_index=1)
+           ]
+       },
+       step_modes={0: "alternative"}  # Mark step 0 as having alternatives
+   )
+
+   pipeline = SynthesisPipeline(config)
+
+   # Runtime pattern fallback: pipeline automatically tries patterns until one succeeds
+   # No need to call auto_detect_compatibility()
+
+
+Pipeline
+--------
+
+.. _synthesis-pipeline:
+
+SynthesisPipeline
+~~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-core
+
+**Main entry point for executing syntheses and enumerating products.**
+
+``SynthesisPipeline`` orchestrates the synthesis process, handling:
+
+- Single reactions from SMARTS strings
+- Automatic routing to compatible alternative patterns (runtime fallback)
+- Multi-step syntheses with intermediate tracking
+- Batch enumeration with optional parallelization
+- Integration with Thompson Sampling via multiprocessing support
+
+.. admonition:: Dependencies
+   :class: dependencies
+
+   - :ref:`ReactionConfig <reaction-config>` - passed to constructor
+   - :ref:`ReactionDef <reaction-def>` - accessed via config
+   - Returns :ref:`EnumerationResult <enumeration-result>`, :ref:`EnumerationError <enumeration-error>`, :ref:`AutoDetectionResult <auto-detection-result>`
+
+**Depends on:** :ref:`ReactionConfig <reaction-config>`
+
+Constructor
+^^^^^^^^^^^
 
 .. code-block:: python
 
-    from TACTICS.library_enumeration.smarts_toolkit import AlternativeSMARTSConfig
+   from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
 
-    config = AlternativeSMARTSConfig(
-        primary_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]"
-    )
+   config = ReactionConfig(
+       reactions=[ReactionDef(reaction_smarts="...", step_index=0)],
+       reagent_file_list=["reagents.smi"]
+   )
 
-    print(config.has_alternatives())  # False
+   pipeline = SynthesisPipeline(config)
 
-**Multiple SMARTS patterns:**
+.. list-table:: Constructor Parameters
+   :header-rows: 1
+   :widths: 20 20 10 50
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``config``
+     - ``ReactionConfig``
+     - Yes
+     - Reaction configuration with reactions and reagent files
+
+Enumeration Methods
+^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 45 55
+
+   * - Method
+     - Description
+   * - ``enumerate_single(reagent_mols, reagent_keys=None, ...)``
+     - Enumerate single product from RDKit Mol objects
+   * - ``enumerate_single_from_smiles(smiles_list, reagent_keys=None, ...)``
+     - Enumerate single product from SMILES strings
+   * - ``enumerate_library(n_jobs=1, ...)``
+     - Enumerate all combinations from reagent files
+   * - ``enumerate_batch(combinations, n_jobs=1, ...)``
+     - Enumerate specific combinations, optionally in parallel
+
+**enumerate_single_from_smiles parameters:**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 22 10 46
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``smiles_list``
+     - ``list[str]``
+     - Yes
+     - SMILES strings for each reagent position
+   * - ``reagent_keys``
+     - ``list[str]``
+     - No
+     - Keys for compatibility lookup (names or identifiers)
+   * - ``store_intermediates``
+     - ``bool``
+     - No
+     - Store intermediate products for multi-step. Default: False
+
+**Returns:** :ref:`EnumerationResult <enumeration-result>`
+
+Utility Methods
+^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 45 55
+
+   * - Method
+     - Description
+   * - ``get_validator(step_index=0, pattern_id="primary")``
+     - Get internal validator for troubleshooting
+   * - ``validate_all()``
+     - Validate all steps and patterns
+   * - ``auto_detect_compatibility(reagent_lists=None, ...)``
+     - Pre-detect which reagents work with which patterns (optional optimization)
+   * - ``register_compatibility(position, reagent_key, patterns, ...)``
+     - Manually register a reagent's compatible patterns
+   * - ``get_compatible_patterns(reagent_keys, step_index=0)``
+     - Find pattern compatible with all reagents
+   * - ``get_compatibility_map()``
+     - Get full compatibility mapping
+   * - ``prepare_worker_data()``
+     - Serialize for multiprocessing workers
+   * - ``from_worker_data(data)``
+     - Reconstruct pipeline in worker process (class method)
+
+Properties
+^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 20 55
+
+   * - Property
+     - Type
+     - Description
+   * - ``num_steps``
+     - ``int``
+     - Number of reaction steps
+   * - ``num_components``
+     - ``int``
+     - Number of reagent files/positions required
+   * - ``is_multi_step``
+     - ``bool``
+     - True if multi-step synthesis
+   * - ``has_alternatives``
+     - ``bool``
+     - True if any step has alternative patterns
+   * - ``pattern_ids``
+     - ``dict[int, list[str]]``
+     - Available pattern IDs at each step
+   * - ``reactions``
+     - ``list[ReactionDef]``
+     - All reactions from config
+   * - ``reagent_file_list``
+     - ``list[str]``
+     - Reagent file paths from config
+
+Example: Basic Enumeration
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+   :caption: Enumerate products from SMILES
+
+   from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
+
+   config = ReactionConfig(
+       reactions=[
+           ReactionDef(
+               reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+               step_index=0
+           )
+       ],
+       reagent_file_list=["acids.smi", "amines.smi"]
+   )
+
+   pipeline = SynthesisPipeline(config)
+
+   # Single enumeration
+   result = pipeline.enumerate_single_from_smiles(["CC(=O)O", "CCN"])
+
+   if result.success:
+       print(f"Product: {result.product_smiles}")
+       print(f"Pattern used: {result.patterns_used}")
+   else:
+       print(f"Failed: {result.error}")
+
+Example: Library Enumeration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+   :caption: Enumerate all products with parallelization
+
+   from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef, results_to_dataframe
+
+   config = ReactionConfig(
+       reactions=[
+           ReactionDef(
+               reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+               step_index=0
+           )
+       ],
+       reagent_file_list=["acids.smi", "amines.smi"]
+   )
+
+   pipeline = SynthesisPipeline(config)
+
+   # Enumerate all combinations with 4 parallel workers
+   all_results = pipeline.enumerate_library(n_jobs=4, show_progress=True)
+
+   # Analyze results
+   successes = [r for r in all_results if r.success]
+   failures = [r for r in all_results if not r.success]
+   print(f"Success rate: {len(successes)/len(all_results)*100:.1f}%")
+
+   # Convert to Polars DataFrame
+   df = results_to_dataframe(all_results)
+
+
+Protecting Groups and Deprotection
+----------------------------------
+
+The SMARTS toolkit includes built-in support for common protecting groups and allows
+defining custom groups for specialized chemistry.
+
+.. _built-in-protecting-groups:
+
+Built-in Protecting Groups
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following protecting groups are available by default:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 15 18 35 32
+
+   * - Name
+     - Protects
+     - Detection SMARTS
+     - Result
+   * - Boc
+     - Amine (N)
+     - ``[NX3][C](=O)OC(C)(C)C``
+     - Free amine
+   * - Fmoc
+     - Amine (N)
+     - ``[NX3]C(=O)OCC1c2ccccc2-c2ccccc12``
+     - Free amine
+   * - Cbz
+     - Amine (N)
+     - ``[NX3]C(=O)OCc1ccccc1``
+     - Free amine
+   * - Acetamide
+     - Amine (N)
+     - ``[NX3][C](=O)[CH3]``
+     - Free amine
+   * - TBS
+     - Alcohol (O)
+     - ``[OX2][Si](C)(C)C(C)(C)C``
+     - Free alcohol
+   * - O-Benzyl
+     - Alcohol (O)
+     - ``[OX2]Cc1ccccc1``
+     - Free alcohol
+   * - Trityl
+     - Amine/Alcohol
+     - ``[NX3,OX2]C(c1ccccc1)(c1ccccc1)c1ccccc1``
+     - Free N/O
+   * - tBu-ester
+     - Carboxylic acid
+     - ``[CX3](=O)OC(C)(C)C``
+     - Free acid
+   * - Me-ester
+     - Carboxylic acid
+     - ``[CX3](=O)O[CH3]``
+     - Free acid
+   * - Et-ester
+     - Carboxylic acid
+     - ``[CX3](=O)OCC``
+     - Free acid
+
+**Accessing protecting group information:**
 
 .. code-block:: python
 
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        AlternativeSMARTSConfig,
-        SMARTSPatternConfig
-    )
-
-    config = AlternativeSMARTSConfig(
-        primary_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        alternatives=[
-            SMARTSPatternConfig(
-                pattern_id="secondary_amine",
-                reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]"
-            ),
-            SMARTSPatternConfig(
-                pattern_id="tertiary_amine",
-                reaction_smarts="[C:1](=O)[OH].[N:2]>>[C:1](=O)[N:2]"
-            )
-        ]
-    )
-
-    print(config.has_alternatives())  # True
-
-    # Get all patterns in priority order (primary first)
-    all_patterns = config.get_all_patterns()
-    for p in all_patterns:
-        print(f"{p.pattern_id}: {p.reaction_smarts}")
-
-Multi-Step Synthesis
---------------------
-
-Support for multi-step synthesis routes with intermediate tracking and protecting group handling.
-
-ReactionSequence
-~~~~~~~~~~~~~~~~
-
-Unified handler for single-step and multi-step synthesis.
-
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.ReactionSequence
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-**Key Features:**
-
-* Supports three modes: simple SMARTS, SMARTS with alternatives, multi-step
-* Uses :class:`SMARTSRouter` at each step for alternative pattern support
-* Tracks intermediate products between steps
-* Supports protecting group tracking
-* Validates required/expected substructures
-
-**Single-Step Usage:**
-
-.. code-block:: python
-
-    from rdkit import Chem
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        ReactionSequence,
-        MultiStepSynthesisConfig
-    )
-
-    # Single-step synthesis (mode 1)
-    config = MultiStepSynthesisConfig(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        reagent_file_list=["acids.smi", "amines.smi"]
-    )
-
-    sequence = ReactionSequence(config)
-
-    # Enumerate product
-    acid_mol = Chem.MolFromSmiles("CC(=O)O")
-    amine_mol = Chem.MolFromSmiles("CCN")
-
-    product, patterns_used = sequence.enumerate(
-        reagent_mols=[acid_mol, amine_mol],
-        reagent_keys=["acetic_acid", "ethylamine"]
-    )
-
-    if product:
-        print(f"Product: {Chem.MolToSmiles(product)}")
-        print(f"Patterns used: {patterns_used}")
-
-**Multi-Step Synthesis:**
-
-.. code-block:: python
-
-    from rdkit import Chem
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        ReactionSequence,
-        MultiStepSynthesisConfig,
-        ReactionStepConfig,
-        ReactionInputConfig,
-        ReactionInputSource,
-        AlternativeSMARTSConfig
-    )
-
-    # Define a 2-step synthesis
-    step1 = ReactionStepConfig(
-        step_idx=0,
-        smarts_config=AlternativeSMARTSConfig(
-            primary_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]"
-        ),
-        inputs=[
-            ReactionInputConfig(source=ReactionInputSource.REAGENT_FILE, component_idx=0),
-            ReactionInputConfig(source=ReactionInputSource.REAGENT_FILE, component_idx=1)
-        ],
-        description="Amide coupling step 1"
-    )
-
-    step2 = ReactionStepConfig(
-        step_idx=1,
-        smarts_config=AlternativeSMARTSConfig(
-            primary_smarts="[N:1].[C:2]=O>>[N:1][C:2]"  # Reductive amination
-        ),
-        inputs=[
-            ReactionInputConfig(source=ReactionInputSource.PREVIOUS_STEP, step_idx=0),
-            ReactionInputConfig(source=ReactionInputSource.REAGENT_FILE, component_idx=2)
-        ],
-        description="Reductive amination step 2"
-    )
-
-    config = MultiStepSynthesisConfig(
-        reagent_file_list=["acids.smi", "amines.smi", "aldehydes.smi"],
-        steps=[step1, step2]
-    )
-
-    sequence = ReactionSequence(config)
-
-    # Check properties
-    print(f"Number of components: {sequence.num_components}")
-    print(f"Number of steps: {sequence.num_steps}")
-
-    # Enumerate
-    reagent_mols = [
-        Chem.MolFromSmiles("CC(=O)O"),    # acid
-        Chem.MolFromSmiles("NCCN"),       # diamine
-        Chem.MolFromSmiles("CC=O")        # aldehyde
-    ]
-
-    product, patterns_used = sequence.enumerate(reagent_mols)
-
-    if product:
-        print(f"Final product: {Chem.MolToSmiles(product)}")
-        for step, pattern in patterns_used.items():
-            print(f"  Step {step}: {pattern}")
-
-MultiStepSynthesisConfig
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Top-level configuration for single or multi-step synthesis routes.
-
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.MultiStepSynthesisConfig
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-**Supports three modes:**
-
-1. **Single SMARTS** (backwards compatible): Provide ``reaction_smarts``
-2. **Single with alternatives**: Provide ``alternative_smarts``
-3. **Multi-step**: Provide ``steps`` list
-
-**Mode 1 - Single SMARTS:**
-
-.. code-block:: python
-
-    from TACTICS.library_enumeration.smarts_toolkit import MultiStepSynthesisConfig
-
-    config = MultiStepSynthesisConfig(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        reagent_file_list=["acids.smi", "amines.smi"]
-    )
-
-    print(config.is_multi_step())  # False
-
-**Mode 2 - Single with alternatives:**
-
-.. code-block:: python
-
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        MultiStepSynthesisConfig,
-        AlternativeSMARTSConfig,
-        SMARTSPatternConfig
-    )
-
-    config = MultiStepSynthesisConfig(
-        alternative_smarts=AlternativeSMARTSConfig(
-            primary_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-            alternatives=[
-                SMARTSPatternConfig(
-                    pattern_id="secondary",
-                    reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]"
-                )
-            ]
-        ),
-        reagent_file_list=["acids.smi", "amines.smi"]
-    )
-
-**Mode 3 - Multi-step:**
-
-.. code-block:: python
-
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        MultiStepSynthesisConfig,
-        ReactionStepConfig,
-        ReactionInputConfig,
-        ReactionInputSource,
-        AlternativeSMARTSConfig
-    )
-
-    config = MultiStepSynthesisConfig(
-        reagent_file_list=["component_a.smi", "component_b.smi", "component_c.smi"],
-        steps=[
-            ReactionStepConfig(
-                step_idx=0,
-                smarts_config=AlternativeSMARTSConfig(primary_smarts="..."),
-                inputs=[
-                    ReactionInputConfig(source=ReactionInputSource.REAGENT_FILE, component_idx=0),
-                    ReactionInputConfig(source=ReactionInputSource.REAGENT_FILE, component_idx=1)
-                ]
-            ),
-            ReactionStepConfig(
-                step_idx=1,
-                smarts_config=AlternativeSMARTSConfig(primary_smarts="..."),
-                inputs=[
-                    ReactionInputConfig(source=ReactionInputSource.PREVIOUS_STEP, step_idx=0),
-                    ReactionInputConfig(source=ReactionInputSource.REAGENT_FILE, component_idx=2)
-                ]
-            )
-        ]
-    )
-
-ReactionStepConfig
-~~~~~~~~~~~~~~~~~~
-
-Configuration for a single step in a multi-step synthesis.
-
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.ReactionStepConfig
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-**Attributes:**
-
-* ``step_idx``: 0-indexed step number
-* ``smarts_config``: :class:`AlternativeSMARTSConfig` for this step
-* ``inputs``: List of :class:`ReactionInputConfig` specifying inputs
-* ``description``: Optional human-readable description
-* ``required_substructure``: Optional SMARTS that must be present in inputs
-* ``expected_substructure``: Optional SMARTS that should appear in output
-
-**Example with substructure validation:**
-
-.. code-block:: python
-
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        ReactionStepConfig,
-        ReactionInputConfig,
-        ReactionInputSource,
-        AlternativeSMARTSConfig
-    )
-
-    step = ReactionStepConfig(
-        step_idx=0,
-        smarts_config=AlternativeSMARTSConfig(
-            primary_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]"
-        ),
-        inputs=[
-            ReactionInputConfig(source=ReactionInputSource.REAGENT_FILE, component_idx=0),
-            ReactionInputConfig(source=ReactionInputSource.REAGENT_FILE, component_idx=1)
-        ],
-        description="Amide coupling",
-        required_substructure="[NH2]",      # Input must have primary amine
-        expected_substructure="C(=O)N"       # Product should have amide bond
-    )
-
-ReactionInputConfig
-~~~~~~~~~~~~~~~~~~~
-
-Configuration for reaction inputs (reagents or intermediates).
-
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.ReactionInputConfig
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-**Attributes:**
-
-* ``source``: :class:`ReactionInputSource` (``REAGENT_FILE`` or ``PREVIOUS_STEP``)
-* ``component_idx``: Required when source is ``REAGENT_FILE`` (which reagent file)
-* ``step_idx``: Required when source is ``PREVIOUS_STEP`` (which step's output)
-
-**Examples:**
-
-.. code-block:: python
-
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        ReactionInputConfig,
-        ReactionInputSource
-    )
-
-    # Input from reagent file (component 0)
-    input_from_file = ReactionInputConfig(
-        source=ReactionInputSource.REAGENT_FILE,
-        component_idx=0
-    )
-
-    # Input from previous step's output
-    input_from_step = ReactionInputConfig(
-        source=ReactionInputSource.PREVIOUS_STEP,
-        step_idx=0
-    )
-
-ReactionInputSource
-~~~~~~~~~~~~~~~~~~~
-
-Enum defining the source of input for a reaction step.
-
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.ReactionInputSource
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-**Values:**
-
-* ``REAGENT_FILE``: Input comes from a reagent ``.smi`` file
-* ``PREVIOUS_STEP``: Input comes from the output of a previous synthesis step
-
-ProtectingGroupConfig
+   from TACTICS.library_enumeration.smarts_toolkit.constants import (
+       get_all_protecting_group_names,
+       get_protecting_group,
+   )
+
+   # List all available protecting groups
+   print(get_all_protecting_group_names())
+   # ['Boc', 'Fmoc', 'Cbz', 'Acetamide', 'TBS', 'O-Benzyl', 'Trityl', 'tBu-ester', 'Me-ester', 'Et-ester']
+
+   # Get details for a specific group
+   boc = get_protecting_group("Boc")
+   print(f"Name: {boc.name}")
+   print(f"Detection SMARTS: {boc.smarts}")
+   print(f"Deprotection SMARTS: {boc.deprotection_smarts}")
+
+Reactant Deprotection
 ~~~~~~~~~~~~~~~~~~~~~
 
-Configuration for tracking a protecting group through multi-step synthesis.
-
-.. autoclass:: TACTICS.library_enumeration.smarts_toolkit.ProtectingGroupConfig
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-**Attributes:**
-
-* ``name``: Human-readable name (e.g., "Boc", "Fmoc")
-* ``protected_smarts``: SMARTS pattern to detect protected form
-* ``deprotected_smarts``: SMARTS pattern to detect deprotected form
-* ``component_idx``: Which reagent component has this protecting group
-* ``protection_removed_at_step``: Which step removes the protection
-
-**Example:**
+Deprotect a reactant **before** the reaction runs using ``target=<reactant_index>``:
 
 .. code-block:: python
 
-    from TACTICS.library_enumeration.smarts_toolkit import ProtectingGroupConfig
+   from TACTICS.library_enumeration import (
+       ReactionConfig, ReactionDef, DeprotectionSpec, SynthesisPipeline
+   )
 
-    boc_config = ProtectingGroupConfig(
-        name="Boc",
-        protected_smarts="[NH]C(=O)OC(C)(C)C",
-        deprotected_smarts="[NH2]",
-        component_idx=0,
-        protection_removed_at_step=1  # Deprotection happens at step 1
-    )
+   config = ReactionConfig(
+       reactions=[
+           ReactionDef(
+               reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+               step_index=0,
+               deprotections=[
+                   # Remove Boc from second reactant (index 1) before reaction
+                   DeprotectionSpec(group="Boc", target=1),
+               ],
+           )
+       ],
+       reagent_file_list=["acids.smi", "boc_amines.smi"],
+   )
 
-Command-Line Interface
-----------------------
+   pipeline = SynthesisPipeline(config)
 
-The SMARTS toolkit includes a command-line interface for validation and testing.
+   # Boc-protected amine will be deprotected before amide coupling
+   result = pipeline.enumerate_single_from_smiles([
+       "CC(=O)O",                    # Acetic acid
+       "CC(C)(C)OC(=O)NCCN"          # Boc-ethylenediamine
+   ])
 
-**Basic Usage:**
+Product Deprotection
+~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: bash
-
-    python -m TACTICS.library_enumeration.smarts_toolkit.cli \
-        "[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]" \
-        acids.smi amines.smi \
-        --validate
-
-**With Reaction Testing:**
-
-.. code-block:: bash
-
-    python -m TACTICS.library_enumeration.smarts_toolkit.cli \
-        "[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]" \
-        acids.smi amines.smi \
-        --validate \
-        --test-reactions \
-        --sample-size 1000
-
-**Export Compatible Reagents:**
-
-.. code-block:: bash
-
-    python -m TACTICS.library_enumeration.smarts_toolkit.cli \
-        "[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]" \
-        acids.smi amines.smi \
-        --export-compatible ./compatible_reagents
-
-**CLI Arguments:**
-
-* ``reaction_smarts``: Required. The reaction SMARTS pattern to validate.
-* ``reagent_files``: Required. One or more reagent files (``.smi`` or ``.csv``).
-* ``--validate``: Run validation analysis.
-* ``--test-reactions``: Test actual reaction combinations (can be slow).
-* ``--sample-size``: Number of combinations to test (default: 100).
-* ``--export-compatible``: Directory to export compatible reagents.
-* ``--output``: Output JSON file for results (default: ``smarts_analysis.json``).
-
-Complete Workflow Example
--------------------------
-
-This example shows a complete workflow for validating a reaction, visualizing results,
-and exporting compatible reagents:
+Deprotect the product **after** the reaction runs using ``target="product"``:
 
 .. code-block:: python
 
-    from rdkit import Chem
-    from TACTICS.library_enumeration.smarts_toolkit import (
-        # Validation
-        SMARTSValidator,
-        ValidationResult,
-        # Visualization
-        SMARTSVisualizer,
-        # Multi-SMARTS routing
-        SMARTSRouter,
-        AlternativeSMARTSConfig,
-        SMARTSPatternConfig,
-        # Multi-step synthesis
-        ReactionSequence,
-        MultiStepSynthesisConfig
-    )
+   from TACTICS.library_enumeration import (
+       ReactionConfig, ReactionDef, DeprotectionSpec, SynthesisPipeline
+   )
 
-    # 1. Validate the SMARTS pattern against reagent libraries
-    validator = SMARTSValidator(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        reagent_files=["acids.smi", "amines.smi"],
-        desalt_on_import=True  # Clean up salt forms
-    )
+   config = ReactionConfig(
+       reactions=[
+           ReactionDef(
+               reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+               step_index=0,
+               deprotections=[
+                   # Remove Fmoc from product after reaction
+                   DeprotectionSpec(group="Fmoc", target="product"),
+               ],
+           )
+       ],
+       reagent_file_list=["acids.smi", "amines.smi"],
+   )
 
-    result = validator.validate(test_reactions=True, sample_size=500)
+   pipeline = SynthesisPipeline(config)
 
-    print("=== Validation Results ===")
-    for pos, coverage in result.coverage_stats.items():
-        print(f"Position {pos}: {coverage:.1f}% coverage")
-    print(f"Reaction success rate: {result.reaction_success_rate:.1f}%")
+Custom Protecting Groups
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-    # 2. Visualize results (in Jupyter)
-    viz = SMARTSVisualizer(validator)
-    viz.visualize_reaction()
-    viz.visualize_compatible_reagents(position=0, max_molecules=10)
-    viz.generate_summary_plot()
+Define custom protecting groups using :ref:`ProtectingGroupInfo <protecting-group-info>`:
 
-    # 3. Export compatible reagents for use in TACTICS
-    validator.export_compatible_reagents(
-        output_dir="./cleaned_reagents",
-        prefix=["acid", "amine"],
-        desalt=True,
-        deprotect=True
-    )
+.. code-block:: python
 
-    # 4. Set up multi-SMARTS routing for production
-    config = AlternativeSMARTSConfig(
-        primary_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        alternatives=[
-            SMARTSPatternConfig(
-                pattern_id="secondary",
-                reaction_smarts="[C:1](=O)[OH].[NH:2]>>[C:1](=O)[N:2]"
-            )
-        ]
-    )
+   from TACTICS.library_enumeration import (
+       ReactionConfig, ReactionDef, DeprotectionSpec, ProtectingGroupInfo,
+       SynthesisPipeline
+   )
 
-    router = SMARTSRouter(config)
+   # Define a custom protecting group
+   alloc = ProtectingGroupInfo(
+       name="Alloc",
+       smarts="[NX3]C(=O)OCC=C",
+       deprotection_smarts="[N:1]C(=O)OCC=C>>[N:1]"
+   )
 
-    # Register compatibility based on validation
-    for smiles, name in result.compatible_reagents.get(1, []):
-        mol = Chem.MolFromSmiles(smiles)
-        if mol:
-            # Check if primary or secondary amine
-            if mol.HasSubstructMatch(Chem.MolFromSmarts("[NH2]")):
-                router.register_reagent_compatibility(name, {"primary"})
-            elif mol.HasSubstructMatch(Chem.MolFromSmarts("[NH]")):
-                router.register_reagent_compatibility(name, {"secondary"})
+   config = ReactionConfig(
+       reactions=[
+           ReactionDef(
+               reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+               step_index=0,
+               deprotections=[
+                   DeprotectionSpec(group="Alloc", target="product"),
+               ],
+           ),
+       ],
+       reagent_file_list=["acids.smi", "amines.smi"],
+       protecting_groups=[alloc],  # Register custom group
+   )
 
-    # 5. Use in enumeration
-    acid = Chem.MolFromSmiles("CC(=O)O")
-    amine = Chem.MolFromSmiles("CNC")
+   pipeline = SynthesisPipeline(config)
 
-    product, pattern_used = router.enumerate(
-        [acid, amine],
-        ["acetic_acid", "methylamine"]
-    )
 
-    if product:
-        print(f"Product: {Chem.MolToSmiles(product)}")
-        print(f"Used pattern: {pattern_used}")
+Result Types
+------------
+
+.. _validation-result:
+
+ValidationResult
+~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-result
+
+**Comprehensive results from SMARTS validation.**
+
+Returned by :ref:`ReactionDef.validate_reaction() <reaction-def>`.
+
+.. list-table:: Attributes
+   :header-rows: 1
+   :widths: 28 25 47
+
+   * - Attribute
+     - Type
+     - Description
+   * - ``compatible_reagents``
+     - ``dict[int, list[tuple]]``
+     - ``{position: [(smiles, name), ...]}`` - reagents that match
+   * - ``incompatible_reagents``
+     - ``dict[int, list[tuple]]``
+     - ``{position: [(smiles, name), ...]}`` - reagents that don't match
+   * - ``invalid_smiles``
+     - ``dict[int, list[tuple]]``
+     - Unparseable SMILES entries
+   * - ``duplicate_smiles``
+     - ``dict[int, list[tuple]]``
+     - Duplicate entries
+   * - ``protected_reagents``
+     - ``dict[int, list[tuple]]``
+     - ``{position: [(smiles, name, [groups]), ...]}`` - with protecting groups
+   * - ``multi_fragment_reagents``
+     - ``dict[int, list[tuple]]``
+     - ``{position: [(smiles, name, [fragments]), ...]}`` - with salts
+   * - ``coverage_stats``
+     - ``dict[int, float]``
+     - Percent compatible per position (0-100)
+   * - ``reaction_success_rate``
+     - ``float``
+     - Percent of test reactions that succeeded
+   * - ``error_messages``
+     - ``list[str]``
+     - Critical errors
+   * - ``warnings``
+     - ``list[str]``
+     - Non-critical warnings
+
+**Methods and Properties:**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Member
+     - Description
+   * - ``is_valid()``
+     - True if all positions have >0% coverage and no critical errors
+   * - ``total_compatible``
+     - Total compatible reagents across all positions
+   * - ``total_incompatible``
+     - Total incompatible reagents
+
+
+.. _enumeration-result:
+
+EnumerationResult
+~~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-result
+
+**Complete result from pipeline enumeration.**
+
+Returned by :ref:`SynthesisPipeline <synthesis-pipeline>` enumeration methods.
+
+.. list-table:: Attributes
+   :header-rows: 1
+   :widths: 22 25 53
+
+   * - Attribute
+     - Type
+     - Description
+   * - ``product``
+     - ``Mol | None``
+     - Final product as RDKit Mol object
+   * - ``product_smiles``
+     - ``str | None``
+     - SMILES of final product
+   * - ``product_name``
+     - ``str | None``
+     - Name derived from reagent keys
+   * - ``patterns_used``
+     - ``dict[int, str]``
+     - ``{step_index: pattern_id}`` for each step
+   * - ``intermediates``
+     - ``dict[int, Mol] | None``
+     - ``{step_index: mol}`` if ``store_intermediates=True``
+   * - ``error``
+     - ``EnumerationError | None``
+     - Error details if failed
+
+**Properties:**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Property
+     - Description
+   * - ``success``
+     - True if enumeration succeeded (product is not None and no error)
+
+
+.. _enumeration-error:
+
+EnumerationError
+~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-result
+
+**Details about a failed enumeration.**
+
+Contained in :ref:`EnumerationResult.error <enumeration-result>` when enumeration fails.
+
+.. list-table:: Attributes
+   :header-rows: 1
+   :widths: 22 25 53
+
+   * - Attribute
+     - Type
+     - Description
+   * - ``step_index``
+     - ``int``
+     - Which step failed
+   * - ``pattern_id``
+     - ``str | None``
+     - Which pattern was attempted
+   * - ``error_type``
+     - ``str``
+     - One of: ``no_compatible_pattern``, ``reaction_failed``, ``invalid_input``, ``deprotection_failed``
+   * - ``message``
+     - ``str``
+     - Human-readable description
+   * - ``reagent_smiles``
+     - ``list[str]``
+     - Input SMILES that caused the failure
+
+**Example: Handling Errors**
+
+.. code-block:: python
+
+   result = pipeline.enumerate_single_from_smiles(["CC(=O)O", "CCC"])  # Propane has no amine
+
+   if not result.success:
+       err = result.error
+       print(f"Failed at step {err.step_index}")
+       print(f"Error type: {err.error_type}")
+       print(f"Message: {err.message}")
+       print(f"Reagents: {err.reagent_smiles}")
+
+
+.. _auto-detection-result:
+
+AutoDetectionResult
+~~~~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-result
+
+**Results from automatic SMARTS compatibility detection.**
+
+Returned by :ref:`SynthesisPipeline.auto_detect_compatibility() <synthesis-pipeline>`.
+
+.. list-table:: Attributes
+   :header-rows: 1
+   :widths: 25 30 45
+
+   * - Attribute
+     - Type
+     - Description
+   * - ``pattern_results``
+     - ``dict[int, dict[str, ValidationResult]]``
+     - ``{step_index: {pattern_id: ValidationResult}}``
+   * - ``compatibility_map``
+     - ``dict[tuple, set[str]]``
+     - ``{(step_index, position, reagent_key): {pattern_ids}}``
+   * - ``coverage_by_pattern``
+     - ``dict[int, dict[str, dict[int, float]]]``
+     - ``{step_index: {pattern_id: {position: coverage%}}}``
+   * - ``unmatched_reagents``
+     - ``dict[int, list[str]]``
+     - ``{position: [reagent_names]}`` - reagents that match no pattern
+   * - ``warnings``
+     - ``list[str]``
+     - Warning messages
+
+
+Constants
+---------
+
+The module provides default protecting groups and salt fragments for common use cases.
+
+DEFAULT_PROTECTING_GROUPS
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+List of 10 common protecting groups (see :ref:`built-in-protecting-groups` for details).
+
+DEFAULT_SALT_FRAGMENTS
+~~~~~~~~~~~~~~~~~~~~~~
+
+List of ~25 common salt/counterion fragments including:
+
+- Halides (Cl⁻, Br⁻, I⁻)
+- Metal cations (Na⁺, K⁺, Li⁺, Ca²⁺, Mg²⁺)
+- Organic acids (TFA, acetate, formate)
+- Ammonium salts
+
+Utility Functions
+~~~~~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Function
+     - Description
+   * - ``get_protecting_group(name)``
+     - Get :ref:`ProtectingGroupInfo <protecting-group-info>` by name. Raises ``KeyError`` if not found.
+   * - ``get_all_protecting_group_names()``
+     - Get list of all default protecting group names.
+   * - ``results_to_dataframe(results)``
+     - Convert list of EnumerationResult to Polars DataFrame.
+   * - ``failures_to_dataframe(results)``
+     - Convert failed EnumerationResult objects to DataFrame.
+   * - ``summarize_failures(results)``
+     - Get summary statistics of enumeration failures.
+
+

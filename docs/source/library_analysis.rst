@@ -1,296 +1,670 @@
-Library Analysis Module
-=======================
+Library Analysis
+================
 
-The Library Analysis module provides tools for analyzing chemical libraries and their building blocks, 
-as well as visualization capabilities for chemical analysis and Thompson Sampling benchmark results.
+The Library Analysis module provides tools for analyzing Thompson Sampling results,
+identifying top building blocks, and creating visualizations for benchmarking studies.
 
-LibraryAnalysis Class
----------------------
-
-The LibraryAnalysis class provides tools for analyzing chemical libraries and their building blocks,
-including identification of top building blocks and overlap analysis between different cutoffs.
-
-.. autoclass:: TACTICS.library_analysis.library_analysis.LibraryAnalysis
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :noindex:
-
-**Class Methods:**
-
-.. class:: LibraryAnalysis(polars_dataframe, top_n_cutoff=100)
-   
-   Initialize the LibraryAnalysis class.
-
-   :param polars.DataFrame polars_dataframe: DataFrame containing library data with 'product_code' and 'score' columns
-   :param int top_n_cutoff: Number of top products to consider for analysis
-
-   .. method:: find_top_building_blocks()
-      
-      Identify and count the most frequently occurring building blocks in top products.
-      
-      :returns: None (results stored in class attributes)
-
-   .. method:: check_overlap(new_cutoff)
-      
-      Check overlap between current cutoff and a new cutoff value.
-      
-      :param int new_cutoff: New cutoff value to compare against
-      :returns: List of tuples containing overlap information for each position
-      :rtype: list
-
-   
-      
-      Visualize top building blocks using RDKit molecular drawings.
-      
-      :param bool show_overlap: Whether to show overlapping building blocks
-      :param int mols_per_row: Number of molecules per row in the grid
-      :param tuple sub_img_size: Size of each molecule image
-      :param LibraryAnalysis comparison_analysis: Another analysis instance for comparison
-      :param int top_n: Number of top building blocks to visualize
-
-   .. method:: compare_analysis_overlap(other_analysis, top_n=100)
-      
-      Compare building block overlap with another LibraryAnalysis instance.
-      
-      :param LibraryAnalysis other_analysis: Another LibraryAnalysis instance to compare with
-      :param int top_n: Number of top building blocks to consider
-      :returns: List of overlap results for each position
-      :rtype: list
-
-LibraryVisualization Class
---------------------------
-
-The LibraryVisualization class provides tools for creating visualizations from LibraryAnalysis instances,
-including chemical structure visualization and comparative analysis plots.
-
-.. autoclass:: TACTICS.library_analysis.visualization.LibraryVisualization
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :noindex:
-
-**Class Methods:**
-
-.. class:: LibraryVisualization(analysis)
-   
-   Initialize the LibraryVisualization class.
-
-   :param LibraryAnalysis analysis: LibraryAnalysis instance containing data to visualize
-
-   .. method:: plot_top_products_comparison(analysis_instances, reference_instance, top_n=100, title="Top Products Comparison", figsize=(15, 10), analysis_labels=None, save_path=None)
-      
-      Generate subplots comparing overlap of top products between analysis instances and a reference.
-      
-      :param list analysis_instances: List of LibraryAnalysis instances to compare
-      :param LibraryAnalysis reference_instance: Reference LibraryAnalysis instance
-      :param int top_n: Number of top products to consider
-      :param str title: Plot title
-      :param tuple figsize: Figure size (width, height)
-      :param list analysis_labels: Labels for each analysis group
-      :param str save_path: Path to save the plot
-
-   .. method:: visualize_top_building_blocks(show_overlap=False, mols_per_row=5, sub_img_size=(300, 300), comparison_analysis=None, top_n=20)
-      
-      Visualize top building blocks for each position using RDKit.
-      
-      :param bool show_overlap: Whether to show overlapping building blocks
-      :param int mols_per_row: Number of molecules to display per row
-      :param tuple sub_img_size: Size of each molecule image
-      :param LibraryAnalysis comparison_analysis: Another LibraryAnalysis instance for overlap comparison
-      :param int top_n: Number of top building blocks to consider
-
-TS_Benchmarks Class
+Module Architecture
 -------------------
 
-The TS_Benchmarks class provides comprehensive tools for benchmarking and visualizing Thompson Sampling (TS) 
-results across multiple cycles and search strategies. All required data is automatically generated during 
-initialization, making it extremely user-friendly with a simple one-step setup process.
+.. graphviz::
+
+    digraph LibraryAnalysis {
+        rankdir=TB;
+        node [shape=box, style="rounded,filled", fontname="Helvetica"];
+
+        subgraph cluster_input {
+            label="Input Data";
+            style=filled;
+            color=lightblue;
+
+            Results [label="Results DataFrame\n(Polars)", shape=cylinder, fillcolor=lightblue];
+            Reference [label="Reference Data\n(Ground Truth)", shape=cylinder, fillcolor=lightblue];
+        }
+
+        subgraph cluster_analysis {
+            label="Analysis";
+            style=filled;
+            color=lightyellow;
+
+            LibraryAnalysis [label="LibraryAnalysis\n- Top building blocks\n- Overlap analysis", fillcolor=gold];
+        }
+
+        subgraph cluster_viz {
+            label="Visualization";
+            style=filled;
+            color=lightgreen;
+
+            LibraryVisualization [label="LibraryVisualization\n- Structure grids\n- Comparison plots", fillcolor=lightgreen];
+            TS_Benchmarks [label="TS_Benchmarks\n- Strip plots\n- Bar plots\n- Line plots", fillcolor=lightgreen];
+        }
+
+        subgraph cluster_output {
+            label="Outputs";
+            style=filled;
+            color=lavender;
+
+            Plots [label="Interactive Plots\n(Altair)", fillcolor=lavender];
+            MolGrids [label="Molecule Grids\n(RDKit)", fillcolor=lavender];
+            Stats [label="Statistics\n& Summaries", fillcolor=lavender];
+        }
+
+        Results -> LibraryAnalysis;
+        Reference -> TS_Benchmarks;
+        LibraryAnalysis -> LibraryVisualization;
+        LibraryVisualization -> Plots;
+        LibraryVisualization -> MolGrids;
+        TS_Benchmarks -> Plots;
+        TS_Benchmarks -> Stats;
+    }
+
+Quick Start
+-----------
+
+**Analyze results and find top building blocks:**
+
+.. code-block:: python
+   :caption: Basic analysis workflow
+
+   import polars as pl
+   from TACTICS.library_analysis import LibraryAnalysis, LibraryVisualization
+
+   # Load results
+   results_df = pl.read_csv("results.csv")
+
+   # Create analysis with SMILES files for building block lookup
+   analysis = LibraryAnalysis(
+       df=results_df,
+       smiles_files=["acids.smi", "amines.smi"],
+       product_code_column="Product_Code",
+       score_column="Scores"
+   )
+   
+   # Find top building blocks in top 100 compounds
+   counters, total = analysis.find_top_building_blocks(cutoff=100)
+
+   # Visualize top building blocks
+   viz = LibraryVisualization(analysis)
+   viz.visualize_top_building_blocks(top_n=20)
+
+**Benchmark Thompson Sampling methods:**
+
+.. code-block:: python
+   :caption: Benchmarking multiple methods
+
+   from TACTICS.library_analysis.visualization import TS_Benchmarks
+
+   # TS_Benchmarks auto-generates all data during initialization
+   benchmarks = TS_Benchmarks(
+       no_of_cycles=10,
+       methods_list=["roulette_wheel", "bayes_ucb", "greedy"],
+       TS_runs_data={
+           "roulette_wheel": [cycle1_df, cycle2_df, ...],
+           "bayes_ucb": [cycle1_df, cycle2_df, ...],
+           "greedy": [cycle1_df, cycle2_df, ...],
+       },
+       reference_data=reference_df,
+       top_n=100,
+       sort_type="minimize"
+   )
+
+   # All data pre-calculated - ready to plot immediately
+   benchmarks.stripplot_TS_results()
+   benchmarks.plot_barplot_TS_results()
+   benchmarks.plot_line_performance_with_error_bars()
+
+
+.. _library-analysis:
+
+LibraryAnalysis
+---------------
+
+.. rst-class:: class-core
+
+Analyzes chemical libraries to identify top building blocks and their overlap.
+
+.. admonition:: Dependencies
+   :class: dependencies
+
+   - Polars or Pandas DataFrame with product codes and scores
+   - SMILES files (.smi) containing building block structures
+   - Used by :ref:`LibraryVisualization <library-visualization>` for visualizations
+
+Constructor
+~~~~~~~~~~~
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 22 20 10 48
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``df``
+     - ``DataFrame``
+     - Yes
+     - Polars or Pandas DataFrame with product codes and scores.
+   * - ``smiles_files``
+     - ``str | list[str]``
+     - Yes
+     - Path(s) to .smi file(s) containing SMILES and building block codes.
+   * - ``product_code_column``
+     - ``str``
+     - No
+     - Name of product code column. Default: ``"Product_Code"``.
+   * - ``score_column``
+     - ``str``
+     - No
+     - Name of score column. Default: ``"Scores"``.
+
+Methods
+~~~~~~~
+
+find_top_building_blocks
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Identify and count building blocks in top products.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``cutoff``
+     - ``int``
+     - Yes
+     - Number of top products to analyze.
+   * - ``sort_scores_by``
+     - ``str``
+     - No
+     - ``"ascending"`` or ``"descending"``. Default: ``"ascending"``.
+   * - ``top_n``
+     - ``int``
+     - No
+     - Number of top building blocks per position. Default: 100.
+
+**Returns**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Type
+     - Description
+   * - ``Tuple[List[Counter], int]``
+     - (position_counters, total_molecules)
+
+**Example**
+
+.. code-block:: python
+
+   from TACTICS.library_analysis import LibraryAnalysis
+
+   analysis = LibraryAnalysis(
+       df=results_df,
+       smiles_files=["acids.smi", "amines.smi"],
+       product_code_column="Product_Code",
+       score_column="Scores"
+   )
+   counters, total = analysis.find_top_building_blocks(cutoff=100)
+
+check_overlap
+^^^^^^^^^^^^^
+
+Check overlap between current cutoff and a new cutoff value.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``new_cutoff``
+     - ``int``
+     - Yes
+     - New cutoff value to compare against.
+
+**Returns**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Type
+     - Description
+   * - ``list[tuple]``
+     - Overlap information for each position.
+
+compare_analysis_overlap
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Compare building block overlap with another LibraryAnalysis instance.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 20 10 50
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``other_analysis``
+     - ``LibraryAnalysis``
+     - Yes
+     - Another analysis to compare with.
+   * - ``top_n``
+     - ``int``
+     - No
+     - Number of top building blocks. Default: 100.
+
+**Returns**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Type
+     - Description
+   * - ``list``
+     - Overlap results for each position.
+
+
+.. _library-visualization:
+
+LibraryVisualization
+--------------------
+
+.. rst-class:: class-core
+
+Creates visualizations from LibraryAnalysis instances.
+
+.. admonition:: Dependencies
+   :class: dependencies
+
+   - Requires :ref:`LibraryAnalysis <library-analysis>` instance
+   - RDKit for molecular structure rendering
+
+**Depends on:** :ref:`LibraryAnalysis <library-analysis>`
+
+Constructor
+~~~~~~~~~~~
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 20 10 50
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``analysis``
+     - ``LibraryAnalysis``
+     - Yes
+     - Analysis instance containing data to visualize.
+
+Methods
+~~~~~~~
+
+visualize_top_building_blocks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Display top building blocks using RDKit molecular drawings.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 24 18 10 48
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``show_overlap``
+     - ``bool``
+     - No
+     - Show overlapping building blocks. Default: False.
+   * - ``mols_per_row``
+     - ``int``
+     - No
+     - Molecules per row in grid. Default: 5.
+   * - ``sub_img_size``
+     - ``tuple``
+     - No
+     - Size of each molecule image. Default: (300, 300).
+   * - ``comparison_analysis``
+     - ``LibraryAnalysis``
+     - No
+     - Another analysis for overlap comparison.
+   * - ``top_n``
+     - ``int``
+     - No
+     - Number of top building blocks. Default: 20.
+
+plot_top_products_comparison
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Generate subplots comparing overlap between analysis instances and a reference.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 22 20 10 48
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``analysis_instances``
+     - ``list``
+     - Yes
+     - List of LibraryAnalysis instances to compare.
+   * - ``reference_instance``
+     - ``LibraryAnalysis``
+     - Yes
+     - Reference analysis instance.
+   * - ``top_n``
+     - ``int``
+     - No
+     - Top products to consider. Default: 100.
+   * - ``title``
+     - ``str``
+     - No
+     - Plot title.
+   * - ``figsize``
+     - ``tuple``
+     - No
+     - Figure size (width, height). Default: (15, 10).
+   * - ``analysis_labels``
+     - ``list``
+     - No
+     - Labels for each analysis group.
+   * - ``save_path``
+     - ``str``
+     - No
+     - Path to save the plot.
+
+
+.. _ts-benchmarks:
+
+TS_Benchmarks
+-------------
+
+.. rst-class:: class-core
+
+Comprehensive benchmarking and visualization for Thompson Sampling results across
+multiple cycles and search strategies.
 
 **Key Features:**
 
-* 🤖 Automatic Data Generation: All datasets generated during initialization - no manual steps required
-* 🎨 Consistent Color Schemes: Unified colors across all plot types for professional appearance
-* 📊 Multi-cycle Analysis: Compare different TS methods across multiple cycles with comprehensive statistics
-* 📈 Reference Comparison: Benchmark against ground truth reference data with detailed performance metrics
-* 🎯 Multiple Visualization Types: Strip plots, bar plots, and line plots with error bars
-* ⚙️ Configurable Parameters: Customizable top_n, sort_type, and analysis points via constructor
-* 🧹 Clean Output: Organized summaries with emojis and comprehensive statistics
+- Automatic data generation during initialization
+- Consistent color schemes across all plots
+- Multi-cycle analysis with statistics
+- Reference comparison with performance metrics
+- Multiple visualization types (strip, bar, line plots)
 
-**New Simplified Workflow:**
+Constructor
+~~~~~~~~~~~
 
-1. **One-step initialization**: ``TS_Benchmarks(...)`` - Everything generated automatically!
-2. **Direct plotting**: Call any plotting method immediately
-   - Distribution analysis: ``stripplot_TS_results()``
-   - Hit recovery: ``plot_barplot_TS_results()``
-   - Performance trends: ``plot_line_performance_with_error_bars()``
+All required data is automatically generated during initialization.
 
-**Major Improvements:**
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 22 10 48
 
-* 🚀 Streamlined Usage: No more manual data generation calls - everything happens in ``__init__``
-* 🔧 Enhanced Constructor: Support for custom ``top_n``, ``sort_type``, and ``top_ns`` parameters
-* 📊 Pre-calculated Statistics: Grouped statistics and error bar data generated during initialization
-* 🎨 Color Consistency: Same method gets same color across stripplot, bar plot, and line plot
-* ✨ Better User Experience: Clear progress indicators and comprehensive summaries
-
-.. autoclass:: TACTICS.library_analysis.visualization.TS_Benchmarks
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :noindex:
-
-**Class Methods:**
-
-.. class:: TS_Benchmarks(no_of_cycles, methods_list, TS_runs_data, reference_data=None, top_n=100, sort_type="minimize", top_ns=None)
-   
-   Initialize the TS_Benchmarks class and automatically generate all required data for Thompson Sampling analysis.
-   
-   **🔄 Automatic Data Generation**: This constructor automatically generates all datasets including:
-   TS runs data, bar plot data, line plot data, and grouped statistics for error bars.
-
-   :param int no_of_cycles: Number of cycles to analyze
-   :param list methods_list: List of method names (search strategies)
-   :param dict TS_runs_data: Dictionary mapping method names to lists of DataFrames (one per cycle)
-   :param DataFrame reference_data: Optional reference/ground truth data for comparison
-   :param int top_n: Number of top products to consider for bar plot analysis (default: 100)
-   :param str sort_type: Type of sorting ("minimize" or "maximize", default: "minimize")
-   :param list top_ns: List of top N values for line plot analysis (default: [50, 100, 200, 300, 400, 500])
-
-   .. method:: stripplot_TS_results(width=None, height=None, save_path=None, show_plot=True)
-      
-      🎨 Generate a strip plot showing score distributions across cycles and methods.
-      **Data is pre-generated during initialization** - ready to plot immediately!
-      
-      :param int width: Plot width in pixels (auto-calculated if None)
-      :param int height: Plot height in pixels (auto-calculated if None)
-      :param str save_path: Path to save the plot (supports .html, .png, .svg)
-      :param bool show_plot: Whether to display the plot in Jupyter
-      :returns: Altair chart object or None
-      :rtype: altair.Chart or None
-
-   
-      
-      📊 Create a grouped bar plot showing reference hit recovery by method and cycle.
-      **Data is pre-generated during initialization** - ready to plot immediately!
-      
-      :param int width: Plot width in pixels (auto-calculated if None)
-      :param int height: Plot height in pixels (default: 400)
-      :param str save_path: Path to save the plot (supports .html, .png, .svg)
-      :param bool show_plot: Whether to display the plot in Jupyter
-      :returns: Altair chart object or None
-      :rtype: altair.Chart or None
-
-   .. method:: plot_line_performance_with_error_bars(width=None, height=None, save_path=None, show_plot=True)
-      
-      📈 Create line plot with error bars showing mean performance trends across different top-N cutoffs.
-      **Data and grouped statistics are pre-generated during initialization** - ready to plot immediately!
-      
-      :param int width: Plot width in pixels (default: 800)
-      :param int height: Plot height in pixels (default: 500)
-      :param str save_path: Path to save the plot (supports .html, .png, .svg)
-      :param bool show_plot: Whether to display the plot in Jupyter
-      :returns: Altair chart object or None
-      :rtype: altair.Chart or None
-
-**Internal/Advanced Methods:**
-
-These methods are automatically called during initialization but can be accessed for advanced usage:
-
-   .. method:: gen_TS_runs_data(top_n=100, sort_type="minimize")
-      
-      🔧 **Internal method** - Generate combined datasets from all TS runs.
-      **Automatically called during initialization.**
-      
-      :param int top_n: Number of top products to consider per method/cycle
-      :param str sort_type: "minimize" (ascending) or "maximize" (descending) sorting
-      :returns: Tuple of (combined_df_top_n, combined_df_all)
-      :rtype: tuple
-
-   .. method:: get_barplot_TS_results_data(top_n=100)
-      
-      🔧 **Internal method** - Generate data for bar plot showing fraction of reference compounds found.
-      **Automatically called during initialization.**
-      
-      :param int top_n: Number of top reference compounds to use as benchmark
-      :returns: DataFrame with hit counts for bar plotting
-      :rtype: polars.DataFrame
-
-   .. method:: gen_line_plot_performance_data(top_ns=None)
-      
-      🔧 **Internal method** - Generate performance data for line plots across different top_n cutoffs.
-      **Automatically called during initialization.**
-      
-      :param list top_ns: List of top_n values to test (default: [50,100,200,300,400,500])
-      :returns: DataFrame with performance fractions
-      :rtype: polars.DataFrame
-
-   .. method:: get_performance_summary()
-      
-      Get summary of all processed performance data and chart components.
-      
-      :returns: Dictionary containing all stored data and charts
-      :rtype: dict
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``no_of_cycles``
+     - ``int``
+     - Yes
+     - Number of cycles to analyze.
+   * - ``methods_list``
+     - ``list[str]``
+     - Yes
+     - List of method names (search strategies).
+   * - ``TS_runs_data``
+     - ``dict``
+     - Yes
+     - Maps method names to lists of DataFrames (one per cycle).
+   * - ``reference_data``
+     - ``DataFrame``
+     - No
+     - Ground truth reference data for comparison.
+   * - ``top_n``
+     - ``int``
+     - No
+     - Top products for bar plot. Default: 100.
+   * - ``sort_type``
+     - ``str``
+     - No
+     - ``"minimize"`` or ``"maximize"``. Default: ``"minimize"``.
+   * - ``top_ns``
+     - ``list[int]``
+     - No
+     - Top-N values for line plot. Default: [50, 100, 200, 300, 400, 500].
 
 **Automatic Data Storage:**
 
-🤖 **All data is automatically generated and stored during initialization**:
+.. list-table::
+   :header-rows: 1
+   :widths: 28 72
 
-* ``combined_df_top_n``: Top N compounds from each method/cycle (ready for stripplot)
-* ``combined_df_all``: All compounds from each method/cycle (complete dataset)
-* ``bar_plot_df``: Hit recovery data for bar plots (pre-calculated)
-* ``line_plot_df``: Raw performance data across cycles (individual cycle data)
-* ``grouped_stats``: Statistical summaries with mean, std, and error bounds (for line plot)
-* ``grouped_stats_caps``: Error bar cap positions (for error bar styling)
-* ``unique_top_ns``: Sorted list of top-N values analyzed
-* ``actual_methods``: Methods found in data (for validation)
+   * - Attribute
+     - Description
+   * - ``combined_df_top_n``
+     - Top N compounds from each method/cycle (for stripplot).
+   * - ``combined_df_all``
+     - All compounds from each method/cycle.
+   * - ``bar_plot_df``
+     - Hit recovery data for bar plots.
+   * - ``line_plot_df``
+     - Raw performance data across cycles.
+   * - ``grouped_stats``
+     - Statistical summaries with mean, std, error bounds.
+   * - ``actual_methods``
+     - Methods found in data (for validation).
 
-**Color Consistency:**
+Visualization Methods
+~~~~~~~~~~~~~~~~~~~~~
 
-🎨 **Unified color scheme across all plots** - each method gets the same color in stripplot, bar plot, and line plot via the internal ``_get_color_scheme()`` method.
+stripplot_TS_results
+^^^^^^^^^^^^^^^^^^^^
 
-**New Simplified Usage Pattern:**
+Generate strip plot showing score distributions across cycles and methods.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 18 15 10 57
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``width``
+     - ``int``
+     - No
+     - Plot width in pixels (auto-calculated if None).
+   * - ``height``
+     - ``int``
+     - No
+     - Plot height in pixels (auto-calculated if None).
+   * - ``save_path``
+     - ``str``
+     - No
+     - Path to save (.html, .png, .svg).
+   * - ``show_plot``
+     - ``bool``
+     - No
+     - Display in Jupyter. Default: True.
+
+**Returns**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Type
+     - Description
+   * - ``altair.Chart``
+     - Altair chart object (or None if saved).
+
+plot_barplot_TS_results
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Create grouped bar plot showing reference hit recovery by method and cycle.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 18 15 10 57
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``width``
+     - ``int``
+     - No
+     - Plot width in pixels (auto-calculated if None).
+   * - ``height``
+     - ``int``
+     - No
+     - Plot height in pixels. Default: 400.
+   * - ``save_path``
+     - ``str``
+     - No
+     - Path to save (.html, .png, .svg).
+   * - ``show_plot``
+     - ``bool``
+     - No
+     - Display in Jupyter. Default: True.
+
+plot_line_performance_with_error_bars
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Create line plot with error bars showing mean performance across top-N cutoffs.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 18 15 10 57
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``width``
+     - ``int``
+     - No
+     - Plot width in pixels. Default: 800.
+   * - ``height``
+     - ``int``
+     - No
+     - Plot height in pixels. Default: 500.
+   * - ``save_path``
+     - ``str``
+     - No
+     - Path to save (.html, .png, .svg).
+   * - ``show_plot``
+     - ``bool``
+     - No
+     - Display in Jupyter. Default: True.
+
+Other Methods
+~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :widths: 35 65
+
+   * - Method
+     - Description
+   * - ``get_performance_summary()``
+     - Get dict containing all stored data and charts.
+   * - ``gen_TS_runs_data(top_n, sort_type)``
+     - Internal: Generate combined datasets.
+   * - ``get_barplot_TS_results_data(top_n)``
+     - Internal: Generate bar plot data.
+   * - ``gen_line_plot_performance_data(top_ns)``
+     - Internal: Generate line plot data.
+
+Complete Example
+~~~~~~~~~~~~~~~~
 
 .. code-block:: python
+   :caption: Full benchmarking workflow
 
-   # ✨ NEW: One-step initialization with automatic data generation
-   ts_benchmarks = TS_Benchmarks(
+   import polars as pl
+   from TACTICS.library_analysis.visualization import TS_Benchmarks
+
+   # Load results from multiple runs
+   rw_runs = [pl.read_csv(f"rw_cycle_{i}.csv") for i in range(10)]
+   ucb_runs = [pl.read_csv(f"ucb_cycle_{i}.csv") for i in range(10)]
+   greedy_runs = [pl.read_csv(f"greedy_cycle_{i}.csv") for i in range(10)]
+
+   # Load reference data
+   reference = pl.read_csv("reference_scores.csv")
+
+   # Create benchmarks (all data generated automatically)
+   benchmarks = TS_Benchmarks(
        no_of_cycles=10,
-       methods_list=['thompson_standard', 'thompson_boltzmann', 'random_baseline'],
+       methods_list=["RouletteWheel", "BayesUCB", "Greedy"],
        TS_runs_data={
-           'thompson_standard': [cycle1_df, cycle2_df, ...], 
-           'thompson_boltzmann': [cycle1_df, cycle2_df, ...],
-           'random_baseline': [cycle1_df, cycle2_df, ...]
+           "RouletteWheel": rw_runs,
+           "BayesUCB": ucb_runs,
+           "Greedy": greedy_runs,
        },
-       reference_data=reference_df,
-       top_n=100,  # Custom analysis size
-       sort_type="minimize",  # Lower scores = better
-       top_ns=[25, 50, 100, 200]  # Custom line plot points
+       reference_data=reference,
+       top_n=100,
+       sort_type="minimize",
+       top_ns=[25, 50, 100, 200, 300]
    )
-   # 🎉 All data automatically generated above!
 
-   # 🚀 Ready to plot immediately - no additional data generation needed!
-   strip_plot = ts_benchmarks.stripplot_TS_results(width=800, height=500)
-   bar_plot = ts_benchmarks.plot_barplot_TS_results(width=700, height=400)
-   line_plot = ts_benchmarks.plot_line_performance_with_error_bars(width=900, height=600)
+   # Generate all visualizations
+   strip_chart = benchmarks.stripplot_TS_results(
+       width=800, height=500, save_path="strip_plot.html"
+   )
 
-   # 📊 Access all pre-calculated data
-   print(f"Methods analyzed: {ts_benchmarks.actual_methods}")
-   print(f"Performance range: {ts_benchmarks.grouped_stats['mean'].min():.3f} to {ts_benchmarks.grouped_stats['mean'].max():.3f}")
-   
-   # 🏆 Get comprehensive summary
-   summary = ts_benchmarks.get_performance_summary()
+   bar_chart = benchmarks.plot_barplot_TS_results(
+       width=700, height=400, save_path="bar_plot.html"
+   )
 
-**Migration from Old Usage:**
+   line_chart = benchmarks.plot_line_performance_with_error_bars(
+       width=900, height=600, save_path="line_plot.html"
+   )
 
-.. code-block:: python
+   # Access computed statistics
+   print(f"Methods analyzed: {benchmarks.actual_methods}")
+   summary = benchmarks.get_performance_summary()
 
-   # ❌ OLD: Multi-step process (no longer needed)
-   # ts_benchmarks = TS_Benchmarks(...)
-   # ts_benchmarks.gen_TS_runs_data(top_n=100)
-   # ts_benchmarks.get_barplot_TS_results_data(top_n=100)
-   # ts_benchmarks.gen_line_plot_performance_data(top_ns=[50,100,200])
-   # ts_benchmarks.plot_line_performance_with_error_bars()
 
-   # ✅ NEW: Single-step process
-   ts_benchmarks = TS_Benchmarks(..., top_n=100, top_ns=[50,100,200])
-   ts_benchmarks.plot_line_performance_with_error_bars()  # Ready immediately! 
+Workflow Overview
+-----------------
+
+.. graphviz::
+
+    digraph Workflow {
+        rankdir=TB;
+        node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10];
+        nodesep=0.3;
+        ranksep=0.4;
+
+        TSRun [label="Thompson Sampling Results", fillcolor="#ADD8E6"];
+        Analysis [label="LibraryAnalysis\n(find top BBs)", fillcolor="#FFD700"];
+        Viz [label="LibraryVisualization\n(create plots)", fillcolor="#90EE90"];
+        Benchmark [label="TS_Benchmarks\n(compare methods)", fillcolor="#E6E6FA"];
+
+        TSRun -> Analysis;
+        Analysis -> Viz;
+        TSRun -> Benchmark;
+    }
+
+Typical analysis workflow:
+
+1. **Run Thompson Sampling** - Generate results DataFrames
+2. **LibraryAnalysis** - Identify top building blocks and their frequencies
+3. **LibraryVisualization** - Create molecular structure grids
+4. **TS_Benchmarks** - Compare multiple methods with statistical analysis

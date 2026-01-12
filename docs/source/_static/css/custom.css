@@ -1,0 +1,414 @@
+/* Custom CSS for TACTICS Documentation */
+
+/* ===== Parameter Tables ===== */
+/* Clean, modern parameter tables with consistent styling */
+
+table.docutils {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+}
+
+table.docutils th,
+table.docutils td {
+    padding: 0.75em 1em;
+    border: 1px solid var(--pst-color-border);
+    vertical-align: top;
+}
+
+table.docutils th {
+    background-color: var(--pst-color-surface);
+    font-weight: 600;
+    text-align: left;
+}
+
+table.docutils tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Dark mode table styling */
+html[data-theme="dark"] table.docutils tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Parameter name styling */
+table.docutils td:first-child code {
+    font-weight: 500;
+    color: var(--pst-color-primary);
+}
+
+/* Type column styling */
+table.docutils td:nth-child(2) code {
+    font-size: 0.9em;
+    color: var(--pst-color-text-muted);
+}
+
+/* Required column styling */
+table.docutils td:nth-child(3) {
+    text-align: center;
+    font-weight: 500;
+}
+
+/* ===== Code Blocks ===== */
+/* Enhanced code block styling */
+
+div.highlight {
+    margin: 1em 0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+div.highlight pre {
+    padding: 1em;
+    margin: 0;
+    overflow-x: auto;
+}
+
+/* Code block captions */
+div.code-block-caption {
+    background-color: var(--pst-color-surface);
+    padding: 0.5em 1em;
+    font-size: 0.9em;
+    font-weight: 500;
+    border-bottom: 1px solid var(--pst-color-border);
+}
+
+/* Inline code */
+code.literal {
+    background-color: var(--pst-color-surface);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+/* ===== Section Headers ===== */
+/* Better visual hierarchy */
+
+h1 {
+    border-bottom: 2px solid var(--pst-color-primary);
+    padding-bottom: 0.3em;
+}
+
+h2 {
+    border-bottom: 1px solid var(--pst-color-border);
+    padding-bottom: 0.2em;
+    margin-top: 2em;
+}
+
+h3 {
+    margin-top: 1.5em;
+}
+
+/* ===== Admonitions ===== */
+/* Cleaner admonition styling */
+
+div.admonition {
+    border-radius: 6px;
+    margin: 1.5em 0;
+    padding: 1em;
+    border-left: 4px solid;
+}
+
+div.admonition.note {
+    border-left-color: var(--pst-color-info);
+    background-color: rgba(var(--pst-color-info-rgb), 0.1);
+}
+
+div.admonition.warning {
+    border-left-color: var(--pst-color-warning);
+    background-color: rgba(var(--pst-color-warning-rgb), 0.1);
+}
+
+div.admonition.tip {
+    border-left-color: var(--pst-color-success);
+    background-color: rgba(var(--pst-color-success-rgb), 0.1);
+}
+
+div.admonition p.admonition-title {
+    font-weight: 600;
+    margin-bottom: 0.5em;
+}
+
+/* ===== Graphviz Diagrams ===== */
+/* Better diagram integration with readable text */
+
+.graphviz {
+    text-align: center;
+    margin: 2em 0;
+    overflow-x: auto;
+}
+
+.graphviz svg {
+    max-width: 100%;
+    height: auto;
+    /* Ensure minimum readable size - prevents over-compression */
+    min-width: min(100%, 400px);
+}
+
+/* For wide diagrams, allow horizontal scroll instead of compression */
+.graphviz-wide {
+    overflow-x: auto;
+    text-align: left;
+}
+
+.graphviz-wide svg {
+    max-width: none;
+    min-width: 600px;
+}
+
+/* ===== Sphinx Design Components ===== */
+/* Tab styling */
+
+.sd-tab-set > label {
+    font-weight: 500;
+}
+
+/* Card styling */
+.sd-card {
+    border-radius: 8px;
+}
+
+/* ===== List Tables ===== */
+/* Specific styling for parameter list-tables */
+
+table.docutils.field-list {
+    border: none;
+}
+
+table.docutils.field-list td,
+table.docutils.field-list th {
+    border: none;
+    padding: 0.5em 0;
+}
+
+table.docutils.field-list th.field-name {
+    background: none;
+    font-weight: 500;
+    width: auto;
+    white-space: nowrap;
+}
+
+/* ===== Return Type Tables ===== */
+/* Styling for return value documentation */
+
+.returns-table {
+    margin-top: 0.5em;
+}
+
+.returns-table th:first-child {
+    width: 25%;
+}
+
+/* ===== Method Signatures ===== */
+/* Cleaner method/class signatures */
+
+dl.py.class > dt,
+dl.py.function > dt,
+dl.py.method > dt {
+    background-color: var(--pst-color-surface);
+    padding: 0.75em 1em;
+    border-radius: 6px;
+    border-left: 3px solid var(--pst-color-primary);
+    margin-bottom: 0.5em;
+}
+
+dl.py.class > dt .sig-name,
+dl.py.function > dt .sig-name,
+dl.py.method > dt .sig-name {
+    font-weight: 600;
+}
+
+/* ===== Responsive Design ===== */
+/* Better mobile experience */
+
+@media (max-width: 768px) {
+    table.docutils {
+        font-size: 0.9em;
+    }
+    
+    table.docutils th,
+    table.docutils td {
+        padding: 0.5em;
+    }
+    
+    /* Make tables horizontally scrollable on mobile */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+}
+
+/* ===== Utility Classes ===== */
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: var(--pst-color-text-muted);
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.2em 0.5em;
+    font-size: 0.75em;
+    font-weight: 600;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.badge-required {
+    background-color: var(--pst-color-danger);
+    color: white;
+}
+
+.badge-optional {
+    background-color: var(--pst-color-secondary);
+    color: white;
+}
+
+/* ===== Version Badge ===== */
+
+.version-badge {
+    display: inline-block;
+    background-color: var(--pst-color-primary);
+    color: white;
+    padding: 0.2em 0.6em;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 500;
+    margin-left: 0.5em;
+}
+
+/* ===== Migration Tables ===== */
+/* For v0.3.0 -> v0.4.0 migration */
+
+table.migration-table td:first-child {
+    text-decoration: line-through;
+    color: var(--pst-color-text-muted);
+}
+
+table.migration-table td:nth-child(2) {
+    font-weight: 500;
+    color: var(--pst-color-success);
+}
+
+/* ===== Class Type Differentiation ===== */
+/* Visual hierarchy for different class types in documentation */
+
+/* Fundamental Types (enums, simple dataclasses) - Gray left border */
+.class-fundamental {
+    border-left: 4px solid #6c757d;
+    padding-left: 1em;
+    margin-left: 0;
+    margin-bottom: 2em;
+}
+
+.class-fundamental > h3:first-of-type::before {
+    content: "📦 ";
+}
+
+/* Configuration Classes - Teal/Cyan left border */
+.class-config {
+    border-left: 4px solid #17a2b8;
+    padding-left: 1em;
+    margin-left: 0;
+    margin-bottom: 2em;
+}
+
+.class-config > h3:first-of-type::before {
+    content: "⚙️ ";
+}
+
+/* Core/Main Classes - Blue left border */
+.class-core {
+    border-left: 4px solid #007bff;
+    padding-left: 1em;
+    margin-left: 0;
+    margin-bottom: 2em;
+}
+
+.class-core > h3:first-of-type::before {
+    content: "🔷 ";
+}
+
+/* Result/Output Types - Green left border */
+.class-result {
+    border-left: 4px solid #28a745;
+    padding-left: 1em;
+    margin-left: 0;
+    margin-bottom: 2em;
+}
+
+.class-result > h3:first-of-type::before {
+    content: "📤 ";
+}
+
+/* ===== Dependency Boxes ===== */
+/* Custom admonition for class dependencies */
+
+div.admonition.dependencies {
+    border-left-color: #6f42c1;
+    background-color: rgba(111, 66, 193, 0.08);
+}
+
+div.admonition.dependencies > .admonition-title {
+    color: #6f42c1;
+}
+
+div.admonition.dependencies > .admonition-title::before {
+    content: "🔗 ";
+}
+
+/* Dark mode adjustments for dependency boxes */
+html[data-theme="dark"] div.admonition.dependencies {
+    background-color: rgba(111, 66, 193, 0.15);
+}
+
+/* Inline dependency statement */
+p.depends-on {
+    font-size: 0.9em;
+    color: var(--pst-color-text-muted);
+    margin-bottom: 1em;
+    padding: 0.5em 0.75em;
+    background-color: var(--pst-color-surface);
+    border-radius: 4px;
+    border-left: 3px solid #6f42c1;
+}
+
+p.depends-on strong {
+    color: #6f42c1;
+}
+
+/* ===== Method Category Headers ===== */
+/* Sub-sections within class documentation */
+
+h4.method-category {
+    font-size: 1.05em;
+    color: var(--pst-color-text-muted);
+    border-bottom: 1px dashed var(--pst-color-border);
+    padding-bottom: 0.3em;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+}
+
+/* ===== Class Methods Section ===== */
+/* Nested sections for methods under classes */
+
+.class-methods {
+    margin-left: 1em;
+    padding-left: 1em;
+    border-left: 2px solid var(--pst-color-border);
+}
+
+/* ===== Cross-Reference Styling ===== */
+/* Make cross-references more visible */
+
+a.reference.internal code {
+    color: var(--pst-color-primary);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+}
+
+a.reference.internal code:hover {
+    text-decoration-style: solid;
+}

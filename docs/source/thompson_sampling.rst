@@ -1,562 +1,1358 @@
-Thompson Sampling Module
-========================
+Thompson Sampling
+=================
 
-The Thompson Sampling module implements a unified, flexible Thompson sampling framework for chemical library exploration with support for multiple selection strategies, evaluators, and warmup approaches.
+The Thompson Sampling module implements a unified, flexible Thompson Sampling framework 
+for chemical library exploration. It provides pluggable selection strategies, warmup 
+approaches, and evaluators for efficiently screening ultra-large combinatorial libraries.
 
-Overview
---------
+The module follows a composition-based architecture where the core ``ThompsonSampler`` 
+class accepts pluggable components:
 
-The package provides a **unified ThompsonSampler** that accepts different strategies:
+- **Selection Strategies** - How to choose reagents during search
+- **Warmup Strategies** - How to initialize priors before search
+- **Evaluators** - How to score generated compounds
 
-* **Selection Strategies**: Control how reagents are selected (greedy, roulette wheel, UCB, Bayes-UCB, epsilon-greedy)
-* **Warmup Strategies**: Determine how reagent priors are initialized (standard, stratified, enhanced, Latin hypercube)
-* **Evaluators**: Score compounds using different methods (lookup, database, fingerprint, ML models, docking)
-
-This modular design allows easy experimentation with different optimization approaches and simple integration of custom strategies.
-
-Core Sampler
-------------
-
-.. autoclass:: TACTICS.thompson_sampling.core.sampler.ThompsonSampler
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-   .. automethod:: __init__
-   .. automethod:: from_config
-   .. automethod:: warm_up
-   .. automethod:: search
-   .. automethod:: evaluate
-   .. automethod:: evaluate_batch
-   .. automethod:: close
-
-   The ThompsonSampler is the main class for Thompson Sampling optimization:
-
-   * **Flexible Strategy System**: Use any selection strategy by passing a SelectionStrategy instance
-   * **Parallel Evaluation**: Built-in support for multiprocessing (processes > 1)
-   * **Batch Sampling**: Sample multiple compounds per cycle (batch_size > 1)
-   * **Warmup Strategies**: Initialize priors using different sampling approaches
-   * **Progress Tracking**: Optional progress bars and logging
-   * **Config-based Setup**: Create sampler from Pydantic configs using ``from_config()``
-
-Selection Strategies
+Module Architecture
 -------------------
 
+.. graphviz::
+
+    digraph ThompsonSamplingModule {
+        rankdir=TB;
+        node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10];
+        edge [fontname="Helvetica", fontsize=9];
+        nodesep=0.3;
+        ranksep=0.5;
+
+        // Core at top
+        subgraph cluster_core {
+            label="Core";
+            style=filled;
+            color="#FFF8DC";
+            
+            ThompsonSampler [label="ThompsonSampler", fillcolor="#FFD700"];
+            
+            subgraph cluster_core_helpers {
+                label="";
+                style=invis;
+                rank=same;
+                Reagent [label="Reagent", fillcolor="#FFFACD"];
+                ParallelEvaluator [label="ParallelEvaluator", fillcolor="#FFFACD"];
+            }
+        }
+
+        // Strategies - vertical list
+        subgraph cluster_strategies {
+            label="Selection Strategies";
+            style=filled;
+            color="#FFE4E1";
+
+            BaseStrategy [label="SelectionStrategy (ABC)", fillcolor="white"];
+            Greedy [label="GreedySelection", fillcolor="#FFB6C1"];
+            RouletteWheel [label="RouletteWheelSelection", fillcolor="#FFB6C1"];
+            UCB [label="UCBSelection", fillcolor="#FFB6C1"];
+            EpsilonGreedy [label="EpsilonGreedySelection", fillcolor="#FFB6C1"];
+            BayesUCB [label="BayesUCBSelection", fillcolor="#FFB6C1"];
+            
+            // Force vertical
+            BaseStrategy -> Greedy [style=invis];
+            Greedy -> RouletteWheel [style=invis];
+            RouletteWheel -> UCB [style=invis];
+            UCB -> EpsilonGreedy [style=invis];
+            EpsilonGreedy -> BayesUCB [style=invis];
+        }
+
+        // Warmup - vertical list
+        subgraph cluster_warmup {
+            label="Warmup Strategies";
+            style=filled;
+            color="#E0FFFF";
+
+            BaseWarmup [label="WarmupStrategy (ABC)", fillcolor="white"];
+            Balanced [label="BalancedWarmup", fillcolor="#00CED1"];
+            Standard [label="StandardWarmup", fillcolor="#AFEEEE"];
+            Enhanced [label="EnhancedWarmup", fillcolor="#AFEEEE"];
+            
+            // Force vertical
+            BaseWarmup -> Balanced [style=invis];
+            Balanced -> Standard [style=invis];
+            Standard -> Enhanced [style=invis];
+        }
+
+        // Evaluators - vertical list
+        subgraph cluster_evaluators {
+            label="Evaluators";
+            style=filled;
+            color="#E6E6FA";
+
+            BaseEvaluator [label="Evaluator (ABC)", fillcolor="white"];
+            Lookup [label="LookupEvaluator", fillcolor="#DDA0DD"];
+            DB [label="DBEvaluator", fillcolor="#DDA0DD"];
+            FP [label="FPEvaluator", fillcolor="#DDA0DD"];
+            MW [label="MWEvaluator", fillcolor="#DDA0DD"];
+            ROCS [label="ROCSEvaluator", fillcolor="#D8BFD8"];
+            FRED [label="FredEvaluator", fillcolor="#D8BFD8"];
+            ML [label="MLClassifierEvaluator", fillcolor="#D8BFD8"];
+            
+            // Force vertical
+            BaseEvaluator -> Lookup [style=invis];
+            Lookup -> DB [style=invis];
+            DB -> FP [style=invis];
+            FP -> MW [style=invis];
+            MW -> ROCS [style=invis];
+            ROCS -> FRED [style=invis];
+            FRED -> ML [style=invis];
+        }
+
+        // Inheritance arrows (visible)
+        BaseStrategy -> Greedy [style=dashed, constraint=false];
+        BaseStrategy -> RouletteWheel [style=dashed, constraint=false];
+        BaseStrategy -> UCB [style=dashed, constraint=false];
+        BaseStrategy -> EpsilonGreedy [style=dashed, constraint=false];
+        BaseStrategy -> BayesUCB [style=dashed, constraint=false];
+
+        BaseWarmup -> Balanced [style=dashed, constraint=false];
+        BaseWarmup -> Standard [style=dashed, constraint=false];
+        BaseWarmup -> Enhanced [style=dashed, constraint=false];
+
+        BaseEvaluator -> Lookup [style=dashed, constraint=false];
+        BaseEvaluator -> DB [style=dashed, constraint=false];
+        BaseEvaluator -> FP [style=dashed, constraint=false];
+        BaseEvaluator -> MW [style=dashed, constraint=false];
+        BaseEvaluator -> ROCS [style=dashed, constraint=false];
+        BaseEvaluator -> FRED [style=dashed, constraint=false];
+        BaseEvaluator -> ML [style=dashed, constraint=false];
+
+        // Core connections
+        ThompsonSampler -> BaseStrategy [style=bold];
+        ThompsonSampler -> BaseWarmup [style=bold];
+        ThompsonSampler -> BaseEvaluator [style=bold];
+    }
+
+Quick Start
+-----------
+
+**Using presets (recommended):**
+
+.. code-block:: python
+   :caption: Simplest usage with presets
+
+   from TACTICS.library_enumeration import SynthesisPipeline
+   from TACTICS.library_enumeration.smarts_toolkit import ReactionConfig, ReactionDef
+   from TACTICS.thompson_sampling import run_ts, get_preset
+   from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+   # 1. Create synthesis pipeline (single source of truth)
+   rxn_config = ReactionConfig(
+       reactions=[ReactionDef(
+           reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+           step_index=0
+       )],
+       reagent_file_list=["acids.smi", "amines.smi"]
+   )
+   pipeline = SynthesisPipeline(rxn_config)
+
+   # 2. Get preset configuration
+   config = get_preset(
+       "fast_exploration",
+       synthesis_pipeline=pipeline,
+       evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
+       mode="minimize",
+       num_iterations=1000
+   )
+
+   # 3. Run and get results
+   results_df = run_ts(config)
+   print(results_df.sort("score").head(10))
+
+**Direct sampler control:**
+
+.. code-block:: python
+   :caption: Manual sampler setup
+
+   from TACTICS.library_enumeration import SynthesisPipeline
+   from TACTICS.library_enumeration.smarts_toolkit import ReactionConfig, ReactionDef
+   from TACTICS.thompson_sampling.core.sampler import ThompsonSampler
+   from TACTICS.thompson_sampling.strategies import RouletteWheelSelection
+   from TACTICS.thompson_sampling.warmup import BalancedWarmup
+   from TACTICS.thompson_sampling.factories import create_evaluator
+   from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+   # 1. Create synthesis pipeline
+   rxn_config = ReactionConfig(
+       reactions=[ReactionDef(
+           reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+           step_index=0
+       )],
+       reagent_file_list=["acids.smi", "amines.smi"]
+   )
+   pipeline = SynthesisPipeline(rxn_config)
+
+   # 2. Create components
+   strategy = RouletteWheelSelection(mode="maximize", alpha=0.1, beta=0.05)
+   warmup = BalancedWarmup(observations_per_reagent=3)
+   evaluator = create_evaluator(LookupEvaluatorConfig(ref_filename="scores.csv"))
+
+   # 3. Create sampler with pipeline
+   sampler = ThompsonSampler(
+       synthesis_pipeline=pipeline,
+       selection_strategy=strategy,
+       warmup_strategy=warmup,
+       batch_size=10
+   )
+
+   # 4. Set evaluator and run
+   sampler.set_evaluator(evaluator)
+   warmup_df = sampler.warm_up(num_warmup_trials=3)
+   results_df = sampler.search(num_cycles=1000)
+   sampler.close()
+
+
+.. _thompson-sampler:
+
+ThompsonSampler
+---------------
+
+.. rst-class:: class-core
+
+**The main class for Thompson Sampling optimization.**
+
+The ``ThompsonSampler`` is the central orchestrator that coordinates selection strategies,
+warmup strategies, and evaluators to efficiently explore combinatorial chemical libraries.
+
+.. admonition:: Dependencies
+   :class: dependencies
+
+   Requires these components:
+
+   - :ref:`SynthesisPipeline <synthesis-pipeline>` - single source of truth for reactions and reagents
+   - :ref:`SelectionStrategy <selection-strategy>` - for reagent selection during search
+   - :ref:`WarmupStrategy <warmup-strategy>` - for initializing priors (optional, defaults to StandardWarmup)
+   - :ref:`Evaluator <evaluator-base>` - for scoring compounds (set via ``set_evaluator()``)
+
+**Depends on:** :ref:`SynthesisPipeline <synthesis-pipeline>`, :ref:`SelectionStrategy <selection-strategy>`, :ref:`WarmupStrategy <warmup-strategy>`, :ref:`Evaluator <evaluator-base>`
+
+Constructor
+~~~~~~~~~~~
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 22 18 10 50
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``synthesis_pipeline``
+     - ``SynthesisPipeline``
+     - Yes
+     - Pipeline containing reaction config and reagent files (single source of truth).
+   * - ``selection_strategy``
+     - ``SelectionStrategy``
+     - Yes
+     - Selection strategy instance (Greedy, RouletteWheel, UCB, etc.).
+   * - ``warmup_strategy``
+     - ``WarmupStrategy``
+     - No
+     - Warmup strategy. Default: StandardWarmup().
+   * - ``batch_size``
+     - ``int``
+     - No
+     - Compounds to sample per cycle. Default: 1.
+   * - ``processes``
+     - ``int``
+     - No
+     - CPU cores for parallel evaluation. Default: 1 (sequential).
+   * - ``min_cpds_per_core``
+     - ``int``
+     - No
+     - Min compounds per core before batch evaluation. Default: 10.
+   * - ``max_resamples``
+     - ``int``
+     - No
+     - Stop after this many consecutive duplicates. Default: None.
+   * - ``log_filename``
+     - ``str``
+     - No
+     - Path for log file output.
+   * - ``product_library_file``
+     - ``str``
+     - No
+     - Pre-enumerated product CSV for testing mode.
+   * - ``use_boltzmann_weighting``
+     - ``bool``
+     - No
+     - Use Boltzmann-weighted updates (legacy RWS). Default: False.
+
+Factory Method: from_config
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a sampler from a Pydantic configuration.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 25 10 45
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``config``
+     - ``ThompsonSamplingConfig``
+     - Yes
+     - Configuration with strategy, warmup, and evaluator settings.
+
+**Returns**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Type
+     - Description
+   * - ``ThompsonSampler``
+     - Configured sampler ready for warmup and search.
+
+**Example**
+
+.. code-block:: python
+
+   from TACTICS.library_enumeration import SynthesisPipeline
+   from TACTICS.library_enumeration.smarts_toolkit import ReactionConfig, ReactionDef
+   from TACTICS.thompson_sampling.core.sampler import ThompsonSampler
+   from TACTICS.thompson_sampling.config import ThompsonSamplingConfig
+   from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
+   from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+
+   # Create synthesis pipeline
+   rxn_config = ReactionConfig(
+       reactions=[ReactionDef(reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]", step_index=0)],
+       reagent_file_list=["acids.smi", "amines.smi"]
+   )
+   pipeline = SynthesisPipeline(rxn_config)
+
+   # Create Thompson Sampling config
+   config = ThompsonSamplingConfig(
+       synthesis_pipeline=pipeline,
+       num_ts_iterations=1000,
+       strategy_config=RouletteWheelConfig(mode="maximize"),
+       evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
+   )
+
+   sampler = ThompsonSampler.from_config(config)
+
+Core Methods
+~~~~~~~~~~~~
+
+warm_up
+^^^^^^^
+
+Initialize reagent posteriors with warmup evaluations.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 22 15 10 53
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``num_warmup_trials``
+     - ``int``
+     - No
+     - Trials per reagent. Default: 3.
+
+**Returns**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Type
+     - Description
+   * - ``polars.DataFrame``
+     - Warmup results with columns: ``score``, ``SMILES``, ``Name``.
+
+search
+^^^^^^
+
+Run the main Thompson Sampling search loop.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``num_cycles``
+     - ``int``
+     - No
+     - Maximum sampling cycles. Default: 100.
+   * - ``max_evaluations``
+     - ``int``
+     - No
+     - Stop after this many unique evaluations.
+
+**Returns**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Type
+     - Description
+   * - ``polars.DataFrame``
+     - Search results with columns: ``score``, ``SMILES``, ``Name``.
+
+evaluate
+^^^^^^^^
+
+Evaluate a single reagent combination.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 18 10 52
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``choice_list``
+     - ``list[int]``
+     - Yes
+     - Reagent indices for each component.
+
+**Returns**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Type
+     - Description
+   * - ``tuple[str, str, float]``
+     - (product_smiles, product_name, score).
+
+Setup Methods
+~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Method
+     - Description
+   * - ``set_evaluator(evaluator)``
+     - Set the scoring evaluator.
+   * - ``load_product_library(library_file)``
+     - Load pre-enumerated products for testing.
+   * - ``close()``
+     - Cleanup multiprocessing resources.
+
+.. note::
+
+   The ``synthesis_pipeline`` is now passed to the constructor and is the single source
+   of truth for reactions and reagents. The old ``read_reagents()`` and ``set_reaction()``
+   methods have been removed.
+
+
+Selection Strategies
+--------------------
+
 Selection strategies determine how reagents are chosen during the search phase.
+All strategies implement the ``SelectionStrategy`` abstract base class.
 
-.. autoclass:: TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. _selection-strategy:
 
-.. autoclass:: TACTICS.thompson_sampling.strategies.greedy_selection.GreedySelection
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. graphviz::
 
-   Simple greedy selection (argmax/argmin of sampled scores):
+    digraph StrategySelection {
+        rankdir=TB;
+        node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10];
+        nodesep=0.2;
+        ranksep=0.3;
 
-   * Direct optimization toward best-performing reagents
-   * Fastest convergence but may get stuck in local optima
-   * Best for: Simple optimization landscapes, limited computational budgets
+        SelectReagent [label="Select Reagent", fillcolor="#FFFACD"];
 
-.. autoclass:: TACTICS.thompson_sampling.strategies.roulette_wheel.RouletteWheelSelection
-   :members:
-   :undoc-members:
-   :show-inheritance:
+        Greedy [label="Greedy (argmax/argmin)", fillcolor="#90EE90"];
+        RouletteWheel [label="RouletteWheel (Thermal Cycling)", fillcolor="#ADD8E6"];
+        UCB [label="UCB (Confidence Bounds)", fillcolor="#FFB6C1"];
+        BayesUCB [label="BayesUCB (Student-t + CATS)", fillcolor="#E6E6FA"];
+        EpsilonGreedy [label="EpsilonGreedy (Random/Greedy)", fillcolor="#FFFACD"];
 
-   Roulette wheel selection with adaptive thermal cycling:
+        // Force vertical layout
+        SelectReagent -> Greedy;
+        Greedy -> RouletteWheel [style=invis];
+        RouletteWheel -> UCB [style=invis];
+        UCB -> BayesUCB [style=invis];
+        BayesUCB -> EpsilonGreedy [style=invis];
+        
+        SelectReagent -> RouletteWheel;
+        SelectReagent -> UCB;
+        SelectReagent -> BayesUCB;
+        SelectReagent -> EpsilonGreedy;
+    }
 
-   * Better exploration/exploitation balance via thermal cycling
-   * Adaptive temperature control based on sampling efficiency
-   * Component rotation for systematic exploration
-   * Best for: Complex multi-modal landscapes, large libraries
+SelectionStrategy (Base Class)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: TACTICS.thompson_sampling.strategies.ucb_selection.UCBSelection
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. rst-class:: class-fundamental
 
-   Upper Confidence Bound (UCB) selection:
+Abstract base class for all selection strategies. Extend this to create custom strategies.
 
-   * Balances exploitation and exploration via confidence bounds
-   * Deterministic selection based on UCB values
-   * Best for: Situations where deterministic behavior is preferred
+.. list-table:: Required Methods
+   :header-rows: 1
+   :widths: 40 60
 
-.. autoclass:: TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   * - Method
+     - Description
+   * - ``select_reagent(reagent_list, disallow_mask, rng, ...)``
+     - Select one reagent from the list.
+   * - ``select_batch(reagent_list, batch_size, ...)``
+     - Select multiple reagents (optional override).
 
-   Adaptive Bayes-UCB selection with thermal cycling:
+.. _greedy-selection:
 
-   * Theoretically grounded Bayesian confidence bounds using Student-t quantiles
-   * Adaptive percentile parameters for dynamic exploration/exploitation control
-   * Component-based thermal cycling for systematic search space exploration
-   * Efficiency-based adaptation: automatically increases exploration when stuck
-   * Best for: Complex multi-modal landscapes, escaping local optima, theoretical guarantees
-   * Requires: scipy for Student-t distribution
+GreedySelection
+~~~~~~~~~~~~~~~
 
-   The percentile parameters serve as an analog to temperature in thermal cycling:
-   - Higher percentile (p_high) → wider confidence bounds → more exploration
-   - Lower percentile (p_low) → tighter bounds → more exploitation
-   - Adapts based on sampling efficiency to maintain search progress
+.. rst-class:: class-config
 
-.. autoclass:: TACTICS.thompson_sampling.strategies.epsilon_greedy.EpsilonGreedy
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Simple greedy selection using argmax/argmin of sampled scores.
 
-   Epsilon-greedy selection:
+**Extends:** :ref:`SelectionStrategy <selection-strategy>`
 
-   * Simple exploration strategy: random selection with probability ε
-   * Greedy selection with probability 1-ε
-   * Best for: Baseline comparisons, simple exploration needs
+- Fast convergence but may get stuck in local optima
+- Best for: Simple optimization landscapes, limited budgets
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 18 10 52
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``mode``
+     - ``str``
+     - No
+     - ``"maximize"`` or ``"minimize"``. Default: ``"maximize"``.
+
+**Example**
+
+.. code-block:: python
+
+   from TACTICS.thompson_sampling.strategies import GreedySelection
+
+   strategy = GreedySelection(mode="maximize")
+   # For docking scores (lower is better)
+   strategy = GreedySelection(mode="minimize")
+
+.. _roulette-wheel-selection:
+
+RouletteWheelSelection
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Roulette wheel selection with thermal cycling and Component-Aware Thompson Sampling (CATS).
+
+**Extends:** :ref:`SelectionStrategy <selection-strategy>`
+
+- Boltzmann-weighted selection with adaptive temperature control
+- Component rotation for systematic exploration
+- CATS: Shannon entropy-based criticality analysis
+- Best for: Complex multi-modal landscapes, large libraries
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 22 15 10 53
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``mode``
+     - ``str``
+     - No
+     - ``"maximize"``, ``"minimize"``, ``"maximize_boltzmann"``, or ``"minimize_boltzmann"``.
+   * - ``alpha``
+     - ``float``
+     - No
+     - Base temperature for heated component. Default: 0.1.
+   * - ``beta``
+     - ``float``
+     - No
+     - Base temperature for cooled components. Default: 0.05.
+   * - ``exploration_phase_end``
+     - ``float``
+     - No
+     - Fraction before CATS starts. Default: 0.20.
+   * - ``transition_phase_end``
+     - ``float``
+     - No
+     - Fraction when CATS fully applied. Default: 0.60.
+   * - ``min_observations``
+     - ``int``
+     - No
+     - Min observations before trusting criticality. Default: 5.
+
+**Example**
+
+.. code-block:: python
+
+   from TACTICS.thompson_sampling.strategies import RouletteWheelSelection
+
+   # Standard thermal cycling
+   strategy = RouletteWheelSelection(
+       mode="maximize",
+       alpha=0.1,
+       beta=0.05
+   )
+
+   # Higher exploration
+   strategy = RouletteWheelSelection(
+       mode="maximize",
+       alpha=0.2,
+       beta=0.1
+   )
+
+.. _ucb-selection:
+
+UCBSelection
+~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Upper Confidence Bound selection with deterministic behavior.
+
+**Extends:** :ref:`SelectionStrategy <selection-strategy>`
+
+- Balances exploitation and exploration via confidence bounds
+- Best for: Situations requiring deterministic, reproducible behavior
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``mode``
+     - ``str``
+     - No
+     - ``"maximize"`` or ``"minimize"``. Default: ``"maximize"``.
+   * - ``c``
+     - ``float``
+     - No
+     - Exploration parameter. Higher = more exploration. Default: 2.0.
+
+**Example**
+
+.. code-block:: python
+
+   from TACTICS.thompson_sampling.strategies import UCBSelection
+
+   strategy = UCBSelection(mode="maximize", c=2.0)
+   # Higher exploration
+   strategy = UCBSelection(mode="maximize", c=4.0)
+
+.. _epsilon-greedy-selection:
+
+EpsilonGreedySelection
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Simple exploration strategy with decaying epsilon.
+
+**Extends:** :ref:`SelectionStrategy <selection-strategy>`
+
+- Random selection with probability epsilon, greedy otherwise
+- Best for: Baseline comparisons, simple exploration needs
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``mode``
+     - ``str``
+     - No
+     - ``"maximize"`` or ``"minimize"``. Default: ``"maximize"``.
+   * - ``epsilon``
+     - ``float``
+     - No
+     - Initial exploration probability [0, 1]. Default: 0.1.
+   * - ``decay``
+     - ``float``
+     - No
+     - Decay rate per iteration. Default: 0.995.
+
+**Example**
+
+.. code-block:: python
+
+   from TACTICS.thompson_sampling.strategies import EpsilonGreedySelection
+
+   # 20% exploration with decay
+   strategy = EpsilonGreedySelection(
+       mode="maximize",
+       epsilon=0.2,
+       decay=0.995
+   )
+
+.. _bayes-ucb-selection:
+
+BayesUCBSelection
+~~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Bayesian UCB with Student-t quantiles and CATS integration.
+
+**Extends:** :ref:`SelectionStrategy <selection-strategy>`
+
+- Theoretically grounded Bayesian confidence bounds
+- Percentile-based thermal cycling (analog to temperature)
+- Component-aware exploration based on Shannon entropy
+- Best for: Complex landscapes, escaping local optima
+- Requires: scipy
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 24 15 8 53
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``mode``
+     - ``str``
+     - No
+     - ``"maximize"`` or ``"minimize"``. Default: ``"maximize"``.
+   * - ``initial_p_high``
+     - ``float``
+     - No
+     - Base percentile for heated component [0.5, 0.999]. Default: 0.90.
+   * - ``initial_p_low``
+     - ``float``
+     - No
+     - Base percentile for cooled components [0.5, 0.999]. Default: 0.60.
+   * - ``exploration_phase_end``
+     - ``float``
+     - No
+     - Fraction before CATS starts. Default: 0.20.
+   * - ``transition_phase_end``
+     - ``float``
+     - No
+     - Fraction when CATS fully applied. Default: 0.60.
+   * - ``min_observations``
+     - ``int``
+     - No
+     - Min observations before trusting criticality. Default: 5.
+
+**Example**
+
+.. code-block:: python
+
+   from TACTICS.thompson_sampling.strategies import BayesUCBSelection
+
+   strategy = BayesUCBSelection(mode="maximize")
+
+   # More aggressive exploration
+   strategy = BayesUCBSelection(
+       mode="maximize",
+       initial_p_high=0.95,
+       initial_p_low=0.70,
+       exploration_phase_end=0.25
+   )
+
 
 Warmup Strategies
 -----------------
 
-Warmup strategies determine how reagent combinations are sampled to initialize posteriors.
+Warmup strategies determine how reagent combinations are sampled to initialize posteriors
+before the main search begins.
 
-.. autoclass:: TACTICS.thompson_sampling.warmup.base.WarmupStrategy
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. graphviz::
 
-.. autoclass:: TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    digraph WarmupStrategies {
+        rankdir=TB;
+        node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10];
+        nodesep=0.3;
+        ranksep=0.4;
 
-   Balanced warmup (Recommended): Exactly K observations per reagent with stratified partners
+        Init [label="Initialize Priors", fillcolor="#FFFACD"];
 
-   * Guarantees uniform coverage across all reagents
-   * Uses per-reagent variance estimation with James-Stein shrinkage
-   * Reduces bias from random sampling
-   * Best for: Most use cases, especially with asymmetric component sizes
+        Balanced [label="BalancedWarmup (Recommended)\nK obs per reagent", fillcolor="#00CED1"];
+        Standard [label="StandardWarmup\nRandom partners", fillcolor="#AFEEEE"];
+        Enhanced [label="EnhancedWarmup\nParallel pairing (Legacy RWS)", fillcolor="#AFEEEE"];
 
-.. autoclass:: TACTICS.thompson_sampling.warmup.standard.StandardWarmup
-   :members:
-   :undoc-members:
-   :show-inheritance:
+        Init -> Balanced;
+        Init -> Standard;
+        Init -> Enhanced;
+    }
 
-   Standard warmup: Each reagent tested num_trials times with random partners
+.. _warmup-strategy:
 
-   * Simple and straightforward
-   * Ensures all reagents are evaluated
-   * Expected evaluations: (sum of reagents) × num_trials
+WarmupStrategy (Base Class)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: TACTICS.thompson_sampling.warmup.enhanced.EnhancedWarmup
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. rst-class:: class-fundamental
 
-   Enhanced warmup: Stochastic parallel pairing with shuffling (legacy)
+Abstract base class for warmup strategies.
 
-   * Used in original RWS algorithm
-   * Parallel pairing of reagents across components
-   * Best for: Replicating legacy RWS results
+.. list-table:: Required Methods
+   :header-rows: 1
+   :widths: 45 55
 
-Evaluator Classes
-----------------
+   * - Method
+     - Description
+   * - ``generate_warmup_combinations(reagent_lists, num_trials, disallow_tracker)``
+     - Generate list of combinations to evaluate.
+   * - ``get_expected_evaluations(reagent_lists, num_trials)``
+     - Estimate number of evaluations.
+   * - ``get_name()``
+     - Return strategy name.
 
-.. autoclass:: TACTICS.thompson_sampling.core.evaluators.LookupEvaluator
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. _balanced-warmup:
 
-.. autoclass:: TACTICS.thompson_sampling.core.evaluators.ROCSEvaluator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. autoclass:: TACTICS.thompson_sampling.core.evaluators.DBEvaluator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Utility Functions
-----------------
-
-.. autofunction:: TACTICS.thompson_sampling.utils.ts_utils.read_reagents
-.. autofunction:: TACTICS.thompson_sampling.utils.ts_utils.create_reagents
-.. autofunction:: TACTICS.thompson_sampling.utils.ts_logger.get_logger
-
-Legacy Interface
-----------------
-
-For backward compatibility, the legacy interface is still available:
-
-.. autofunction:: TACTICS.thompson_sampling.legacy.ts_main.run_ts
-   :noindex:
-
-.. autoclass:: TACTICS.thompson_sampling.legacy.standard_thompson_sampling.StandardThompsonSampler
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. autoclass:: TACTICS.thompson_sampling.legacy.enhanced_thompson_sampling.EnhancedThompsonSampler
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Configuration-Based Approach
------------------------------
-
-The modern way to use Thompson Sampling is through Pydantic configuration:
-
-.. code-block:: python
-
-    from TACTICS.thompson_sampling import ThompsonSampler
-    from TACTICS.thompson_sampling.config import ThompsonSamplingConfig
-    from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
-    from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
-    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
-
-    # Create configuration
-    config = ThompsonSamplingConfig(
-        reaction_smarts="[#6:1](=[O:2])[OH].[#7:3]>>[#6:1](=[O:2])[#7:3]",
-        reagent_file_list=["acids.smi", "amines.smi"],
-        num_ts_iterations=1000,
-        num_warmup_trials=3,
-        strategy_config=RouletteWheelConfig(mode="maximize", alpha=0.1, beta=0.1),
-        warmup_config=BalancedWarmupConfig(observations_per_reagent=3),
-        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")
-    )
-
-    # Create sampler from config (handles all setup automatically)
-    sampler = ThompsonSampler.from_config(config)
-    sampler.set_reaction(config.reaction_smarts)
-
-    # Run optimization
-    warmup_results = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
-    search_results = sampler.search(num_cycles=config.num_ts_iterations)
-    sampler.close()
-
-Using Configuration Presets
+BalancedWarmup (Recommended)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For common use cases, use pre-configured presets:
+.. rst-class:: class-config
+
+Balanced warmup guaranteeing exactly K observations per reagent with stratified partners.
+
+**Extends:** :ref:`WarmupStrategy <warmup-strategy>`
+
+- Uniform coverage across all reagents
+- Per-reagent variance estimation with James-Stein shrinkage
+- Reduces bias from random sampling
+- Best for: Most use cases, especially asymmetric component sizes
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 26 15 8 51
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``observations_per_reagent``
+     - ``int``
+     - No
+     - Observations per reagent. Default: 3.
+   * - ``use_per_reagent_variance``
+     - ``bool``
+     - No
+     - Use per-reagent variance estimation. Default: True.
+   * - ``shrinkage_strength``
+     - ``float``
+     - No
+     - James-Stein shrinkage strength. Default: 3.0.
+   * - ``seed``
+     - ``int``
+     - No
+     - Random seed for reproducibility.
+
+**Example**
 
 .. code-block:: python
 
-    from TACTICS.thompson_sampling.presets import get_preset
-    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+   from TACTICS.thompson_sampling.warmup import BalancedWarmup
 
-    # Use a preset configuration
-    config = get_preset(
-        "parallel_batch",  # Fast exploration, parallel batch, etc.
-        reaction_smarts="[#6:1](=[O:2])[OH].[#7:3]>>[#6:1](=[O:2)][#7:3]",
-        reagent_file_list=["acids.smi", "amines.smi"],
-        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
-        batch_size=100,
-        processes=4,
-        output_dir="./results"  # Optional: save results to directory
-    )
+   warmup = BalancedWarmup(observations_per_reagent=5)
 
-    sampler = ThompsonSampler.from_config(config)
-    sampler.set_reaction(config.reaction_smarts)
-    warmup_results = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
-    search_results = sampler.search(num_cycles=config.num_ts_iterations)
-    sampler.close()
+   # With per-reagent variance
+   warmup = BalancedWarmup(
+       observations_per_reagent=5,
+       use_per_reagent_variance=True,
+       shrinkage_strength=3.0
+   )
 
-Available Presets
-~~~~~~~~~~~~~~~~~
+.. _standard-warmup:
 
-The following presets are available:
+StandardWarmup
+~~~~~~~~~~~~~~
 
-**Modern Presets** (use BalancedWarmup):
+.. rst-class:: class-config
 
-* **fast_exploration**: Epsilon-greedy for quick screening (ε=0.2, decay=0.995)
-* **parallel_batch**: Roulette wheel with thermal cycling for parallel batch processing
-* **conservative_exploit**: Greedy strategy for pure exploitation
-* **balanced_sampling**: UCB for balanced exploration/exploitation (c=2.0)
-* **diverse_coverage**: Roulette wheel with high exploration (α=0.2, β=0.2)
+Standard warmup testing each reagent with random partners.
 
-**Legacy Presets** (use EnhancedWarmup with stochastic parallel pairing):
+**Extends:** :ref:`WarmupStrategy <warmup-strategy>`
 
-* **legacy_rws_maximize**: Original RWS algorithm with Boltzmann weighting (maximize mode)
-* **legacy_rws_minimize**: Original RWS algorithm with Boltzmann weighting (minimize mode, e.g., docking)
+- Simple and straightforward
+- Ensures all reagents evaluated
+- Expected evaluations: sum(reagent_counts) * num_trials
 
-All presets support:
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 15 10 55
 
-* **mode**: "maximize" or "minimize" optimization direction
-* **output_dir**: Optional directory to save results and logs (with preset-specific filenames)
-* Additional preset-specific parameters (batch_size, processes, num_iterations, etc.)
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``seed``
+     - ``int``
+     - No
+     - Random seed for reproducibility.
+
+.. _enhanced-warmup:
+
+EnhancedWarmup (Legacy)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Stochastic parallel pairing with shuffling from the original RWS algorithm.
+
+**Extends:** :ref:`WarmupStrategy <warmup-strategy>`
+
+- Parallel pairing of reagents across components
+- Required for replicating legacy RWS results
+- Best for: legacy_rws_maximize and legacy_rws_minimize presets
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``seed``
+     - ``int``
+     - No
+     - Random seed for reproducibility.
+
+
+Evaluators
+----------
+
+Evaluators score compounds based on various criteria. Choose based on your data source
+and computational requirements.
+
+.. graphviz::
+
+    digraph Evaluators {
+        rankdir=TB;
+        node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10];
+        nodesep=0.2;
+        ranksep=0.3;
+
+        Evaluate [label="Evaluate Compound", fillcolor="#FFFACD"];
+
+        // Fast evaluators
+        fast_label [label="Fast", shape=plaintext, fontsize=9];
+        Lookup [label="LookupEvaluator (CSV)", fillcolor="#90EE90"];
+        DB [label="DBEvaluator (SQLite)", fillcolor="#90EE90"];
+
+        // Computational evaluators
+        compute_label [label="Computational", shape=plaintext, fontsize=9];
+        FP [label="FPEvaluator (Fingerprints)", fillcolor="#ADD8E6"];
+        MW [label="MWEvaluator (Mol Weight)", fillcolor="#ADD8E6"];
+
+        // Slow evaluators
+        slow_label [label="Slow (use processes>1)", shape=plaintext, fontsize=9];
+        ROCS [label="ROCSEvaluator (3D Shape)", fillcolor="#E6E6FA"];
+        FRED [label="FredEvaluator (Docking)", fillcolor="#E6E6FA"];
+        ML [label="MLClassifierEvaluator", fillcolor="#E6E6FA"];
+
+        // Force vertical layout
+        Evaluate -> fast_label [style=invis];
+        fast_label -> Lookup [style=invis];
+        Lookup -> DB [style=invis];
+        DB -> compute_label [style=invis];
+        compute_label -> FP [style=invis];
+        FP -> MW [style=invis];
+        MW -> slow_label [style=invis];
+        slow_label -> ROCS [style=invis];
+        ROCS -> FRED [style=invis];
+        FRED -> ML [style=invis];
+
+        // Visible connections
+        Evaluate -> Lookup;
+        Evaluate -> DB;
+        Evaluate -> FP;
+        Evaluate -> MW;
+        Evaluate -> ROCS;
+        Evaluate -> FRED;
+        Evaluate -> ML;
+    }
+
+.. _evaluator-base:
+
+Evaluator (Base Class)
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-fundamental
+
+Abstract base class for all evaluators.
+
+.. list-table:: Required Methods
+   :header-rows: 1
+   :widths: 35 65
+
+   * - Method
+     - Description
+   * - ``evaluate(input)``
+     - Score a compound (accepts Mol or product_name depending on evaluator).
+   * - ``counter`` (property)
+     - Number of evaluations performed.
+
+.. _lookup-evaluator:
+
+LookupEvaluator
+~~~~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Fast evaluator that looks up pre-computed scores from a CSV file.
+
+**Extends:** :ref:`Evaluator <evaluator-base>`
+
+- Use for: Pre-computed scores, benchmarking
+- Recommendation: Use ``processes=1`` (parallel overhead exceeds lookup time)
+
+.. list-table:: Config Parameters (LookupEvaluatorConfig)
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``ref_filename``
+     - ``str``
+     - Yes
+     - Path to CSV file with scores.
+   * - ``score_col``
+     - ``str``
+     - No
+     - Column name for scores. Default: ``"Scores"``.
+   * - ``compound_col``
+     - ``str``
+     - No
+     - Column name for compound IDs. Default: ``"Product_Code"``.
+
+**Example**
+
+.. code-block:: python
+
+   from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+   from TACTICS.thompson_sampling.factories import create_evaluator
+
+   config = LookupEvaluatorConfig(
+       ref_filename="scores.csv",
+       score_col="binding_affinity"
+   )
+   evaluator = create_evaluator(config)
+
+.. _db-evaluator:
+
+DBEvaluator
+~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Fast evaluator using SQLite database for large datasets.
+
+**Extends:** :ref:`Evaluator <evaluator-base>`
+
+- Use for: Large pre-computed datasets (millions of compounds)
+- Recommendation: Use ``processes=1``
+
+.. list-table:: Config Parameters (DBEvaluatorConfig)
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``db_filename``
+     - ``str``
+     - Yes
+     - Path to SQLite database.
+   * - ``db_prefix``
+     - ``str``
+     - No
+     - Key prefix for lookups. Default: ``""``.
+
+.. _fp-evaluator:
+
+FPEvaluator
+~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Evaluator using Morgan fingerprint Tanimoto similarity.
+
+**Extends:** :ref:`Evaluator <evaluator-base>`
+
+- Use for: Similarity-based virtual screening
+- Returns: Tanimoto similarity [0, 1]
+
+.. list-table:: Config Parameters (FPEvaluatorConfig)
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``query_smiles``
+     - ``str``
+     - Yes
+     - Reference molecule SMILES.
+   * - ``radius``
+     - ``int``
+     - No
+     - Morgan fingerprint radius. Default: 2.
+   * - ``n_bits``
+     - ``int``
+     - No
+     - Fingerprint bit length. Default: 2048.
+
+.. _mw-evaluator:
+
+MWEvaluator
+~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Simple evaluator returning molecular weight. Primarily for testing.
+
+**Extends:** :ref:`Evaluator <evaluator-base>`
+
+.. _rocs-evaluator:
+
+ROCSEvaluator
+~~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+3D shape-based evaluator using OpenEye ROCS.
+
+**Extends:** :ref:`Evaluator <evaluator-base>`
+
+- Use for: Shape-based virtual screening
+- Requires: OpenEye Toolkit license
+- Recommendation: Use ``processes>1`` for parallel evaluation
+
+.. list-table:: Config Parameters (ROCSEvaluatorConfig)
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``query_molfile``
+     - ``str``
+     - Yes
+     - Path to reference structure (.sdf).
+   * - ``max_confs``
+     - ``int``
+     - No
+     - Max conformers to generate. Default: 50.
+
+.. _fred-evaluator:
+
+FredEvaluator
+~~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Molecular docking evaluator using OpenEye FRED.
+
+**Extends:** :ref:`Evaluator <evaluator-base>`
+
+- Use for: Structure-based virtual screening
+- Requires: OpenEye Toolkit license
+- Recommendation: Use ``processes>1`` for parallel evaluation
+- Mode: ``minimize`` (lower docking scores = better)
+
+.. list-table:: Config Parameters (FredEvaluatorConfig)
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``design_unit_file``
+     - ``str``
+     - Yes
+     - Path to receptor file (.oedu).
+   * - ``max_confs``
+     - ``int``
+     - No
+     - Max conformers to generate. Default: 100.
+
+.. _ml-classifier-evaluator:
+
+MLClassifierEvaluator
+~~~~~~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Evaluator using a trained scikit-learn classifier.
+
+**Extends:** :ref:`Evaluator <evaluator-base>`
+
+- Use for: ML-based scoring with trained models
+- Requires: scikit-learn, trained model pickle file
+
+.. list-table:: Config Parameters (MLClassifierEvaluatorConfig)
+   :header-rows: 1
+   :widths: 20 15 10 55
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``model_filename``
+     - ``str``
+     - Yes
+     - Path to pickled sklearn model.
+
+
+.. _run-ts:
 
 Convenience Function: run_ts()
--------------------------------
+------------------------------
 
-For the simplest out-of-the-box usage, use the ``run_ts()`` convenience wrapper:
+.. rst-class:: class-core
 
-.. autofunction:: TACTICS.thompson_sampling.main.run_ts
+The simplest way to run Thompson Sampling optimization.
 
-The ``run_ts()`` function provides automatic setup, logging, file saving, and cleanup:
+.. admonition:: Dependencies
+   :class: dependencies
 
-Simple Usage with Presets
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+   - :ref:`ThompsonSamplingConfig <thompson-sampling-config>` - full configuration object
+   - Internally creates :ref:`ThompsonSampler <thompson-sampler>` and runs warmup + search
 
-.. code-block:: python
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 20 22 10 48
 
-    from TACTICS.thompson_sampling import run_ts, get_preset
-    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``config``
+     - ``ThompsonSamplingConfig``
+     - Yes
+     - Full configuration object.
+   * - ``return_warmup``
+     - ``bool``
+     - No
+     - Also return warmup results. Default: False.
 
-    # 1. Create evaluator config
-    evaluator = LookupEvaluatorConfig(ref_filename="scores.csv")
+**Returns**
 
-    # 2. Get preset
-    config = get_preset(
-        "fast_exploration",
-        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-        reagent_file_list=["acids.smi", "amines.smi"],
-        evaluator_config=evaluator,
-        mode="minimize"  # For docking scores
-    )
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
 
-    # 3. Run and get results (returns polars DataFrame)
-    results_df = run_ts(config)
+   * - Type
+     - Description
+   * - ``DataFrame`` or ``tuple``
+     - Search results, or (search_df, warmup_df) if return_warmup=True.
 
-With Warmup Results
-~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    from TACTICS.thompson_sampling import run_ts, get_preset
-    from TACTICS.thompson_sampling.core.evaluator_config import DBEvaluatorConfig
-
-    evaluator = DBEvaluatorConfig(db_filename="scores.db")
-    config = get_preset(
-        "balanced_sampling",
-        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-        reagent_file_list=["acids.smi", "amines.smi"],
-        evaluator_config=evaluator,
-        num_iterations=1000
-    )
-
-    # Get both search and warmup results
-    search_df, warmup_df = run_ts(config, return_warmup=True)
-
-    # Analyze warmup phase
-    print(warmup_df.head())
-
-    # Analyze search results
-    print(search_df.sort("score").head(10))
-
-Parallel Batch Processing
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Example**
 
 .. code-block:: python
 
-    from TACTICS.thompson_sampling import run_ts, get_preset
-    from TACTICS.thompson_sampling.core.evaluator_config import FredEvaluatorConfig
+   from TACTICS.library_enumeration import SynthesisPipeline
+   from TACTICS.library_enumeration.smarts_toolkit import ReactionConfig, ReactionDef
+   from TACTICS.thompson_sampling import run_ts, get_preset
+   from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
-    # For slow evaluators (docking, ML models)
-    evaluator = FredEvaluatorConfig(design_unit_file="receptor.oedu")
+   # Create synthesis pipeline
+   rxn_config = ReactionConfig(
+       reactions=[ReactionDef(reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]", step_index=0)],
+       reagent_file_list=["acids.smi", "amines.smi"]
+   )
+   pipeline = SynthesisPipeline(rxn_config)
 
-    config = get_preset(
-        "parallel_batch",
-        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-        reagent_file_list=["acids.smi", "amines.smi"],
-        evaluator_config=evaluator,
-        mode="minimize",  # Docking scores
-        batch_size=100,   # Sample 100 per cycle
-        processes=8       # Use 8 CPU cores
-    )
+   # Get preset configuration
+   config = get_preset(
+       "balanced_sampling",
+       synthesis_pipeline=pipeline,
+       evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
+       num_iterations=1000
+   )
 
-    results_df = run_ts(config)
+   # Get both results
+   search_df, warmup_df = run_ts(config, return_warmup=True)
+   print(f"Warmup: {len(warmup_df)}, Search: {len(search_df)}")
 
-Custom Configuration
-~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    from TACTICS.thompson_sampling import ThompsonSamplingConfig, run_ts
-    from TACTICS.thompson_sampling.strategies.config import EpsilonGreedyConfig
-    from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
-    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
-
-    config = ThompsonSamplingConfig(
-        reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
-        reagent_file_list=["acids.smi", "amines.smi"],
-        num_ts_iterations=1000,
-        num_warmup_trials=5,
-        strategy_config=EpsilonGreedyConfig(mode="maximize", epsilon=0.2, decay=0.995),
-        warmup_config=BalancedWarmupConfig(observations_per_reagent=5),
-        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
-        results_filename="results.csv",
-        log_filename="run.log"
-    )
-
-    results_df = run_ts(config)
-
-Benefits of run_ts()
-~~~~~~~~~~~~~~~~~~~~
-
-The ``run_ts()`` function provides several benefits:
-
-* **Automatic logging**: Sets up logging from config
-* **Automatic file saving**: Saves results if filename provided
-* **Progress display**: Shows top results unless hidden
-* **Resource cleanup**: Automatically closes multiprocessing pools
-* **Simple API**: 3-line workflow for common cases
-* **Flexible**: Works with presets or custom configs
-* **Polars DataFrames**: Returns efficient polars DataFrames
-
-For maximum flexibility and control, use ``ThompsonSampler`` directly instead of ``run_ts()``.
-
-See the :doc:`configuration` page for more details on configuration options and presets.
-
-Usage Examples
---------------
-
-Basic Thompson Sampling with Greedy Selection:
-
-.. code-block:: python
-
-    from TACTICS.thompson_sampling.core.sampler import ThompsonSampler
-    from TACTICS.thompson_sampling.strategies import GreedySelection
-    from TACTICS.thompson_sampling.core.evaluators import LookupEvaluator
-
-    # Create greedy selection strategy
-    strategy = GreedySelection(mode="maximize")
-
-    # Create sampler
-    sampler = ThompsonSampler(selection_strategy=strategy)
-
-    # Setup
-    sampler.read_reagents(["reagents1.smi", "reagents2.smi"])
-    sampler.set_reaction("[C:1]=[O:2]>>[C:1][O:2]")
-    sampler.set_evaluator(LookupEvaluator({"ref_filename": "scores.csv"}))
-
-    # Run optimization
-    warmup_results = sampler.warm_up(num_warmup_trials=3)
-    search_results = sampler.search(num_cycles=100)
-
-    # Cleanup
-    sampler.close()
-
-Roulette Wheel Selection with Thermal Cycling:
-
-.. code-block:: python
-
-    from TACTICS.thompson_sampling.strategies import RouletteWheelSelection
-
-    # Create roulette wheel strategy with thermal cycling
-    strategy = RouletteWheelSelection(
-        mode="maximize",
-        alpha=0.1,          # Initial heating temperature
-        beta=0.1,           # Initial cooling temperature
-        scaling=1.0
-    )
-
-    sampler = ThompsonSampler(
-        selection_strategy=strategy,
-        batch_size=10,      # Sample 10 compounds per cycle
-        processes=4         # Use 4 CPU cores for parallel evaluation
-    )
-
-    # Setup and run as before
-    sampler.read_reagents(["reagents1.smi", "reagents2.smi"])
-    sampler.set_reaction("[C:1]=[O:2]>>[C:1][O:2]")
-    sampler.set_evaluator(LookupEvaluator({"ref_filename": "scores.csv"}))
-
-    warmup_results = sampler.warm_up(num_warmup_trials=3)
-    search_results = sampler.search(num_cycles=100)
-
-    sampler.close()
-
-Custom Warmup Strategy:
-
-.. code-block:: python
-
-    from TACTICS.thompson_sampling.warmup import EnhancedWarmup
-
-    # Use enhanced warmup with anchor compounds
-    warmup_strategy = EnhancedWarmup(
-        anchor_strategy="max_variance",
-        num_anchors=5
-    )
-
-    strategy = GreedySelection(mode="maximize")
-
-    sampler = ThompsonSampler(
-        selection_strategy=strategy,
-        warmup_strategy=warmup_strategy  # Use custom warmup
-    )
-
-    # Run as usual
-    sampler.read_reagents(["reagents1.smi", "reagents2.smi"])
-    sampler.set_reaction("[C:1]=[O:2]>>[C:1][O:2]")
-    sampler.set_evaluator(LookupEvaluator({"ref_filename": "scores.csv"}))
-
-    warmup_results = sampler.warm_up(num_warmup_trials=3)
-    search_results = sampler.search(num_cycles=100)
-
-    sampler.close()
-
-Creating Custom Strategies:
-
-.. code-block:: python
-
-    from TACTICS.thompson_sampling.strategies.base_strategy import SelectionStrategy
-    import numpy as np
-
-    class MyCustomStrategy(SelectionStrategy):
-        """Custom selection strategy"""
-
-        def select_reagent(self, reagent_list, disallow_mask=None, **kwargs):
-            rng = kwargs.get('rng', np.random.default_rng())
-
-            # Sample from posterior distributions
-            scores = self.prepare_scores(reagent_list, rng)
-
-            # Apply custom selection logic
-            # ... your implementation ...
-
-            # Apply disallow mask
-            if disallow_mask:
-                scores[np.array(list(disallow_mask))] = np.nan
-
-            # Return selected index
-            if self.mode in ["maximize", "maximize_boltzmann"]:
-                return np.nanargmax(scores)
-            else:
-                return np.nanargmin(scores)
-
-    # Use custom strategy
-    strategy = MyCustomStrategy(mode="maximize")
-    sampler = ThompsonSampler(selection_strategy=strategy)
 
 Strategy Selection Guide
------------------------
+------------------------
 
-**GreedySelection:**
+Choose the right strategy based on your use case:
 
-* Best for: Simple optimization landscapes, limited budgets
-* Pros: Fast convergence, simple
-* Cons: Can get stuck in local optima
+.. list-table::
+   :header-rows: 1
+   :widths: 22 25 25 28
 
-**RouletteWheelSelection:**
+   * - Strategy
+     - Best For
+     - Pros
+     - Cons
+   * - **Greedy**
+     - Simple landscapes, limited budgets
+     - Fast convergence
+     - Can get stuck in local optima
+   * - **RouletteWheel**
+     - Complex multi-modal landscapes
+     - Thermal cycling, CATS, adaptive
+     - More parameters to tune
+   * - **UCB**
+     - Deterministic optimization needs
+     - Theoretically grounded
+     - Less stochastic
+   * - **BayesUCB**
+     - Complex landscapes, escaping optima
+     - Bayesian bounds, CATS
+     - Requires scipy
+   * - **EpsilonGreedy**
+     - Baseline comparisons
+     - Very simple
+     - Less sophisticated
 
-* Best for: Complex multi-modal landscapes, large libraries
-* Pros: Better exploration/exploitation balance via thermal cycling, adaptive temperature
-* Cons: More complex, requires parameter tuning
 
-**UCBSelection:**
+Evaluator Selection Guide
+-------------------------
 
-* Best for: Deterministic optimization needs
-* Pros: Theoretically grounded, principled exploration via confidence bounds
-* Cons: Less stochastic exploration than Thompson Sampling
+Choose based on your data source and computational requirements:
 
-**BayesUCBSelection:**
+**Fast Evaluators** (use ``processes=1``):
 
-* Best for: Complex multi-modal landscapes, escaping local optima
-* Pros: Bayesian confidence bounds using Student-t quantiles, adaptive percentile parameters, thermal cycling
-* Cons: Requires scipy, more complex than simple UCB
-* Note: Percentile parameters control exploration (higher p_high → more exploration)
+- ``LookupEvaluator``: Pre-computed scores in CSV
+- ``DBEvaluator``: Pre-computed scores in SQLite
 
-**EpsilonGreedySelection:**
+**Computational Evaluators**:
 
-* Best for: Baseline comparisons, quick screening
-* Pros: Very simple, easy to understand, supports decay
-* Cons: Less sophisticated than other methods 
+- ``FPEvaluator``: Fingerprint similarity (fast)
+- ``MWEvaluator``: Molecular weight (testing only)
+
+**Slow Evaluators** (use ``processes>1``):
+
+- ``ROCSEvaluator``: 3D shape similarity (requires OpenEye)
+- ``FredEvaluator``: Molecular docking (requires OpenEye)
+- ``MLClassifierEvaluator``: ML model predictions
+
+See the :doc:`configuration` page for preset configurations and detailed examples.
