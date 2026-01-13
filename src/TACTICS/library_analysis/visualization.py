@@ -639,10 +639,11 @@ class TS_Benchmarks:
         
         return combined_df_top_n, combined_df_all
     
-    def stripplot_TS_results(self, width: Optional[int] = None, height: Optional[int] = None, 
-                         save_path: Optional[str] = None, show_plot: bool = True):
+    def stripplot_TS_results(self, width: Optional[int] = None, height: Optional[int] = None,
+                         save_path: Optional[str] = None, show_plot: bool = True,
+                         legend_position: str = "right"):
         """
-        Generate a stripplot for TS results using altair. 
+        Generate a stripplot for TS results using altair.
         This visualizes the distribution of scores across cycles and methods.
         Data is automatically generated during class initialization.
 
@@ -656,7 +657,9 @@ class TS_Benchmarks:
             Path to save the plot
         show_plot: bool
             If True, shows the plot in Jupyter
-            
+        legend_position: str
+            Position of the legend. "right" (default) or "bottom" for horizontal legend below plot.
+
         Returns:
         --------
         altair.Chart or None
@@ -681,22 +684,46 @@ class TS_Benchmarks:
         
         # Use the standardized color scheme for consistency across all plots
         color_scheme = self._get_color_scheme(include_ref=True)
-        
+
+        # Generate proper sort order for cycles (1, 2, 3, ..., 10, ref) instead of lexicographic (1, 10, 2, ...)
+        cycle_order = [str(i) for i in range(1, self.no_of_cycles + 1)]
+        if self.reference_data is not None:
+            cycle_order.append("ref")
+
+        # Build legend config based on position
+        if legend_position == "bottom":
+            legend_config = alt.Legend(
+                orient="bottom",
+                direction="horizontal",
+                titleFontSize=16,
+                labelFontSize=14,
+                columns=0  # Auto-wrap
+            )
+        else:
+            legend_config = alt.Legend(
+                orient="right",
+                titleFontSize=20,
+                labelFontSize=18,
+                titlePadding=10,
+                symbolSize=100
+            )
+
         # Create a stripplot for TS results using altair
         # Single plot with methods grouped within each cycle using x-axis positioning
         stripplot = alt.Chart(self.combined_df_top_n).mark_circle(
             size=40,
             opacity=0.7
         ).encode(
-            x=alt.X("cycle:O", 
+            x=alt.X("cycle:O",
                    title="Cycle",
+                   sort=cycle_order,
                    axis=alt.Axis(
                        labelAngle=0,
                        labelFontSize=16,
                        titleFontSize=18,
                        titlePadding=10
                    )),
-            y=alt.Y("score:Q", 
+            y=alt.Y("score:Q",
                    title="Score",
                    scale=alt.Scale(domain=[y_min, y_max]),
                    axis=alt.Axis(
@@ -704,16 +731,10 @@ class TS_Benchmarks:
                        titleFontSize=18,
                        titlePadding=10
                    )),
-            color=alt.Color("method:N", 
+            color=alt.Color("method:N",
                            title="Method",
                            scale=color_scheme,
-                           legend=alt.Legend(
-                               orient="right",
-                               titleFontSize=20,
-                               labelFontSize=18,
-                               titlePadding=10,
-                               symbolSize=100
-                           )),
+                           legend=legend_config),
             # Use xOffset to separate methods horizontally within each cycle
             xOffset=alt.XOffset("method:N", 
                                scale=alt.Scale(
@@ -829,12 +850,13 @@ class TS_Benchmarks:
         
 
     def plot_barplot_TS_results(self, width: Optional[int] = None, height: Optional[int] = None,
-                            save_path: Optional[str] = None, show_plot: bool = True):
+                            save_path: Optional[str] = None, show_plot: bool = True,
+                            legend_position: str = "right", dark_mode: bool = False):
         """
-        Generate a barplot for TS results using altair. 
+        Generate a barplot for TS results using altair.
         This visualizes the number of reference hits recovered by each search strategy.
         Data is automatically generated during class initialization.
-        
+
         Parameters:
         -----------
         width : Optional[int]
@@ -845,7 +867,11 @@ class TS_Benchmarks:
             Path to save the plot
         show_plot : bool
             If True, shows the plot in Jupyter
-            
+        legend_position : str
+            Position of the legend. "right" (default) or "bottom" for horizontal legend below plot.
+        dark_mode : bool
+            If True, uses white text for bar labels (for dark backgrounds). Default is False (black text).
+
         Returns:
         --------
         altair.Chart or None
@@ -853,48 +879,69 @@ class TS_Benchmarks:
         """
         if width is None:
             width = max(400, len(self.bar_plot_df["cycle"].unique()) * 120)
-        
+
         if height is None:
             height = 400
-        
+
         # Use the standardized color scheme for consistency across all plots
         color_scheme = self._get_color_scheme(include_ref=True)
-        
+
+        # Generate proper sort order for cycles (1, 2, 3, ..., 10, ref) instead of lexicographic (1, 10, 2, ...)
+        cycle_order = [str(i) for i in range(1, self.no_of_cycles + 1)]
+        if self.reference_data is not None:
+            cycle_order.append("ref")
+
+        # Build legend config based on position
+        if legend_position == "bottom":
+            legend_config = alt.Legend(
+                orient="bottom",
+                direction="horizontal",
+                titleFontSize=16,
+                labelFontSize=14,
+                columns=0  # Auto-wrap
+            )
+        else:
+            legend_config = alt.Legend(
+                orient="right",
+                titleFontSize=20,
+                labelFontSize=18,
+                symbolSize=100,
+                padding=10
+            )
+
         # Create grouped barplot (not stacked) for better readability
         barplot = alt.Chart(self.bar_plot_df).mark_bar(
             stroke='white',
             strokeWidth=1
         ).encode(
-            x=alt.X("cycle:O", 
+            x=alt.X("cycle:O",
                    title="Cycle",
+                   sort=cycle_order,
                    axis=alt.Axis(
                        labelAngle=0,
                        labelFontSize=18,
                        titleFontSize=20
                    )),
-            y=alt.Y("found:Q", 
+            y=alt.Y("found:Q",
                    title="Number of Top Reference Compounds Found",
                    axis=alt.Axis(
                        labelFontSize=18,
                        titleFontSize=20
                    )),
-            color=alt.Color("method:N", 
+            color=alt.Color("method:N",
                            title="Method",
                            scale=color_scheme,
-                           legend=alt.Legend(
-                               orient="right",
-                               titleFontSize=20,
-                               labelFontSize=18,
-                               symbolSize=100,
-                               padding=10
-                           )),
+                           legend=legend_config),
             xOffset=alt.XOffset("method:N"),
             tooltip=["cycle:O", "method:N", "found:Q"]
         ).properties(
             width=width,
             height=height
         )
-        
+
+        # Text color based on dark mode
+        text_color = 'white' if dark_mode else 'black'
+
         # Add text labels positioned correctly on top of each bar
         text = alt.Chart(self.bar_plot_df).mark_text(
             align='center',
@@ -902,9 +949,9 @@ class TS_Benchmarks:
             fontSize=11,
             fontWeight='bold',
             dy=-5,
-            color='black'
+            color=text_color
         ).encode(
-            x=alt.X("cycle:O"),
+            x=alt.X("cycle:O", sort=cycle_order),
             xOffset=alt.XOffset("method:N"),
             y=alt.Y("found:Q"),
             text=alt.condition(
@@ -1025,12 +1072,13 @@ class TS_Benchmarks:
         return line_plot_df
     
     def plot_line_performance_with_error_bars(self, width: Optional[int] = None, height: Optional[int] = None,
-                                            save_path: Optional[str] = None, show_plot: bool = True):
+                                            save_path: Optional[str] = None, show_plot: bool = True,
+                                            legend_position: str = "right"):
         """
         Generate a line plot with error bars for method performance using altair.
         Shows mean fraction of reference compounds found across cycles with standard deviation error bars.
         Data and grouped statistics are automatically generated during class initialization.
-        
+
         Parameters:
         -----------
         width : Optional[int]
@@ -1041,7 +1089,9 @@ class TS_Benchmarks:
             Path to save the plot
         show_plot : bool
             If True, shows the plot in Jupyter
-            
+        legend_position : str
+            Position of the legend. "right" (default) or "bottom" for horizontal legend below plot.
+
         Returns:
         --------
         altair.Chart or None
@@ -1058,20 +1108,37 @@ class TS_Benchmarks:
         
         # Use pre-generated grouped statistics
         grouped_stats = self.grouped_stats
-        
+
         # Use the standardized color scheme for consistency across all plots
         # Line plot doesn't include reference data, so set include_ref=False
         color_scheme = self._get_color_scheme(include_ref=False)
-        
+
+        # Build legend config based on position
+        if legend_position == "bottom":
+            legend_config = alt.Legend(
+                orient="bottom",
+                direction="horizontal",
+                titleFontSize=16,
+                labelFontSize=14,
+                columns=0  # Auto-wrap
+            )
+        else:
+            legend_config = alt.Legend(
+                orient="right",
+                titleFontSize=20,
+                labelFontSize=18,
+                symbolSize=100
+            )
+
         # Create the base chart
         base = alt.Chart(grouped_stats)
-        
+
         # Main line plot with thicker lines and larger points
         line_plot = base.mark_line(
             point=alt.OverlayMarkDef(size=120, filled=True),
             strokeWidth=4
         ).encode(
-            x=alt.X("top_n:Q", 
+            x=alt.X("top_n:Q",
                    title="Top N Compounds",
                    scale=alt.Scale(domain=[min(self.unique_top_ns), max(self.unique_top_ns)]),
                    axis=alt.Axis(
@@ -1081,7 +1148,7 @@ class TS_Benchmarks:
                        values=self.unique_top_ns,  # Explicitly set tick values
                        format="d"  # Format as integers
                    )),
-            y=alt.Y("mean:Q", 
+            y=alt.Y("mean:Q",
                    title="Mean Fraction Found",
                    scale=alt.Scale(domain=[0, 1]),
                    axis=alt.Axis(
@@ -1089,15 +1156,11 @@ class TS_Benchmarks:
                        titleFontSize=28,
                        format=".1%"
                    )),
-            color=alt.Color("method:N", 
+            color=alt.Color("method:N",
                            title="Method",
                            scale=color_scheme,
-                           legend=alt.Legend(
-                               orient="right",
-                               titleFontSize=20,
-                               labelFontSize=18,
-                               symbolSize=100
-                           )),
+                           legend=legend_config),
+            order=alt.Order("top_n:Q"),  # Ensures lines connect in ascending x order
             tooltip=["method:N", "top_n:O", "mean:Q", "std:Q", "n_cycles:O"]
         )
         

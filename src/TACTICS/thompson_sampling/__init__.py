@@ -41,9 +41,6 @@ from .warmup import (
 # Import utilities
 from .utils import get_logger, read_reagents, create_reagents
 
-# Import main function
-from .main import run_ts
-
 # Import baseline functionality
 from .baseline import run_random_baseline, run_exhaustive_baseline
 
@@ -54,9 +51,6 @@ __all__ = [
     # Configuration
     'ThompsonSamplingConfig',
     'RandomBaselineConfig',
-
-    # Main function
-    'run_ts',
 
     # Presets
     'ConfigPresets',
