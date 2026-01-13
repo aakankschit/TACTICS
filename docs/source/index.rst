@@ -121,13 +121,13 @@ Quick Start
 Simple Out-of-the-Box Usage (Recommended)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The easiest way to get started with TACTICS is using the ``run_ts()`` convenience function with presets:
+The easiest way to get started with TACTICS is using ``ThompsonSampler`` with presets:
 
 .. code-block:: python
 
     from TACTICS.library_enumeration import SynthesisPipeline
     from TACTICS.library_enumeration.smarts_toolkit import ReactionConfig, ReactionDef
-    from TACTICS.thompson_sampling import run_ts, get_preset
+    from TACTICS.thompson_sampling import ThompsonSampler, get_preset
     from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
     # 1. Create synthesis pipeline (single source of truth)
@@ -152,8 +152,11 @@ The easiest way to get started with TACTICS is using the ``run_ts()`` convenienc
         num_iterations=1000
     )
 
-    # 4. Run and get results (returns polars DataFrame)
-    results_df = run_ts(config)
+    # 4. Create sampler and run optimization
+    sampler = ThompsonSampler.from_config(config)
+    warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+    results_df = sampler.search(num_cycles=config.num_ts_iterations)
+    sampler.close()
 
     # 5. Analyze top results
     print(results_df.sort("score").head(10))
@@ -182,7 +185,7 @@ For expensive evaluators (docking, ML models), use parallel batch mode:
 
     from TACTICS.library_enumeration import SynthesisPipeline
     from TACTICS.library_enumeration.smarts_toolkit import ReactionConfig, ReactionDef
-    from TACTICS.thompson_sampling import run_ts, get_preset
+    from TACTICS.thompson_sampling import ThompsonSampler, get_preset
     from TACTICS.thompson_sampling.core.evaluator_config import FredEvaluatorConfig
 
     # Create synthesis pipeline
@@ -207,7 +210,11 @@ For expensive evaluators (docking, ML models), use parallel batch mode:
         batch_size=100    # Sample 100 compounds per cycle
     )
 
-    results_df = run_ts(config)
+    # Create sampler and run optimization
+    sampler = ThompsonSampler.from_config(config)
+    warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+    results_df = sampler.search(num_cycles=config.num_ts_iterations)
+    sampler.close()
 
 Custom Configuration
 ~~~~~~~~~~~~~~~~~~~~
@@ -218,7 +225,7 @@ For full control over all parameters:
 
     from TACTICS.library_enumeration import SynthesisPipeline
     from TACTICS.library_enumeration.smarts_toolkit import ReactionConfig, ReactionDef
-    from TACTICS.thompson_sampling import ThompsonSamplingConfig, run_ts
+    from TACTICS.thompson_sampling import ThompsonSamplingConfig, ThompsonSampler
     from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
     from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
     from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
@@ -256,7 +263,11 @@ For full control over all parameters:
         log_filename="optimization.log"
     )
 
-    results_df = run_ts(config)
+    # Create sampler and run optimization
+    sampler = ThompsonSampler.from_config(config)
+    warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+    results_df = sampler.search(num_cycles=config.num_ts_iterations)
+    sampler.close()
 
 Advanced Usage: Direct Sampler Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -309,7 +320,7 @@ use ``SynthesisPipeline.from_alternatives()``:
 
 .. code-block:: python
 
-    from TACTICS.thompson_sampling import ThompsonSamplingConfig, run_ts
+    from TACTICS.thompson_sampling import ThompsonSamplingConfig, ThompsonSampler
     from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
     from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
     from TACTICS.library_enumeration import SynthesisPipeline
@@ -332,7 +343,11 @@ use ``SynthesisPipeline.from_alternatives()``:
         evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
     )
 
-    results_df = run_ts(config)
+    # Create sampler and run optimization
+    sampler = ThompsonSampler.from_config(config)
+    warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+    results_df = sampler.search(num_cycles=config.num_ts_iterations)
+    sampler.close()
 
 Installation
 ------------

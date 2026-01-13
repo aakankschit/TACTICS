@@ -501,6 +501,10 @@ Generate strip plot showing score distributions across cycles and methods.
      - ``bool``
      - No
      - Display in Jupyter. Default: True.
+   * - ``legend_position``
+     - ``str``
+     - No
+     - Position of legend: ``"right"`` (default) or ``"bottom"`` for horizontal legend below plot.
 
 **Returns**
 
@@ -542,6 +546,14 @@ Create grouped bar plot showing reference hit recovery by method and cycle.
      - ``bool``
      - No
      - Display in Jupyter. Default: True.
+   * - ``legend_position``
+     - ``str``
+     - No
+     - Position of legend: ``"right"`` (default) or ``"bottom"`` for horizontal legend below plot.
+   * - ``dark_mode``
+     - ``bool``
+     - No
+     - Use white text for bar labels (for dark backgrounds). Default: False.
 
 plot_line_performance_with_error_bars
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -572,6 +584,10 @@ Create line plot with error bars showing mean performance across top-N cutoffs.
      - ``bool``
      - No
      - Display in Jupyter. Default: True.
+   * - ``legend_position``
+     - ``str``
+     - No
+     - Position of legend: ``"right"`` (default) or ``"bottom"`` for horizontal legend below plot.
 
 Other Methods
 ~~~~~~~~~~~~~
@@ -625,15 +641,19 @@ Complete Example
 
    # Generate all visualizations
    strip_chart = benchmarks.stripplot_TS_results(
-       width=800, height=500, save_path="strip_plot.html"
+       width=800, height=500, save_path="strip_plot.html",
+       legend_position="right"  # or "bottom" for horizontal legend
    )
 
    bar_chart = benchmarks.plot_barplot_TS_results(
-       width=700, height=400, save_path="bar_plot.html"
+       width=700, height=400, save_path="bar_plot.html",
+       legend_position="bottom",  # horizontal legend below plot
+       dark_mode=False  # set True for white text on dark backgrounds
    )
 
    line_chart = benchmarks.plot_line_performance_with_error_bars(
-       width=900, height=600, save_path="line_plot.html"
+       width=900, height=600, save_path="line_plot.html",
+       legend_position="right"
    )
 
    # Access computed statistics

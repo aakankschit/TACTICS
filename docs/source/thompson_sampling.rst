@@ -139,7 +139,7 @@ Quick Start
 
    from TACTICS.library_enumeration import SynthesisPipeline
    from TACTICS.library_enumeration.smarts_toolkit import ReactionConfig, ReactionDef
-   from TACTICS.thompson_sampling import run_ts, get_preset
+   from TACTICS.thompson_sampling import ThompsonSampler, get_preset
    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
    # 1. Create synthesis pipeline (single source of truth)
@@ -161,8 +161,12 @@ Quick Start
        num_iterations=1000
    )
 
-   # 3. Run and get results
-   results_df = run_ts(config)
+   # 3. Create sampler and run optimization
+   sampler = ThompsonSampler.from_config(config)
+   warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+   results_df = sampler.search(num_cycles=config.num_ts_iterations)
+   sampler.close()
+
    print(results_df.sort("score").head(10))
 
 **Direct sampler control:**
@@ -1225,78 +1229,6 @@ Evaluator using a trained scikit-learn classifier.
      - ``str``
      - Yes
      - Path to pickled sklearn model.
-
-
-.. _run-ts:
-
-Convenience Function: run_ts()
-------------------------------
-
-.. rst-class:: class-core
-
-The simplest way to run Thompson Sampling optimization.
-
-.. admonition:: Dependencies
-   :class: dependencies
-
-   - :ref:`ThompsonSamplingConfig <thompson-sampling-config>` - full configuration object
-   - Internally creates :ref:`ThompsonSampler <thompson-sampler>` and runs warmup + search
-
-.. list-table:: Parameters
-   :header-rows: 1
-   :widths: 20 22 10 48
-
-   * - Parameter
-     - Type
-     - Required
-     - Description
-   * - ``config``
-     - ``ThompsonSamplingConfig``
-     - Yes
-     - Full configuration object.
-   * - ``return_warmup``
-     - ``bool``
-     - No
-     - Also return warmup results. Default: False.
-
-**Returns**
-
-.. list-table::
-   :header-rows: 1
-   :widths: 30 70
-
-   * - Type
-     - Description
-   * - ``DataFrame`` or ``tuple``
-     - Search results, or (search_df, warmup_df) if return_warmup=True.
-
-**Example**
-
-.. code-block:: python
-
-   from TACTICS.library_enumeration import SynthesisPipeline
-   from TACTICS.library_enumeration.smarts_toolkit import ReactionConfig, ReactionDef
-   from TACTICS.thompson_sampling import run_ts, get_preset
-   from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
-
-   # Create synthesis pipeline
-   rxn_config = ReactionConfig(
-       reactions=[ReactionDef(reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]", step_index=0)],
-       reagent_file_list=["acids.smi", "amines.smi"]
-   )
-   pipeline = SynthesisPipeline(rxn_config)
-
-   # Get preset configuration
-   config = get_preset(
-       "balanced_sampling",
-       synthesis_pipeline=pipeline,
-       evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
-       num_iterations=1000
-   )
-
-   # Get both results
-   search_df, warmup_df = run_ts(config, return_warmup=True)
-   print(f"Warmup: {len(warmup_df)}, Search: {len(search_df)}")
 
 
 Strategy Selection Guide
