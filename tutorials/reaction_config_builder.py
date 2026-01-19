@@ -254,7 +254,8 @@ def _(mo):
     ---
     ## Step 3: Reagent Files
 
-    Specify the paths to reagent SMILES files.
+    Specify the paths to reagent SMILES files. By default, paths to the bundled
+    Thrombin dataset are provided. Replace these with your own file paths as needed.
     """)
     return
 
@@ -280,13 +281,16 @@ def _(num_files_dropdown):
 @app.cell
 def _(mo, num_files_dropdown):
     """Create reagent file path inputs."""
+    import importlib.resources
+
     _num_files = int(num_files_dropdown.value)
 
-    # Example paths for convenience
+    # Get bundled data paths for default examples
+    _data_files = importlib.resources.files("TACTICS.data.thrombin")
     _example_paths = [
-        "data/reagents/thrombin/acids.smi",
-        "data/reagents/thrombin/coupled_aa_sub.smi",
-        "data/reagents/thrombin/amino_acids_no_fmoc.smi",
+        str(_data_files / "acids.smi"),
+        str(_data_files / "coupled_aa_sub.smi"),
+        str(_data_files / "amino_acids_no_fmoc.smi"),
         "",
         "",
         "",

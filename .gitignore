@@ -172,8 +172,14 @@ experiment_template.py
 # Experiments directory (local research scripts)
 experiments/
 
-# Data directory (local datasets)
-data/
+# Examples directory (local user workflows)
+examples/
+
+# Data directory (local datasets - root level only)
+/data/
+
+# But DO include package data (bundled with distribution)
+!src/TACTICS/data/
 
 # Outputs directory (generated results)
 outputs/

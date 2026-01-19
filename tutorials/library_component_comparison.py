@@ -120,18 +120,20 @@ def _(mo):
 
 @app.cell
 def _():
-    """Define dataset paths for both library representations."""
+    """Load bundled Thrombin dataset paths."""
+    import importlib.resources
+
+    _data_files = importlib.resources.files("TACTICS.data.thrombin")
+    ACIDS_FILE = str(_data_files / "acids.smi")
+    DIPEPTIDES_FILE = str(_data_files / "coupled_aa_sub.smi")
+    AMINO_ACIDS_FILE = str(_data_files / "amino_acids_no_fmoc.smi")
+    SCORES_FILE = str(_data_files / "product_scores.csv")
+
     # 2-Component Library Files
-    ACIDS_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/acids.smi"
-    DIPEPTIDES_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/coupled_aa_sub.smi"
     REAGENT_FILES_2COMP = [ACIDS_FILE, DIPEPTIDES_FILE]
 
     # 3-Component Library Files
-    AMINO_ACIDS_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/amino_acids_no_fmoc.smi"
     REAGENT_FILES_3COMP = [AMINO_ACIDS_FILE, AMINO_ACIDS_FILE, ACIDS_FILE]
-
-    # Scores file (same for both representations - same products)
-    SCORES_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/scores/thrombin/product_scores.csv"
 
     # SMARTS patterns
     AMIDE_COUPLING_SMARTS = "[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]);!$(N[#6]~[!#6;!#16]):3]>>[#6:1](=[O:2])[#7:3]"

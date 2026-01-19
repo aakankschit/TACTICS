@@ -60,8 +60,21 @@ notebook = [
     "ipykernel"
 ]
 
+docs = [
+    "sphinx>=7.0",
+    "pydata-sphinx-theme>=0.15",
+    "sphinx-design",
+    "sphinx-copybutton",
+    "sphinx-togglebutton",
+    "myst-nb>=1.0",
+]
+
 openeye = [
     "openeye-toolkits"
+]
+
+tutorials = [
+    "marimo>=0.18.0",
 ]
 
 [project.urls]
@@ -73,6 +86,9 @@ Issues = "https://github.com/aakankschit/TACTICS/issues"
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["TACTICS*"]
+
+[tool.setuptools.package-data]
+"TACTICS.data" = ["**/*.smi", "**/*.csv", "**/*.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

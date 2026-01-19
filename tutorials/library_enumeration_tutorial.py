@@ -106,11 +106,24 @@ def _():
 @app.cell
 def _():
     mo.md(r"""
-    ## 1. Setup: Create Sample Reagent Files
+    ## 1. Setup: Load Bundled Dataset
 
-    We will load the files from the data folder.
+    This tutorial uses the bundled Thrombin dataset included with TACTICS.
     """)
     return
+
+
+@app.cell
+def _():
+    """Load bundled Thrombin dataset paths."""
+    import importlib.resources
+
+    _data_files = importlib.resources.files("TACTICS.data.thrombin")
+    ACIDS_PTH = str(_data_files / "acids.smi")
+    DIPEPTIDES_PTH = str(_data_files / "coupled_aa_sub.smi")
+    AMINO_ACIDS_PTH = str(_data_files / "amino_acids_no_fmoc.smi")
+    SCORES_PTH = str(_data_files / "product_scores.csv")
+    return ACIDS_PTH, AMINO_ACIDS_PTH, DIPEPTIDES_PTH, SCORES_PTH
 
 
 @app.function
@@ -139,38 +152,13 @@ def read_file_to_list(filepath):
 
 
 @app.cell
-def _():
-    # Start by loading the amino acids and the carboxulic acids
-    # Using absolute paths to avoid issues while executing but change these paths depending on where the data files are located
-
-    # These amino acids are fmoc deprotected but have other protecting groups on them
-    AMINO_ACIDS_PTH = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/amino_acids_no_fmoc.smi"
-    # Carboxylic acids
-    ACIDS_PTH = (
-        "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/acids.smi"
-    )
-    # Dipeptides with the an amine substitution to be representative of the products used in experiment
-    DIPEPTIDES_PTH = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/coupled_aa_sub.smi"
-    return ACIDS_PTH, AMINO_ACIDS_PTH, DIPEPTIDES_PTH
-
-
-@app.cell
-def _():
-    # Reference File Path for Thompson Sampling
-
-    # This file was generated using docking evaluator with Thrombin as the target of interest.
-    SCORES_PTH = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/scores/thrombin/product_scores.csv"
-    return (SCORES_PTH,)
-
-
-@app.cell
 def _(ACIDS_PTH, AMINO_ACIDS_PTH, DIPEPTIDES_PTH, SCORES_PTH):
-    # Laod all Data into lists
+    # Load all Data into lists
     amino_acids = read_file_to_list(AMINO_ACIDS_PTH)
     dipeptides = read_file_to_list(DIPEPTIDES_PTH)
     acids = read_file_to_list(ACIDS_PTH)
     scores = pl.read_csv(SCORES_PTH)
-    return acids, amino_acids, dipeptides
+    return acids, amino_acids, dipeptides, scores
 
 
 @app.cell

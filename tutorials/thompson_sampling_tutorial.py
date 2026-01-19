@@ -103,13 +103,16 @@ def _(mo):
 
 @app.cell
 def _():
-    """Define dataset paths."""
-    ACIDS_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/acids.smi"
-    AMINES_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/reagents/thrombin/coupled_aa_sub.smi"
+    """Load bundled Thrombin dataset paths."""
+    import importlib.resources
+
+    _data_files = importlib.resources.files("TACTICS.data.thrombin")
+    ACIDS_FILE = str(_data_files / "acids.smi")
+    AMINES_FILE = str(_data_files / "coupled_aa_sub.smi")
+    SCORES_FILE = str(_data_files / "product_scores.csv")
     REAGENT_FILES = [ACIDS_FILE, AMINES_FILE]
-    SCORES_FILE = "/Users/aakankschitnandkeolyar/Desktop/TACTICS/data/scores/thrombin/product_scores.csv"
     AMIDE_COUPLING_SMARTS = "[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]);!$(N[#6]~[!#6;!#16]):3]>>[#6:1](=[O:2])[#7:3]"
-    return AMIDE_COUPLING_SMARTS, REAGENT_FILES, SCORES_FILE
+    return ACIDS_FILE, AMINES_FILE, AMIDE_COUPLING_SMARTS, REAGENT_FILES, SCORES_FILE
 
 
 @app.cell

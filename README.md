@@ -6,7 +6,42 @@
 
 A comprehensive library for Thompson Sampling-based optimization of chemical combinatorial libraries, featuring a unified architecture with flexible strategy selection, modern Pydantic configuration, and preset configurations for out-of-the-box usage.
 
-## 🚀 Key Features
+## Quick Start with Interactive Tutorials
+
+TACTICS includes interactive [marimo](https://marimo.io) notebooks for learning and exploration.
+For full documentation, see the [TACTICS Documentation](https://aakankschit.github.io/TACTICS/).
+
+### Installation
+
+```bash
+pip install TACTICS[tutorials]  # Includes marimo
+```
+
+### Running Tutorials
+
+**As an interactive app** (recommended for exploration):
+```bash
+marimo run tutorials/thompson_sampling_tutorial.py
+```
+
+**In edit mode** (for learning/modification):
+```bash
+marimo edit tutorials/thompson_sampling_tutorial.py
+```
+
+### Available Tutorials
+
+| Tutorial | Description |
+|----------|-------------|
+| `library_enumeration_tutorial.py` | SynthesisPipeline and enumeration |
+| `thompson_sampling_tutorial.py` | Selection strategies comparison |
+| `reaction_config_builder.py` | ReactionConfig builder |
+| `library_component_comparison.py` | Library component analysis |
+| `legacy_vs_current_comparison.py` | Legacy vs current benchmark |
+
+> **Note**: Tutorials default to the bundled Thrombin dataset. Select "Local Data" mode to use your own files.
+
+## Key Features
 
 - **Unified Thompson Sampling Framework**: Single `ThompsonSampler` with pluggable selection strategies
 - **Multiple Selection Strategies**:
@@ -27,13 +62,12 @@ A comprehensive library for Thompson Sampling-based optimization of chemical com
 - **Library Analysis**: Comprehensive analysis and visualization tools
 - **Polars DataFrames**: Fast, efficient data handling throughout
 
-## 📦 Package Structure
+## Package Structure
 
 ```
 TACTICS/
 ├── thompson_sampling/
 │   ├── config.py              # ThompsonSamplingConfig (Pydantic v2)
-│   ├── main.py                # run_ts() convenience wrapper
 │   ├── presets.py             # Preset configurations
 │   ├── factories.py           # Factory functions for component creation
 │   ├── core/                  # Core unified sampler
@@ -62,22 +96,23 @@ TACTICS/
 └── library_analysis/          # Analysis and visualization
 ```
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 TACTICS/
 ├── src/TACTICS/              # Core package (pip installable)
 │   ├── thompson_sampling/    # Thompson Sampling algorithms
 │   ├── library_enumeration/  # Library generation tools
-│   └── library_analysis/     # Analysis and visualization
+│   ├── library_analysis/     # Analysis and visualization
+│   └── data/                 # Bundled tutorial datasets
+│       └── thrombin/         # Thrombin inhibitor dataset
 │
+├── tutorials/                # Interactive marimo tutorials
 ├── tests/                    # Unit and integration tests
-├── docs/                     # Sphinx documentation
-├── notebooks/                # Jupyter tutorial notebooks
-└── outputs/                  # Generated outputs (gitignored)
+└── docs/                     # Sphinx documentation
 ```
 
-## 🎯 Quick Start
+## Quick Start
 
 ### Simple Out-of-the-Box Usage with Presets (Recommended)
 
@@ -85,7 +120,7 @@ The easiest way to get started is using presets with `SynthesisPipeline`:
 
 ```python
 from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
-from TACTICS.thompson_sampling import run_ts, get_preset
+from TACTICS.thompson_sampling import ThompsonSampler, get_preset
 from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
 # 1. Create synthesis pipeline (single source of truth for reactions)
@@ -111,8 +146,11 @@ config = get_preset(
     num_iterations=1000
 )
 
-# 4. Run and get results (returns Polars DataFrame)
-results_df = run_ts(config)
+# 4. Create sampler from config and run
+sampler = ThompsonSampler.from_config(config)
+warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+results_df = sampler.search(num_cycles=config.num_ts_iterations)
+sampler.close()
 
 # 5. Analyze top results
 print(results_df.sort("score").head(10))
@@ -131,7 +169,7 @@ For slow evaluators (docking, ML models), use batch mode with multiprocessing:
 
 ```python
 from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
-from TACTICS.thompson_sampling import run_ts, get_preset
+from TACTICS.thompson_sampling import ThompsonSampler, get_preset
 from TACTICS.thompson_sampling.core.evaluator_config import FredEvaluatorConfig
 
 # Create synthesis pipeline
@@ -156,7 +194,11 @@ config = get_preset(
     batch_size=100,   # Sample 100 compounds per cycle
 )
 
-results_df = run_ts(config)
+# Create sampler and run
+sampler = ThompsonSampler.from_config(config)
+warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+results_df = sampler.search(num_cycles=config.num_ts_iterations)
+sampler.close()
 ```
 
 ### Custom Configuration (Advanced)
@@ -165,7 +207,7 @@ For full control, create custom configurations:
 
 ```python
 from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
-from TACTICS.thompson_sampling import ThompsonSamplingConfig, run_ts
+from TACTICS.thompson_sampling import ThompsonSampler, ThompsonSamplingConfig
 from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
 from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
 from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
@@ -199,11 +241,17 @@ config = ThompsonSamplingConfig(
         score_col="binding_affinity"
     ),
     batch_size=10,
-    results_filename="my_results.csv",
     log_filename="optimization.log"
 )
 
-results_df = run_ts(config)
+# Create sampler and run
+sampler = ThompsonSampler.from_config(config)
+warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+results_df = sampler.search(num_cycles=config.num_ts_iterations)
+sampler.close()
+
+# Save results
+results_df.write_csv("my_results.csv")
 ```
 
 ### Random Baseline Sampling
@@ -235,7 +283,7 @@ config = RandomBaselineConfig(
 results_df = run_random_baseline(config)
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Pydantic Configuration Models
 
@@ -283,7 +331,7 @@ except ValidationError as e:
     print(f"Configuration error: {e}")
 ```
 
-## 🧪 Testing
+## Testing
 
 The package includes comprehensive tests for configuration validation:
 
@@ -298,29 +346,33 @@ pytest tests/test_config_validation.py -v
 pytest tests/ --cov=TACTICS --cov-report=html
 ```
 
-## 📚 Documentation
+## Documentation
 
-- **API Documentation**: See `docs/` for detailed API documentation
-- **Examples**: Check `examples/` for usage examples
-- **Configuration Guide**: See `TACTICS/README.md` for detailed configuration options
+- **Full Documentation**: [TACTICS Documentation](https://aakankschit.github.io/TACTICS/)
+- **Interactive Tutorials**: See `tutorials/` for marimo notebooks
+- **API Reference**: Build locally with `cd docs && make html`
 
-## 🛠️ Installation
+## Installation
 
 ```bash
 # Clone repository and install package in development mode
 git clone https://github.com/aakankschit/TACTICS.git
-cd TACTICS; pip install -e .
+cd TACTICS
+pip install -e .
 
-# for usage of the notebook tutorials:
-cd TACTICS; pip install -e .[notebook]
+# With interactive tutorials (marimo):
+pip install -e ".[tutorials]"
+
+# With test dependencies:
+pip install -e ".[test]"
 ```
 
-## 📋 Requirements
+## Requirements
 
 - Python 3.11+
 - Multiprocessing support
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -329,11 +381,11 @@ cd TACTICS; pip install -e .[notebook]
 5. Ensure all tests pass
 6. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 📖 Citation
+## Citation
 
 If you use TACTICS in your research, please cite:
 
@@ -346,7 +398,7 @@ If you use TACTICS in your research, please cite:
 }
 ```
 
-## 🆘 Support
+## Support
 
 For questions and support:
 - Open an issue on GitHub
