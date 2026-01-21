@@ -1,7 +1,7 @@
 # TACTICS: Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery
 
 <p align="center">
-  <img src="docs/source/_static/images/TACTICS_logo.png" alt="TACTICS Logo" width="600">
+  <img src="https://raw.githubusercontent.com/aakankschit/TACTICS/main/docs/source/_static/images/TACTICS_logo.png" alt="TACTICS Logo" width="600">
 </p>
 
 A comprehensive library for Thompson Sampling-based optimization of chemical combinatorial libraries, featuring a unified architecture with flexible strategy selection, modern Pydantic configuration, and preset configurations for out-of-the-box usage.
@@ -14,7 +14,7 @@ For full documentation, see the [TACTICS Documentation](https://aakankschit.gith
 ### Installation
 
 ```bash
-pip install TACTICS[tutorials]  # Includes marimo
+pip install chem-tactics[tutorials]  # Includes marimo
 ```
 
 ### Running Tutorials

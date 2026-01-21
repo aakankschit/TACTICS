@@ -3,8 +3,8 @@ requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "TACTICS"
-version = "1.0.0"
+name = "chem-tactics"
+version = "1.0.1"
 description = "Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = {text = "MIT"}
