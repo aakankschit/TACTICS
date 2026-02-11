@@ -234,6 +234,49 @@ class FredEvaluator(Evaluator):
             score = float(oechem.OEGetSDData(docked_mol, sd_tag))
         return score
 
+class CustomEvaluator(Evaluator):
+    """An evaluator class that uses a user-provided custom scoring function
+    """
+
+    def __init__(self, scoring_function):
+        """
+        :param scoring_function: callable that accepts an RDKit Mol and returns a float
+        """
+        if not callable(scoring_function):
+            raise ValueError(
+                "scoring_function must be a callable that accepts an RDKit Mol "
+                "and returns a float"
+            )
+
+        self.scoring_function = scoring_function
+        self.num_evaluations = 0
+        self.score_cache = {}
+
+    @property
+    def counter(self):
+        return self.num_evaluations
+
+    def evaluate(self, mol):
+        """Evaluate a molecule using the user-defined scoring function
+        :param mol: Input RDKit molecule
+        :return: Float score from the custom function, np.nan on failure
+        """
+        self.num_evaluations += 1
+
+        smi = Chem.MolToSmiles(mol)
+
+        # Look up to see if we already processed this molecule
+        cached_score = self.score_cache.get(smi)
+        if cached_score is not None:
+            return cached_score
+
+        try:
+            score = float(self.scoring_function(mol))
+        except Exception:
+            score = np.nan
+
+        self.score_cache[smi] = score
+        return score
 
 def generate_confs(mol, max_confs):
     """Generate conformers with Omega
