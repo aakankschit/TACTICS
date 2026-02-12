@@ -242,12 +242,6 @@ class CustomEvaluator(Evaluator):
         """
         :param scoring_function: callable that accepts an RDKit Mol and returns a float
         """
-        if not callable(scoring_function):
-            raise ValueError(
-                "scoring_function must be a callable that accepts an RDKit Mol "
-                "and returns a float"
-            )
-
         self.scoring_function = scoring_function
         self.num_evaluations = 0
         self.score_cache = {}
@@ -260,12 +254,11 @@ class CustomEvaluator(Evaluator):
         """Evaluate a molecule using the user-defined scoring function
         :param mol: Input RDKit molecule
         :return: Float score from the custom function, np.nan on failure
-        """
-        self.num_evaluations += 1
-
-        smi = Chem.MolToSmiles(mol)
-
+        """      
+        self.num_evaluations += 1      
+        
         # Look up to see if we already processed this molecule
+        smi = Chem.MolToSmiles(mol)
         cached_score = self.score_cache.get(smi)
         if cached_score is not None:
             return cached_score

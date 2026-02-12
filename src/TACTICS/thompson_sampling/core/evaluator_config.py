@@ -1,7 +1,7 @@
 """Pydantic configuration models for evaluators."""
 
 from pydantic import BaseModel, Field
-from typing import Literal, Optional
+from typing import Literal, Optional, Callable, Any
 
 
 class LookupEvaluatorConfig(BaseModel):
@@ -88,3 +88,17 @@ class MLClassifierEvaluatorConfig(BaseModel):
 
     evaluator_type: Literal["ml_classifier"] = "ml_classifier"
     model_filename: str = Field(..., description="Path to trained model file (joblib pickle)")
+
+class CustomEvaluatorConfig(BaseModel):
+    """
+    Configuration for CustomEvaluator.
+
+    Uses a user-provided callable scoring function that accepts an RDKit Mol
+    and returns a float.
+    """
+
+    evaluator_type: Literal["custom"] = "custom"
+    scoring_function: Callable[[Any], float] = Field(
+        ...,
+        description="Callable that accepts an RDKit Mol and returns a float score"
+    )
