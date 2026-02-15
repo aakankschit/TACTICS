@@ -153,42 +153,28 @@ class BayesUCBSelection(SelectionStrategy):
 
         return np.clip(criticality, 0.0, 1.0)
 
-    def _get_criticality_weight(self, current_cycle, total_cycles):
+    def _get_criticality_weight(self, reagent_list, current_cycle=None, total_cycles=None):
         """
-        Calculate progressive criticality weight for current iteration.
+        Calculate observation-gated criticality weight.
 
-        Three-phase progression prevents early-iteration bias:
-        - Phase 1 (0-20%): Pure exploration, weight = 0.0
-        - Phase 2 (20-60%): Gradual introduction, weight increases linearly 0→1
-        - Phase 3 (60-100%): Full CATS, weight = 1.0
+        Instead of a fixed three-phase schedule, weight is determined by how
+        many observations we have — i.e. how much we can trust the criticality
+        estimate. This is data-driven rather than schedule-driven.
+
+        Weight ramps from 0 to 1 as min observations go from 0 to
+        2 * min_observations, then stays at 1.0.
 
         Args:
-            current_cycle: Current search cycle (0-indexed)
-            total_cycles: Total number of search cycles
+            reagent_list: List of Reagent objects (used to check observation counts)
+            current_cycle: Unused, kept for API compatibility
+            total_cycles: Unused, kept for API compatibility
 
         Returns:
             Criticality weight in [0, 1]
         """
-        if total_cycles <= 0:
-            return 1.0  # Edge case
-
-        # Calculate progress as fraction of total
-        progress = current_cycle / total_cycles
-
-        # Phase 1: Pure exploration (0-20%)
-        if progress < self.exploration_phase_end:
-            return 0.0
-
-        # Phase 2: Gradual introduction (20-60%)
-        elif progress < self.transition_phase_end:
-            phase_progress = (progress - self.exploration_phase_end) / (
-                self.transition_phase_end - self.exploration_phase_end
-            )
-            return phase_progress
-
-        # Phase 3: Full CATS (60-100%)
-        else:
-            return 1.0
+        min_obs = min(r.n_samples for r in reagent_list)
+        weight = min_obs / (2.0 * self.min_observations) if self.min_observations > 0 else 1.0
+        return float(np.clip(weight, 0.0, 1.0))
 
     def _get_cats_multiplier(self, criticality):
         """
@@ -233,20 +219,20 @@ class BayesUCBSelection(SelectionStrategy):
         # Step 2: Calculate criticality
         criticality = self._calculate_criticality(reagent_list)
 
-        # Step 3: Get progressive weight
-        weight = self._get_criticality_weight(current_cycle, total_cycles)
+        # Step 3: Get observation-gated weight
+        weight = self._get_criticality_weight(reagent_list)
 
         # Step 4: Get CATS multiplier
         cats_mult = self._get_cats_multiplier(criticality)
 
-        # Step 5: Progressive blending
+        # Step 5: Blend: weight=0 → no adjustment, weight=1 → full CATS
         effective_mult = (1.0 - weight) * 1.0 + weight * cats_mult
 
         # Step 6: Apply to base
         final_percentile = base_percentile * effective_mult
 
-        # Clamp to valid percentile range [0, 1]
-        return np.clip(final_percentile, 0.0, 1.0)
+        # Clamp to valid percentile range; 0.999 avoids t.ppf(1.0)=inf
+        return np.clip(final_percentile, 0.5, 0.999)
 
     def select_reagent(self, reagent_list, disallow_mask=None, **kwargs):
         """

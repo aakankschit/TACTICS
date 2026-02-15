@@ -24,6 +24,11 @@ class RouletteWheelSelection(SelectionStrategy):
         exploration_phase_end=0.20,
         transition_phase_end=0.60,
         min_observations=5,
+        adaptive_temperature=False,
+        alpha_increment=0.01,
+        beta_increment=0.001,
+        efficiency_threshold=0.10,
+        alpha_max=2.0,
         **kwargs,
     ):
         """
@@ -36,6 +41,11 @@ class RouletteWheelSelection(SelectionStrategy):
             exploration_phase_end: Fraction of iterations before CATS starts (default: 0.20)
             transition_phase_end: Fraction of iterations when CATS is fully applied (default: 0.60)
             min_observations: Minimum observations per reagent before trusting criticality (default: 5)
+            adaptive_temperature: Enable legacy-inspired adaptive temperature control (default: False)
+            alpha_increment: Amount to increase alpha when efficiency drops (default: 0.01)
+            beta_increment: Amount to increase beta when zero unique found (default: 0.001)
+            efficiency_threshold: Efficiency below which alpha is incremented (default: 0.10)
+            alpha_max: Maximum alpha value (default: 2.0)
             **kwargs: Catches deprecated parameters with warnings
         """
         super().__init__(mode)
@@ -45,6 +55,13 @@ class RouletteWheelSelection(SelectionStrategy):
         self.initial_beta = beta
         self.alpha = alpha
         self.beta = beta
+
+        # Adaptive temperature parameters
+        self.adaptive_temperature = adaptive_temperature
+        self.alpha_increment = alpha_increment
+        self.beta_increment = beta_increment
+        self.efficiency_threshold = efficiency_threshold
+        self.alpha_max = alpha_max
 
         # CATS parameters
         self.exploration_phase_end = exploration_phase_end
@@ -66,24 +83,6 @@ class RouletteWheelSelection(SelectionStrategy):
                 "Thermal cycling will have no effect. "
                 "For thermal cycling to work, set beta < alpha (e.g., beta=0.05, alpha=0.1).",
                 UserWarning,
-                stacklevel=2,
-            )
-
-        # Deprecated parameter warnings
-        deprecated = {
-            "alpha_max",
-            "alpha_increment",
-            "beta_increment",
-            "efficiency_threshold",
-            "scaling",
-        }
-        found_deprecated = deprecated & set(kwargs.keys())
-        if found_deprecated:
-            warnings.warn(
-                f"Parameters {found_deprecated} are deprecated and will be ignored. "
-                f"CATS now derives all parameters from alpha/beta ratio. "
-                f"Remove these parameters from your configuration.",
-                DeprecationWarning,
                 stacklevel=2,
             )
 
@@ -141,42 +140,31 @@ class RouletteWheelSelection(SelectionStrategy):
 
         return np.clip(criticality, 0.0, 1.0)
 
-    def _get_criticality_weight(self, current_cycle, total_cycles):
+    def _get_criticality_weight(self, reagent_list, current_cycle=None, total_cycles=None):
         """
-        Calculate progressive criticality weight for current iteration.
+        Calculate observation-gated criticality weight.
 
-        Three-phase progression prevents early-iteration bias:
-        - Phase 1 (0-20%): Pure exploration, weight = 0.0
-        - Phase 2 (20-60%): Gradual introduction, weight increases linearly 0→1
-        - Phase 3 (60-100%): Full CATS, weight = 1.0
+        Instead of a fixed three-phase schedule, weight is determined by how
+        many observations we have — i.e. how much we can trust the criticality
+        estimate. This is data-driven rather than schedule-driven.
+
+        Weight ramps from 0 to 1 as min observations go from 0 to
+        2 * min_observations, then stays at 1.0.
 
         Args:
-            current_cycle: Current search cycle (0-indexed)
-            total_cycles: Total number of search cycles
+            reagent_list: List of Reagent objects (used to check observation counts)
+            current_cycle: Unused, kept for API compatibility
+            total_cycles: Unused, kept for API compatibility
 
         Returns:
             Criticality weight in [0, 1]
         """
-        if total_cycles <= 0:
-            return 1.0  # Edge case
-
-        # Calculate progress as fraction of total
-        progress = current_cycle / total_cycles
-
-        # Phase 1: Pure exploration (0-20%)
-        if progress < self.exploration_phase_end:
-            return 0.0
-
-        # Phase 2: Gradual introduction (20-60%)
-        elif progress < self.transition_phase_end:
-            phase_progress = (progress - self.exploration_phase_end) / (
-                self.transition_phase_end - self.exploration_phase_end
-            )
-            return phase_progress
-
-        # Phase 3: Full CATS (60-100%)
-        else:
-            return 1.0
+        min_obs = min(r.n_samples for r in reagent_list)
+        # Ramp from 0 → 1 as observations go from 0 → 2*min_observations
+        # Below min_observations: low confidence, partial weight
+        # Above 2*min_observations: full confidence, weight = 1.0
+        weight = min_obs / (2.0 * self.min_observations) if self.min_observations > 0 else 1.0
+        return float(np.clip(weight, 0.0, 1.0))
 
     def _get_cats_multiplier(self, criticality):
         """
@@ -227,13 +215,13 @@ class RouletteWheelSelection(SelectionStrategy):
         # Step 2: Calculate criticality
         criticality = self._calculate_criticality(reagent_list)
 
-        # Step 3: Get progressive weight
-        weight = self._get_criticality_weight(current_cycle, total_cycles)
+        # Step 3: Get observation-gated weight
+        weight = self._get_criticality_weight(reagent_list)
 
         # Step 4: Get CATS multiplier
         cats_mult = self._get_cats_multiplier(criticality)
 
-        # Step 5: Progressive blending
+        # Step 5: Blend: weight=0 → no adjustment, weight=1 → full CATS
         effective_mult = (1.0 - weight) * 1.0 + weight * cats_mult
 
         # Step 6: Apply to base
@@ -358,6 +346,41 @@ class RouletteWheelSelection(SelectionStrategy):
 
         # Sample batch_size reagents with replacement
         return np.random.choice(len(reagent_list), size=batch_size, p=probs)
+
+    def adapt_temperatures(self, n_unique, n_attempted):
+        """
+        Adapt temperatures based on sampling efficiency (legacy RWS-inspired).
+
+        When posteriors tighten, selection concentrates on a few reagents, leading
+        to more duplicate combinations. Increasing temperatures counteracts this
+        by broadening the selection distribution.
+
+        Mirrors the adaptive mechanism from the ETS paper's RWSSampler:
+        - alpha += alpha_increment when efficiency < threshold
+        - beta += beta_increment when zero unique compounds found
+
+        Args:
+            n_unique: Number of unique compounds generated in this batch
+            n_attempted: Number of compounds attempted in this batch
+
+        Returns:
+            True if temperatures were adjusted, False otherwise
+        """
+        if not self.adaptive_temperature:
+            return False
+
+        adjusted = False
+        efficiency = n_unique / max(n_attempted, 1)
+
+        if efficiency < self.efficiency_threshold and self.alpha < self.alpha_max:
+            self.alpha += self.alpha_increment
+            adjusted = True
+
+        if n_unique == 0:
+            self.beta += self.beta_increment
+            adjusted = True
+
+        return adjusted
 
     def rotate_component(self, n_components: int):
         """

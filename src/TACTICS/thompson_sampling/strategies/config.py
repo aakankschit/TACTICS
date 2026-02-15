@@ -51,6 +51,28 @@ class RouletteWheelConfig(BaseModel):
         description="Minimum observations per reagent before trusting criticality"
     )
 
+    # Adaptive temperature parameters (legacy RWS-inspired)
+    adaptive_temperature: bool = Field(
+        default=False,
+        description="Enable adaptive temperature control (increase alpha/beta when sampling efficiency drops)"
+    )
+    alpha_increment: float = Field(
+        default=0.01, ge=0,
+        description="Amount to increase alpha when efficiency drops below threshold"
+    )
+    beta_increment: float = Field(
+        default=0.001, ge=0,
+        description="Amount to increase beta when zero unique compounds found"
+    )
+    efficiency_threshold: float = Field(
+        default=0.10, ge=0, le=1,
+        description="Efficiency below which alpha is incremented"
+    )
+    alpha_max: float = Field(
+        default=2.0, gt=0,
+        description="Maximum alpha value"
+    )
+
     @field_validator('transition_phase_end')
     @classmethod
     def validate_phase_progression(cls, v, info):
@@ -61,6 +83,8 @@ class RouletteWheelConfig(BaseModel):
                 f"({info.data['exploration_phase_end']})"
             )
         return v
+
+
 class UCBConfig(BaseModel):
     """Configuration for Upper Confidence Bound selection."""
 

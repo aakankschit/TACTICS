@@ -784,17 +784,19 @@ class TS_Benchmarks:
         """
         if self.reference_data is None:
             raise ValueError("Please ensure that reference_data is provided")
-        
+
         # Get top N reference compounds (sorted by score to get the actual top compounds)
-        top_ref_compounds = self.reference_data.sort("score", descending=False).head(top_n)["Name"].unique().to_list()
+        # Use sort_type to determine sort direction: "minimize" = ascending, "maximize" = descending
+        _descending = self.sort_type == "maximize"
+        top_ref_compounds = self.reference_data.sort("score", descending=_descending).head(top_n)["Name"].unique().to_list()
         
         # Filter combined data to exclude the reference method itself (to avoid duplication)
         # Only look at TS methods to see how many reference compounds they found
         ts_data = self.combined_df_top_n.filter(
-            (pl.col("Name").is_in(top_ref_compounds)) & 
+            (pl.col("Name").is_in(top_ref_compounds)) &
             (pl.col("method") != "ref")  # Exclude reference data to avoid duplication
         )
-        
+
         # Count the number of hits found by each TS method in each cycle
         cycle_counts = ts_data.group_by(["cycle", "method"]).agg(
             pl.count().alias("found")
@@ -1000,14 +1002,16 @@ class TS_Benchmarks:
         """
         if self.reference_data is None:
             raise ValueError("Please ensure that reference_data is provided for performance analysis")
-        
+
         if top_ns is None:
             top_ns = [50, 100, 200, 300, 400, 500]
-        
+
         print("\n📈 Generating Line Plot Performance Data...")
-        
+
         # Pre-calculate reference compound sets for each top_n cutoff
-        ref_sorted = self.reference_data.sort("score", descending=False)
+        # Use sort_type to determine sort direction: "minimize" = ascending, "maximize" = descending
+        _descending = self.sort_type == "maximize"
+        ref_sorted = self.reference_data.sort("score", descending=_descending)
         ref_sets = {}
         for n in top_ns:
             ref_sets[n] = set(ref_sorted.head(n)["Name"].to_list())

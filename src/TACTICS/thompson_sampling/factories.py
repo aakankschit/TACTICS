@@ -106,7 +106,12 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             beta=config.beta,
             exploration_phase_end=config.exploration_phase_end,
             transition_phase_end=config.transition_phase_end,
-            min_observations=config.min_observations
+            min_observations=config.min_observations,
+            adaptive_temperature=config.adaptive_temperature,
+            alpha_increment=config.alpha_increment,
+            beta_increment=config.beta_increment,
+            efficiency_threshold=config.efficiency_threshold,
+            alpha_max=config.alpha_max,
         )
 
     elif isinstance(config, UCBConfig):
@@ -195,11 +200,11 @@ def create_evaluator(config: EvaluatorConfig) -> Evaluator:
         True
     """
     if isinstance(config, LookupEvaluatorConfig):
-        # LookupEvaluator expects a JSON string or dict
+        # LookupEvaluator expects a dict with ref_filename, compound_col, and score_col
         input_dict = {
             "ref_filename": config.ref_filename,
-            "ref_colname": config.score_col,  # Map score_col to ref_colname
-            "compound_col": config.compound_col
+            "compound_col": config.compound_col,
+            "score_col": config.score_col,
         }
         return LookupEvaluator(json.dumps(input_dict))
 
