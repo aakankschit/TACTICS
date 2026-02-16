@@ -1,7 +1,7 @@
 """Pydantic configuration models for selection strategies."""
 
 from pydantic import BaseModel, Field, field_validator
-from typing import Literal, Tuple
+from typing import Literal, Optional, Tuple
 
 
 class GreedyConfig(BaseModel):
@@ -49,6 +49,18 @@ class RouletteWheelConfig(BaseModel):
         default=5,
         gt=0,
         description="Minimum observations per reagent before trusting criticality"
+    )
+
+    # CATS exploration decay
+    cats_exploration_fraction: Optional[float] = Field(
+        default=0.3,
+        ge=0,
+        le=1,
+        description=(
+            "Fraction of total cycles during which CATS explores at full strength. "
+            "After this point, CATS influence decays linearly if criticality remains low. "
+            "Set to None to disable decay. (default: 0.3 = first 30% of cycles)"
+        ),
     )
 
     # Adaptive temperature parameters (legacy RWS-inspired)
@@ -163,6 +175,18 @@ class BayesUCBConfig(BaseModel):
         default=5,
         gt=0,
         description="Minimum observations per reagent before trusting criticality"
+    )
+
+    # CATS exploration decay
+    cats_exploration_fraction: Optional[float] = Field(
+        default=0.3,
+        ge=0,
+        le=1,
+        description=(
+            "Fraction of total cycles during which CATS explores at full strength. "
+            "After this point, CATS influence decays linearly if criticality remains low. "
+            "Set to None to disable decay. (default: 0.3 = first 30% of cycles)"
+        ),
     )
 
     @field_validator('transition_phase_end')

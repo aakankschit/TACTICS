@@ -151,6 +151,14 @@ class ThompsonSamplingConfig(BaseModel):
         description="Use Boltzmann-weighted Bayesian updates (legacy RWS)",
     )
 
+    # Reproducibility
+    seed: Optional[int] = Field(
+        default=None,
+        description="Random seed for reproducibility. Controls all RNG sources "
+                   "(warmup partner selection, search sampling, component ordering). "
+                   "None = non-deterministic.",
+    )
+
     # SMARTS compatibility detection
     auto_detect_smarts_compatibility: bool = Field(
         default=True,

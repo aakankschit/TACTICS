@@ -29,6 +29,7 @@ class RouletteWheelSelection(SelectionStrategy):
         beta_increment=0.001,
         efficiency_threshold=0.10,
         alpha_max=2.0,
+        cats_exploration_fraction=0.3,
         **kwargs,
     ):
         """
@@ -46,6 +47,9 @@ class RouletteWheelSelection(SelectionStrategy):
             beta_increment: Amount to increase beta when zero unique found (default: 0.001)
             efficiency_threshold: Efficiency below which alpha is incremented (default: 0.10)
             alpha_max: Maximum alpha value (default: 2.0)
+            cats_exploration_fraction: Fraction of total cycles during which CATS explores
+                at full strength. After this point, CATS influence decays linearly if
+                criticality remains low. Set to None to disable decay (default: 0.5).
             **kwargs: Catches deprecated parameters with warnings
         """
         super().__init__(mode)
@@ -67,6 +71,7 @@ class RouletteWheelSelection(SelectionStrategy):
         self.exploration_phase_end = exploration_phase_end
         self.transition_phase_end = transition_phase_end
         self.min_observations = min_observations
+        self.cats_exploration_fraction = cats_exploration_fraction
 
         # Thermal cycling state
         self.current_component_idx = 0
@@ -104,13 +109,18 @@ class RouletteWheelSelection(SelectionStrategy):
         Returns:
             Criticality score in [0, 1]. Returns 0.5 (neutral) if insufficient data.
         """
+        # Filter out retired reagents (those that never got warmup observations)
+        active_reagents = [r for r in reagent_list if r.n_samples > 0]
+        if len(active_reagents) < 2:
+            return 0.5  # Not enough active reagents for entropy
+
         # Check if we have sufficient data
-        observations = [r.n_samples for r in reagent_list]
+        observations = [r.n_samples for r in active_reagents]
         if min(observations) < self.min_observations:
             return 0.5  # Neutral criticality if insufficient data
 
         # Extract posterior means
-        means = np.array([r.mean for r in reagent_list])
+        means = np.array([r.mean for r in active_reagents])
 
         # Handle edge case: all means identical
         if np.std(means) < 1e-10:
@@ -129,7 +139,7 @@ class RouletteWheelSelection(SelectionStrategy):
         entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
 
         # Maximum entropy (uniform distribution)
-        max_entropy = np.log(len(reagent_list))
+        max_entropy = np.log(len(active_reagents))
 
         # Criticality: 1 - normalized_entropy
         if max_entropy < 1e-10:
@@ -159,7 +169,12 @@ class RouletteWheelSelection(SelectionStrategy):
         Returns:
             Criticality weight in [0, 1]
         """
-        min_obs = min(r.n_samples for r in reagent_list)
+        # Filter out retired reagents (those that never got warmup observations)
+        active_obs = [r.n_samples for r in reagent_list if r.n_samples > 0]
+        if not active_obs:
+            return 0.0
+
+        min_obs = min(active_obs)
         # Ramp from 0 → 1 as observations go from 0 → 2*min_observations
         # Below min_observations: low confidence, partial weight
         # Above 2*min_observations: full confidence, weight = 1.0
@@ -197,6 +212,7 @@ class RouletteWheelSelection(SelectionStrategy):
         1. Thermal cycling sets base temperature (alpha for heated, beta for cooled)
         2. CATS adjusts based on criticality
         3. Progressive weighting controls CATS influence
+        4. Exploration decay reduces CATS when criticality stays low
 
         Args:
             component_idx: Which reaction component
@@ -215,16 +231,32 @@ class RouletteWheelSelection(SelectionStrategy):
         # Step 2: Calculate criticality
         criticality = self._calculate_criticality(reagent_list)
 
-        # Step 3: Get observation-gated weight
+        # Step 3: Get observation-gated weight (ramps up with data)
         weight = self._get_criticality_weight(reagent_list)
 
-        # Step 4: Get CATS multiplier
+        # Step 4: Exploration decay — reduce CATS when it hasn't found structure
+        # After cats_exploration_fraction of cycles, if criticality is still low,
+        # linearly decay the CATS weight so posteriors drive selection directly.
+        # High criticality → keep CATS active; low criticality → decay to neutral.
+        if (
+            self.cats_exploration_fraction is not None
+            and total_cycles > 0
+            and current_cycle is not None
+        ):
+            exploration_end = self.cats_exploration_fraction * total_cycles
+            if current_cycle > exploration_end:
+                remaining = total_cycles - exploration_end
+                progress = (current_cycle - exploration_end) / max(remaining, 1)
+                decay = criticality + (1.0 - criticality) * (1.0 - progress)
+                weight *= decay
+
+        # Step 5: Get CATS multiplier
         cats_mult = self._get_cats_multiplier(criticality)
 
-        # Step 5: Blend: weight=0 → no adjustment, weight=1 → full CATS
+        # Step 6: Blend: weight=0 → no adjustment, weight=1 → full CATS
         effective_mult = (1.0 - weight) * 1.0 + weight * cats_mult
 
-        # Step 6: Apply to base
+        # Step 7: Apply to base
         final_temp = base_temp * effective_mult
 
         return final_temp
@@ -283,7 +315,7 @@ class RouletteWheelSelection(SelectionStrategy):
             else:
                 probs = np.ones(len(reagent_list)) / len(reagent_list)
 
-        return np.random.choice(len(reagent_list), p=probs)
+        return rng.choice(len(reagent_list), p=probs)
 
     def select_batch(self, reagent_list, batch_size, disallow_mask=None, **kwargs):
         """
@@ -345,7 +377,7 @@ class RouletteWheelSelection(SelectionStrategy):
                 probs = np.ones(len(reagent_list)) / len(reagent_list)
 
         # Sample batch_size reagents with replacement
-        return np.random.choice(len(reagent_list), size=batch_size, p=probs)
+        return rng.choice(len(reagent_list), size=batch_size, p=probs)
 
     def adapt_temperatures(self, n_unique, n_attempted):
         """

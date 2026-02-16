@@ -131,7 +131,9 @@ class Reagent:
         # Transition to search phase
         self.current_phase = "search"
 
-        # Replay warmup scores
+        # Replay warmup scores as Bayesian updates
+        # n_samples already reflects warmup observations; don't double-count
+        warmup_n = self.n_samples
         if self.use_boltzmann_weighting:
             # Batch Boltzmann update (legacy RWS algorithm)
             self._batch_boltzmann_update(self.initial_scores)
@@ -139,9 +141,11 @@ class Reagent:
         else:
             # Sequential standard Bayesian updates
             warmup_scores = self.initial_scores.copy()
-            self.initial_scores = []  # Clear to avoid double-counting
+            self.initial_scores = []
             for score in warmup_scores:
                 self.add_score(score)
+            # Correct n_samples: replay shouldn't count as new observations
+            self.n_samples = warmup_n
 
     def init_prior_per_reagent(
         self,
@@ -211,6 +215,8 @@ class Reagent:
         self.current_phase = "search"
 
         # Replay warmup scores as Bayesian updates
+        # n_samples already reflects warmup observations; don't double-count
+        warmup_n = self.n_samples
         if self.use_boltzmann_weighting:
             self._batch_boltzmann_update(self.initial_scores)
             self.initial_scores = []
@@ -219,6 +225,8 @@ class Reagent:
             self.initial_scores = []
             for score in warmup_scores:
                 self.add_score(score)
+            # Correct n_samples: replay shouldn't count as new observations
+            self.n_samples = warmup_n
 
     def sample(self) -> float:
         """

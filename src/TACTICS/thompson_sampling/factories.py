@@ -112,6 +112,7 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             beta_increment=config.beta_increment,
             efficiency_threshold=config.efficiency_threshold,
             alpha_max=config.alpha_max,
+            cats_exploration_fraction=config.cats_exploration_fraction,
         )
 
     elif isinstance(config, UCBConfig):
@@ -131,7 +132,8 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             initial_p_low=config.initial_p_low,
             exploration_phase_end=config.exploration_phase_end,
             transition_phase_end=config.transition_phase_end,
-            min_observations=config.min_observations
+            min_observations=config.min_observations,
+            cats_exploration_fraction=config.cats_exploration_fraction,
         )
 
     elif isinstance(config, BoltzmannConfig):

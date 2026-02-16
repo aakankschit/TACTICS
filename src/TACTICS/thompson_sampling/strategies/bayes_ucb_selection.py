@@ -41,6 +41,7 @@ class BayesUCBSelection(SelectionStrategy):
         exploration_phase_end=0.20,
         transition_phase_end=0.60,
         min_observations=5,
+        cats_exploration_fraction=0.3,
         **kwargs
     ):
         """
@@ -53,6 +54,9 @@ class BayesUCBSelection(SelectionStrategy):
             exploration_phase_end: Fraction of iterations before CATS starts (default: 0.20)
             transition_phase_end: Fraction of iterations when CATS is fully applied (default: 0.60)
             min_observations: Minimum observations per reagent before trusting criticality (default: 5)
+            cats_exploration_fraction: Fraction of total cycles during which CATS explores
+                at full strength. After this point, CATS influence decays linearly if
+                criticality remains low. Set to None to disable decay (default: 0.5).
             **kwargs: Catches deprecated parameters with warnings
         """
         super().__init__(mode)
@@ -67,6 +71,7 @@ class BayesUCBSelection(SelectionStrategy):
         self.exploration_phase_end = exploration_phase_end
         self.transition_phase_end = transition_phase_end
         self.min_observations = min_observations
+        self.cats_exploration_fraction = cats_exploration_fraction
 
         # Thermal cycling state
         self.current_component_idx = 0
@@ -203,6 +208,7 @@ class BayesUCBSelection(SelectionStrategy):
         1. Thermal cycling sets base percentile (p_high for heated, p_low for cooled)
         2. CATS adjusts based on criticality
         3. Progressive weighting controls CATS influence
+        4. Exploration decay reduces CATS when criticality stays low
 
         Args:
             component_idx: Which reaction component
@@ -219,16 +225,29 @@ class BayesUCBSelection(SelectionStrategy):
         # Step 2: Calculate criticality
         criticality = self._calculate_criticality(reagent_list)
 
-        # Step 3: Get observation-gated weight
+        # Step 3: Get observation-gated weight (ramps up with data)
         weight = self._get_criticality_weight(reagent_list)
 
-        # Step 4: Get CATS multiplier
+        # Step 4: Exploration decay — reduce CATS when it hasn't found structure
+        if (
+            self.cats_exploration_fraction is not None
+            and total_cycles > 0
+            and current_cycle is not None
+        ):
+            exploration_end = self.cats_exploration_fraction * total_cycles
+            if current_cycle > exploration_end:
+                remaining = total_cycles - exploration_end
+                progress = (current_cycle - exploration_end) / max(remaining, 1)
+                decay = criticality + (1.0 - criticality) * (1.0 - progress)
+                weight *= decay
+
+        # Step 5: Get CATS multiplier
         cats_mult = self._get_cats_multiplier(criticality)
 
-        # Step 5: Blend: weight=0 → no adjustment, weight=1 → full CATS
+        # Step 6: Blend: weight=0 → no adjustment, weight=1 → full CATS
         effective_mult = (1.0 - weight) * 1.0 + weight * cats_mult
 
-        # Step 6: Apply to base
+        # Step 7: Apply to base
         final_percentile = base_percentile * effective_mult
 
         # Clamp to valid percentile range; 0.999 avoids t.ppf(1.0)=inf

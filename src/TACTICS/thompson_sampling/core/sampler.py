@@ -1,4 +1,3 @@
-import random
 from typing import List, Optional, Tuple, TYPE_CHECKING, Dict
 import math
 import numpy as np
@@ -67,6 +66,7 @@ class ThompsonSampler:
         product_library_file: Optional[str] = None,
         cats_manager=None,
         use_boltzmann_weighting: bool = False,
+        seed: Optional[int] = None,
     ):
         self.synthesis_pipeline = synthesis_pipeline
         self.selection_strategy = selection_strategy
@@ -85,6 +85,10 @@ class ThompsonSampler:
         self.product_smiles_dict = None
         self.cats_manager = cats_manager  # Optional CATS integration
         self.use_boltzmann_weighting = use_boltzmann_weighting
+
+        # Master RNG for reproducibility
+        self._seed = seed
+        self._rng = np.random.default_rng(seed)
 
         # Load product library if provided
         if product_library_file:
@@ -159,6 +163,11 @@ class ThompsonSampler:
         # Get pipeline from config (single source of truth)
         pipeline = config.synthesis_pipeline
 
+        # Wire seed to warmup strategy if not already set
+        seed = getattr(config, "seed", None)
+        if seed is not None and hasattr(warmup, "seed") and warmup.seed is None:
+            warmup.seed = seed
+
         # Create sampler instance
         sampler = cls(
             synthesis_pipeline=pipeline,
@@ -171,6 +180,7 @@ class ThompsonSampler:
             min_cpds_per_core=10,
             product_library_file=config.product_library_file,
             use_boltzmann_weighting=config.use_boltzmann_weighting,
+            seed=seed,
         )
 
         # Set up sampler
@@ -542,7 +552,7 @@ class ThompsonSampler:
             total_cycles = num_cycles
 
         out_list = []
-        rng = np.random.default_rng()
+        rng = self._rng
         n_resamples = 0
         n_components = len(self.reagent_lists)
 
@@ -573,7 +583,7 @@ class ThompsonSampler:
 
                 # Randomize component selection order to avoid bias
                 selection_order = list(range(n_components))
-                random.shuffle(selection_order)
+                rng.shuffle(selection_order)
 
                 for component_idx in selection_order:
                     reagent_list = self.reagent_lists[component_idx]
@@ -683,5 +693,4 @@ class ThompsonSampler:
         search_df = pl.DataFrame(
             out_list, schema=["score", "SMILES", "Name"], orient="row"
         )
-        return search_df
         return search_df
