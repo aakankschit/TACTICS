@@ -13,7 +13,8 @@ from .evaluators import (
     FredEvaluator,
     FPEvaluator,
     MWEvaluator,
-    MLClassifierEvaluator
+    MLClassifierEvaluator,
+    CustomEvaluator,
 )
 
 __all__ = [
@@ -26,4 +27,5 @@ __all__ = [
     'FPEvaluator',
     'MWEvaluator',
     'MLClassifierEvaluator',
+    'CustomEvaluator',
 ] 

@@ -39,7 +39,8 @@ from .core.evaluator_config import (
     MWEvaluatorConfig,
     ROCSEvaluatorConfig,
     FredEvaluatorConfig,
-    MLClassifierEvaluatorConfig
+    MLClassifierEvaluatorConfig,
+    CustomEvaluatorConfig
 )
 from .core.evaluators import (
     LookupEvaluator,
@@ -49,7 +50,8 @@ from .core.evaluators import (
     ROCSEvaluator,
     FredEvaluator,
     MLClassifierEvaluator,
-    Evaluator
+    Evaluator,
+    CustomEvaluator
 )
 
 
@@ -76,7 +78,8 @@ EvaluatorConfig = Union[
     MWEvaluatorConfig,
     ROCSEvaluatorConfig,
     FredEvaluatorConfig,
-    MLClassifierEvaluatorConfig
+    MLClassifierEvaluatorConfig,
+    CustomEvaluatorConfig
 ]
 
 
@@ -239,6 +242,10 @@ def create_evaluator(config: EvaluatorConfig) -> Evaluator:
     elif isinstance(config, MLClassifierEvaluatorConfig):
         input_dict = {"model_filename": config.model_filename}
         return MLClassifierEvaluator(input_dict)
+
+    elif isinstance(config, CustomEvaluatorConfig):
+        scoring_function = config.scoring_function
+        return CustomEvaluator(scoring_function)
 
     else:
         raise ValueError(f"Unknown evaluator config type: {type(config)}")
