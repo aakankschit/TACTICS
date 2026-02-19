@@ -113,6 +113,7 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             efficiency_threshold=config.efficiency_threshold,
             alpha_max=config.alpha_max,
             cats_exploration_fraction=config.cats_exploration_fraction,
+            cats_range=config.cats_range,
         )
 
     elif isinstance(config, UCBConfig):

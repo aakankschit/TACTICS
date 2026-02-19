@@ -63,6 +63,17 @@ class RouletteWheelConfig(BaseModel):
         ),
     )
 
+    # CATS multiplier range override
+    cats_range: Optional[float] = Field(
+        default=None,
+        gt=0,
+        description=(
+            "Override alpha/beta-derived CATS multiplier range. If set, "
+            "cats_max = cats_range, cats_min = 1/cats_range. "
+            "When None, range is derived from alpha/beta ratio."
+        ),
+    )
+
     # Adaptive temperature parameters (legacy RWS-inspired)
     adaptive_temperature: bool = Field(
         default=False,

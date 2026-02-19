@@ -30,6 +30,7 @@ class RouletteWheelSelection(SelectionStrategy):
         efficiency_threshold=0.10,
         alpha_max=2.0,
         cats_exploration_fraction=0.3,
+        cats_range=None,
         **kwargs,
     ):
         """
@@ -50,6 +51,8 @@ class RouletteWheelSelection(SelectionStrategy):
             cats_exploration_fraction: Fraction of total cycles during which CATS explores
                 at full strength. After this point, CATS influence decays linearly if
                 criticality remains low. Set to None to disable decay (default: 0.5).
+            cats_range: Override alpha/beta-derived CATS multiplier range. If set,
+                cats_max = cats_range, cats_min = 1/cats_range. (default: None)
             **kwargs: Catches deprecated parameters with warnings
         """
         super().__init__(mode)
@@ -76,10 +79,15 @@ class RouletteWheelSelection(SelectionStrategy):
         # Thermal cycling state
         self.current_component_idx = 0
 
-        # Derive CATS range from alpha/beta ratio
-        self.ratio = self.alpha / self.beta if self.beta > 0 else 1.0
-        self.cats_max_mult = self.ratio
-        self.cats_min_mult = 1.0 / self.ratio if self.ratio > 0 else 1.0
+        # Derive CATS range from alpha/beta ratio or explicit override
+        if cats_range is not None:
+            self.ratio = cats_range
+            self.cats_max_mult = cats_range
+            self.cats_min_mult = 1.0 / cats_range
+        else:
+            self.ratio = self.alpha / self.beta if self.beta > 0 else 1.0
+            self.cats_max_mult = self.ratio
+            self.cats_min_mult = 1.0 / self.ratio if self.ratio > 0 else 1.0
 
         # Validation warnings
         if abs(self.alpha - self.beta) < 1e-10:
@@ -91,20 +99,27 @@ class RouletteWheelSelection(SelectionStrategy):
                 stacklevel=2,
             )
 
-    def _calculate_criticality(self, reagent_list):
+    def _calculate_criticality(self, reagent_list, rng=None):
         """
-        Calculate component criticality using Shannon entropy.
+        Calculate component criticality using Shannon entropy of z-score softmax
+        with signal-to-noise dampening.
 
-        Shannon entropy measures posterior distribution concentration:
-        - High entropy (uniform) → Flexible component (many good options)
-        - Low entropy (peaked) → Critical component (few good options)
+        Converts posterior means to z-scores before softmax, making criticality
+        scale-invariant. A signal-to-noise ratio (SNR) check dampens the z-scores
+        when between-reagent spread is comparable to sampling noise, preventing
+        false criticality signals on balanced libraries.
 
-        Criticality = 1 - (entropy / max_entropy) ∈ [0, 1]
-        - criticality ≈ 0: Flexible component → should EXPLORE
-        - criticality ≈ 1: Critical component → should EXPLOIT
+        SNR = std(posterior_means) / expected_noise_std
+        - SNR <= 1: noise dominates -> z-scores suppressed -> criticality -> 0
+        - SNR > 1: real signal -> z-scores preserved -> criticality reflects structure
+
+        Criticality = 1 - (entropy / max_entropy) in [0, 1]
+        - criticality ~ 0: Flexible component -> should EXPLORE
+        - criticality ~ 1: Critical component -> should EXPLOIT
 
         Args:
             reagent_list: List of Reagent objects with posterior distributions
+            rng: Unused, kept for API compatibility
 
         Returns:
             Criticality score in [0, 1]. Returns 0.5 (neutral) if insufficient data.
@@ -126,16 +141,41 @@ class RouletteWheelSelection(SelectionStrategy):
         if np.std(means) < 1e-10:
             return 0.0  # Perfectly flexible (all equally good)
 
-        # Convert means to probability distribution using softmax
         # For minimization, negate means (want higher probability for lower scores)
         if self.mode == "minimize":
             means = -means
 
-        # Numerical stability: subtract max before exp
-        exp_means = np.exp(means - means.max())
+        # Normalize to z-scores so criticality is scale-invariant.
+        # Raw ROCS scores span ~0.2 units, so exp(raw) collapses to uniform.
+        # Z-scores give exp(2)=7.4x weight for a reagent 2-sigma above the mean.
+        mean_std = np.std(means)
+        if mean_std < 1e-10:
+            return 0.0  # All means identical after sign flip
+
+        # Signal-to-noise dampening: suppress z-scores when between-reagent
+        # spread is comparable to expected sampling noise.
+        # Each reagent's posterior SE = std / sqrt(n), giving the expected
+        # noise in the mean estimate. If observed spread ~ noise, differences
+        # are not meaningful and CATS should not act on them.
+        se_squared = np.array([
+            r.std ** 2 / max(r.n_samples, 1) for r in active_reagents
+        ])
+        noise_std = np.sqrt(np.mean(se_squared))
+        snr = mean_std / max(noise_std, 1e-10)
+
+        # Smooth dampening: activates only when SNR > 1 (signal exceeds noise)
+        # SNR <= 1 -> strength ~ 0 (noise-dominated, no CATS effect)
+        # SNR = 2  -> strength ~ 0.63
+        # SNR = 3  -> strength ~ 0.86
+        imbalance_strength = 1.0 - np.exp(-max(snr - 1.0, 0.0))
+
+        z_scores = (means - np.mean(means)) / mean_std
+        z_scores *= imbalance_strength  # Dampen toward 0 when SNR is low
+
+        exp_means = np.exp(z_scores)
         probabilities = exp_means / exp_means.sum()
 
-        # Shannon entropy: H = -Σ p_i log(p_i)
+        # Shannon entropy: H = -sum p_i log(p_i)
         entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
 
         # Maximum entropy (uniform distribution)
@@ -203,7 +243,7 @@ class RouletteWheelSelection(SelectionStrategy):
         return multiplier
 
     def _get_component_temperature(
-        self, component_idx, reagent_list, current_cycle, total_cycles
+        self, component_idx, reagent_list, current_cycle, total_cycles, rng=None
     ):
         """
         Get CATS-adjusted temperature for a component.
@@ -219,6 +259,7 @@ class RouletteWheelSelection(SelectionStrategy):
             reagent_list: List of Reagent objects for this component
             current_cycle: Current search cycle
             total_cycles: Total number of cycles
+            rng: Optional numpy random generator for criticality sampling
 
         Returns:
             Final temperature value
@@ -229,7 +270,7 @@ class RouletteWheelSelection(SelectionStrategy):
         )
 
         # Step 2: Calculate criticality
-        criticality = self._calculate_criticality(reagent_list)
+        criticality = self._calculate_criticality(reagent_list, rng=rng)
 
         # Step 3: Get observation-gated weight (ramps up with data)
         weight = self._get_criticality_weight(reagent_list)
@@ -293,7 +334,7 @@ class RouletteWheelSelection(SelectionStrategy):
 
         # Get CATS-adjusted temperature
         effective_temp = self._get_component_temperature(
-            component_idx, reagent_list, current_cycle, total_cycles
+            component_idx, reagent_list, current_cycle, total_cycles, rng=rng
         )
 
         # Apply temperature via Boltzmann distribution
@@ -353,7 +394,7 @@ class RouletteWheelSelection(SelectionStrategy):
 
         # Get CATS-adjusted temperature
         effective_temp = self._get_component_temperature(
-            component_idx, reagent_list, current_cycle, total_cycles
+            component_idx, reagent_list, current_cycle, total_cycles, rng=rng
         )
 
         # Apply temperature via Boltzmann distribution
