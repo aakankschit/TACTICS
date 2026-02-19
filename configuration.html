@@ -1,0 +1,1666 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Configuration System &#8212; TACTICS 0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=5ce0522f" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=837179f8"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=1ae7504c"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'configuration';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Library Enumeration" href="library_enumeration.html" />
+    <link rel="prev" title="Thompson Sampling" href="thompson_sampling.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="thompson_sampling.html">
+    Thompson Sampling
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Configuration System
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_enumeration.html">
+    Library Enumeration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_analysis.html">
+    Library Analysis
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="thompson_sampling.html">
+    Thompson Sampling
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Configuration System
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_enumeration.html">
+    Library Enumeration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_analysis.html">
+    Library Analysis
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Configuration System</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="configuration-system">
+<h1>Configuration System<a class="headerlink" href="#configuration-system" title="Link to this heading">#</a></h1>
+<p>The TACTICS package uses Pydantic v2 for robust configuration management with automatic
+validation and type checking. The configuration system uses <code class="docutils literal notranslate"><span class="pre">SynthesisPipeline</span></code> as the
+single source of truth for reactions and reagents.</p>
+<section id="configuration-hierarchy">
+<h2>Configuration Hierarchy<a class="headerlink" href="#configuration-hierarchy" title="Link to this heading">#</a></h2>
+<div class="graphviz"><object data="_images/graphviz-ccad187b98ab6eecaaea69f6a88c1c64dddc8336.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">digraph Configuration {
+    rankdir=TB;
+    node [shape=box, style=&quot;rounded,filled&quot;, fontname=&quot;Helvetica&quot;, fontsize=10];
+    edge [fontname=&quot;Helvetica&quot;, fontsize=9];
+    nodesep=0.2;
+    ranksep=0.4;
+
+    // Main config at top
+    ThompsonSamplingConfig [label=&quot;ThompsonSamplingConfig&quot;, fillcolor=&quot;#FFD700&quot;];
+
+    // Strategy section header
+    strategy_label [label=&quot;strategy_config&quot;, shape=plaintext, fontname=&quot;Helvetica Bold&quot;];
+
+    // Strategy configs - stacked vertically
+    GreedyConfig [label=&quot;GreedyConfig&quot;, fillcolor=&quot;#FFB6C1&quot;];
+    RouletteWheelConfig [label=&quot;RouletteWheelConfig&quot;, fillcolor=&quot;#FFB6C1&quot;];
+    UCBConfig [label=&quot;UCBConfig&quot;, fillcolor=&quot;#FFB6C1&quot;];
+    EpsilonGreedyConfig [label=&quot;EpsilonGreedyConfig&quot;, fillcolor=&quot;#FFB6C1&quot;];
+    BayesUCBConfig [label=&quot;BayesUCBConfig&quot;, fillcolor=&quot;#FFB6C1&quot;];
+
+    // Warmup section header
+    warmup_label [label=&quot;warmup_config&quot;, shape=plaintext, fontname=&quot;Helvetica Bold&quot;];
+
+    // Warmup configs - stacked vertically
+    BalancedWarmupConfig [label=&quot;BalancedWarmupConfig&quot;, fillcolor=&quot;#00CED1&quot;];
+    StandardWarmupConfig [label=&quot;StandardWarmupConfig&quot;, fillcolor=&quot;#AFEEEE&quot;];
+    EnhancedWarmupConfig [label=&quot;EnhancedWarmupConfig&quot;, fillcolor=&quot;#AFEEEE&quot;];
+
+    // Evaluator section header
+    evaluator_label [label=&quot;evaluator_config&quot;, shape=plaintext, fontname=&quot;Helvetica Bold&quot;];
+
+    // Evaluator configs - stacked vertically
+    LookupEvaluatorConfig [label=&quot;LookupEvaluatorConfig&quot;, fillcolor=&quot;#DDA0DD&quot;];
+    DBEvaluatorConfig [label=&quot;DBEvaluatorConfig&quot;, fillcolor=&quot;#DDA0DD&quot;];
+    FPEvaluatorConfig [label=&quot;FPEvaluatorConfig&quot;, fillcolor=&quot;#DDA0DD&quot;];
+    MWEvaluatorConfig [label=&quot;MWEvaluatorConfig&quot;, fillcolor=&quot;#DDA0DD&quot;];
+    ROCSEvaluatorConfig [label=&quot;ROCSEvaluatorConfig&quot;, fillcolor=&quot;#D8BFD8&quot;];
+    FredEvaluatorConfig [label=&quot;FredEvaluatorConfig&quot;, fillcolor=&quot;#D8BFD8&quot;];
+    MLClassifierConfig [label=&quot;MLClassifierEvaluatorConfig&quot;, fillcolor=&quot;#D8BFD8&quot;];
+
+    // Force vertical layout with invisible edges
+    ThompsonSamplingConfig -&gt; strategy_label [style=invis];
+    strategy_label -&gt; GreedyConfig [style=invis];
+    GreedyConfig -&gt; RouletteWheelConfig [style=invis];
+    RouletteWheelConfig -&gt; UCBConfig [style=invis];
+    UCBConfig -&gt; EpsilonGreedyConfig [style=invis];
+    EpsilonGreedyConfig -&gt; BayesUCBConfig [style=invis];
+    BayesUCBConfig -&gt; warmup_label [style=invis];
+    warmup_label -&gt; BalancedWarmupConfig [style=invis];
+    BalancedWarmupConfig -&gt; StandardWarmupConfig [style=invis];
+    StandardWarmupConfig -&gt; EnhancedWarmupConfig [style=invis];
+    EnhancedWarmupConfig -&gt; evaluator_label [style=invis];
+    evaluator_label -&gt; LookupEvaluatorConfig [style=invis];
+    LookupEvaluatorConfig -&gt; DBEvaluatorConfig [style=invis];
+    DBEvaluatorConfig -&gt; FPEvaluatorConfig [style=invis];
+    FPEvaluatorConfig -&gt; MWEvaluatorConfig [style=invis];
+    MWEvaluatorConfig -&gt; ROCSEvaluatorConfig [style=invis];
+    ROCSEvaluatorConfig -&gt; FredEvaluatorConfig [style=invis];
+    FredEvaluatorConfig -&gt; MLClassifierConfig [style=invis];
+
+    // Visible connections from main config to section headers
+    ThompsonSamplingConfig -&gt; strategy_label [style=bold];
+    ThompsonSamplingConfig -&gt; warmup_label [style=bold];
+    ThompsonSamplingConfig -&gt; evaluator_label [style=bold];
+
+    // Visible connections from headers to first option (one-of relationship)
+    strategy_label -&gt; GreedyConfig [style=dashed, label=&quot;one of&quot;];
+    strategy_label -&gt; RouletteWheelConfig [style=dashed];
+    strategy_label -&gt; UCBConfig [style=dashed];
+    strategy_label -&gt; EpsilonGreedyConfig [style=dashed];
+    strategy_label -&gt; BayesUCBConfig [style=dashed];
+
+    warmup_label -&gt; BalancedWarmupConfig [style=dashed, label=&quot;one of&quot;];
+    warmup_label -&gt; StandardWarmupConfig [style=dashed];
+    warmup_label -&gt; EnhancedWarmupConfig [style=dashed];
+
+    evaluator_label -&gt; LookupEvaluatorConfig [style=dashed, label=&quot;one of&quot;];
+    evaluator_label -&gt; DBEvaluatorConfig [style=dashed];
+    evaluator_label -&gt; FPEvaluatorConfig [style=dashed];
+    evaluator_label -&gt; MWEvaluatorConfig [style=dashed];
+    evaluator_label -&gt; ROCSEvaluatorConfig [style=dashed];
+    evaluator_label -&gt; FredEvaluatorConfig [style=dashed];
+    evaluator_label -&gt; MLClassifierConfig [style=dashed];
+}</p></object></div>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<p><strong>Modern approach (recommended):</strong></p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Using nested Pydantic configs with SynthesisPipeline</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration.smarts_toolkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThompsonSamplingConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.strategies.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">RouletteWheelConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.warmup.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">BalancedWarmupConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.core.evaluator_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LookupEvaluatorConfig</span>
+
+<span class="c1"># Create synthesis pipeline (single source of truth)</span>
+<span class="n">rxn_config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="n">ReactionDef</span><span class="p">(</span>
+        <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+        <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">rxn_config</span><span class="p">)</span>
+
+<span class="c1"># Create Thompson Sampling config</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">ThompsonSamplingConfig</span><span class="p">(</span>
+    <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">num_ts_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">strategy_config</span><span class="o">=</span><span class="n">RouletteWheelConfig</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;maximize&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">),</span>
+    <span class="n">warmup_config</span><span class="o">=</span><span class="n">BalancedWarmupConfig</span><span class="p">(</span><span class="n">observations_per_reagent</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+    <span class="n">evaluator_config</span><span class="o">=</span><span class="n">LookupEvaluatorConfig</span><span class="p">(</span><span class="n">ref_filename</span><span class="o">=</span><span class="s2">&quot;scores.csv&quot;</span><span class="p">),</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p><strong>Using presets:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Simplified preset-based configuration</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration.smarts_toolkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_preset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.core.evaluator_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LookupEvaluatorConfig</span>
+
+<span class="c1"># Create synthesis pipeline</span>
+<span class="n">rxn_config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="n">ReactionDef</span><span class="p">(</span>
+        <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+        <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">rxn_config</span><span class="p">)</span>
+
+<span class="c1"># Get preset configuration</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_preset</span><span class="p">(</span>
+    <span class="s2">&quot;fast_exploration&quot;</span><span class="p">,</span>
+    <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">evaluator_config</span><span class="o">=</span><span class="n">LookupEvaluatorConfig</span><span class="p">(</span><span class="n">ref_filename</span><span class="o">=</span><span class="s2">&quot;scores.csv&quot;</span><span class="p">),</span>
+    <span class="n">num_iterations</span><span class="o">=</span><span class="mi">1000</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="thompsonsamplingconfig">
+<span id="thompson-sampling-config"></span><h2>ThompsonSamplingConfig<a class="headerlink" href="#thompsonsamplingconfig" title="Link to this heading">#</a></h2>
+<p class="class-core">The main configuration class for Thompson Sampling optimization.</p>
+<div class="dependencies admonition">
+<p class="admonition-title">Dependencies</p>
+<p>Accepts these nested config objects:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="library_enumeration.html#synthesis-pipeline"><span class="std std-ref">SynthesisPipeline</span></a> - via <code class="docutils literal notranslate"><span class="pre">synthesis_pipeline</span></code> (required)</p></li>
+<li><p><a class="reference internal" href="#strategy-configs"><span class="std std-ref">Strategy Configs</span></a> - via <code class="docutils literal notranslate"><span class="pre">strategy_config</span></code></p></li>
+<li><p><a class="reference internal" href="#warmup-configs"><span class="std std-ref">Warmup Configs</span></a> - via <code class="docutils literal notranslate"><span class="pre">warmup_config</span></code></p></li>
+<li><p><a class="reference internal" href="#evaluator-configs"><span class="std std-ref">Evaluator Configs</span></a> - via <code class="docutils literal notranslate"><span class="pre">evaluator_config</span></code></p></li>
+</ul>
+</div>
+<div class="pst-scrollable-table-container"><table class="table" id="id5">
+<caption><span class="caption-text">Core Parameters</span><a class="headerlink" href="#id5" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 24.0%" />
+<col style="width: 18.0%" />
+<col style="width: 8.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">synthesis_pipeline</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SynthesisPipeline</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Single source of truth for reactions and reagents.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">num_ts_iterations</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Maximum sampling cycles.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_warmup_trials</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Warmup trials per reagent. Default: 3.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pst-scrollable-table-container"><table class="table" id="id6">
+<caption><span class="caption-text">Component Configs (Modern)</span><a class="headerlink" href="#id6" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 24.0%" />
+<col style="width: 22.0%" />
+<col style="width: 8.0%" />
+<col style="width: 46.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">strategy_config</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrategyConfig</span></code></p></td>
+<td><p>Yes*</p></td>
+<td><p>Selection strategy configuration.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">warmup_config</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">WarmupConfig</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Warmup strategy. Default: BalancedWarmupConfig.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">evaluator_config</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">EvaluatorConfig</span></code></p></td>
+<td><p>Yes*</p></td>
+<td><p>Evaluator configuration.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pst-scrollable-table-container"><table class="table" id="id7">
+<caption><span class="caption-text">Batch &amp; Performance</span><a class="headerlink" href="#id7" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 15.0%" />
+<col style="width: 8.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">batch_size</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Compounds to sample per cycle. Default: 1.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">processes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>CPU cores for parallel evaluation. Default: 1.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">min_cpds_per_core</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Min compounds per core before batch evaluation. Default: 10.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_resamples</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Stop after this many consecutive duplicates.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pst-scrollable-table-container"><table class="table" id="id8">
+<caption><span class="caption-text">Output &amp; Advanced</span><a class="headerlink" href="#id8" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 28.0%" />
+<col style="width: 15.0%" />
+<col style="width: 8.0%" />
+<col style="width: 49.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">results_filename</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Output CSV path. Default: <code class="docutils literal notranslate"><span class="pre">&quot;results.csv&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">log_filename</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Log file path.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hide_progress</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Hide progress bars. Default: False.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">use_boltzmann_weighting</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Legacy RWS Boltzmann updates. Default: False.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">auto_detect_smarts_compatibility</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Auto-detect reagent SMARTS compatibility. Default: False.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">deprotect_for_compatibility</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Apply deprotection during detection. Default: False.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">desalt_for_compatibility</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Apply desalting during detection. Default: False.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="strategy-configurations">
+<span id="strategy-configs"></span><h2>Strategy Configurations<a class="headerlink" href="#strategy-configurations" title="Link to this heading">#</a></h2>
+<p>All strategy configs are used with <code class="docutils literal notranslate"><span class="pre">ThompsonSamplingConfig.strategy_config</span></code>.</p>
+<section id="greedyconfig">
+<span id="greedy-config"></span><h3>GreedyConfig<a class="headerlink" href="#greedyconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for greedy (argmax/argmin) selection.</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#greedy-selection"><span class="std std-ref">GreedySelection</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id9">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id9" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 18.0%" />
+<col style="width: 10.0%" />
+<col style="width: 52.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">strategy_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal[&quot;greedy&quot;]</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;maximize&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;minimize&quot;</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">&quot;maximize&quot;</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="roulettewheelconfig">
+<span id="roulette-wheel-config"></span><h3>RouletteWheelConfig<a class="headerlink" href="#roulettewheelconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for roulette wheel selection with thermal cycling and CATS.</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#roulette-wheel-selection"><span class="std std-ref">RouletteWheelSelection</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id10">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id10" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 24.0%" />
+<col style="width: 15.0%" />
+<col style="width: 8.0%" />
+<col style="width: 53.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">strategy_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;maximize&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;minimize&quot;</span></code>, or Boltzmann variants.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Base temperature for heated component. Default: 0.1.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">beta</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Base temperature for cooled components. Default: 0.05.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exploration_phase_end</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Fraction before CATS starts [0, 1]. Default: 0.20.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">transition_phase_end</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Fraction when CATS fully applied [0, 1]. Default: 0.60.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">min_observations</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Min observations for criticality trust. Default: 5.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="ucbconfig">
+<span id="ucb-config"></span><h3>UCBConfig<a class="headerlink" href="#ucbconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for Upper Confidence Bound selection.</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#ucb-selection"><span class="std std-ref">UCBSelection</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id11">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id11" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 18.0%" />
+<col style="width: 10.0%" />
+<col style="width: 52.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">strategy_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal[&quot;ucb&quot;]</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;maximize&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;minimize&quot;</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">&quot;maximize&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">c</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Exploration parameter. Higher = more exploration. Default: 2.0.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="epsilongreedyconfig">
+<span id="epsilon-greedy-config"></span><h3>EpsilonGreedyConfig<a class="headerlink" href="#epsilongreedyconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for epsilon-greedy selection with decay.</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#epsilon-greedy-selection"><span class="std std-ref">EpsilonGreedySelection</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id12">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id12" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">strategy_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;maximize&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;minimize&quot;</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">&quot;maximize&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">epsilon</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Initial exploration probability [0, 1]. Default: 0.1.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">decay</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Decay rate per iteration (0, 1]. Default: 0.995.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="bayesucbconfig">
+<span id="bayes-ucb-config"></span><h3>BayesUCBConfig<a class="headerlink" href="#bayesucbconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for Bayesian UCB with CATS integration.</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#bayes-ucb-selection"><span class="std std-ref">BayesUCBSelection</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id13">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id13" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 24.0%" />
+<col style="width: 15.0%" />
+<col style="width: 8.0%" />
+<col style="width: 53.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">strategy_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;maximize&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;minimize&quot;</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">&quot;maximize&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">initial_p_high</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Percentile for heated component [0.5, 0.999]. Default: 0.90.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">initial_p_low</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Percentile for cooled components [0.5, 0.999]. Default: 0.60.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exploration_phase_end</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Fraction before CATS starts. Default: 0.20.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">transition_phase_end</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Fraction when CATS fully applied. Default: 0.60.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">min_observations</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Min observations for criticality. Default: 5.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="warmup-configurations">
+<span id="warmup-configs"></span><h2>Warmup Configurations<a class="headerlink" href="#warmup-configurations" title="Link to this heading">#</a></h2>
+<p>All warmup configs are used with <code class="docutils literal notranslate"><span class="pre">ThompsonSamplingConfig.warmup_config</span></code>.</p>
+<section id="balancedwarmupconfig-recommended">
+<span id="balanced-warmup-config"></span><h3>BalancedWarmupConfig (Recommended)<a class="headerlink" href="#balancedwarmupconfig-recommended" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for balanced warmup with per-reagent variance estimation.</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#balanced-warmup"><span class="std std-ref">BalancedWarmup</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id14">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id14" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 26.0%" />
+<col style="width: 15.0%" />
+<col style="width: 8.0%" />
+<col style="width: 51.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">warmup_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">observations_per_reagent</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Observations per reagent. Default: 3.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">use_per_reagent_variance</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Use per-reagent variance estimation. Default: True.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shrinkage_strength</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>No</p></td>
+<td><p>James-Stein shrinkage strength. Default: 3.0.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">seed</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Random seed for reproducibility.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="standardwarmupconfig">
+<span id="standard-warmup-config"></span><h3>StandardWarmupConfig<a class="headerlink" href="#standardwarmupconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for standard warmup with random partners.</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#standard-warmup"><span class="std std-ref">StandardWarmup</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id15">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id15" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 18.0%" />
+<col style="width: 10.0%" />
+<col style="width: 52.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">warmup_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">seed</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Random seed for reproducibility.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="enhancedwarmupconfig">
+<span id="enhanced-warmup-config"></span><h3>EnhancedWarmupConfig<a class="headerlink" href="#enhancedwarmupconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for legacy enhanced warmup (stochastic parallel pairing).</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#enhanced-warmup"><span class="std std-ref">EnhancedWarmup</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id16">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id16" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 18.0%" />
+<col style="width: 10.0%" />
+<col style="width: 52.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">warmup_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">seed</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Random seed for reproducibility.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="evaluator-configurations">
+<span id="evaluator-configs"></span><h2>Evaluator Configurations<a class="headerlink" href="#evaluator-configurations" title="Link to this heading">#</a></h2>
+<p>All evaluator configs are used with <code class="docutils literal notranslate"><span class="pre">ThompsonSamplingConfig.evaluator_config</span></code>.</p>
+<section id="lookupevaluatorconfig">
+<span id="lookup-evaluator-config"></span><h3>LookupEvaluatorConfig<a class="headerlink" href="#lookupevaluatorconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for CSV-based score lookup.</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#lookup-evaluator"><span class="std std-ref">LookupEvaluator</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id17">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id17" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">evaluator_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ref_filename</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Path to CSV file with scores.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">score_col</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Score column name. Default: <code class="docutils literal notranslate"><span class="pre">&quot;Scores&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">compound_col</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Compound ID column. Default: <code class="docutils literal notranslate"><span class="pre">&quot;Product_Code&quot;</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="dbevaluatorconfig">
+<span id="db-evaluator-config"></span><h3>DBEvaluatorConfig<a class="headerlink" href="#dbevaluatorconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for SQLite database lookup.</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#db-evaluator"><span class="std std-ref">DBEvaluator</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id18">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id18" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">evaluator_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">db_filename</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Path to SQLite database.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">db_prefix</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Key prefix for lookups. Default: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="fpevaluatorconfig">
+<span id="fp-evaluator-config"></span><h3>FPEvaluatorConfig<a class="headerlink" href="#fpevaluatorconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for fingerprint similarity evaluation.</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#fp-evaluator"><span class="std std-ref">FPEvaluator</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id19">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id19" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">evaluator_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">query_smiles</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Reference molecule SMILES.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">radius</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Morgan fingerprint radius. Default: 2.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">n_bits</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Fingerprint bit length. Default: 2048.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="rocsevaluatorconfig">
+<span id="rocs-evaluator-config"></span><h3>ROCSEvaluatorConfig<a class="headerlink" href="#rocsevaluatorconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for 3D shape similarity (requires OpenEye).</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#rocs-evaluator"><span class="std std-ref">ROCSEvaluator</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id20">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id20" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">evaluator_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">query_molfile</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Path to reference structure (.sdf).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_confs</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Max conformers to generate. Default: 50.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="fredevaluatorconfig">
+<span id="fred-evaluator-config"></span><h3>FredEvaluatorConfig<a class="headerlink" href="#fredevaluatorconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for molecular docking (requires OpenEye).</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#fred-evaluator"><span class="std std-ref">FredEvaluator</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id21">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id21" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">evaluator_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">design_unit_file</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Path to receptor file (.oedu).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_confs</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Max conformers to generate. Default: 100.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="mlclassifierevaluatorconfig">
+<span id="ml-classifier-evaluator-config"></span><h3>MLClassifierEvaluatorConfig<a class="headerlink" href="#mlclassifierevaluatorconfig" title="Link to this heading">#</a></h3>
+<p class="class-config">Configuration for ML model-based evaluation.</p>
+<p><strong>Creates:</strong> <a class="reference internal" href="thompson_sampling.html#ml-classifier-evaluator"><span class="std std-ref">MLClassifierEvaluator</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id22">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id22" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">evaluator_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Literal</span></code></p></td>
+<td><p>Auto</p></td>
+<td><p>Set automatically.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">model_filename</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Path to pickled sklearn model.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="configuration-presets">
+<span id="id1"></span><h2>Configuration Presets<a class="headerlink" href="#configuration-presets" title="Link to this heading">#</a></h2>
+<p class="class-core">TACTICS provides pre-configured setups for common use cases via <code class="docutils literal notranslate"><span class="pre">get_preset()</span></code>.</p>
+<div class="dependencies admonition">
+<p class="admonition-title">Dependencies</p>
+<p>Returns fully configured <a class="reference internal" href="#thompson-sampling-config"><span class="std std-ref">ThompsonSamplingConfig</span></a> objects with preset
+strategy, warmup, and evaluator configurations.</p>
+</div>
+<p><strong>Available Presets:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 78.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Preset Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fast_exploration</span></code></p></td>
+<td><p>Quick screening with epsilon-greedy (epsilon=0.2, decay=0.995).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">parallel_batch</span></code></p></td>
+<td><p>Batch processing for slow evaluators with RouletteWheel.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">conservative_exploit</span></code></p></td>
+<td><p>Hit optimization with greedy strategy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">balanced_sampling</span></code></p></td>
+<td><p>General-purpose with UCB (c=2.0).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">diverse_coverage</span></code></p></td>
+<td><p>Maximum diversity with high-temperature RouletteWheel.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">legacy_rws_maximize</span></code></p></td>
+<td><p>Original RWS algorithm for maximize mode.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">legacy_rws_minimize</span></code></p></td>
+<td><p>Original RWS algorithm for minimize mode (docking).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Example usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration.smarts_toolkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_preset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.core.evaluator_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LookupEvaluatorConfig</span>
+
+<span class="c1"># Create synthesis pipeline</span>
+<span class="n">rxn_config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="n">ReactionDef</span><span class="p">(</span>
+        <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+        <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">rxn_config</span><span class="p">)</span>
+
+<span class="c1"># Fast exploration for initial screening</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_preset</span><span class="p">(</span>
+    <span class="s2">&quot;fast_exploration&quot;</span><span class="p">,</span>
+    <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">evaluator_config</span><span class="o">=</span><span class="n">LookupEvaluatorConfig</span><span class="p">(</span><span class="n">ref_filename</span><span class="o">=</span><span class="s2">&quot;scores.csv&quot;</span><span class="p">),</span>
+    <span class="n">num_iterations</span><span class="o">=</span><span class="mi">1000</span>
+<span class="p">)</span>
+
+<span class="c1"># Parallel batch for docking</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.core.evaluator_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">FredEvaluatorConfig</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_preset</span><span class="p">(</span>
+    <span class="s2">&quot;parallel_batch&quot;</span><span class="p">,</span>
+    <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">evaluator_config</span><span class="o">=</span><span class="n">FredEvaluatorConfig</span><span class="p">(</span><span class="n">design_unit_file</span><span class="o">=</span><span class="s2">&quot;receptor.oedu&quot;</span><span class="p">),</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="factory-functions">
+<span id="id2"></span><h2>Factory Functions<a class="headerlink" href="#factory-functions" title="Link to this heading">#</a></h2>
+<p class="class-core">Factory functions create component instances from configurations.</p>
+<div class="dependencies admonition">
+<p class="admonition-title">Dependencies</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">create_strategy()</span></code> - takes <a class="reference internal" href="#strategy-configs"><span class="std std-ref">Strategy Configs</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create_warmup()</span></code> - takes <a class="reference internal" href="#warmup-configs"><span class="std std-ref">Warmup Configs</span></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create_evaluator()</span></code> - takes <a class="reference internal" href="#evaluator-configs"><span class="std std-ref">Evaluator Configs</span></a></p></li>
+</ul>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 35.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">create_strategy(config)</span></code></p></td>
+<td><p>Create SelectionStrategy from config.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">create_warmup(config)</span></code></p></td>
+<td><p>Create WarmupStrategy from config.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">create_evaluator(config)</span></code></p></td>
+<td><p>Create Evaluator from config.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.factories</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_strategy</span><span class="p">,</span>
+    <span class="n">create_warmup</span><span class="p">,</span>
+    <span class="n">create_evaluator</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.strategies.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">RouletteWheelConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.warmup.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">BalancedWarmupConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.core.evaluator_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LookupEvaluatorConfig</span>
+
+<span class="n">strategy</span> <span class="o">=</span> <span class="n">create_strategy</span><span class="p">(</span><span class="n">RouletteWheelConfig</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;maximize&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">))</span>
+<span class="n">warmup</span> <span class="o">=</span> <span class="n">create_warmup</span><span class="p">(</span><span class="n">BalancedWarmupConfig</span><span class="p">(</span><span class="n">observations_per_reagent</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">create_evaluator</span><span class="p">(</span><span class="n">LookupEvaluatorConfig</span><span class="p">(</span><span class="n">ref_filename</span><span class="o">=</span><span class="s2">&quot;scores.csv&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="json-yaml-configuration">
+<h2>JSON/YAML Configuration<a class="headerlink" href="#json-yaml-configuration" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">ThompsonSamplingConfig</span></code> requires a <code class="docutils literal notranslate"><span class="pre">SynthesisPipeline</span></code> object which cannot be
+serialized directly to JSON. For reproducibility, serialize the <code class="docutils literal notranslate"><span class="pre">ReactionConfig</span></code>
+and evaluator/strategy configs separately.</p>
+</div>
+<p><strong>Save ReactionConfig to JSON:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration.smarts_toolkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span>
+
+<span class="n">rxn_config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="n">ReactionDef</span><span class="p">(</span>
+        <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+        <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;reaction_config.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">rxn_config</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Load and create pipeline:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration.smarts_toolkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionConfig</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;reaction_config.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="n">rxn_config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">rxn_config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example ReactionConfig JSON:</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;reactions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;reaction_smarts&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;step_index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;pattern_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;deprotections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;reagent_file_list&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;amines.smi&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;step_inputs&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;step_modes&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;protecting_groups&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="validation-examples">
+<h2>Validation Examples<a class="headerlink" href="#validation-examples" title="Link to this heading">#</a></h2>
+<p><strong>Type validation:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration.smarts_toolkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThompsonSamplingConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.strategies.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">GreedyConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.core.evaluator_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LookupEvaluatorConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span>
+
+<span class="c1"># Create pipeline</span>
+<span class="n">rxn_config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="n">ReactionDef</span><span class="p">(</span><span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span> <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">)],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">rxn_config</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ThompsonSamplingConfig</span><span class="p">(</span>
+        <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+        <span class="n">num_ts_iterations</span><span class="o">=</span><span class="s2">&quot;not_an_integer&quot;</span><span class="p">,</span>  <span class="c1"># Invalid!</span>
+        <span class="n">strategy_config</span><span class="o">=</span><span class="n">GreedyConfig</span><span class="p">(),</span>
+        <span class="n">evaluator_config</span><span class="o">=</span><span class="n">LookupEvaluatorConfig</span><span class="p">(</span><span class="n">ref_filename</span><span class="o">=</span><span class="s2">&quot;scores.csv&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Constraint validation:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.strategies.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">RouletteWheelConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">RouletteWheelConfig</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;maximize&quot;</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=-</span><span class="mf">0.1</span><span class="p">,</span>  <span class="c1"># Invalid: must be &gt; 0</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Constraint error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Use SynthesisPipeline</strong> - Single source of truth for reactions and reagents</p></li>
+<li><p><strong>Use presets</strong> - Start with presets and customize as needed</p></li>
+<li><p><strong>Validate early</strong> - Pydantic catches errors before expensive computations</p></li>
+<li><p><strong>Save ReactionConfig</strong> - JSON export for reproducibility</p></li>
+<li><p><strong>Use BalancedWarmup</strong> - Recommended for most use cases</p></li>
+<li><p><strong>Choose evaluator wisely</strong> - Use <code class="docutils literal notranslate"><span class="pre">processes=1</span></code> for fast evaluators (Lookup, DB)</p></li>
+</ol>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="thompson_sampling.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Thompson Sampling</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="library_enumeration.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Library Enumeration</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-hierarchy">Configuration Hierarchy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thompsonsamplingconfig">ThompsonSamplingConfig</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#strategy-configurations">Strategy Configurations</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#greedyconfig">GreedyConfig</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roulettewheelconfig">RouletteWheelConfig</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ucbconfig">UCBConfig</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#epsilongreedyconfig">EpsilonGreedyConfig</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesucbconfig">BayesUCBConfig</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#warmup-configurations">Warmup Configurations</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#balancedwarmupconfig-recommended">BalancedWarmupConfig (Recommended)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standardwarmupconfig">StandardWarmupConfig</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#enhancedwarmupconfig">EnhancedWarmupConfig</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluator-configurations">Evaluator Configurations</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lookupevaluatorconfig">LookupEvaluatorConfig</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dbevaluatorconfig">DBEvaluatorConfig</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fpevaluatorconfig">FPEvaluatorConfig</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rocsevaluatorconfig">ROCSEvaluatorConfig</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fredevaluatorconfig">FredEvaluatorConfig</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mlclassifierevaluatorconfig">MLClassifierEvaluatorConfig</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-presets">Configuration Presets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factory-functions">Factory Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#json-yaml-configuration">JSON/YAML Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-examples">Validation Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices">Best Practices</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

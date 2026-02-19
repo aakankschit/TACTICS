@@ -1,0 +1,1350 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Library Analysis &#8212; TACTICS 0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=5ce0522f" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=837179f8"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=1ae7504c"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'library_analysis';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Library Enumeration" href="library_enumeration.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="thompson_sampling.html">
+    Thompson Sampling
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="configuration.html">
+    Configuration System
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_enumeration.html">
+    Library Enumeration
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Library Analysis
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="thompson_sampling.html">
+    Thompson Sampling
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="configuration.html">
+    Configuration System
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_enumeration.html">
+    Library Enumeration
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Library Analysis
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Library Analysis</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="library-analysis">
+<h1>Library Analysis<a class="headerlink" href="#library-analysis" title="Link to this heading">#</a></h1>
+<p>The Library Analysis module provides tools for analyzing Thompson Sampling results,
+identifying top building blocks, and creating visualizations for benchmarking studies.</p>
+<section id="module-architecture">
+<h2>Module Architecture<a class="headerlink" href="#module-architecture" title="Link to this heading">#</a></h2>
+<div class="graphviz"><object data="_images/graphviz-c2d55c94a8170611af5b35780b38b8d0b1ae1205.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">digraph LibraryAnalysis {
+    rankdir=TB;
+    node [shape=box, style=&quot;rounded,filled&quot;, fontname=&quot;Helvetica&quot;];
+
+    subgraph cluster_input {
+        label=&quot;Input Data&quot;;
+        style=filled;
+        color=lightblue;
+
+        Results [label=&quot;Results DataFrame\n(Polars)&quot;, shape=cylinder, fillcolor=lightblue];
+        Reference [label=&quot;Reference Data\n(Ground Truth)&quot;, shape=cylinder, fillcolor=lightblue];
+    }
+
+    subgraph cluster_analysis {
+        label=&quot;Analysis&quot;;
+        style=filled;
+        color=lightyellow;
+
+        LibraryAnalysis [label=&quot;LibraryAnalysis\n- Top building blocks\n- Overlap analysis&quot;, fillcolor=gold];
+    }
+
+    subgraph cluster_viz {
+        label=&quot;Visualization&quot;;
+        style=filled;
+        color=lightgreen;
+
+        LibraryVisualization [label=&quot;LibraryVisualization\n- Structure grids\n- Comparison plots&quot;, fillcolor=lightgreen];
+        TS_Benchmarks [label=&quot;TS_Benchmarks\n- Strip plots\n- Bar plots\n- Line plots&quot;, fillcolor=lightgreen];
+    }
+
+    subgraph cluster_output {
+        label=&quot;Outputs&quot;;
+        style=filled;
+        color=lavender;
+
+        Plots [label=&quot;Interactive Plots\n(Altair)&quot;, fillcolor=lavender];
+        MolGrids [label=&quot;Molecule Grids\n(RDKit)&quot;, fillcolor=lavender];
+        Stats [label=&quot;Statistics\n&amp; Summaries&quot;, fillcolor=lavender];
+    }
+
+    Results -&gt; LibraryAnalysis;
+    Reference -&gt; TS_Benchmarks;
+    LibraryAnalysis -&gt; LibraryVisualization;
+    LibraryVisualization -&gt; Plots;
+    LibraryVisualization -&gt; MolGrids;
+    TS_Benchmarks -&gt; Plots;
+    TS_Benchmarks -&gt; Stats;
+}</p></object></div>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<p><strong>Analyze results and find top building blocks:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Basic analysis workflow</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">LibraryAnalysis</span><span class="p">,</span> <span class="n">LibraryVisualization</span>
+
+<span class="c1"># Load results</span>
+<span class="n">results_df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;results.csv&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create analysis with SMILES files for building block lookup</span>
+<span class="n">analysis</span> <span class="o">=</span> <span class="n">LibraryAnalysis</span><span class="p">(</span>
+    <span class="n">df</span><span class="o">=</span><span class="n">results_df</span><span class="p">,</span>
+    <span class="n">smiles_files</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">],</span>
+    <span class="n">product_code_column</span><span class="o">=</span><span class="s2">&quot;Product_Code&quot;</span><span class="p">,</span>
+    <span class="n">score_column</span><span class="o">=</span><span class="s2">&quot;Scores&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Find top building blocks in top 100 compounds</span>
+<span class="n">counters</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">find_top_building_blocks</span><span class="p">(</span><span class="n">cutoff</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># Visualize top building blocks</span>
+<span class="n">viz</span> <span class="o">=</span> <span class="n">LibraryVisualization</span><span class="p">(</span><span class="n">analysis</span><span class="p">)</span>
+<span class="n">viz</span><span class="o">.</span><span class="n">visualize_top_building_blocks</span><span class="p">(</span><span class="n">top_n</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p><strong>Benchmark Thompson Sampling methods:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Benchmarking multiple methods</span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_analysis.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">TS_Benchmarks</span>
+
+<span class="c1"># TS_Benchmarks auto-generates all data during initialization</span>
+<span class="n">benchmarks</span> <span class="o">=</span> <span class="n">TS_Benchmarks</span><span class="p">(</span>
+    <span class="n">no_of_cycles</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">methods_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;roulette_wheel&quot;</span><span class="p">,</span> <span class="s2">&quot;bayes_ucb&quot;</span><span class="p">,</span> <span class="s2">&quot;greedy&quot;</span><span class="p">],</span>
+    <span class="n">TS_runs_data</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;roulette_wheel&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">cycle1_df</span><span class="p">,</span> <span class="n">cycle2_df</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="s2">&quot;bayes_ucb&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">cycle1_df</span><span class="p">,</span> <span class="n">cycle2_df</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="s2">&quot;greedy&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">cycle1_df</span><span class="p">,</span> <span class="n">cycle2_df</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="n">reference_data</span><span class="o">=</span><span class="n">reference_df</span><span class="p">,</span>
+    <span class="n">top_n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">sort_type</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># All data pre-calculated - ready to plot immediately</span>
+<span class="n">benchmarks</span><span class="o">.</span><span class="n">stripplot_TS_results</span><span class="p">()</span>
+<span class="n">benchmarks</span><span class="o">.</span><span class="n">plot_barplot_TS_results</span><span class="p">()</span>
+<span class="n">benchmarks</span><span class="o">.</span><span class="n">plot_line_performance_with_error_bars</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="libraryanalysis">
+<span id="id1"></span><h2>LibraryAnalysis<a class="headerlink" href="#libraryanalysis" title="Link to this heading">#</a></h2>
+<p class="class-core">Analyzes chemical libraries to identify top building blocks and their overlap.</p>
+<div class="dependencies admonition">
+<p class="admonition-title">Dependencies</p>
+<ul class="simple">
+<li><p>Polars or Pandas DataFrame with product codes and scores</p></li>
+<li><p>SMILES files (.smi) containing building block structures</p></li>
+<li><p>Used by <a class="reference internal" href="#library-visualization"><span class="std std-ref">LibraryVisualization</span></a> for visualizations</p></li>
+</ul>
+</div>
+<section id="constructor">
+<h3>Constructor<a class="headerlink" href="#constructor" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table" id="id8">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id8" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 20.0%" />
+<col style="width: 10.0%" />
+<col style="width: 48.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">df</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Polars or Pandas DataFrame with product codes and scores.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">smiles_files</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">|</span> <span class="pre">list[str]</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Path(s) to .smi file(s) containing SMILES and building block codes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">product_code_column</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Name of product code column. Default: <code class="docutils literal notranslate"><span class="pre">&quot;Product_Code&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">score_column</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Name of score column. Default: <code class="docutils literal notranslate"><span class="pre">&quot;Scores&quot;</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading">#</a></h3>
+<section id="find-top-building-blocks">
+<h4>find_top_building_blocks<a class="headerlink" href="#find-top-building-blocks" title="Link to this heading">#</a></h4>
+<p>Identify and count building blocks in top products.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id9">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id9" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cutoff</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Number of top products to analyze.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sort_scores_by</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;ascending&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;descending&quot;</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">&quot;ascending&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">top_n</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Number of top building blocks per position. Default: 100.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Returns</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Tuple[List[Counter],</span> <span class="pre">int]</span></code></p></td>
+<td><p>(position_counters, total_molecules)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">LibraryAnalysis</span>
+
+<span class="n">analysis</span> <span class="o">=</span> <span class="n">LibraryAnalysis</span><span class="p">(</span>
+    <span class="n">df</span><span class="o">=</span><span class="n">results_df</span><span class="p">,</span>
+    <span class="n">smiles_files</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">],</span>
+    <span class="n">product_code_column</span><span class="o">=</span><span class="s2">&quot;Product_Code&quot;</span><span class="p">,</span>
+    <span class="n">score_column</span><span class="o">=</span><span class="s2">&quot;Scores&quot;</span>
+<span class="p">)</span>
+<span class="n">counters</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">find_top_building_blocks</span><span class="p">(</span><span class="n">cutoff</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="check-overlap">
+<h4>check_overlap<a class="headerlink" href="#check-overlap" title="Link to this heading">#</a></h4>
+<p>Check overlap between current cutoff and a new cutoff value.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id10">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id10" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">new_cutoff</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>New cutoff value to compare against.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Returns</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">list[tuple]</span></code></p></td>
+<td><p>Overlap information for each position.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="compare-analysis-overlap">
+<h4>compare_analysis_overlap<a class="headerlink" href="#compare-analysis-overlap" title="Link to this heading">#</a></h4>
+<p>Compare building block overlap with another LibraryAnalysis instance.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id11">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id11" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 10.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">other_analysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LibraryAnalysis</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Another analysis to compare with.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">top_n</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Number of top building blocks. Default: 100.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Returns</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>Overlap results for each position.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+</section>
+<section id="libraryvisualization">
+<span id="library-visualization"></span><h2>LibraryVisualization<a class="headerlink" href="#libraryvisualization" title="Link to this heading">#</a></h2>
+<p class="class-core">Creates visualizations from LibraryAnalysis instances.</p>
+<div class="dependencies admonition">
+<p class="admonition-title">Dependencies</p>
+<ul class="simple">
+<li><p>Requires <a class="reference internal" href="#id1"><span class="std std-ref">LibraryAnalysis</span></a> instance</p></li>
+<li><p>RDKit for molecular structure rendering</p></li>
+</ul>
+</div>
+<p><strong>Depends on:</strong> <a class="reference internal" href="#id1"><span class="std std-ref">LibraryAnalysis</span></a></p>
+<section id="id2">
+<h3>Constructor<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table" id="id12">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id12" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 10.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">analysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LibraryAnalysis</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Analysis instance containing data to visualize.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id3">
+<h3>Methods<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<section id="visualize-top-building-blocks">
+<h4>visualize_top_building_blocks<a class="headerlink" href="#visualize-top-building-blocks" title="Link to this heading">#</a></h4>
+<p>Display top building blocks using RDKit molecular drawings.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id13">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id13" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 24.0%" />
+<col style="width: 18.0%" />
+<col style="width: 10.0%" />
+<col style="width: 48.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">show_overlap</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Show overlapping building blocks. Default: False.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mols_per_row</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Molecules per row in grid. Default: 5.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sub_img_size</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tuple</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Size of each molecule image. Default: (300, 300).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">comparison_analysis</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LibraryAnalysis</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Another analysis for overlap comparison.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">top_n</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Number of top building blocks. Default: 20.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="plot-top-products-comparison">
+<h4>plot_top_products_comparison<a class="headerlink" href="#plot-top-products-comparison" title="Link to this heading">#</a></h4>
+<p>Generate subplots comparing overlap between analysis instances and a reference.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id14">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id14" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 20.0%" />
+<col style="width: 10.0%" />
+<col style="width: 48.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">analysis_instances</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>List of LibraryAnalysis instances to compare.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reference_instance</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">LibraryAnalysis</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Reference analysis instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">top_n</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Top products to consider. Default: 100.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">title</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Plot title.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">figsize</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tuple</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Figure size (width, height). Default: (15, 10).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">analysis_labels</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Labels for each analysis group.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">save_path</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Path to save the plot.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+</section>
+<section id="ts-benchmarks">
+<span id="id4"></span><h2>TS_Benchmarks<a class="headerlink" href="#ts-benchmarks" title="Link to this heading">#</a></h2>
+<p class="class-core">Comprehensive benchmarking and visualization for Thompson Sampling results across
+multiple cycles and search strategies.</p>
+<p><strong>Key Features:</strong></p>
+<ul class="simple">
+<li><p>Automatic data generation during initialization</p></li>
+<li><p>Consistent color schemes across all plots</p></li>
+<li><p>Multi-cycle analysis with statistics</p></li>
+<li><p>Reference comparison with performance metrics</p></li>
+<li><p>Multiple visualization types (strip, bar, line plots)</p></li>
+</ul>
+<section id="id5">
+<h3>Constructor<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>All required data is automatically generated during initialization.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id15">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id15" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 22.0%" />
+<col style="width: 10.0%" />
+<col style="width: 48.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">no_of_cycles</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Number of cycles to analyze.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">methods_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[str]</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>List of method names (search strategies).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TS_runs_data</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Maps method names to lists of DataFrames (one per cycle).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reference_data</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Ground truth reference data for comparison.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">top_n</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Top products for bar plot. Default: 100.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sort_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;minimize&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;maximize&quot;</span></code>. Default: <code class="docutils literal notranslate"><span class="pre">&quot;minimize&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">top_ns</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[int]</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Top-N values for line plot. Default: [50, 100, 200, 300, 400, 500].</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Automatic Data Storage:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 28.0%" />
+<col style="width: 72.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">combined_df_top_n</span></code></p></td>
+<td><p>Top N compounds from each method/cycle (for stripplot).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">combined_df_all</span></code></p></td>
+<td><p>All compounds from each method/cycle.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bar_plot_df</span></code></p></td>
+<td><p>Hit recovery data for bar plots.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">line_plot_df</span></code></p></td>
+<td><p>Raw performance data across cycles.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">grouped_stats</span></code></p></td>
+<td><p>Statistical summaries with mean, std, error bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">actual_methods</span></code></p></td>
+<td><p>Methods found in data (for validation).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="visualization-methods">
+<h3>Visualization Methods<a class="headerlink" href="#visualization-methods" title="Link to this heading">#</a></h3>
+<section id="stripplot-ts-results">
+<h4>stripplot_TS_results<a class="headerlink" href="#stripplot-ts-results" title="Link to this heading">#</a></h4>
+<p>Generate strip plot showing score distributions across cycles and methods.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id16">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id16" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 18.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 57.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">width</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Plot width in pixels (auto-calculated if None).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">height</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Plot height in pixels (auto-calculated if None).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">save_path</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Path to save (.html, .png, .svg).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">show_plot</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Display in Jupyter. Default: True.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">legend_position</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Position of legend: <code class="docutils literal notranslate"><span class="pre">&quot;right&quot;</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">&quot;bottom&quot;</span></code> for horizontal legend below plot.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Returns</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">altair.Chart</span></code></p></td>
+<td><p>Altair chart object (or None if saved).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="plot-barplot-ts-results">
+<h4>plot_barplot_TS_results<a class="headerlink" href="#plot-barplot-ts-results" title="Link to this heading">#</a></h4>
+<p>Create grouped bar plot showing reference hit recovery by method and cycle.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id17">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id17" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 18.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 57.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">width</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Plot width in pixels (auto-calculated if None).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">height</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Plot height in pixels. Default: 400.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">save_path</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Path to save (.html, .png, .svg).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">show_plot</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Display in Jupyter. Default: True.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">legend_position</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Position of legend: <code class="docutils literal notranslate"><span class="pre">&quot;right&quot;</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">&quot;bottom&quot;</span></code> for horizontal legend below plot.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dark_mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Use white text for bar labels (for dark backgrounds). Default: False.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="plot-line-performance-with-error-bars">
+<h4>plot_line_performance_with_error_bars<a class="headerlink" href="#plot-line-performance-with-error-bars" title="Link to this heading">#</a></h4>
+<p>Create line plot with error bars showing mean performance across top-N cutoffs.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id18">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id18" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 18.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 57.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">width</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Plot width in pixels. Default: 800.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">height</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Plot height in pixels. Default: 500.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">save_path</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Path to save (.html, .png, .svg).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">show_plot</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Display in Jupyter. Default: True.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">legend_position</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Position of legend: <code class="docutils literal notranslate"><span class="pre">&quot;right&quot;</span></code> (default) or <code class="docutils literal notranslate"><span class="pre">&quot;bottom&quot;</span></code> for horizontal legend below plot.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="other-methods">
+<h3>Other Methods<a class="headerlink" href="#other-methods" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 35.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_performance_summary()</span></code></p></td>
+<td><p>Get dict containing all stored data and charts.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gen_TS_runs_data(top_n,</span> <span class="pre">sort_type)</span></code></p></td>
+<td><p>Internal: Generate combined datasets.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_barplot_TS_results_data(top_n)</span></code></p></td>
+<td><p>Internal: Generate bar plot data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gen_line_plot_performance_data(top_ns)</span></code></p></td>
+<td><p>Internal: Generate line plot data.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="complete-example">
+<h3>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading">#</a></h3>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">Full benchmarking workflow</span><a class="headerlink" href="#id19" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_analysis.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">TS_Benchmarks</span>
+
+<span class="c1"># Load results from multiple runs</span>
+<span class="n">rw_runs</span> <span class="o">=</span> <span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rw_cycle_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">ucb_runs</span> <span class="o">=</span> <span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ucb_cycle_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">greedy_runs</span> <span class="o">=</span> <span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;greedy_cycle_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+
+<span class="c1"># Load reference data</span>
+<span class="n">reference</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;reference_scores.csv&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create benchmarks (all data generated automatically)</span>
+<span class="n">benchmarks</span> <span class="o">=</span> <span class="n">TS_Benchmarks</span><span class="p">(</span>
+    <span class="n">no_of_cycles</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">methods_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;RouletteWheel&quot;</span><span class="p">,</span> <span class="s2">&quot;BayesUCB&quot;</span><span class="p">,</span> <span class="s2">&quot;Greedy&quot;</span><span class="p">],</span>
+    <span class="n">TS_runs_data</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;RouletteWheel&quot;</span><span class="p">:</span> <span class="n">rw_runs</span><span class="p">,</span>
+        <span class="s2">&quot;BayesUCB&quot;</span><span class="p">:</span> <span class="n">ucb_runs</span><span class="p">,</span>
+        <span class="s2">&quot;Greedy&quot;</span><span class="p">:</span> <span class="n">greedy_runs</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">reference_data</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span>
+    <span class="n">top_n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">sort_type</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
+    <span class="n">top_ns</span><span class="o">=</span><span class="p">[</span><span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Generate all visualizations</span>
+<span class="n">strip_chart</span> <span class="o">=</span> <span class="n">benchmarks</span><span class="o">.</span><span class="n">stripplot_TS_results</span><span class="p">(</span>
+    <span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;strip_plot.html&quot;</span><span class="p">,</span>
+    <span class="n">legend_position</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>  <span class="c1"># or &quot;bottom&quot; for horizontal legend</span>
+<span class="p">)</span>
+
+<span class="n">bar_chart</span> <span class="o">=</span> <span class="n">benchmarks</span><span class="o">.</span><span class="n">plot_barplot_TS_results</span><span class="p">(</span>
+    <span class="n">width</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;bar_plot.html&quot;</span><span class="p">,</span>
+    <span class="n">legend_position</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span>  <span class="c1"># horizontal legend below plot</span>
+    <span class="n">dark_mode</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># set True for white text on dark backgrounds</span>
+<span class="p">)</span>
+
+<span class="n">line_chart</span> <span class="o">=</span> <span class="n">benchmarks</span><span class="o">.</span><span class="n">plot_line_performance_with_error_bars</span><span class="p">(</span>
+    <span class="n">width</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;line_plot.html&quot;</span><span class="p">,</span>
+    <span class="n">legend_position</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Access computed statistics</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Methods analyzed: </span><span class="si">{</span><span class="n">benchmarks</span><span class="o">.</span><span class="n">actual_methods</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">benchmarks</span><span class="o">.</span><span class="n">get_performance_summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="workflow-overview">
+<h2>Workflow Overview<a class="headerlink" href="#workflow-overview" title="Link to this heading">#</a></h2>
+<div class="graphviz"><object data="_images/graphviz-995d807ded7e5c09189c07cab199e5fceca5e47e.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">digraph Workflow {
+    rankdir=TB;
+    node [shape=box, style=&quot;rounded,filled&quot;, fontname=&quot;Helvetica&quot;, fontsize=10];
+    nodesep=0.3;
+    ranksep=0.4;
+
+    TSRun [label=&quot;Thompson Sampling Results&quot;, fillcolor=&quot;#ADD8E6&quot;];
+    Analysis [label=&quot;LibraryAnalysis\n(find top BBs)&quot;, fillcolor=&quot;#FFD700&quot;];
+    Viz [label=&quot;LibraryVisualization\n(create plots)&quot;, fillcolor=&quot;#90EE90&quot;];
+    Benchmark [label=&quot;TS_Benchmarks\n(compare methods)&quot;, fillcolor=&quot;#E6E6FA&quot;];
+
+    TSRun -&gt; Analysis;
+    Analysis -&gt; Viz;
+    TSRun -&gt; Benchmark;
+}</p></object></div>
+<p>Typical analysis workflow:</p>
+<ol class="arabic simple">
+<li><p><strong>Run Thompson Sampling</strong> - Generate results DataFrames</p></li>
+<li><p><strong>LibraryAnalysis</strong> - Identify top building blocks and their frequencies</p></li>
+<li><p><strong>LibraryVisualization</strong> - Create molecular structure grids</p></li>
+<li><p><strong>TS_Benchmarks</strong> - Compare multiple methods with statistical analysis</p></li>
+</ol>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="library_enumeration.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Library Enumeration</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-architecture">Module Architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraryanalysis">LibraryAnalysis</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constructor">Constructor</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#methods">Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#find-top-building-blocks">find_top_building_blocks</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#check-overlap">check_overlap</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-analysis-overlap">compare_analysis_overlap</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraryvisualization">LibraryVisualization</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Constructor</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-top-building-blocks">visualize_top_building_blocks</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-top-products-comparison">plot_top_products_comparison</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ts-benchmarks">TS_Benchmarks</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Constructor</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-methods">Visualization Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#stripplot-ts-results">stripplot_TS_results</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-barplot-ts-results">plot_barplot_TS_results</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-line-performance-with-error-bars">plot_line_performance_with_error_bars</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-methods">Other Methods</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-example">Complete Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow-overview">Workflow Overview</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

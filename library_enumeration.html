@@ -1,0 +1,2178 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Library Enumeration &#8212; TACTICS 0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=5ce0522f" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=837179f8"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=1ae7504c"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'library_enumeration';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Library Analysis" href="library_analysis.html" />
+    <link rel="prev" title="Configuration System" href="configuration.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="thompson_sampling.html">
+    Thompson Sampling
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="configuration.html">
+    Configuration System
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Library Enumeration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_analysis.html">
+    Library Analysis
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="thompson_sampling.html">
+    Thompson Sampling
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="configuration.html">
+    Configuration System
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Library Enumeration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_analysis.html">
+    Library Analysis
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Library Enumeration</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="library-enumeration">
+<h1>Library Enumeration<a class="headerlink" href="#library-enumeration" title="Link to this heading">#</a></h1>
+<p>The Library Enumeration module provides tools for generating combinatorial chemical products
+from reagent libraries using reaction SMARTS patterns. It supports single-step reactions,
+alternative SMARTS routing, multi-step synthesis pipelines, and protecting group deprotection.</p>
+<section id="module-architecture">
+<h2>Module Architecture<a class="headerlink" href="#module-architecture" title="Link to this heading">#</a></h2>
+<p>The following diagram shows the class hierarchy and dependencies:</p>
+<div class="graphviz"><object data="_images/graphviz-fb0ebf7cdc4f8b75c8cc4eb80e86319ddfe77f72.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">digraph LibraryEnumeration {
+    rankdir=TB;
+    node [shape=box, style=&quot;rounded,filled&quot;, fontname=&quot;Helvetica&quot;, fontsize=10];
+    edge [fontname=&quot;Helvetica&quot;, fontsize=9];
+    nodesep=0.2;
+    ranksep=0.4;
+
+    // Fundamental types
+    fundamental_label [label=&quot;Fundamental Types&quot;, shape=plaintext, fontname=&quot;Helvetica Bold&quot;];
+    InputSource [label=&quot;InputSource (enum)&quot;, fillcolor=&quot;#DCDCDC&quot;];
+    ProtectingGroupInfo [label=&quot;ProtectingGroupInfo&quot;, fillcolor=&quot;#DCDCDC&quot;];
+    DeprotectionSpec [label=&quot;DeprotectionSpec&quot;, fillcolor=&quot;#DCDCDC&quot;];
+    StepInput [label=&quot;StepInput&quot;, fillcolor=&quot;#DCDCDC&quot;];
+
+    // Core reaction definition
+    core_label [label=&quot;Reaction Definition&quot;, shape=plaintext, fontname=&quot;Helvetica Bold&quot;];
+    ReactionDef [label=&quot;ReactionDef (core class)&quot;, fillcolor=&quot;#007bff&quot;, fontcolor=&quot;white&quot;];
+
+    // Configuration
+    config_label [label=&quot;Configuration&quot;, shape=plaintext, fontname=&quot;Helvetica Bold&quot;];
+    ReactionConfig [label=&quot;ReactionConfig&quot;, fillcolor=&quot;#17a2b8&quot;, fontcolor=&quot;white&quot;];
+
+    // Pipeline
+    pipeline_label [label=&quot;Pipeline&quot;, shape=plaintext, fontname=&quot;Helvetica Bold&quot;];
+    SynthesisPipeline [label=&quot;SynthesisPipeline&quot;, fillcolor=&quot;#007bff&quot;, fontcolor=&quot;white&quot;];
+
+    // Results
+    result_label [label=&quot;Result Types&quot;, shape=plaintext, fontname=&quot;Helvetica Bold&quot;];
+    ValidationResult [label=&quot;ValidationResult&quot;, fillcolor=&quot;#28a745&quot;, fontcolor=&quot;white&quot;];
+    EnumerationResult [label=&quot;EnumerationResult&quot;, fillcolor=&quot;#28a745&quot;, fontcolor=&quot;white&quot;];
+    EnumerationError [label=&quot;EnumerationError&quot;, fillcolor=&quot;#28a745&quot;, fontcolor=&quot;white&quot;];
+    AutoDetectionResult [label=&quot;AutoDetectionResult&quot;, fillcolor=&quot;#28a745&quot;, fontcolor=&quot;white&quot;];
+
+    // File Utilities
+    utility_label [label=&quot;File Utilities&quot;, shape=plaintext, fontname=&quot;Helvetica Bold&quot;];
+    WriteLibrary [label=&quot;write_enumerated_library()&quot;, fillcolor=&quot;#ffc107&quot;];
+    ResultsDF [label=&quot;results_to_dataframe()&quot;, fillcolor=&quot;#ffc107&quot;];
+    FailuresDF [label=&quot;failures_to_dataframe()&quot;, fillcolor=&quot;#ffc107&quot;];
+
+    // Force vertical layout
+    fundamental_label -&gt; InputSource [style=invis];
+    InputSource -&gt; ProtectingGroupInfo [style=invis];
+    ProtectingGroupInfo -&gt; DeprotectionSpec [style=invis];
+    DeprotectionSpec -&gt; StepInput [style=invis];
+    StepInput -&gt; core_label [style=invis];
+    core_label -&gt; ReactionDef [style=invis];
+    ReactionDef -&gt; config_label [style=invis];
+    config_label -&gt; ReactionConfig [style=invis];
+    ReactionConfig -&gt; pipeline_label [style=invis];
+    pipeline_label -&gt; SynthesisPipeline [style=invis];
+    SynthesisPipeline -&gt; result_label [style=invis];
+    result_label -&gt; ValidationResult [style=invis];
+    ValidationResult -&gt; EnumerationResult [style=invis];
+    EnumerationResult -&gt; EnumerationError [style=invis];
+    EnumerationError -&gt; AutoDetectionResult [style=invis];
+    AutoDetectionResult -&gt; utility_label [style=invis];
+    utility_label -&gt; WriteLibrary [style=invis];
+    WriteLibrary -&gt; ResultsDF [style=invis];
+    ResultsDF -&gt; FailuresDF [style=invis];
+
+    // Visible dependencies
+    StepInput -&gt; InputSource [label=&quot;uses&quot;, style=dashed, constraint=false];
+    ReactionDef -&gt; DeprotectionSpec [label=&quot;contains&quot;, style=dashed, constraint=false];
+    ReactionDef -&gt; ValidationResult [label=&quot;returns&quot;, constraint=false];
+    ReactionConfig -&gt; ReactionDef [label=&quot;contains 1+&quot;, style=bold, constraint=false];
+    ReactionConfig -&gt; StepInput [label=&quot;uses&quot;, style=dashed, constraint=false];
+    ReactionConfig -&gt; ProtectingGroupInfo [label=&quot;uses (opt)&quot;, style=dashed, constraint=false];
+    SynthesisPipeline -&gt; ReactionConfig [label=&quot;constructed from&quot;, style=bold, constraint=false];
+    SynthesisPipeline -&gt; EnumerationResult [label=&quot;returns&quot;, constraint=false];
+    SynthesisPipeline -&gt; AutoDetectionResult [label=&quot;returns (opt)&quot;, constraint=false];
+    EnumerationResult -&gt; WriteLibrary [label=&quot;input&quot;, style=dashed, constraint=false];
+    EnumerationResult -&gt; ResultsDF [label=&quot;input&quot;, style=dashed, constraint=false];
+}</p></object></div>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<p><strong>Single reaction with validation:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Define and validate a reaction</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionDef</span><span class="p">,</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">SynthesisPipeline</span>
+
+<span class="c1"># Define a reaction</span>
+<span class="n">rxn</span> <span class="o">=</span> <span class="n">ReactionDef</span><span class="p">(</span>
+    <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+    <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Amide coupling&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Create configuration and pipeline</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="n">rxn</span><span class="p">],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Validate against reagent files</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">rxn</span><span class="o">.</span><span class="n">validate_reaction</span><span class="p">(</span><span class="n">reagent_files</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coverage: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">coverage_stats</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p><strong>Enumerate products with SynthesisPipeline:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Simple enumeration</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span><span class="p">,</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span>
+
+<span class="c1"># Create configuration</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">ReactionDef</span><span class="p">(</span>
+            <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+            <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Amide coupling&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Create pipeline directly from config</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Enumerate a single product from SMILES</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">enumerate_single_from_smiles</span><span class="p">([</span><span class="s2">&quot;CC(=O)O&quot;</span><span class="p">,</span> <span class="s2">&quot;CCN&quot;</span><span class="p">])</span>
+
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Product: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">product_smiles</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># CCNC(C)=O</span>
+</pre></div>
+</div>
+</div>
+<p><strong>With alternative SMARTS patterns:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Auto-routing to compatible patterns</span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SynthesisPipeline</span><span class="p">,</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span><span class="p">,</span>
+    <span class="n">StepInput</span><span class="p">,</span> <span class="n">InputSource</span>
+<span class="p">)</span>
+
+<span class="c1"># Define primary and alternative patterns</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">ReactionDef</span><span class="p">(</span>
+            <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+            <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">pattern_id</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Primary amines&quot;</span>
+        <span class="p">),</span>
+        <span class="n">ReactionDef</span><span class="p">(</span>
+            <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH:2]&gt;&gt;[C:1](=O)[N:2]&quot;</span><span class="p">,</span>
+            <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">pattern_id</span><span class="o">=</span><span class="s2">&quot;secondary&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Secondary amines&quot;</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">],</span>
+    <span class="n">step_inputs</span><span class="o">=</span><span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">StepInput</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span><span class="p">,</span> <span class="n">file_index</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">StepInput</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span><span class="p">,</span> <span class="n">file_index</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="n">step_modes</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;alternative&quot;</span><span class="p">}</span>  <span class="c1"># Mark step 0 as having alternatives</span>
+<span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Pipeline automatically tries alternative patterns at runtime</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">enumerate_single_from_smiles</span><span class="p">([</span><span class="s2">&quot;CC(=O)O&quot;</span><span class="p">,</span> <span class="s2">&quot;CCN(C)C&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pattern used: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">patterns_used</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># {0: &quot;secondary&quot;}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="fundamental-types">
+<h2>Fundamental Types<a class="headerlink" href="#fundamental-types" title="Link to this heading">#</a></h2>
+<p>These are the basic building blocks used by higher-level classes.</p>
+<section id="inputsource">
+<span id="input-source"></span><h3>InputSource<a class="headerlink" href="#inputsource" title="Link to this heading">#</a></h3>
+<p class="class-fundamental">Enum specifying the source of an input for a reaction step.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id8">
+<caption><span class="caption-text">Values</span><a class="headerlink" href="#id8" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">REAGENT_FILE</span></code></p></td>
+<td><p>Input comes from a reagent file (use <code class="docutils literal notranslate"><span class="pre">file_index</span></code> in <a class="reference internal" href="#step-input"><span class="std std-ref">StepInput</span></a>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PREVIOUS_STEP</span></code></p></td>
+<td><p>Input comes from output of a previous step (use <code class="docutils literal notranslate"><span class="pre">step_index</span></code> in <a class="reference internal" href="#step-input"><span class="std std-ref">StepInput</span></a>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputSource</span>
+
+<span class="n">source</span> <span class="o">=</span> <span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span>
+<span class="n">source</span> <span class="o">=</span> <span class="n">InputSource</span><span class="o">.</span><span class="n">PREVIOUS_STEP</span>
+</pre></div>
+</div>
+</section>
+<section id="protectinggroupinfo">
+<span id="protecting-group-info"></span><h3>ProtectingGroupInfo<a class="headerlink" href="#protectinggroupinfo" title="Link to this heading">#</a></h3>
+<p class="class-fundamental">Dataclass defining a protecting group for detection and optional removal.</p>
+<div class="dependencies admonition">
+<p class="admonition-title">Dependencies</p>
+<p>None - this is a standalone dataclass.</p>
+</div>
+<div class="pst-scrollable-table-container"><table class="table" id="id9">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id9" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 18.0%" />
+<col style="width: 10.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Human-readable name (e.g., “Boc”, “Fmoc”)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">smarts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>SMARTS pattern to detect the group</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">deprotection_smarts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Reaction SMARTS for removal (optional)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProtectingGroupInfo</span>
+
+<span class="n">boc</span> <span class="o">=</span> <span class="n">ProtectingGroupInfo</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Boc&quot;</span><span class="p">,</span>
+    <span class="n">smarts</span><span class="o">=</span><span class="s2">&quot;[NX3][C](=O)OC(C)(C)C&quot;</span><span class="p">,</span>
+    <span class="n">deprotection_smarts</span><span class="o">=</span><span class="s2">&quot;[N:1][C](=O)OC(C)(C)C&gt;&gt;[N:1]&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="deprotectionspec">
+<span id="deprotection-spec"></span><h3>DeprotectionSpec<a class="headerlink" href="#deprotectionspec" title="Link to this heading">#</a></h3>
+<p class="class-fundamental">Pydantic model specifying a deprotection to apply during synthesis.
+Deprotections can target either a reactant (before the reaction) or the product (after the reaction).</p>
+<div class="dependencies admonition">
+<p class="admonition-title">Dependencies</p>
+<p>None - uses protecting group names as strings.</p>
+</div>
+<div class="pst-scrollable-table-container"><table class="table" id="id10">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id10" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 25.0%" />
+<col style="width: 10.0%" />
+<col style="width: 43.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">group</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Name of protecting group (e.g., “Boc”, “Fmoc”)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">target</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;product&quot;</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Reactant index (int &gt;= 0) for pre-reaction, or <code class="docutils literal notranslate"><span class="pre">&quot;product&quot;</span></code> for post-reaction</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pst-scrollable-table-container"><table class="table" id="id11">
+<caption><span class="caption-text">Properties</span><a class="headerlink" href="#id11" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 20.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">is_product_deprotection</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>True if this deprotects the product (after reaction)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reactant_index</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>The reactant index if targeting a reactant, None if targeting product</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Example: Reactant Deprotection</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeprotectionSpec</span>
+
+<span class="c1"># Remove Boc from the second reactant (index 1) BEFORE reaction</span>
+<span class="n">deprot</span> <span class="o">=</span> <span class="n">DeprotectionSpec</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s2">&quot;Boc&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">deprot</span><span class="o">.</span><span class="n">is_product_deprotection</span><span class="p">)</span>  <span class="c1"># False</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">deprot</span><span class="o">.</span><span class="n">reactant_index</span><span class="p">)</span>           <span class="c1"># 1</span>
+</pre></div>
+</div>
+<p><strong>Example: Product Deprotection</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeprotectionSpec</span>
+
+<span class="c1"># Remove Fmoc from the product AFTER reaction</span>
+<span class="n">deprot</span> <span class="o">=</span> <span class="n">DeprotectionSpec</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s2">&quot;Fmoc&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;product&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">deprot</span><span class="o">.</span><span class="n">is_product_deprotection</span><span class="p">)</span>  <span class="c1"># True</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">deprot</span><span class="o">.</span><span class="n">reactant_index</span><span class="p">)</span>           <span class="c1"># None</span>
+</pre></div>
+</div>
+</section>
+<section id="stepinput">
+<span id="step-input"></span><h3>StepInput<a class="headerlink" href="#stepinput" title="Link to this heading">#</a></h3>
+<p class="class-fundamental">Pydantic model specifying where an input comes from for a reaction step.</p>
+<div class="dependencies admonition">
+<p class="admonition-title">Dependencies</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#input-source"><span class="std std-ref">InputSource</span></a> - enum specifying the source type</p></li>
+</ul>
+</div>
+<p><strong>Depends on:</strong> <a class="reference internal" href="#input-source"><span class="std std-ref">InputSource</span></a></p>
+<div class="pst-scrollable-table-container"><table class="table" id="id12">
+<caption><span class="caption-text">Parameters</span><a class="headerlink" href="#id12" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 18.0%" />
+<col style="width: 12.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">source</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">InputSource</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Either <code class="docutils literal notranslate"><span class="pre">REAGENT_FILE</span></code> or <code class="docutils literal notranslate"><span class="pre">PREVIOUS_STEP</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">file_index</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Conditional</p></td>
+<td><p>Index into <code class="docutils literal notranslate"><span class="pre">reagent_file_list</span></code>. Required if source is <code class="docutils literal notranslate"><span class="pre">REAGENT_FILE</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">step_index</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Conditional</p></td>
+<td><p>Index of previous step. Required if source is <code class="docutils literal notranslate"><span class="pre">PREVIOUS_STEP</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepInput</span><span class="p">,</span> <span class="n">InputSource</span>
+
+<span class="c1"># Input from first reagent file</span>
+<span class="n">input1</span> <span class="o">=</span> <span class="n">StepInput</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span><span class="p">,</span> <span class="n">file_index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Input from output of step 0</span>
+<span class="n">input2</span> <span class="o">=</span> <span class="n">StepInput</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">InputSource</span><span class="o">.</span><span class="n">PREVIOUS_STEP</span><span class="p">,</span> <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="reaction-definition">
+<h2>Reaction Definition<a class="headerlink" href="#reaction-definition" title="Link to this heading">#</a></h2>
+<section id="reactiondef">
+<span id="reaction-def"></span><h3>ReactionDef<a class="headerlink" href="#reactiondef" title="Link to this heading">#</a></h3>
+<p class="class-core"><strong>The core class for defining a single reaction with built-in validation and visualization.</strong></p>
+<p>This is the fundamental building block of the SMARTS toolkit. Each <code class="docutils literal notranslate"><span class="pre">ReactionDef</span></code> represents
+a single chemical reaction that can validate reagent compatibility, visualize template matches,
+and be combined into multi-step syntheses via <a class="reference internal" href="#reaction-config"><span class="std std-ref">ReactionConfig</span></a>.</p>
+<div class="dependencies admonition">
+<p class="admonition-title">Dependencies</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#deprotection-spec"><span class="std std-ref">DeprotectionSpec</span></a> - for deprotections (optional)</p></li>
+<li><p><a class="reference internal" href="#protecting-group-info"><span class="std std-ref">ProtectingGroupInfo</span></a> - used during validation (optional)</p></li>
+<li><p>Returns <a class="reference internal" href="#validation-result"><span class="std std-ref">ValidationResult</span></a> from validation methods</p></li>
+</ul>
+</div>
+<p><strong>Depends on:</strong> <a class="reference internal" href="#deprotection-spec"><span class="std std-ref">DeprotectionSpec</span></a> (optional), <a class="reference internal" href="#protecting-group-info"><span class="std std-ref">ProtectingGroupInfo</span></a> (optional)</p>
+<section id="constructor-parameters">
+<h4>Constructor Parameters<a class="headerlink" href="#constructor-parameters" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 18.0%" />
+<col style="width: 10.0%" />
+<col style="width: 52.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reaction_smarts</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Reaction SMARTS string (validated on creation)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">step_index</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Step in the sequence (0 = first step). Default: 0</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pattern_id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Identifier for alternatives (auto-generated if not provided)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Human-readable description</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">deprotections</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[DeprotectionSpec]</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Deprotections to apply for this reaction. Default: []</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="properties">
+<h4>Properties<a class="headerlink" href="#properties" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 20.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_reactants</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Number of reactants in the reaction</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">is_validated</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>True if <code class="docutils literal notranslate"><span class="pre">validate_reaction()</span></code> has been called</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">coverage_stats</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">float]</span></code></p></td>
+<td><p>Coverage percentage per position (0-100)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">validation_result</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ValidationResult</span></code></p></td>
+<td><p>Cached validation result (None if not validated)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="validation-methods">
+<h4>Validation Methods<a class="headerlink" href="#validation-methods" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">validate_reaction(reagent_files=None,</span> <span class="pre">reagent_smiles=None,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Validate reaction against reagent files or SMILES lists. Returns <a class="reference internal" href="#validation-result"><span class="std std-ref">ValidationResult</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">get_compatible_reagents(position)</span></code></p></td>
+<td><p>Get list of <code class="docutils literal notranslate"><span class="pre">(smiles,</span> <span class="pre">name)</span></code> tuples for compatible reagents at position</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_incompatible_reagents(position)</span></code></p></td>
+<td><p>Get list of <code class="docutils literal notranslate"><span class="pre">(smiles,</span> <span class="pre">name)</span></code> tuples for incompatible reagents at position</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">get_reactant_template(position)</span></code></p></td>
+<td><p>Get RDKit Mol template for a specific position</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">summary()</span></code></p></td>
+<td><p>Human-readable validation summary string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>validate_reaction parameters:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 18.0%" />
+<col style="width: 10.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reagent_files</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[str]</span></code></p></td>
+<td><p>No*</p></td>
+<td><p>Paths to reagent files (.smi format)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reagent_smiles</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[list[tuple]]</span></code></p></td>
+<td><p>No*</p></td>
+<td><p>Lists of <code class="docutils literal notranslate"><span class="pre">(smiles,</span> <span class="pre">name)</span></code> tuples per position</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">protecting_groups</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[ProtectingGroupInfo]</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Custom protecting groups for detection</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">deprotect</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Apply deprotection during validation. Default: False</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">desalt</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Remove salt fragments during validation. Default: False</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">test_reactions</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Run test reactions to verify products form. Default: False</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>* Must provide either <code class="docutils literal notranslate"><span class="pre">reagent_files</span></code> or <code class="docutils literal notranslate"><span class="pre">reagent_smiles</span></code></p>
+</section>
+<section id="visualization-methods">
+<h4>Visualization Methods<a class="headerlink" href="#visualization-methods" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 45.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">visualize_template_match(smiles,</span> <span class="pre">position,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Visualize which atoms in a molecule match the reaction template</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">visualize_reaction(size=(800,</span> <span class="pre">200))</span></code></p></td>
+<td><p>Visualize the reaction scheme</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="example">
+<h4>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h4>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">Complete ReactionDef workflow</span><a class="headerlink" href="#id13" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionDef</span><span class="p">,</span> <span class="n">DeprotectionSpec</span>
+
+<span class="c1"># Define reaction with deprotection on reactant</span>
+<span class="n">rxn</span> <span class="o">=</span> <span class="n">ReactionDef</span><span class="p">(</span>
+    <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+    <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">pattern_id</span><span class="o">=</span><span class="s2">&quot;amide_coupling&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Amide bond formation&quot;</span><span class="p">,</span>
+    <span class="n">deprotections</span><span class="o">=</span><span class="p">[</span><span class="n">DeprotectionSpec</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s2">&quot;Boc&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="c1"># Validate against reagent files</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">rxn</span><span class="o">.</span><span class="n">validate_reaction</span><span class="p">(</span>
+    <span class="n">reagent_files</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">],</span>
+    <span class="n">deprotect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">test_reactions</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># Check coverage</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Position 0 coverage: </span><span class="si">{</span><span class="n">rxn</span><span class="o">.</span><span class="n">coverage_stats</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Position 1 coverage: </span><span class="si">{</span><span class="n">rxn</span><span class="o">.</span><span class="n">coverage_stats</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reaction success rate: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">reaction_success_rate</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get compatible reagents for position 1</span>
+<span class="n">compatible</span> <span class="o">=</span> <span class="n">rxn</span><span class="o">.</span><span class="n">get_compatible_reagents</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">compatible</span><span class="p">)</span><span class="si">}</span><span class="s2"> compatible amines&quot;</span><span class="p">)</span>
+
+<span class="c1"># Troubleshoot a problematic reagent</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">rxn</span><span class="o">.</span><span class="n">visualize_template_match</span><span class="p">(</span><span class="s2">&quot;CC(C)(C)OC(=O)NCCn&quot;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h2>
+<section id="reactionconfig">
+<span id="reaction-config"></span><h3>ReactionConfig<a class="headerlink" href="#reactionconfig" title="Link to this heading">#</a></h3>
+<p class="class-config"><strong>Container for synthesis configuration holding one or more ReactionDef objects.</strong></p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">ReactionConfig</span></code> to define complex syntheses including:</p>
+<ul class="simple">
+<li><p>Single reactions (one <code class="docutils literal notranslate"><span class="pre">ReactionDef</span></code>)</p></li>
+<li><p>Alternative SMARTS patterns (multiple <code class="docutils literal notranslate"><span class="pre">ReactionDef</span></code> objects with same <code class="docutils literal notranslate"><span class="pre">step_index</span></code>)</p></li>
+<li><p>Multi-step syntheses (multiple <code class="docutils literal notranslate"><span class="pre">ReactionDef</span></code> objects with different <code class="docutils literal notranslate"><span class="pre">step_index</span></code> values)</p></li>
+<li><p>Protecting group deprotections (via <code class="docutils literal notranslate"><span class="pre">ReactionDef.deprotections</span></code>)</p></li>
+</ul>
+<div class="dependencies admonition">
+<p class="admonition-title">Dependencies</p>
+<p>Composes multiple lower-level classes:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#reaction-def"><span class="std std-ref">ReactionDef</span></a> - one or more reaction definitions (required)</p></li>
+<li><p><a class="reference internal" href="#step-input"><span class="std std-ref">StepInput</span></a> - input sources for multi-step synthesis (required for multi-step)</p></li>
+<li><p><a class="reference internal" href="#protecting-group-info"><span class="std std-ref">ProtectingGroupInfo</span></a> - custom protecting groups (optional)</p></li>
+</ul>
+</div>
+<p><strong>Depends on:</strong> <a class="reference internal" href="#reaction-def"><span class="std std-ref">ReactionDef</span></a>, <a class="reference internal" href="#step-input"><span class="std std-ref">StepInput</span></a>, <a class="reference internal" href="#protecting-group-info"><span class="std std-ref">ProtectingGroupInfo</span></a></p>
+<section id="id1">
+<h4>Constructor Parameters<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 22.0%" />
+<col style="width: 10.0%" />
+<col style="width: 46.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reactions</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[ReactionDef]</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>List of reaction definitions (minimum 1)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reagent_file_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[str]</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Paths to reagent files. Default: []</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">step_inputs</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">list[StepInput]]</span></code></p></td>
+<td><p>Conditional</p></td>
+<td><p>Mapping of step_index to input sources. Required if multiple reactions</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">step_modes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">str]</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Mark steps with alternative patterns: <code class="docutils literal notranslate"><span class="pre">{step_index:</span> <span class="pre">&quot;alternative&quot;}</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">protecting_groups</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[ProtectingGroupInfo]</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Custom protecting group definitions</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id2">
+<h4>Properties<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 20.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_steps</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Number of unique steps</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">is_multi_step</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>True if more than one step</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">steps_with_alternatives</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[int]</span></code></p></td>
+<td><p>Step indices that have alternative patterns</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">step_indices</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[int]</span></code></p></td>
+<td><p>Sorted list of all step indices</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="methods">
+<h4>Methods<a class="headerlink" href="#methods" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_reactions_for_step(step_index)</span></code></p></td>
+<td><p>Get all ReactionDef objects for a given step</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">get_primary_reaction(step_index)</span></code></p></td>
+<td><p>Get the primary reaction (pattern_id=’primary’ or first)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_inputs_for_step(step_index)</span></code></p></td>
+<td><p>Get StepInput configuration for a step</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">has_alternatives_at_step(step_index)</span></code></p></td>
+<td><p>Check if step has alternative SMARTS patterns</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">validate_all(deprotect=False,</span> <span class="pre">desalt=False)</span></code></p></td>
+<td><p>Validate all reactions, returns <code class="docutils literal notranslate"><span class="pre">{step:</span> <span class="pre">{pattern_id:</span> <span class="pre">ValidationResult}}</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="example-single-reaction">
+<h4>Example: Single Reaction<a class="headerlink" href="#example-single-reaction" title="Link to this heading">#</a></h4>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">Single reaction configuration</span><a class="headerlink" href="#id14" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionDef</span><span class="p">,</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">SynthesisPipeline</span>
+
+<span class="n">rxn</span> <span class="o">=</span> <span class="n">ReactionDef</span><span class="p">(</span>
+    <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Amide coupling&quot;</span>
+<span class="p">)</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="n">rxn</span><span class="p">],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Create pipeline directly from config</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="example-multi-step-synthesis">
+<h4>Example: Multi-Step Synthesis<a class="headerlink" href="#example-multi-step-synthesis" title="Link to this heading">#</a></h4>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">Two-step synthesis with intermediate</span><a class="headerlink" href="#id15" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ReactionDef</span><span class="p">,</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">StepInput</span><span class="p">,</span> <span class="n">InputSource</span><span class="p">,</span> <span class="n">DeprotectionSpec</span><span class="p">,</span>
+    <span class="n">SynthesisPipeline</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 0: Amide coupling</span>
+<span class="n">step0</span> <span class="o">=</span> <span class="n">ReactionDef</span><span class="p">(</span>
+    <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+    <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Amide coupling&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 1: Reductive amination (with Boc deprotection on reactant)</span>
+<span class="n">step1</span> <span class="o">=</span> <span class="n">ReactionDef</span><span class="p">(</span>
+    <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[NH2:1].[CH:2]=O&gt;&gt;[NH:1][CH2:2]&quot;</span><span class="p">,</span>
+    <span class="n">step_index</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Reductive amination&quot;</span><span class="p">,</span>
+    <span class="n">deprotections</span><span class="o">=</span><span class="p">[</span><span class="n">DeprotectionSpec</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s2">&quot;Boc&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>  <span class="c1"># Deprotect first input</span>
+<span class="p">)</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="n">step0</span><span class="p">,</span> <span class="n">step1</span><span class="p">],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;aldehydes.smi&quot;</span><span class="p">],</span>
+    <span class="n">step_inputs</span><span class="o">=</span><span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">StepInput</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span><span class="p">,</span> <span class="n">file_index</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">StepInput</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span><span class="p">,</span> <span class="n">file_index</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">],</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">StepInput</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">InputSource</span><span class="o">.</span><span class="n">PREVIOUS_STEP</span><span class="p">,</span> <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">StepInput</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span><span class="p">,</span> <span class="n">file_index</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="example-alternative-smarts">
+<h4>Example: Alternative SMARTS<a class="headerlink" href="#example-alternative-smarts" title="Link to this heading">#</a></h4>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">Multiple patterns for the same step with runtime fallback</span><a class="headerlink" href="#id16" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ReactionDef</span><span class="p">,</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">StepInput</span><span class="p">,</span> <span class="n">InputSource</span><span class="p">,</span> <span class="n">SynthesisPipeline</span>
+<span class="p">)</span>
+
+<span class="c1"># Primary pattern for primary amines</span>
+<span class="n">primary</span> <span class="o">=</span> <span class="n">ReactionDef</span><span class="p">(</span>
+    <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+    <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">pattern_id</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span>  <span class="c1"># Required: first alternative should be &quot;primary&quot;</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Primary amines&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Alternative for secondary amines</span>
+<span class="n">secondary</span> <span class="o">=</span> <span class="n">ReactionDef</span><span class="p">(</span>
+    <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH:2]&gt;&gt;[C:1](=O)[N:2]&quot;</span><span class="p">,</span>
+    <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">pattern_id</span><span class="o">=</span><span class="s2">&quot;secondary&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Secondary amines&quot;</span>
+<span class="p">)</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">],</span>
+    <span class="n">step_inputs</span><span class="o">=</span><span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">StepInput</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span><span class="p">,</span> <span class="n">file_index</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">StepInput</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span><span class="p">,</span> <span class="n">file_index</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="n">step_modes</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;alternative&quot;</span><span class="p">}</span>  <span class="c1"># Mark step 0 as having alternatives</span>
+<span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Runtime pattern fallback: pipeline automatically tries patterns until one succeeds</span>
+<span class="c1"># No need to call auto_detect_compatibility()</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="pipeline">
+<h2>Pipeline<a class="headerlink" href="#pipeline" title="Link to this heading">#</a></h2>
+<section id="synthesispipeline">
+<span id="synthesis-pipeline"></span><h3>SynthesisPipeline<a class="headerlink" href="#synthesispipeline" title="Link to this heading">#</a></h3>
+<p class="class-core"><strong>Main entry point for executing syntheses and enumerating products.</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">SynthesisPipeline</span></code> orchestrates the synthesis process, handling:</p>
+<ul class="simple">
+<li><p>Single reactions from SMARTS strings</p></li>
+<li><p>Automatic routing to compatible alternative patterns (runtime fallback)</p></li>
+<li><p>Multi-step syntheses with intermediate tracking</p></li>
+<li><p>Batch enumeration with optional parallelization</p></li>
+<li><p>Integration with Thompson Sampling via multiprocessing support</p></li>
+</ul>
+<div class="dependencies admonition">
+<p class="admonition-title">Dependencies</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#reaction-config"><span class="std std-ref">ReactionConfig</span></a> - passed to constructor</p></li>
+<li><p><a class="reference internal" href="#reaction-def"><span class="std std-ref">ReactionDef</span></a> - accessed via config</p></li>
+<li><p>Returns <a class="reference internal" href="#enumeration-result"><span class="std std-ref">EnumerationResult</span></a>, <a class="reference internal" href="#enumeration-error"><span class="std std-ref">EnumerationError</span></a>, <a class="reference internal" href="#auto-detection-result"><span class="std std-ref">AutoDetectionResult</span></a></p></li>
+</ul>
+</div>
+<p><strong>Depends on:</strong> <a class="reference internal" href="#reaction-config"><span class="std std-ref">ReactionConfig</span></a></p>
+<section id="constructor">
+<h4>Constructor<a class="headerlink" href="#constructor" title="Link to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span><span class="p">,</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="n">ReactionDef</span><span class="p">(</span><span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">)],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;reagents.smi&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table" id="id17">
+<caption><span class="caption-text">Constructor Parameters</span><a class="headerlink" href="#id17" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 10.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">config</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ReactionConfig</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Reaction configuration with reactions and reagent files</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="enumeration-methods">
+<h4>Enumeration Methods<a class="headerlink" href="#enumeration-methods" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 45.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">enumerate_single(reagent_mols,</span> <span class="pre">reagent_keys=None,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Enumerate single product from RDKit Mol objects</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">enumerate_single_from_smiles(smiles_list,</span> <span class="pre">reagent_keys=None,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Enumerate single product from SMILES strings</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">enumerate_library(n_jobs=1,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Enumerate all combinations from reagent files</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">enumerate_batch(combinations,</span> <span class="pre">n_jobs=1,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Enumerate specific combinations, optionally in parallel</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>enumerate_single_from_smiles parameters:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 22.0%" />
+<col style="width: 10.0%" />
+<col style="width: 46.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">smiles_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[str]</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>SMILES strings for each reagent position</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reagent_keys</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[str]</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Keys for compatibility lookup (names or identifiers)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">store_intermediates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Store intermediate products for multi-step. Default: False</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Returns:</strong> <a class="reference internal" href="#enumeration-result"><span class="std std-ref">EnumerationResult</span></a></p>
+</section>
+<section id="utility-methods">
+<h4>Utility Methods<a class="headerlink" href="#utility-methods" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 45.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_validator(step_index=0,</span> <span class="pre">pattern_id=&quot;primary&quot;)</span></code></p></td>
+<td><p>Get internal validator for troubleshooting</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">validate_all()</span></code></p></td>
+<td><p>Validate all steps and patterns</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">auto_detect_compatibility(reagent_lists=None,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Pre-detect which reagents work with which patterns (optional optimization)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">register_compatibility(position,</span> <span class="pre">reagent_key,</span> <span class="pre">patterns,</span> <span class="pre">...)</span></code></p></td>
+<td><p>Manually register a reagent’s compatible patterns</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_compatible_patterns(reagent_keys,</span> <span class="pre">step_index=0)</span></code></p></td>
+<td><p>Find pattern compatible with all reagents</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">get_compatibility_map()</span></code></p></td>
+<td><p>Get full compatibility mapping</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">prepare_worker_data()</span></code></p></td>
+<td><p>Serialize for multiprocessing workers</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">from_worker_data(data)</span></code></p></td>
+<td><p>Reconstruct pipeline in worker process (class method)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id3">
+<h4>Properties<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 20.0%" />
+<col style="width: 55.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_steps</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Number of reaction steps</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">num_components</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Number of reagent files/positions required</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">is_multi_step</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>True if multi-step synthesis</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">has_alternatives</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>True if any step has alternative patterns</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pattern_ids</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">list[str]]</span></code></p></td>
+<td><p>Available pattern IDs at each step</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reactions</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[ReactionDef]</span></code></p></td>
+<td><p>All reactions from config</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reagent_file_list</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[str]</span></code></p></td>
+<td><p>Reagent file paths from config</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="example-basic-enumeration">
+<h4>Example: Basic Enumeration<a class="headerlink" href="#example-basic-enumeration" title="Link to this heading">#</a></h4>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">Enumerate products from SMILES</span><a class="headerlink" href="#id18" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span><span class="p">,</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">ReactionDef</span><span class="p">(</span>
+            <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+            <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Single enumeration</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">enumerate_single_from_smiles</span><span class="p">([</span><span class="s2">&quot;CC(=O)O&quot;</span><span class="p">,</span> <span class="s2">&quot;CCN&quot;</span><span class="p">])</span>
+
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Product: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">product_smiles</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pattern used: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">patterns_used</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="example-library-enumeration">
+<h4>Example: Library Enumeration<a class="headerlink" href="#example-library-enumeration" title="Link to this heading">#</a></h4>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">Enumerate all products with parallelization</span><a class="headerlink" href="#id19" title="Link to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span><span class="p">,</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span><span class="p">,</span> <span class="n">results_to_dataframe</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">ReactionDef</span><span class="p">(</span>
+            <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+            <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Enumerate all combinations with 4 parallel workers</span>
+<span class="n">all_results</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">enumerate_library</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">show_progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Analyze results</span>
+<span class="n">successes</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">success</span><span class="p">]</span>
+<span class="n">failures</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_results</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">success</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Success rate: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">successes</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+<span class="c1"># Convert to Polars DataFrame</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">results_to_dataframe</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="protecting-groups-and-deprotection">
+<h2>Protecting Groups and Deprotection<a class="headerlink" href="#protecting-groups-and-deprotection" title="Link to this heading">#</a></h2>
+<p>The SMARTS toolkit includes built-in support for common protecting groups and allows
+defining custom groups for specialized chemistry.</p>
+<section id="built-in-protecting-groups">
+<span id="id4"></span><h3>Built-in Protecting Groups<a class="headerlink" href="#built-in-protecting-groups" title="Link to this heading">#</a></h3>
+<p>The following protecting groups are available by default:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 15.0%" />
+<col style="width: 18.0%" />
+<col style="width: 35.0%" />
+<col style="width: 32.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Protects</p></th>
+<th class="head"><p>Detection SMARTS</p></th>
+<th class="head"><p>Result</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Boc</p></td>
+<td><p>Amine (N)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[NX3][C](=O)OC(C)(C)C</span></code></p></td>
+<td><p>Free amine</p></td>
+</tr>
+<tr class="row-odd"><td><p>Fmoc</p></td>
+<td><p>Amine (N)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[NX3]C(=O)OCC1c2ccccc2-c2ccccc12</span></code></p></td>
+<td><p>Free amine</p></td>
+</tr>
+<tr class="row-even"><td><p>Cbz</p></td>
+<td><p>Amine (N)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[NX3]C(=O)OCc1ccccc1</span></code></p></td>
+<td><p>Free amine</p></td>
+</tr>
+<tr class="row-odd"><td><p>Acetamide</p></td>
+<td><p>Amine (N)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[NX3][C](=O)[CH3]</span></code></p></td>
+<td><p>Free amine</p></td>
+</tr>
+<tr class="row-even"><td><p>TBS</p></td>
+<td><p>Alcohol (O)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[OX2][Si](C)(C)C(C)(C)C</span></code></p></td>
+<td><p>Free alcohol</p></td>
+</tr>
+<tr class="row-odd"><td><p>O-Benzyl</p></td>
+<td><p>Alcohol (O)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[OX2]Cc1ccccc1</span></code></p></td>
+<td><p>Free alcohol</p></td>
+</tr>
+<tr class="row-even"><td><p>Trityl</p></td>
+<td><p>Amine/Alcohol</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[NX3,OX2]C(c1ccccc1)(c1ccccc1)c1ccccc1</span></code></p></td>
+<td><p>Free N/O</p></td>
+</tr>
+<tr class="row-odd"><td><p>tBu-ester</p></td>
+<td><p>Carboxylic acid</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[CX3](=O)OC(C)(C)C</span></code></p></td>
+<td><p>Free acid</p></td>
+</tr>
+<tr class="row-even"><td><p>Me-ester</p></td>
+<td><p>Carboxylic acid</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[CX3](=O)O[CH3]</span></code></p></td>
+<td><p>Free acid</p></td>
+</tr>
+<tr class="row-odd"><td><p>Et-ester</p></td>
+<td><p>Carboxylic acid</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[CX3](=O)OCC</span></code></p></td>
+<td><p>Free acid</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Accessing protecting group information:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration.smarts_toolkit.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_all_protecting_group_names</span><span class="p">,</span>
+    <span class="n">get_protecting_group</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># List all available protecting groups</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">get_all_protecting_group_names</span><span class="p">())</span>
+<span class="c1"># [&#39;Boc&#39;, &#39;Fmoc&#39;, &#39;Cbz&#39;, &#39;Acetamide&#39;, &#39;TBS&#39;, &#39;O-Benzyl&#39;, &#39;Trityl&#39;, &#39;tBu-ester&#39;, &#39;Me-ester&#39;, &#39;Et-ester&#39;]</span>
+
+<span class="c1"># Get details for a specific group</span>
+<span class="n">boc</span> <span class="o">=</span> <span class="n">get_protecting_group</span><span class="p">(</span><span class="s2">&quot;Boc&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Name: </span><span class="si">{</span><span class="n">boc</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detection SMARTS: </span><span class="si">{</span><span class="n">boc</span><span class="o">.</span><span class="n">smarts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Deprotection SMARTS: </span><span class="si">{</span><span class="n">boc</span><span class="o">.</span><span class="n">deprotection_smarts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="reactant-deprotection">
+<h3>Reactant Deprotection<a class="headerlink" href="#reactant-deprotection" title="Link to this heading">#</a></h3>
+<p>Deprotect a reactant <strong>before</strong> the reaction runs using <code class="docutils literal notranslate"><span class="pre">target=&lt;reactant_index&gt;</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span><span class="p">,</span> <span class="n">DeprotectionSpec</span><span class="p">,</span> <span class="n">SynthesisPipeline</span>
+<span class="p">)</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">ReactionDef</span><span class="p">(</span>
+            <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+            <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">deprotections</span><span class="o">=</span><span class="p">[</span>
+                <span class="c1"># Remove Boc from second reactant (index 1) before reaction</span>
+                <span class="n">DeprotectionSpec</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s2">&quot;Boc&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;boc_amines.smi&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Boc-protected amine will be deprotected before amide coupling</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">enumerate_single_from_smiles</span><span class="p">([</span>
+    <span class="s2">&quot;CC(=O)O&quot;</span><span class="p">,</span>                    <span class="c1"># Acetic acid</span>
+    <span class="s2">&quot;CC(C)(C)OC(=O)NCCN&quot;</span>          <span class="c1"># Boc-ethylenediamine</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="product-deprotection">
+<h3>Product Deprotection<a class="headerlink" href="#product-deprotection" title="Link to this heading">#</a></h3>
+<p>Deprotect the product <strong>after</strong> the reaction runs using <code class="docutils literal notranslate"><span class="pre">target=&quot;product&quot;</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span><span class="p">,</span> <span class="n">DeprotectionSpec</span><span class="p">,</span> <span class="n">SynthesisPipeline</span>
+<span class="p">)</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">ReactionDef</span><span class="p">(</span>
+            <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+            <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">deprotections</span><span class="o">=</span><span class="p">[</span>
+                <span class="c1"># Remove Fmoc from product after reaction</span>
+                <span class="n">DeprotectionSpec</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s2">&quot;Fmoc&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;product&quot;</span><span class="p">),</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-protecting-groups">
+<h3>Custom Protecting Groups<a class="headerlink" href="#custom-protecting-groups" title="Link to this heading">#</a></h3>
+<p>Define custom protecting groups using <a class="reference internal" href="#protecting-group-info"><span class="std std-ref">ProtectingGroupInfo</span></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span><span class="p">,</span> <span class="n">DeprotectionSpec</span><span class="p">,</span> <span class="n">ProtectingGroupInfo</span><span class="p">,</span>
+    <span class="n">SynthesisPipeline</span>
+<span class="p">)</span>
+
+<span class="c1"># Define a custom protecting group</span>
+<span class="n">alloc</span> <span class="o">=</span> <span class="n">ProtectingGroupInfo</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Alloc&quot;</span><span class="p">,</span>
+    <span class="n">smarts</span><span class="o">=</span><span class="s2">&quot;[NX3]C(=O)OCC=C&quot;</span><span class="p">,</span>
+    <span class="n">deprotection_smarts</span><span class="o">=</span><span class="s2">&quot;[N:1]C(=O)OCC=C&gt;&gt;[N:1]&quot;</span>
+<span class="p">)</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">ReactionDef</span><span class="p">(</span>
+            <span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;[C:1](=O)[OH].[NH2:2]&gt;&gt;[C:1](=O)[NH:2]&quot;</span><span class="p">,</span>
+            <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">deprotections</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">DeprotectionSpec</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s2">&quot;Alloc&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;product&quot;</span><span class="p">),</span>
+            <span class="p">],</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">],</span>
+    <span class="n">protecting_groups</span><span class="o">=</span><span class="p">[</span><span class="n">alloc</span><span class="p">],</span>  <span class="c1"># Register custom group</span>
+<span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="result-types">
+<h2>Result Types<a class="headerlink" href="#result-types" title="Link to this heading">#</a></h2>
+<section id="validationresult">
+<span id="validation-result"></span><h3>ValidationResult<a class="headerlink" href="#validationresult" title="Link to this heading">#</a></h3>
+<p class="class-result"><strong>Comprehensive results from SMARTS validation.</strong></p>
+<p>Returned by <a class="reference internal" href="#reaction-def"><span class="std std-ref">ReactionDef.validate_reaction()</span></a>.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id20">
+<caption><span class="caption-text">Attributes</span><a class="headerlink" href="#id20" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 28.0%" />
+<col style="width: 25.0%" />
+<col style="width: 47.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">compatible_reagents</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">list[tuple]]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{position:</span> <span class="pre">[(smiles,</span> <span class="pre">name),</span> <span class="pre">...]}</span></code> - reagents that match</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">incompatible_reagents</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">list[tuple]]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{position:</span> <span class="pre">[(smiles,</span> <span class="pre">name),</span> <span class="pre">...]}</span></code> - reagents that don’t match</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">invalid_smiles</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">list[tuple]]</span></code></p></td>
+<td><p>Unparseable SMILES entries</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">duplicate_smiles</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">list[tuple]]</span></code></p></td>
+<td><p>Duplicate entries</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">protected_reagents</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">list[tuple]]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{position:</span> <span class="pre">[(smiles,</span> <span class="pre">name,</span> <span class="pre">[groups]),</span> <span class="pre">...]}</span></code> - with protecting groups</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">multi_fragment_reagents</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">list[tuple]]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{position:</span> <span class="pre">[(smiles,</span> <span class="pre">name,</span> <span class="pre">[fragments]),</span> <span class="pre">...]}</span></code> - with salts</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">coverage_stats</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">float]</span></code></p></td>
+<td><p>Percent compatible per position (0-100)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reaction_success_rate</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
+<td><p>Percent of test reactions that succeeded</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">error_messages</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[str]</span></code></p></td>
+<td><p>Critical errors</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">warnings</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[str]</span></code></p></td>
+<td><p>Non-critical warnings</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Methods and Properties:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Member</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">is_valid()</span></code></p></td>
+<td><p>True if all positions have &gt;0% coverage and no critical errors</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">total_compatible</span></code></p></td>
+<td><p>Total compatible reagents across all positions</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">total_incompatible</span></code></p></td>
+<td><p>Total incompatible reagents</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="enumerationresult">
+<span id="enumeration-result"></span><h3>EnumerationResult<a class="headerlink" href="#enumerationresult" title="Link to this heading">#</a></h3>
+<p class="class-result"><strong>Complete result from pipeline enumeration.</strong></p>
+<p>Returned by <a class="reference internal" href="#synthesis-pipeline"><span class="std std-ref">SynthesisPipeline</span></a> enumeration methods.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id21">
+<caption><span class="caption-text">Attributes</span><a class="headerlink" href="#id21" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 25.0%" />
+<col style="width: 53.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">product</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mol</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Final product as RDKit Mol object</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">product_smiles</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>SMILES of final product</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">product_name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Name derived from reagent keys</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">patterns_used</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">str]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{step_index:</span> <span class="pre">pattern_id}</span></code> for each step</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">intermediates</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">Mol]</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{step_index:</span> <span class="pre">mol}</span></code> if <code class="docutils literal notranslate"><span class="pre">store_intermediates=True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">error</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">EnumerationError</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Error details if failed</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Properties:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">success</span></code></p></td>
+<td><p>True if enumeration succeeded (product is not None and no error)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="enumerationerror">
+<span id="enumeration-error"></span><h3>EnumerationError<a class="headerlink" href="#enumerationerror" title="Link to this heading">#</a></h3>
+<p class="class-result"><strong>Details about a failed enumeration.</strong></p>
+<p>Contained in <a class="reference internal" href="#enumeration-result"><span class="std std-ref">EnumerationResult.error</span></a> when enumeration fails.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id22">
+<caption><span class="caption-text">Attributes</span><a class="headerlink" href="#id22" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 25.0%" />
+<col style="width: 53.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">step_index</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
+<td><p>Which step failed</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pattern_id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>Which pattern was attempted</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">error_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>One of: <code class="docutils literal notranslate"><span class="pre">no_compatible_pattern</span></code>, <code class="docutils literal notranslate"><span class="pre">reaction_failed</span></code>, <code class="docutils literal notranslate"><span class="pre">invalid_input</span></code>, <code class="docutils literal notranslate"><span class="pre">deprotection_failed</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">message</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Human-readable description</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reagent_smiles</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[str]</span></code></p></td>
+<td><p>Input SMILES that caused the failure</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Example: Handling Errors</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">enumerate_single_from_smiles</span><span class="p">([</span><span class="s2">&quot;CC(=O)O&quot;</span><span class="p">,</span> <span class="s2">&quot;CCC&quot;</span><span class="p">])</span>  <span class="c1"># Propane has no amine</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">error</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed at step </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">step_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error type: </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">error_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Message: </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reagents: </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">reagent_smiles</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="autodetectionresult">
+<span id="auto-detection-result"></span><h3>AutoDetectionResult<a class="headerlink" href="#autodetectionresult" title="Link to this heading">#</a></h3>
+<p class="class-result"><strong>Results from automatic SMARTS compatibility detection.</strong></p>
+<p>Returned by <a class="reference internal" href="#synthesis-pipeline"><span class="std std-ref">SynthesisPipeline.auto_detect_compatibility()</span></a>.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="id23">
+<caption><span class="caption-text">Attributes</span><a class="headerlink" href="#id23" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 30.0%" />
+<col style="width: 45.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pattern_results</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">dict[str,</span> <span class="pre">ValidationResult]]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{step_index:</span> <span class="pre">{pattern_id:</span> <span class="pre">ValidationResult}}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">compatibility_map</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[tuple,</span> <span class="pre">set[str]]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{(step_index,</span> <span class="pre">position,</span> <span class="pre">reagent_key):</span> <span class="pre">{pattern_ids}}</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">coverage_by_pattern</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">dict[str,</span> <span class="pre">dict[int,</span> <span class="pre">float]]]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{step_index:</span> <span class="pre">{pattern_id:</span> <span class="pre">{position:</span> <span class="pre">coverage%}}}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">unmatched_reagents</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict[int,</span> <span class="pre">list[str]]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{position:</span> <span class="pre">[reagent_names]}</span></code> - reagents that match no pattern</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">warnings</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list[str]</span></code></p></td>
+<td><p>Warning messages</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="constants">
+<h2>Constants<a class="headerlink" href="#constants" title="Link to this heading">#</a></h2>
+<p>The module provides default protecting groups and salt fragments for common use cases.</p>
+<section id="default-protecting-groups">
+<h3>DEFAULT_PROTECTING_GROUPS<a class="headerlink" href="#default-protecting-groups" title="Link to this heading">#</a></h3>
+<p>List of 10 common protecting groups (see <a class="reference internal" href="#built-in-protecting-groups"><span class="std std-ref">Built-in Protecting Groups</span></a> for details).</p>
+</section>
+<section id="default-salt-fragments">
+<h3>DEFAULT_SALT_FRAGMENTS<a class="headerlink" href="#default-salt-fragments" title="Link to this heading">#</a></h3>
+<p>List of ~25 common salt/counterion fragments including:</p>
+<ul class="simple">
+<li><p>Halides (Cl⁻, Br⁻, I⁻)</p></li>
+<li><p>Metal cations (Na⁺, K⁺, Li⁺, Ca²⁺, Mg²⁺)</p></li>
+<li><p>Organic acids (TFA, acetate, formate)</p></li>
+<li><p>Ammonium salts</p></li>
+</ul>
+</section>
+<section id="utility-functions">
+<h3>Utility Functions<a class="headerlink" href="#utility-functions" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Function</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_protecting_group(name)</span></code></p></td>
+<td><p>Get <a class="reference internal" href="#protecting-group-info"><span class="std std-ref">ProtectingGroupInfo</span></a> by name. Raises <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> if not found.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">get_all_protecting_group_names()</span></code></p></td>
+<td><p>Get list of all default protecting group names.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">results_to_dataframe(results)</span></code></p></td>
+<td><p>Convert list of EnumerationResult to Polars DataFrame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">failures_to_dataframe(results)</span></code></p></td>
+<td><p>Convert failed EnumerationResult objects to DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">summarize_failures(results)</span></code></p></td>
+<td><p>Get summary statistics of enumeration failures.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="configuration.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Configuration System</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="library_analysis.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Library Analysis</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-architecture">Module Architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fundamental-types">Fundamental Types</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inputsource">InputSource</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#protectinggroupinfo">ProtectingGroupInfo</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deprotectionspec">DeprotectionSpec</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stepinput">StepInput</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reaction-definition">Reaction Definition</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reactiondef">ReactionDef</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#constructor-parameters">Constructor Parameters</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#properties">Properties</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-methods">Validation Methods</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-methods">Visualization Methods</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reactionconfig">ReactionConfig</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Constructor Parameters</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Properties</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#methods">Methods</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example-single-reaction">Example: Single Reaction</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example-multi-step-synthesis">Example: Multi-Step Synthesis</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example-alternative-smarts">Example: Alternative SMARTS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline">Pipeline</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#synthesispipeline">SynthesisPipeline</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#constructor">Constructor</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#enumeration-methods">Enumeration Methods</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#utility-methods">Utility Methods</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Properties</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example-basic-enumeration">Example: Basic Enumeration</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example-library-enumeration">Example: Library Enumeration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#protecting-groups-and-deprotection">Protecting Groups and Deprotection</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-protecting-groups">Built-in Protecting Groups</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reactant-deprotection">Reactant Deprotection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#product-deprotection">Product Deprotection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-protecting-groups">Custom Protecting Groups</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#result-types">Result Types</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validationresult">ValidationResult</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#enumerationresult">EnumerationResult</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#enumerationerror">EnumerationError</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autodetectionresult">AutoDetectionResult</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constants">Constants</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#default-protecting-groups">DEFAULT_PROTECTING_GROUPS</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#default-salt-fragments">DEFAULT_SALT_FRAGMENTS</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utility-functions">Utility Functions</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
