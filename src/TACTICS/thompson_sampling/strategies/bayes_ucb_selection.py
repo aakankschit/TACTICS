@@ -200,7 +200,7 @@ class BayesUCBSelection(SelectionStrategy):
         multiplier = self.cats_min_mult + (self.cats_max_mult - self.cats_min_mult) * (1 - criticality)
         return multiplier
 
-    def _get_component_percentile(self, component_idx, reagent_list, current_cycle, total_cycles):
+    def _get_component_percentile(self, component_idx, reagent_list, current_cycle, total_cycles, **kwargs):
         """
         Get CATS-adjusted percentile for a component.
 
@@ -209,12 +209,14 @@ class BayesUCBSelection(SelectionStrategy):
         2. CATS adjusts based on criticality
         3. Progressive weighting controls CATS influence
         4. Exploration decay reduces CATS when criticality stays low
+        5. Interaction dampening reduces CATS when additive model explains poorly
 
         Args:
             component_idx: Which reaction component
             reagent_list: List of Reagent objects for this component
             current_cycle: Current search cycle
             total_cycles: Total number of cycles
+            **kwargs: Additional context (interaction_strength, etc.)
 
         Returns:
             Final percentile value
@@ -241,13 +243,18 @@ class BayesUCBSelection(SelectionStrategy):
                 decay = criticality + (1.0 - criticality) * (1.0 - progress)
                 weight *= decay
 
-        # Step 5: Get CATS multiplier
+        # Step 5: Interaction dampening — reduce CATS when additive model is poor
+        interaction_strength = kwargs.get("interaction_strength", 0.0)
+        if interaction_strength > 0:
+            weight *= (1.0 - interaction_strength)
+
+        # Step 6: Get CATS multiplier
         cats_mult = self._get_cats_multiplier(criticality)
 
-        # Step 6: Blend: weight=0 → no adjustment, weight=1 → full CATS
+        # Step 7: Blend: weight=0 → no adjustment, weight=1 → full CATS
         effective_mult = (1.0 - weight) * 1.0 + weight * cats_mult
 
-        # Step 7: Apply to base
+        # Step 8: Apply to base
         final_percentile = base_percentile * effective_mult
 
         # Clamp to valid percentile range; 0.999 avoids t.ppf(1.0)=inf
@@ -276,9 +283,11 @@ class BayesUCBSelection(SelectionStrategy):
         current_cycle = kwargs.get('current_cycle', 0)
         total_cycles = kwargs.get('total_cycles', 1)
 
-        # Get CATS-adjusted percentile
+        # Get CATS-adjusted percentile (filter known kwargs to avoid duplication)
+        extra_kwargs = {k: v for k, v in kwargs.items()
+                        if k not in ("component_idx", "current_cycle", "total_cycles", "rng", "iteration")}
         percentile = self._get_component_percentile(
-            component_idx, reagent_list, current_cycle, total_cycles
+            component_idx, reagent_list, current_cycle, total_cycles, **extra_kwargs
         )
 
         # Compute UCB indices for all reagents
