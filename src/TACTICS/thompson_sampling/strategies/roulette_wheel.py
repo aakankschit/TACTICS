@@ -243,7 +243,7 @@ class RouletteWheelSelection(SelectionStrategy):
         return multiplier
 
     def _get_component_temperature(
-        self, component_idx, reagent_list, current_cycle, total_cycles, rng=None, **kwargs
+        self, component_idx, reagent_list, current_cycle, total_cycles, rng=None
     ):
         """
         Get CATS-adjusted temperature for a component.
@@ -253,7 +253,6 @@ class RouletteWheelSelection(SelectionStrategy):
         2. CATS adjusts based on criticality
         3. Progressive weighting controls CATS influence
         4. Exploration decay reduces CATS when criticality stays low
-        5. Interaction dampening reduces CATS when additive model explains poorly
 
         Args:
             component_idx: Which reaction component
@@ -261,7 +260,6 @@ class RouletteWheelSelection(SelectionStrategy):
             current_cycle: Current search cycle
             total_cycles: Total number of cycles
             rng: Optional numpy random generator for criticality sampling
-            **kwargs: Additional context (interaction_strength, etc.)
 
         Returns:
             Final temperature value
@@ -293,18 +291,13 @@ class RouletteWheelSelection(SelectionStrategy):
                 decay = criticality + (1.0 - criticality) * (1.0 - progress)
                 weight *= decay
 
-        # Step 5: Interaction dampening — reduce CATS when additive model is poor
-        interaction_strength = kwargs.get("interaction_strength", 0.0)
-        if interaction_strength > 0:
-            weight *= (1.0 - interaction_strength)
-
-        # Step 6: Get CATS multiplier
+        # Step 5: Get CATS multiplier
         cats_mult = self._get_cats_multiplier(criticality)
 
-        # Step 7: Blend: weight=0 → no adjustment, weight=1 → full CATS
+        # Step 6: Blend: weight=0 → no adjustment, weight=1 → full CATS
         effective_mult = (1.0 - weight) * 1.0 + weight * cats_mult
 
-        # Step 8: Apply to base
+        # Step 7: Apply to base
         final_temp = base_temp * effective_mult
 
         return final_temp
@@ -339,11 +332,9 @@ class RouletteWheelSelection(SelectionStrategy):
         if self.mode not in ["maximize", "maximize_boltzmann"]:
             scores = -scores
 
-        # Get CATS-adjusted temperature (filter known kwargs to avoid duplication)
-        extra_kwargs = {k: v for k, v in kwargs.items()
-                        if k not in ("component_idx", "current_cycle", "total_cycles", "rng", "iteration")}
+        # Get CATS-adjusted temperature
         effective_temp = self._get_component_temperature(
-            component_idx, reagent_list, current_cycle, total_cycles, rng=rng, **extra_kwargs
+            component_idx, reagent_list, current_cycle, total_cycles, rng=rng
         )
 
         # Apply temperature via Boltzmann distribution

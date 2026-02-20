@@ -44,8 +44,7 @@ class Reagent:
         "sum_w",
         "std_score_known",
         "mode",
-        "_compatible_smarts",
-        "_fp",
+        "_compatible_smarts"
     ]
 
     def __init__(self, reagent_name: str, smiles: str, use_boltzmann_weighting: bool = False, mode: str = "maximize"):
@@ -74,7 +73,6 @@ class Reagent:
         self.mode = mode
         # SMARTS compatibility tracking (default: compatible with primary pattern only)
         self._compatible_smarts: Set[str] = {"primary"}
-        self._fp = None
 
     def add_score(self, score: float) -> None:
         """
@@ -97,44 +95,6 @@ class Reagent:
             self.std = self._update_std(current_var)
         else:
             raise ValueError(f"Invalid phase: {self.current_phase}")
-
-    @property
-    def fp(self):
-        """Lazy-cached Morgan fingerprint (radius 2, 2048 bits)."""
-        if self._fp is None and self.mol is not None:
-            from rdkit.Chem import rdFingerprintGenerator
-            gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
-            self._fp = gen.GetFingerprint(self.mol)
-        return self._fp
-
-    def add_pseudo_score(self, score: float, weight: float) -> None:
-        """
-        Add a pseudo-observation from a correlated reagent.
-
-        Nudges the posterior mean toward the observed score, scaled by
-        weight. Does NOT shrink std or increment n_samples — pseudo-
-        observations inform direction but must not reduce uncertainty
-        (which would destroy Thompson Sampling exploration).
-
-        Parameters:
-            score: Observed score from a correlated reagent
-            weight: Propagation weight in (0, 1]; lower = weaker update
-        """
-        if self.current_phase != "search":
-            return
-        if weight <= 0:
-            return
-
-        # Mean-only nudge: move mean toward score, scaled by weight and
-        # inversely by real observation count. Reagents with more real
-        # evidence resist pseudo-observations more strongly.
-        # The 0.02 scale factor ensures even many pseudo-observations
-        # (e.g., 50) remain collectively weaker than a single real
-        # Bayesian update — critical for preserving exploration.
-        # No std update — pseudo-observations must NOT shrink uncertainty.
-        # No n_samples update — preserves BayesUCB df and CATS gating.
-        lr = 0.02 * weight / max(self.n_samples, 1)
-        self.mean += lr * (score - self.mean)
 
     def init_prior(self, prior_mean: float, prior_std: float) -> None:
         """

@@ -60,42 +60,6 @@ EvaluatorConfigType = Union[
 ]
 
 
-class CorrelatedUpdaterConfig(BaseModel):
-    """Configuration for C-UCB correlated posterior updates."""
-
-    enabled: bool = Field(default=False, description="Enable correlated updates")
-    similarity_threshold: float = Field(
-        default=0.5, ge=0.0, le=1.0,
-        description="Minimum Tanimoto similarity to propagate scores",
-    )
-    max_neighbors: int = Field(
-        default=5, gt=0,
-        description="Maximum neighbors per reagent for propagation",
-    )
-    propagation_interval: int = Field(
-        default=10, gt=0,
-        description="Propagate every N-th evaluation cycle (rate limiting)",
-    )
-
-
-class InteractionDetectorConfig(BaseModel):
-    """Configuration for interaction effect detection."""
-
-    enabled: bool = Field(default=False, description="Enable interaction detection")
-    activation_fraction: float = Field(
-        default=0.3, ge=0.0, le=1.0,
-        description="Fraction of total cycles before fitting starts",
-    )
-    refit_interval: int = Field(
-        default=200, gt=0,
-        description="Re-fit model every N observations",
-    )
-    interaction_threshold: float = Field(
-        default=0.5, ge=0.0, le=1.0,
-        description="R² below this triggers CATS dampening",
-    )
-
-
 class ThompsonSamplingConfig(BaseModel):
     """
     Configuration for Thompson Sampling optimization.
@@ -193,16 +157,6 @@ class ThompsonSamplingConfig(BaseModel):
         description="Random seed for reproducibility. Controls all RNG sources "
                    "(warmup partner selection, search sampling, component ordering). "
                    "None = non-deterministic.",
-    )
-
-    # C-UCB correlated updates
-    correlated_updater_config: Optional[CorrelatedUpdaterConfig] = Field(
-        default=None, description="Configuration for C-UCB correlated posterior updates",
-    )
-
-    # Interaction detection
-    interaction_detector_config: Optional[InteractionDetectorConfig] = Field(
-        default=None, description="Configuration for interaction effect detection",
     )
 
     # SMARTS compatibility detection

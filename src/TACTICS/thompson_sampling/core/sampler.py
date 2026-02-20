@@ -85,8 +85,6 @@ class ThompsonSampler:
         self.product_smiles_dict = None
         self.cats_manager = cats_manager  # Optional CATS integration
         self.use_boltzmann_weighting = use_boltzmann_weighting
-        self.correlated_updater = None
-        self.interaction_detector = None
 
         # Master RNG for reproducibility
         self._seed = seed
@@ -201,40 +199,6 @@ class ThompsonSampler:
             )
 
         sampler.set_hide_progress(config.hide_progress)
-
-        # Initialize C-UCB correlated updater if configured
-        cucb_cfg = getattr(config, "correlated_updater_config", None)
-        if cucb_cfg is not None and cucb_cfg.enabled:
-            from .correlated_updater import CorrelatedUpdater
-
-            sampler.correlated_updater = CorrelatedUpdater(
-                reagent_lists=sampler.reagent_lists,
-                similarity_threshold=cucb_cfg.similarity_threshold,
-                max_neighbors=cucb_cfg.max_neighbors,
-            )
-            sampler._cucb_propagation_interval = cucb_cfg.propagation_interval
-            sampler.logger.info(
-                f"C-UCB enabled: threshold={cucb_cfg.similarity_threshold}, "
-                f"max_neighbors={cucb_cfg.max_neighbors}, "
-                f"propagation_interval={cucb_cfg.propagation_interval}"
-            )
-
-        # Initialize interaction detector if configured
-        intdet_cfg = getattr(config, "interaction_detector_config", None)
-        if intdet_cfg is not None and intdet_cfg.enabled:
-            from .interaction_detector import InteractionDetector
-
-            sampler.interaction_detector = InteractionDetector(
-                n_components=len(sampler.reagent_lists),
-                component_sizes=[len(rl) for rl in sampler.reagent_lists],
-                activation_fraction=intdet_cfg.activation_fraction,
-                refit_interval=intdet_cfg.refit_interval,
-                interaction_threshold=intdet_cfg.interaction_threshold,
-            )
-            sampler.logger.info(
-                f"Interaction detector enabled: activation={intdet_cfg.activation_fraction}, "
-                f"refit_interval={intdet_cfg.refit_interval}"
-            )
 
         return sampler
 
@@ -592,15 +556,6 @@ class ThompsonSampler:
         n_resamples = 0
         n_components = len(self.reagent_lists)
 
-        # Interaction strength for CATS dampening
-        _interaction_strength = 0.0
-
-        # C-UCB propagation rate limiting
-        _propagation_interval = 10  # default
-        if self.correlated_updater is not None:
-            cucb_cfg = getattr(self, "_cucb_propagation_interval", 10)
-            _propagation_interval = cucb_cfg
-
         # Accumulator for compounds to evaluate in parallel
         compounds_to_evaluate = []
         min_cpds_per_batch = self.processes * self.min_cpds_per_core
@@ -623,6 +578,7 @@ class ThompsonSampler:
             n_unique = 0
 
             for _ in range(self.batch_size):
+                # Build one combination iteratively, respecting DisallowTracker
                 selected_reagents = [DisallowTracker.Empty] * n_components
 
                 # Randomize component selection order to avoid bias
@@ -650,7 +606,6 @@ class ThompsonSampler:
                         iteration=cycle,
                         current_cycle=cycle,
                         total_cycles=total_cycles,
-                        interaction_strength=_interaction_strength,
                     )
                     selected_reagents[component_idx] = selected_idx
 
@@ -709,29 +664,6 @@ class ThompsonSampler:
                         # Update reagent posteriors WITHOUT scaling
                         for comp_idx, reagent_idx in enumerate(comb):
                             self.reagent_lists[comp_idx][reagent_idx].add_score(score)
-
-                        # C-UCB: propagate to similar reagents (rate-limited)
-                        if (
-                            self.correlated_updater is not None
-                            and cycle % _propagation_interval == 0
-                        ):
-                            for comp_idx, reagent_idx in enumerate(comb):
-                                self.correlated_updater.propagate(
-                                    comp_idx, reagent_idx, score,
-                                    self.reagent_lists,
-                                )
-
-                        # Interaction detector: record observation
-                        if self.interaction_detector is not None:
-                            self.interaction_detector.add_observation(
-                                list(comb), score
-                            )
-
-                # Interaction detector: refit if needed
-                if self.interaction_detector is not None:
-                    if self.interaction_detector.should_refit(cycle, total_cycles):
-                        self.interaction_detector.fit()
-                        _interaction_strength = self.interaction_detector.interaction_strength
 
                 # Clear accumulator
                 compounds_to_evaluate = []
