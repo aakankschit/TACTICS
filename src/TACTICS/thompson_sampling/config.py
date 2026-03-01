@@ -139,6 +139,13 @@ class ThompsonSamplingConfig(BaseModel):
     # Performance (Note: multiprocessing typically not needed for compound generation)
     hide_progress: bool = Field(default=False, description="Hide progress bars")
 
+    # Diagnostics
+    track_diagnostics: bool = Field(
+        default=False,
+        description="Track per-cycle criticality diagnostics during search. "
+                    "Access via sampler.get_diagnostics() after search completes.",
+    )
+
     # Pre-enumerated library (optional, for testing)
     product_library_file: Optional[str] = Field(
         default=None,

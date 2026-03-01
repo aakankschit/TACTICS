@@ -368,6 +368,37 @@ class TestBayesUCBConfig:
         assert strategy.p_low == 0.80
 
 
+class TestBayesUCBIPR:
+    """Test IPR-based criticality for BayesUCB."""
+
+    def test_ipr_criticality_nonzero(self):
+        """BayesUCB with IPR should produce nonzero criticality for peaked distributions."""
+        strategy = BayesUCBSelection(
+            mode="maximize", criticality_metric="ipr", n_adaptive_sharpening=True
+        )
+
+        reagents = []
+        for i in range(20):
+            r = Reagent(f"reagent_{i}", "CC")
+            r.mean = 0.5 if i < 19 else 3.0
+            r.std = 0.5
+            r.n_samples = 10
+            reagents.append(r)
+
+        crit = strategy._calculate_criticality(reagents)
+        assert crit > 0.1, f"IPR criticality should be > 0.1 for peaked dist, got {crit:.4f}"
+
+    def test_weighted_rotation_exists(self):
+        """BayesUCB should have rotate_component_weighted method."""
+        strategy = BayesUCBSelection(mode="maximize")
+        assert hasattr(strategy, "rotate_component_weighted")
+
+        import numpy as np
+        rng = np.random.default_rng(42)
+        strategy.rotate_component_weighted(3, [0.9, 0.1, 0.5], rng=rng)
+        assert 0 <= strategy.current_component_idx < 3
+
+
 class TestBayesUCBEdgeCases:
     """Test edge cases and boundary conditions."""
 

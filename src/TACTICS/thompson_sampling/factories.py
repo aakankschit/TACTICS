@@ -114,6 +114,8 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             alpha_max=config.alpha_max,
             cats_exploration_fraction=config.cats_exploration_fraction,
             cats_range=config.cats_range,
+            criticality_metric=config.criticality_metric,
+            n_adaptive_sharpening=config.n_adaptive_sharpening,
         )
 
     elif isinstance(config, UCBConfig):
@@ -135,6 +137,8 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             transition_phase_end=config.transition_phase_end,
             min_observations=config.min_observations,
             cats_exploration_fraction=config.cats_exploration_fraction,
+            criticality_metric=config.criticality_metric,
+            n_adaptive_sharpening=config.n_adaptive_sharpening,
         )
 
     elif isinstance(config, BoltzmannConfig):

@@ -11,6 +11,7 @@ from TACTICS.thompson_sampling.strategies.config import (
     UCBConfig,
     EpsilonGreedyConfig,
     BoltzmannConfig,
+    BayesUCBConfig,
 )
 from TACTICS.thompson_sampling.warmup.config import (
     StandardWarmupConfig,
@@ -75,6 +76,30 @@ class TestStrategyConfigs:
 
         with pytest.raises(ValidationError):
             EpsilonGreedyConfig(epsilon=1.5)  # > 1
+
+    def test_roulette_wheel_ipr_defaults(self):
+        """Test RouletteWheelConfig has IPR criticality defaults."""
+        config = RouletteWheelConfig()
+        assert config.criticality_metric == "ipr"
+        assert config.n_adaptive_sharpening is True
+
+    def test_bayes_ucb_ipr_defaults(self):
+        """Test BayesUCBConfig has IPR criticality defaults."""
+        config = BayesUCBConfig()
+        assert config.criticality_metric == "ipr"
+        assert config.n_adaptive_sharpening is True
+
+    def test_roulette_wheel_shannon_backward_compat(self):
+        """Test RouletteWheelConfig can be set to shannon for backward compat."""
+        config = RouletteWheelConfig(criticality_metric="shannon", n_adaptive_sharpening=False)
+        assert config.criticality_metric == "shannon"
+        assert config.n_adaptive_sharpening is False
+
+    def test_bayes_ucb_shannon_backward_compat(self):
+        """Test BayesUCBConfig can be set to shannon for backward compat."""
+        config = BayesUCBConfig(criticality_metric="shannon", n_adaptive_sharpening=False)
+        assert config.criticality_metric == "shannon"
+        assert config.n_adaptive_sharpening is False
 
 
 class TestWarmupConfigs:

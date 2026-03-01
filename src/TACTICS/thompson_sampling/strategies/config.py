@@ -1,7 +1,7 @@
 """Pydantic configuration models for selection strategies."""
 
 from pydantic import BaseModel, Field, field_validator
-from typing import Literal, Optional, Tuple
+from typing import Literal, Optional, Tuple, Union
 
 
 class GreedyConfig(BaseModel):
@@ -71,6 +71,24 @@ class RouletteWheelConfig(BaseModel):
             "Override alpha/beta-derived CATS multiplier range. If set, "
             "cats_max = cats_range, cats_min = 1/cats_range. "
             "When None, range is derived from alpha/beta ratio."
+        ),
+    )
+
+    # CATS criticality metric
+    criticality_metric: Literal["ipr", "shannon"] = Field(
+        default="ipr",
+        description=(
+            "Metric for computing component criticality. "
+            "'ipr' uses Inverse Participation Ratio (sensitive to probability concentration). "
+            "'shannon' uses Shannon entropy (legacy, insensitive at large N)."
+        ),
+    )
+    n_adaptive_sharpening: bool = Field(
+        default=True,
+        description=(
+            "Enable N-adaptive sharpening of z-scores before softmax. "
+            "Counteracts softmax flattening for components with many reagents (large N). "
+            "Only applies when criticality_metric='ipr'."
         ),
     )
 
@@ -197,6 +215,24 @@ class BayesUCBConfig(BaseModel):
             "Fraction of total cycles during which CATS explores at full strength. "
             "After this point, CATS influence decays linearly if criticality remains low. "
             "Set to None to disable decay. (default: 0.3 = first 30% of cycles)"
+        ),
+    )
+
+    # CATS criticality metric
+    criticality_metric: Literal["ipr", "shannon"] = Field(
+        default="ipr",
+        description=(
+            "Metric for computing component criticality. "
+            "'ipr' uses Inverse Participation Ratio (sensitive to probability concentration). "
+            "'shannon' uses Shannon entropy (legacy, insensitive at large N)."
+        ),
+    )
+    n_adaptive_sharpening: bool = Field(
+        default=True,
+        description=(
+            "Enable N-adaptive sharpening of z-scores before softmax. "
+            "Counteracts softmax flattening for components with many reagents (large N). "
+            "Only applies when criticality_metric='ipr'."
         ),
     )
 

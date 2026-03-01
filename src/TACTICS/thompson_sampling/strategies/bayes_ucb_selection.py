@@ -15,6 +15,7 @@ References:
 """
 
 import warnings
+from typing import Any, Dict, List, Optional
 import numpy as np
 from scipy import stats
 from .base_strategy import SelectionStrategy
@@ -42,6 +43,8 @@ class BayesUCBSelection(SelectionStrategy):
         transition_phase_end=0.60,
         min_observations=5,
         cats_exploration_fraction=0.3,
+        criticality_metric="ipr",
+        n_adaptive_sharpening=True,
         **kwargs
     ):
         """
@@ -57,6 +60,10 @@ class BayesUCBSelection(SelectionStrategy):
             cats_exploration_fraction: Fraction of total cycles during which CATS explores
                 at full strength. After this point, CATS influence decays linearly if
                 criticality remains low. Set to None to disable decay (default: 0.5).
+            criticality_metric: "ipr" (Inverse Participation Ratio) or "shannon"
+                (legacy Shannon entropy). (default: "ipr")
+            n_adaptive_sharpening: If True and criticality_metric="ipr", apply
+                sqrt(log(N)) sharpening to z-scores. (default: True)
             **kwargs: Catches deprecated parameters with warnings
         """
         super().__init__(mode)
@@ -72,14 +79,21 @@ class BayesUCBSelection(SelectionStrategy):
         self.transition_phase_end = transition_phase_end
         self.min_observations = min_observations
         self.cats_exploration_fraction = cats_exploration_fraction
+        self.criticality_metric = criticality_metric
+        self.n_adaptive_sharpening = n_adaptive_sharpening
 
         # Thermal cycling state
         self.current_component_idx = 0
+        # Mean criticality across components (updated by rotate_component_weighted)
+        self._mean_criticality: float = 0.5
 
         # Derive CATS range from p_high/p_low ratio
         self.ratio = self.p_high / self.p_low if self.p_low > 0 else 1.0
         self.cats_max_mult = self.ratio
         self.cats_min_mult = 1.0 / self.ratio if self.ratio > 0 else 1.0
+
+        # Cache for last component state (avoids double computation)
+        self._last_component_states: Dict[int, Dict[str, Any]] = {}
 
         # Validation warnings
         if abs(self.p_high - self.p_low) < 1e-10:
@@ -106,15 +120,15 @@ class BayesUCBSelection(SelectionStrategy):
 
     def _calculate_criticality(self, reagent_list):
         """
-        Calculate component criticality using Shannon entropy.
+        Calculate component criticality using z-score softmax with SNR dampening.
 
-        Shannon entropy measures posterior distribution concentration:
-        - High entropy (uniform) → Flexible component (many good options)
-        - Low entropy (peaked) → Critical component (few good options)
+        Aligned with RouletteWheelSelection: uses z-scores (scale-invariant),
+        signal-to-noise dampening, N-adaptive sharpening, and supports both
+        IPR and Shannon entropy metrics.
 
-        Criticality = 1 - (entropy / max_entropy) ∈ [0, 1]
-        - criticality ≈ 0: Flexible component → should EXPLORE
-        - criticality ≈ 1: Critical component → should EXPLOIT
+        Criticality in [0, 1]:
+        - criticality ~ 0: Flexible component -> should EXPLORE
+        - criticality ~ 1: Critical component -> should EXPLOIT
 
         Args:
             reagent_list: List of Reagent objects with posterior distributions
@@ -122,113 +136,187 @@ class BayesUCBSelection(SelectionStrategy):
         Returns:
             Criticality score in [0, 1]. Returns 0.5 (neutral) if insufficient data.
         """
-        # Check if we have sufficient data
-        observations = [r.n_samples for r in reagent_list]
+        # Filter out retired reagents
+        active_reagents = [r for r in reagent_list if r.n_samples > 0]
+        if len(active_reagents) < 2:
+            return 0.5
+
+        observations = [r.n_samples for r in active_reagents]
         if min(observations) < self.min_observations:
-            return 0.5  # Neutral criticality if insufficient data
+            return 0.5
 
-        # Extract posterior means
-        means = np.array([r.mean for r in reagent_list])
+        means = np.array([r.mean for r in active_reagents])
 
-        # Handle edge case: all means identical
         if np.std(means) < 1e-10:
-            return 0.0  # Perfectly flexible (all equally good)
+            return 0.0
 
-        # Convert means to probability distribution using softmax
-        # For minimization, negate means (want higher probability for lower scores)
         if self.mode == "minimize":
             means = -means
 
-        # Numerical stability: subtract max before exp
-        exp_means = np.exp(means - means.max())
+        mean_std = np.std(means)
+        if mean_std < 1e-10:
+            return 0.0
+
+        # Signal-to-noise dampening (aligned with RWS)
+        se_squared = np.array([
+            r.std ** 2 / max(r.n_samples, 1) for r in active_reagents
+        ])
+        noise_std = np.sqrt(np.mean(se_squared))
+        snr = mean_std / max(noise_std, 1e-10)
+        imbalance_strength = 1.0 - np.exp(-max(snr - 1.0, 0.0))
+
+        z_scores = (means - np.mean(means)) / mean_std
+        z_scores *= imbalance_strength
+
+        # N-adaptive sharpening
+        N = len(active_reagents)
+        if self.criticality_metric == "ipr" and self.n_adaptive_sharpening and N > 2:
+            sharpening = max(1.0, np.sqrt(np.log(N)))
+            z_scores *= sharpening
+
+        exp_means = np.exp(z_scores - z_scores.max())  # numerical stability
         probabilities = exp_means / exp_means.sum()
 
-        # Shannon entropy: H = -Σ p_i log(p_i)
-        entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
+        if self.criticality_metric == "ipr":
+            ipr = np.sum(probabilities ** 2)
+            effective_N = 1.0 / ipr
+            criticality = 1.0 - (effective_N / N)
+        else:  # shannon (legacy)
+            entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
+            max_entropy = np.log(N)
+            if max_entropy < 1e-10:
+                return 0.5
+            criticality = 1.0 - (entropy / max_entropy)
 
-        # Maximum entropy (uniform distribution)
-        max_entropy = np.log(len(reagent_list))
+        return float(np.clip(criticality, 0.0, 1.0))
 
-        # Criticality: 1 - normalized_entropy
-        if max_entropy < 1e-10:
-            return 0.5  # Edge case: single reagent
-
-        normalized_entropy = entropy / max_entropy
-        criticality = 1.0 - normalized_entropy
-
-        return np.clip(criticality, 0.0, 1.0)
-
-    def _get_criticality_weight(self, reagent_list, current_cycle=None, total_cycles=None):
-        """
-        Calculate observation-gated criticality weight.
-
-        Instead of a fixed three-phase schedule, weight is determined by how
-        many observations we have — i.e. how much we can trust the criticality
-        estimate. This is data-driven rather than schedule-driven.
-
-        Weight ramps from 0 to 1 as min observations go from 0 to
-        2 * min_observations, then stays at 1.0.
-
-        Args:
-            reagent_list: List of Reagent objects (used to check observation counts)
-            current_cycle: Unused, kept for API compatibility
-            total_cycles: Unused, kept for API compatibility
+    def _calculate_criticality_details(self, reagent_list):
+        """Calculate criticality and return all intermediate values.
 
         Returns:
-            Criticality weight in [0, 1]
+            Tuple of (criticality, details_dict) matching RouletteWheelSelection schema.
         """
-        min_obs = min(r.n_samples for r in reagent_list)
-        weight = min_obs / (2.0 * self.min_observations) if self.min_observations > 0 else 1.0
-        return float(np.clip(weight, 0.0, 1.0))
+        details = {
+            "snr": float("nan"),
+            "imbalance_strength": float("nan"),
+            "normalized_entropy": float("nan"),
+            "n_active_reagents": 0,
+            "participation_ratio": float("nan"),
+            "effective_n": float("nan"),
+            "sharpening_factor": float("nan"),
+        }
 
-    def _get_cats_multiplier(self, criticality):
-        """
-        Map component criticality to percentile multiplier.
+        active_reagents = [r for r in reagent_list if r.n_samples > 0]
+        details["n_active_reagents"] = len(active_reagents)
 
-        CATS range is derived from p_high/p_low ratio:
-        - cats_max = p_high / p_low (for flexible components, criticality ≈ 0)
-        - cats_min = p_low / p_high (for critical components, criticality ≈ 1)
+        if len(active_reagents) < 2:
+            return 0.5, details
 
-        Args:
-            criticality: Component criticality in [0, 1]
+        observations = [r.n_samples for r in active_reagents]
+        if min(observations) < self.min_observations:
+            return 0.5, details
+
+        means = np.array([r.mean for r in active_reagents])
+
+        if np.std(means) < 1e-10:
+            details["snr"] = 0.0
+            details["imbalance_strength"] = 0.0
+            details["normalized_entropy"] = 1.0
+            details["participation_ratio"] = 1.0 / len(active_reagents)
+            details["effective_n"] = float(len(active_reagents))
+            details["sharpening_factor"] = 1.0
+            return 0.0, details
+
+        if self.mode == "minimize":
+            means = -means
+
+        mean_std = np.std(means)
+        if mean_std < 1e-10:
+            details["snr"] = 0.0
+            details["imbalance_strength"] = 0.0
+            details["normalized_entropy"] = 1.0
+            details["participation_ratio"] = 1.0 / len(active_reagents)
+            details["effective_n"] = float(len(active_reagents))
+            details["sharpening_factor"] = 1.0
+            return 0.0, details
+
+        se_squared = np.array([
+            r.std ** 2 / max(r.n_samples, 1) for r in active_reagents
+        ])
+        noise_std = np.sqrt(np.mean(se_squared))
+        snr = mean_std / max(noise_std, 1e-10)
+        imbalance_strength = 1.0 - np.exp(-max(snr - 1.0, 0.0))
+
+        details["snr"] = float(snr)
+        details["imbalance_strength"] = float(imbalance_strength)
+
+        z_scores = (means - np.mean(means)) / mean_std
+        z_scores *= imbalance_strength
+
+        N = len(active_reagents)
+        sharpening = 1.0
+        if self.criticality_metric == "ipr" and self.n_adaptive_sharpening and N > 2:
+            sharpening = max(1.0, np.sqrt(np.log(N)))
+            z_scores *= sharpening
+        details["sharpening_factor"] = float(sharpening)
+
+        exp_means = np.exp(z_scores - z_scores.max())
+        probabilities = exp_means / exp_means.sum()
+
+        ipr = float(np.sum(probabilities ** 2))
+        effective_n = 1.0 / ipr
+        details["participation_ratio"] = ipr
+        details["effective_n"] = float(effective_n)
+
+        if self.criticality_metric == "ipr":
+            criticality = 1.0 - (effective_n / N)
+            entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
+            max_entropy = np.log(N)
+            details["normalized_entropy"] = float(entropy / max_entropy) if max_entropy > 1e-10 else float("nan")
+        else:
+            entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
+            max_entropy = np.log(N)
+            if max_entropy < 1e-10:
+                details["normalized_entropy"] = float("nan")
+                return 0.5, details
+            normalized_entropy = entropy / max_entropy
+            details["normalized_entropy"] = float(normalized_entropy)
+            criticality = 1.0 - normalized_entropy
+
+        return float(np.clip(criticality, 0.0, 1.0)), details
+
+    def get_component_criticality(self, reagent_list) -> float:
+        """Return CATS criticality score for a component."""
+        return self._calculate_criticality(reagent_list)
+
+    def get_component_state(
+        self,
+        reagent_list: List,
+        component_idx: int,
+        current_cycle: int,
+        total_cycles: int,
+    ) -> Optional[Dict[str, Any]]:
+        """Return full intermediate state for a component.
+
+        Same schema as RouletteWheelSelection for DataFrame consistency.
+        Now includes SNR dampening (aligned with RWS) and IPR details.
+        ``final_temperature`` maps to the CATS-adjusted percentile value.
 
         Returns:
-            CATS multiplier in [cats_min, cats_max]
+            Dict with all intermediate values.
         """
-        # Map criticality [0,1] to multiplier [cats_max, cats_min]
-        # Higher criticality → lower multiplier (more exploitation)
-        multiplier = self.cats_min_mult + (self.cats_max_mult - self.cats_min_mult) * (1 - criticality)
-        return multiplier
+        # Step 1: Criticality with details (aligned with RWS)
+        criticality, crit_details = self._calculate_criticality_details(reagent_list)
 
-    def _get_component_percentile(self, component_idx, reagent_list, current_cycle, total_cycles):
-        """
-        Get CATS-adjusted percentile for a component.
+        # Step 2: Base percentile from thermal cycling
+        is_heated = component_idx == self.current_component_idx
+        base_temp = self.p_high if is_heated else self.p_low
 
-        Combines thermal cycling with component criticality:
-        1. Thermal cycling sets base percentile (p_high for heated, p_low for cooled)
-        2. CATS adjusts based on criticality
-        3. Progressive weighting controls CATS influence
-        4. Exploration decay reduces CATS when criticality stays low
-
-        Args:
-            component_idx: Which reaction component
-            reagent_list: List of Reagent objects for this component
-            current_cycle: Current search cycle
-            total_cycles: Total number of cycles
-
-        Returns:
-            Final percentile value
-        """
-        # Step 1: Base percentile from thermal cycling
-        base_percentile = self.p_high if component_idx == self.current_component_idx else self.p_low
-
-        # Step 2: Calculate criticality
-        criticality = self._calculate_criticality(reagent_list)
-
-        # Step 3: Get observation-gated weight (ramps up with data)
+        # Step 3: Observation-gated weight
         weight = self._get_criticality_weight(reagent_list)
 
-        # Step 4: Exploration decay — reduce CATS when it hasn't found structure
+        # Step 4: Exploration decay
+        decay = 1.0
         if (
             self.cats_exploration_fraction is not None
             and total_cycles > 0
@@ -241,17 +329,131 @@ class BayesUCBSelection(SelectionStrategy):
                 decay = criticality + (1.0 - criticality) * (1.0 - progress)
                 weight *= decay
 
-        # Step 5: Get CATS multiplier
+        # Step 5: CATS multiplier
         cats_mult = self._get_cats_multiplier(criticality)
 
-        # Step 6: Blend: weight=0 → no adjustment, weight=1 → full CATS
+        # Step 6: Blend
         effective_mult = (1.0 - weight) * 1.0 + weight * cats_mult
 
-        # Step 7: Apply to base
-        final_percentile = base_percentile * effective_mult
+        # Step 7: Final percentile (mapped to final_temperature for schema)
+        final_percentile = base_temp * effective_mult
+        final_percentile = float(np.clip(final_percentile, 0.5, 0.999))
 
-        # Clamp to valid percentile range; 0.999 avoids t.ppf(1.0)=inf
-        return np.clip(final_percentile, 0.5, 0.999)
+        state = {
+            # Metadata
+            "component_idx": component_idx,
+            "current_cycle": current_cycle,
+            "total_cycles": total_cycles,
+            # Criticality details
+            "criticality": criticality,
+            "snr": crit_details["snr"],
+            "imbalance_strength": crit_details["imbalance_strength"],
+            "normalized_entropy": crit_details["normalized_entropy"],
+            "n_active_reagents": crit_details["n_active_reagents"],
+            # IPR details
+            "participation_ratio": crit_details["participation_ratio"],
+            "effective_n": crit_details["effective_n"],
+            "sharpening_factor": crit_details["sharpening_factor"],
+            # Temperature/percentile pipeline
+            "base_temp": base_temp,
+            "is_heated": is_heated,
+            "criticality_weight": weight,
+            "decay": decay,
+            "cats_multiplier": cats_mult,
+            "effective_multiplier": effective_mult,
+            "final_temperature": final_percentile,
+        }
+
+        self._last_component_states[component_idx] = state
+        return state
+
+    def _get_criticality_weight(self, reagent_list, current_cycle=None, total_cycles=None):
+        """
+        Calculate observation-gated criticality weight.
+
+        Instead of a fixed three-phase schedule, weight is determined by how
+        many observations we have — i.e. how much we can trust the criticality
+        estimate. This is data-driven rather than schedule-driven.
+
+        Uses the 25th percentile of observation counts rather than the minimum.
+        With large components (e.g., 3844 dipeptides), the least-sampled reagent
+        may never be re-sampled after warmup, permanently pinning min_obs at the
+        warmup count. The 25th percentile reflects the bulk of the distribution,
+        allowing CATS to ramp up as the majority of reagents accumulate data.
+
+        Weight ramps from 0 to 1 as p25 observations go from 0 to
+        2 * min_observations, then stays at 1.0.
+
+        Args:
+            reagent_list: List of Reagent objects (used to check observation counts)
+            current_cycle: Unused, kept for API compatibility
+            total_cycles: Unused, kept for API compatibility
+
+        Returns:
+            Criticality weight in [0, 1]
+        """
+        # Filter out retired reagents (aligned with RWS)
+        active_obs = [r.n_samples for r in reagent_list if r.n_samples > 0]
+        if not active_obs:
+            return 0.0
+        p25_obs = float(np.percentile(active_obs, 25))
+        weight = p25_obs / (2.0 * self.min_observations) if self.min_observations > 0 else 1.0
+        return float(np.clip(weight, 0.0, 1.0))
+
+    def _get_cats_multiplier(self, criticality):
+        """
+        Map component criticality to a bidirectional percentile multiplier
+        using a relative neutral point.
+
+        The neutral point (multiplier = 1.0) is at the mean criticality across
+        all components, updated each cycle by ``rotate_component_weighted``.
+        Components below the mean get an exploration boost (multiplier > 1);
+        components above the mean get an exploitation reduction (multiplier < 1).
+
+        Mapping (with mean_crit as the neutral point):
+            criticality = 0.0        →  mult = cats_max_mult  (max exploration)
+            criticality = mean_crit  →  mult = 1.0            (neutral)
+            criticality = 1.0        →  mult = cats_min_mult  (max exploitation)
+
+        Args:
+            criticality: Component criticality in [0, 1]
+
+        Returns:
+            CATS multiplier in [cats_min_mult, cats_max_mult]
+        """
+        neutral = self._mean_criticality
+
+        if criticality <= neutral:
+            # Below mean → explore: interpolate [cats_max_mult, 1.0]
+            t = criticality / max(neutral, 1e-10)
+            multiplier = self.cats_max_mult + t * (1.0 - self.cats_max_mult)
+        else:
+            # Above mean → exploit: interpolate [1.0, cats_min_mult]
+            t = (criticality - neutral) / max(1.0 - neutral, 1e-10)
+            multiplier = 1.0 + t * (self.cats_min_mult - 1.0)
+
+        return multiplier
+
+    def _get_component_percentile(self, component_idx, reagent_list, current_cycle, total_cycles):
+        """
+        Get CATS-adjusted percentile for a component.
+
+        Delegates to ``get_component_state()`` which computes and caches all
+        intermediate values, then returns just the final percentile.
+
+        Args:
+            component_idx: Which reaction component
+            reagent_list: List of Reagent objects for this component
+            current_cycle: Current search cycle
+            total_cycles: Total number of cycles
+
+        Returns:
+            Final percentile value
+        """
+        state = self.get_component_state(
+            reagent_list, component_idx, current_cycle, total_cycles
+        )
+        return state["final_temperature"]
 
     def select_reagent(self, reagent_list, disallow_mask=None, **kwargs):
         """
@@ -407,6 +609,31 @@ class BayesUCBSelection(SelectionStrategy):
             Total number of reagent components
         """
         self.current_component_idx = (self.current_component_idx + 1) % n_components
+
+    def rotate_component_weighted(self, n_components, criticalities, rng=None):
+        """
+        Rotate to next component using criticality-weighted probabilities.
+
+        Flexible components (low criticality) get heated more often.
+        Also caches the mean criticality so that ``_get_cats_multiplier`` can
+        use a relative neutral point instead of a fixed 0.5.
+
+        Parameters
+        ----------
+        n_components : int
+            Total number of reagent components
+        criticalities : list of float
+            Per-component criticality values in [0, 1]
+        rng : numpy.random.Generator, optional
+            Random number generator for reproducibility
+        """
+        if rng is None:
+            rng = np.random.default_rng()
+        crits = np.array(criticalities, dtype=float)
+        self._mean_criticality = float(crits.mean())
+        flexibility = np.maximum(1.0 - crits, 0.1)
+        heat_probs = flexibility / flexibility.sum()
+        self.current_component_idx = int(rng.choice(n_components, p=heat_probs))
 
     def reset_percentiles(self):
         """

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple, Optional
+from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 class SelectionStrategy(ABC):
@@ -61,6 +61,45 @@ class SelectionStrategy(ABC):
             self.select_reagent(reagent_list, disallow_mask, **kwargs)
             for _ in range(batch_size)
         ])
+
+    def get_component_criticality(self, reagent_list: List) -> Optional[float]:
+        """Return criticality score for a component, or None if not supported.
+
+        Strategies with CATS (e.g., RouletteWheelSelection, BayesUCBSelection)
+        override this to delegate to their ``_calculate_criticality`` method.
+
+        Returns:
+            Criticality in [0, 1], or None if the strategy doesn't compute it.
+        """
+        return None
+
+    def get_component_state(
+        self,
+        reagent_list: List,
+        component_idx: int,
+        current_cycle: int,
+        total_cycles: int,
+    ) -> Optional[Dict[str, Any]]:
+        """Return full intermediate state for a component, or None if not supported.
+
+        CATS-aware strategies (RouletteWheelSelection, BayesUCBSelection) override
+        this to expose the complete criticality + temperature/percentile pipeline.
+
+        The returned dict has a consistent schema across strategies so that
+        diagnostics DataFrames can be combined for comparison:
+
+        - ``component_idx``, ``current_cycle``, ``total_cycles`` — metadata
+        - ``criticality``, ``snr``, ``imbalance_strength``,
+          ``normalized_entropy``, ``n_active_reagents`` — from criticality calc
+        - ``base_temp``, ``is_heated``, ``criticality_weight``, ``decay``,
+          ``cats_multiplier``, ``effective_multiplier``,
+          ``final_temperature`` — from temperature/percentile pipeline
+
+        Returns:
+            Dict with all intermediate values, or None if the strategy
+            doesn't compute component state.
+        """
+        return None
 
     def prepare_scores(self, reagent_list: List, rng: np.random.Generator) -> np.ndarray:
         """Sample scores from posterior distributions"""

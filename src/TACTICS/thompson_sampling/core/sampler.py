@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, TYPE_CHECKING, Dict
+from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 import math
 import numpy as np
 import polars as pl
@@ -67,6 +67,7 @@ class ThompsonSampler:
         cats_manager=None,
         use_boltzmann_weighting: bool = False,
         seed: Optional[int] = None,
+        track_diagnostics: bool = False,
     ):
         self.synthesis_pipeline = synthesis_pipeline
         self.selection_strategy = selection_strategy
@@ -89,6 +90,10 @@ class ThompsonSampler:
         # Master RNG for reproducibility
         self._seed = seed
         self._rng = np.random.default_rng(seed)
+
+        # Diagnostics
+        self.track_diagnostics = track_diagnostics
+        self._diagnostics_records: list = []
 
         # Load product library if provided
         if product_library_file:
@@ -181,6 +186,7 @@ class ThompsonSampler:
             product_library_file=config.product_library_file,
             use_boltzmann_weighting=config.use_boltzmann_weighting,
             seed=seed,
+            track_diagnostics=config.track_diagnostics,
         )
 
         # Set up sampler
@@ -616,8 +622,16 @@ class ThompsonSampler:
                 n_unique += 1
                 n_resamples = 0
 
-            # Rotate thermal cycling component
-            if hasattr(self.selection_strategy, "rotate_component"):
+            # Rotate thermal cycling component (weighted by criticality if available)
+            if hasattr(self.selection_strategy, "rotate_component_weighted"):
+                criticalities = [
+                    self.selection_strategy.get_component_criticality(rl) or 0.5
+                    for rl in self.reagent_lists
+                ]
+                self.selection_strategy.rotate_component_weighted(
+                    n_components, criticalities, rng=rng
+                )
+            elif hasattr(self.selection_strategy, "rotate_component"):
                 self.selection_strategy.rotate_component(n_components)
 
             # Adaptive temperature: signal efficiency to strategy
@@ -665,6 +679,26 @@ class ThompsonSampler:
                         for comp_idx, reagent_idx in enumerate(comb):
                             self.reagent_lists[comp_idx][reagent_idx].add_score(score)
 
+                # Collect diagnostics after posterior updates
+                if self.track_diagnostics:
+                    for comp_idx, reagent_list in enumerate(self.reagent_lists):
+                        state = self.selection_strategy.get_component_state(
+                            reagent_list, comp_idx, cycle, total_cycles
+                        )
+                        if state is not None:
+                            self._diagnostics_records.append(state)
+                        else:
+                            # Fallback to legacy 3-column schema
+                            crit = self.selection_strategy.get_component_criticality(
+                                reagent_list
+                            )
+                            if crit is not None:
+                                self._diagnostics_records.append({
+                                    "cycle": cycle,
+                                    "component_idx": comp_idx,
+                                    "criticality": crit,
+                                })
+
                 # Clear accumulator
                 compounds_to_evaluate = []
 
@@ -694,3 +728,339 @@ class ThompsonSampler:
             out_list, schema=["score", "SMILES", "Name"], orient="row"
         )
         return search_df
+
+    # Schema for the enhanced 18-column diagnostics DataFrame
+    _ENHANCED_DIAGNOSTICS_SCHEMA = {
+        "component_idx": pl.Int64,
+        "current_cycle": pl.Int64,
+        "total_cycles": pl.Int64,
+        "criticality": pl.Float64,
+        "snr": pl.Float64,
+        "imbalance_strength": pl.Float64,
+        "normalized_entropy": pl.Float64,
+        "n_active_reagents": pl.Int64,
+        "participation_ratio": pl.Float64,
+        "effective_n": pl.Float64,
+        "sharpening_factor": pl.Float64,
+        "base_temp": pl.Float64,
+        "is_heated": pl.Boolean,
+        "criticality_weight": pl.Float64,
+        "decay": pl.Float64,
+        "cats_multiplier": pl.Float64,
+        "effective_multiplier": pl.Float64,
+        "final_temperature": pl.Float64,
+    }
+
+    _LEGACY_DIAGNOSTICS_SCHEMA = {
+        "cycle": pl.Int64,
+        "component_idx": pl.Int64,
+        "criticality": pl.Float64,
+    }
+
+    def get_diagnostics(self) -> pl.DataFrame:
+        """Return per-cycle diagnostics trajectory as a DataFrame.
+
+        Requires ``track_diagnostics=True`` in config.
+
+        For CATS-aware strategies (RouletteWheelSelection, BayesUCBSelection),
+        returns the enhanced 15-column schema with full intermediate values.
+        The ``current_cycle`` column serves the same role as ``cycle`` in the
+        legacy schema.
+
+        For non-CATS strategies that only support ``get_component_criticality()``,
+        returns the legacy 3-column schema (cycle, component_idx, criticality).
+
+        Returns an empty DataFrame (with the correct schema) if diagnostics
+        were not tracked or the strategy doesn't support criticality.
+        """
+        if not self._diagnostics_records:
+            return pl.DataFrame(schema=self._LEGACY_DIAGNOSTICS_SCHEMA)
+
+        # Detect schema from first record
+        first = self._diagnostics_records[0]
+        if "current_cycle" in first:
+            # Enhanced schema
+            return pl.DataFrame(
+                self._diagnostics_records,
+                schema=self._ENHANCED_DIAGNOSTICS_SCHEMA,
+            )
+        else:
+            # Legacy 3-column schema
+            return pl.DataFrame(
+                self._diagnostics_records,
+                schema=self._LEGACY_DIAGNOSTICS_SCHEMA,
+            )
+
+    def get_posterior_landscape(self) -> pl.DataFrame:
+        """Return per-reagent posterior state for all components.
+
+        Each row contains:
+
+        - **component_idx** – component index (0-based)
+        - **reagent_name** – reagent identifier
+        - **mean** – posterior mean
+        - **std** – posterior standard deviation
+        - **n_samples** – number of observations
+
+        Works regardless of ``track_diagnostics`` setting.
+        """
+        records = []
+        for comp_idx, reagent_list in enumerate(self.reagent_lists):
+            for reagent in reagent_list:
+                records.append({
+                    "component_idx": comp_idx,
+                    "reagent_name": reagent.reagent_name,
+                    "mean": reagent.mean,
+                    "std": reagent.std,
+                    "n_samples": reagent.n_samples,
+                })
+        return pl.DataFrame(records)
+
+    def get_sar_summary(self) -> Dict[str, Any]:
+        """Strategy-agnostic post-hoc SAR assessment from final posteriors.
+
+        Works for ANY strategy — computes entropy-based concentration from
+        the current posterior state.  Uses the same z-score softmax approach
+        as CATS ``_calculate_criticality()`` so that the post-hoc concentration
+        and CATS criticality are directly comparable.
+
+        When ``track_diagnostics=True`` and the strategy supports
+        ``get_component_state()`` (CATS strategies), convergence dynamics
+        are also included.
+
+        Returns:
+            Dict with keys:
+
+            - ``components`` – list of per-component dicts
+            - ``landscape_type`` – "structured_SAR" / "diffuse_SAR" /
+              "mixed" / "insufficient_data"
+            - ``summary_text`` – human-readable 2-3 sentence assessment
+            - ``convergence_dynamics`` – (only with CATS + track_diagnostics)
+              per-component convergence info
+        """
+        mode = self.selection_strategy.mode
+        components = []
+
+        for comp_idx, reagent_list in enumerate(self.reagent_lists):
+            comp_info = self._compute_component_sar(reagent_list, comp_idx, mode)
+            components.append(comp_info)
+
+        # Classify landscape
+        assessments = [c["convergence_assessment"] for c in components]
+        if all(a == "insufficient_data" for a in assessments):
+            landscape_type = "insufficient_data"
+        elif all(a == "structured" for a in assessments):
+            landscape_type = "structured_SAR"
+        elif all(a == "diffuse" for a in assessments):
+            landscape_type = "diffuse_SAR"
+        else:
+            landscape_type = "mixed"
+
+        # Build summary text
+        n_structured = sum(1 for a in assessments if a == "structured")
+        n_diffuse = sum(1 for a in assessments if a == "diffuse")
+        n_insufficient = sum(1 for a in assessments if a == "insufficient_data")
+        n_total = len(assessments)
+
+        if landscape_type == "structured_SAR":
+            summary_text = (
+                f"All {n_total} components show structured SAR — the search has "
+                f"identified dominant reagents with concentrated posterior mass."
+            )
+        elif landscape_type == "diffuse_SAR":
+            summary_text = (
+                f"All {n_total} components show diffuse SAR — posterior mass is "
+                f"spread across many reagents with no clear winners."
+            )
+        elif landscape_type == "insufficient_data":
+            summary_text = (
+                f"Insufficient data across all {n_total} components to assess "
+                f"SAR structure. More observations are needed."
+            )
+        else:
+            summary_text = (
+                f"Mixed SAR landscape: {n_structured}/{n_total} structured, "
+                f"{n_diffuse}/{n_total} diffuse"
+                + (f", {n_insufficient}/{n_total} insufficient data" if n_insufficient else "")
+                + ". Components differ in how concentrated the activity is."
+            )
+
+        result: Dict[str, Any] = {
+            "components": components,
+            "landscape_type": landscape_type,
+            "summary_text": summary_text,
+        }
+
+        # Add convergence dynamics if CATS diagnostics available
+        if self.track_diagnostics and self._diagnostics_records:
+            first = self._diagnostics_records[0]
+            if "current_cycle" in first:
+                diag_df = self.get_diagnostics()
+                dynamics = self._compute_convergence_dynamics(diag_df)
+                result["convergence_dynamics"] = dynamics
+
+        return result
+
+    def _compute_component_sar(
+        self, reagent_list: List, comp_idx: int, mode: str
+    ) -> Dict[str, Any]:
+        """Compute SAR metrics for a single component from posteriors."""
+        active_reagents = [r for r in reagent_list if r.n_samples > 0]
+        n_active = len(active_reagents)
+
+        if n_active < 2:
+            return {
+                "component_idx": comp_idx,
+                "posterior_entropy": float("nan"),
+                "normalized_entropy": float("nan"),
+                "concentration": float("nan"),
+                "gini_coefficient": float("nan"),
+                "top1_share": float("nan"),
+                "top5_share": float("nan"),
+                "snr": float("nan"),
+                "effective_n": float("nan"),
+                "participation_ratio": float("nan"),
+                "dominant_reagent": None,
+                "convergence_assessment": "insufficient_data",
+            }
+
+        means = np.array([r.mean for r in active_reagents])
+        names = [r.reagent_name for r in active_reagents]
+
+        if np.std(means) < 1e-10:
+            return {
+                "component_idx": comp_idx,
+                "posterior_entropy": np.log(n_active),
+                "normalized_entropy": 1.0,
+                "concentration": 0.0,
+                "gini_coefficient": 0.0,
+                "top1_share": 1.0 / n_active,
+                "top5_share": min(5, n_active) / n_active,
+                "snr": 0.0,
+                "effective_n": float(n_active),
+                "participation_ratio": 1.0 / n_active,
+                "dominant_reagent": names[0],
+                "convergence_assessment": "diffuse",
+            }
+
+        if mode == "minimize":
+            means = -means
+
+        # Z-score softmax (same as CATS _calculate_criticality)
+        mean_std = np.std(means)
+
+        # SNR
+        se_squared = np.array([
+            r.std ** 2 / max(r.n_samples, 1) for r in active_reagents
+        ])
+        noise_std = np.sqrt(np.mean(se_squared))
+        snr = float(mean_std / max(noise_std, 1e-10))
+
+        imbalance_strength = 1.0 - np.exp(-max(snr - 1.0, 0.0))
+
+        z_scores = (means - np.mean(means)) / mean_std
+        z_scores *= imbalance_strength
+
+        # Read criticality metric from strategy if available
+        criticality_metric = getattr(self.selection_strategy, "criticality_metric", "ipr")
+        n_adaptive_sharpening = getattr(self.selection_strategy, "n_adaptive_sharpening", True)
+
+        if criticality_metric == "ipr" and n_adaptive_sharpening and n_active > 2:
+            sharpening = max(1.0, np.sqrt(np.log(n_active)))
+            z_scores *= sharpening
+
+        exp_means = np.exp(z_scores - z_scores.max())  # numerical stability
+        probabilities = exp_means / exp_means.sum()
+
+        # Shannon entropy
+        entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
+        max_entropy = np.log(n_active)
+        normalized_entropy = entropy / max_entropy if max_entropy > 1e-10 else 1.0
+
+        # IPR-based concentration
+        ipr = float(np.sum(probabilities ** 2))
+        effective_n = 1.0 / ipr
+
+        if criticality_metric == "ipr":
+            concentration = 1.0 - (effective_n / n_active)
+        else:
+            concentration = 1.0 - normalized_entropy
+
+        # Gini coefficient
+        sorted_probs = np.sort(probabilities)
+        n = len(sorted_probs)
+        index = np.arange(1, n + 1)
+        gini = float((2 * np.sum(index * sorted_probs) - (n + 1) * np.sum(sorted_probs)) / (n * np.sum(sorted_probs)))
+
+        # Top-k shares
+        sorted_desc = np.sort(probabilities)[::-1]
+        top1_share = float(sorted_desc[0])
+        top5_share = float(np.sum(sorted_desc[:min(5, n)]))
+
+        # Dominant reagent
+        best_idx = int(np.argmax(probabilities))
+        dominant_reagent = names[best_idx]
+
+        # Assessment
+        if n_active < 5:
+            assessment = "insufficient_data"
+        elif concentration > 0.3:
+            assessment = "structured"
+        else:
+            assessment = "diffuse"
+
+        return {
+            "component_idx": comp_idx,
+            "posterior_entropy": float(entropy),
+            "normalized_entropy": float(normalized_entropy),
+            "concentration": float(concentration),
+            "gini_coefficient": gini,
+            "top1_share": top1_share,
+            "top5_share": top5_share,
+            "snr": snr,
+            "effective_n": float(effective_n),
+            "participation_ratio": ipr,
+            "dominant_reagent": dominant_reagent,
+            "convergence_assessment": assessment,
+        }
+
+    @staticmethod
+    def _compute_convergence_dynamics(diag_df: pl.DataFrame) -> List[Dict[str, Any]]:
+        """Extract convergence dynamics from enhanced diagnostics DataFrame."""
+        dynamics = []
+        for comp_idx in diag_df["component_idx"].unique().sort().to_list():
+            comp_df = diag_df.filter(pl.col("component_idx") == comp_idx).sort("current_cycle")
+
+            crits = comp_df["criticality"].to_numpy()
+            cycles = comp_df["current_cycle"].to_numpy()
+
+            # First cycle where criticality > 0.3
+            structured_mask = crits > 0.3
+            cycle_first = int(cycles[structured_mask][0]) if structured_mask.any() else None
+
+            # Stable: first cycle after which criticality stays > 0.3
+            cycle_stable = None
+            if structured_mask.any():
+                for i in range(len(crits)):
+                    if np.all(crits[i:] > 0.3):
+                        cycle_stable = int(cycles[i])
+                        break
+
+            # SNR trajectory slope (linear regression)
+            snr_values = comp_df["snr"].to_numpy()
+            valid_snr = np.isfinite(snr_values)
+            if valid_snr.sum() >= 2:
+                valid_cycles = cycles[valid_snr].astype(float)
+                valid_snr_vals = snr_values[valid_snr]
+                slope = float(np.polyfit(valid_cycles, valid_snr_vals, 1)[0])
+            else:
+                slope = float("nan")
+
+            dynamics.append({
+                "component_idx": comp_idx,
+                "cycle_first_structured": cycle_first,
+                "cycle_stable": cycle_stable,
+                "snr_trajectory_slope": slope,
+            })
+
+        return dynamics
