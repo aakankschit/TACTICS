@@ -688,3 +688,48 @@ Typical analysis workflow:
 2. **LibraryAnalysis** - Identify top building blocks and their frequencies
 3. **LibraryVisualization** - Create molecular structure grids
 4. **TS_Benchmarks** - Compare multiple methods with statistical analysis
+
+
+.. _diagnostic-plots:
+
+Diagnostic Plots
+----------------
+
+.. rst-class:: class-core
+
+The ``diagnostic_plots`` module provides visualization functions for analyzing
+CATS diagnostics data collected during Thompson Sampling runs.
+
+**Requires:** ``track_diagnostics=True`` in ``ThompsonSamplingConfig`` and
+the diagnostics DataFrame from ``sampler.get_diagnostics()``.
+
+Available Functions
+~~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :widths: 35 65
+
+   * - Function
+     - Description
+   * - ``plot_criticality_trajectories(diag_df)``
+     - Plot per-component criticality over cycles.
+   * - ``plot_snr_trajectories(diag_df)``
+     - Plot signal-to-noise ratio over cycles.
+   * - ``plot_temperature_trajectories(diag_df)``
+     - Plot effective temperature over cycles.
+   * - ``plot_multiplier_trajectories(diag_df)``
+     - Plot CATS multiplier over cycles.
+   * - ``plot_diagnostics_dashboard(diag_df)``
+     - Create a multi-panel dashboard with all diagnostic plots.
+
+**Example**
+
+.. code-block:: python
+
+   from TACTICS.library_analysis.diagnostic_plots import plot_diagnostics_dashboard
+
+   # After running search with track_diagnostics=True
+   diag_df = sampler.get_diagnostics()
+   fig = plot_diagnostics_dashboard(diag_df)
+   fig.savefig("diagnostics.png", dpi=150, bbox_inches="tight")

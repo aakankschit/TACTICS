@@ -265,6 +265,10 @@ The main configuration class for Thompson Sampling optimization.
      - ``bool``
      - No
      - Hide progress bars. Default: False.
+   * - ``track_diagnostics``
+     - ``bool``
+     - No
+     - Collect per-cycle diagnostics (criticality, SNR, multipliers). Default: False.
    * - ``use_boltzmann_weighting``
      - ``bool``
      - No
@@ -365,6 +369,14 @@ Configuration for roulette wheel selection with thermal cycling and CATS.
      - ``int``
      - No
      - Min observations for criticality trust. Default: 5.
+   * - ``criticality_metric``
+     - ``str``
+     - No
+     - ``"ipr"`` (default) or ``"shannon"`` (legacy). IPR recommended for large components.
+   * - ``n_adaptive_sharpening``
+     - ``bool``
+     - No
+     - Apply sqrt(log(N)) z-score sharpening (IPR mode only). Default: True.
 
 .. _ucb-config:
 
@@ -481,6 +493,14 @@ Configuration for Bayesian UCB with CATS integration.
      - ``int``
      - No
      - Min observations for criticality. Default: 5.
+   * - ``criticality_metric``
+     - ``str``
+     - No
+     - ``"ipr"`` (default) or ``"shannon"`` (legacy). IPR recommended for large components.
+   * - ``n_adaptive_sharpening``
+     - ``bool``
+     - No
+     - Apply sqrt(log(N)) z-score sharpening (IPR mode only). Default: True.
 
 
 .. _warmup-configs:

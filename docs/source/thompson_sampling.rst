@@ -287,6 +287,10 @@ Constructor
      - ``bool``
      - No
      - Use Boltzmann-weighted updates (legacy RWS). Default: False.
+   * - ``track_diagnostics``
+     - ``bool``
+     - No
+     - Collect per-cycle diagnostics (criticality, SNR, multipliers). Default: False.
 
 Factory Method: from_config
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -461,6 +465,57 @@ Setup Methods
    of truth for reactions and reagents. The old ``read_reagents()`` and ``set_reaction()``
    methods have been removed.
 
+Diagnostics API
+~~~~~~~~~~~~~~~
+
+The ``ThompsonSampler`` provides methods for post-hoc analysis of search dynamics.
+Enable diagnostics collection by setting ``track_diagnostics=True`` in the config.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Method
+     - Description
+   * - ``get_diagnostics()``
+     - Return per-cycle diagnostics as a Polars DataFrame. Includes criticality, SNR,
+       IPR, effective_n, multipliers, and temperature for each component at each cycle.
+       Requires ``track_diagnostics=True``.
+   * - ``get_posterior_landscape()``
+     - Return per-reagent posterior state (mean, std, n_samples) for all components.
+       Does not require ``track_diagnostics``.
+   * - ``get_sar_summary()``
+     - Return strategy-agnostic SAR assessment with per-component convergence dynamics
+       and top reagent rankings. Does not require ``track_diagnostics``.
+
+**Example**
+
+.. code-block:: python
+
+   config = ThompsonSamplingConfig(
+       synthesis_pipeline=pipeline,
+       num_ts_iterations=1000,
+       track_diagnostics=True,
+       strategy_config=RouletteWheelConfig(mode="minimize"),
+       evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
+   )
+   sampler = ThompsonSampler.from_config(config)
+   sampler.warm_up(num_warmup_trials=5)
+   sampler.search(num_cycles=1000)
+
+   # Get diagnostics DataFrame
+   diag_df = sampler.get_diagnostics()
+   print(diag_df.columns)
+   # ['cycle', 'component', 'criticality', 'snr', 'effective_n', ...]
+
+   # Get posterior landscape
+   landscape = sampler.get_posterior_landscape()
+
+   # Get SAR summary
+   sar = sampler.get_sar_summary()
+
+   sampler.close()
+
 
 Selection Strategies
 --------------------
@@ -566,8 +621,8 @@ Roulette wheel selection with thermal cycling and Component-Aware Thompson Sampl
 **Extends:** :ref:`SelectionStrategy <selection-strategy>`
 
 - Boltzmann-weighted selection with adaptive temperature control
-- Component rotation for systematic exploration
-- CATS: Shannon entropy-based criticality analysis
+- Criticality-weighted component rotation for efficient exploration
+- CATS: IPR-based criticality analysis with SNR dampening
 - Best for: Complex multi-modal landscapes, large libraries
 
 .. list-table:: Parameters
@@ -602,6 +657,14 @@ Roulette wheel selection with thermal cycling and Component-Aware Thompson Sampl
      - ``int``
      - No
      - Min observations before trusting criticality. Default: 5.
+   * - ``criticality_metric``
+     - ``str``
+     - No
+     - ``"ipr"`` (default, recommended) or ``"shannon"`` (legacy). IPR is more sensitive to probability concentration at large N.
+   * - ``n_adaptive_sharpening``
+     - ``bool``
+     - No
+     - Apply sqrt(log(N)) sharpening to z-scores (IPR mode only). Default: True.
 
 **Example**
 
@@ -609,18 +672,19 @@ Roulette wheel selection with thermal cycling and Component-Aware Thompson Sampl
 
    from TACTICS.thompson_sampling.strategies import RouletteWheelSelection
 
-   # Standard thermal cycling
+   # Standard thermal cycling with IPR criticality (default)
    strategy = RouletteWheelSelection(
        mode="maximize",
        alpha=0.1,
        beta=0.05
    )
 
-   # Higher exploration
+   # Legacy Shannon entropy criticality
    strategy = RouletteWheelSelection(
        mode="maximize",
-       alpha=0.2,
-       beta=0.1
+       alpha=0.1,
+       beta=0.05,
+       criticality_metric="shannon"
    )
 
 .. _ucb-selection:
@@ -725,7 +789,7 @@ Bayesian UCB with Student-t quantiles and CATS integration.
 
 - Theoretically grounded Bayesian confidence bounds
 - Percentile-based thermal cycling (analog to temperature)
-- Component-aware exploration based on Shannon entropy
+- Component-aware exploration based on IPR criticality with SNR dampening
 - Best for: Complex landscapes, escaping local optima
 - Requires: scipy
 
@@ -761,6 +825,14 @@ Bayesian UCB with Student-t quantiles and CATS integration.
      - ``int``
      - No
      - Min observations before trusting criticality. Default: 5.
+   * - ``criticality_metric``
+     - ``str``
+     - No
+     - ``"ipr"`` (default, recommended) or ``"shannon"`` (legacy). IPR is more sensitive to probability concentration at large N.
+   * - ``n_adaptive_sharpening``
+     - ``bool``
+     - No
+     - Apply sqrt(log(N)) sharpening to z-scores (IPR mode only). Default: True.
 
 **Example**
 
