@@ -156,6 +156,8 @@ env/
 
 # macOS Finder settings file
 .DS_Store
+# macOS resource fork files
+._*
 
 # Claude Code local config
 CLAUDE.md
@@ -191,6 +193,17 @@ reorganization.md
 /*.png
 /*.pdf
 /*.csv
+
+# SLURM job files (HPC-specific, not distributed)
+*.sub
+slurm-*.out
+slurm-*.err
+
+# HPC scripts (local infrastructure)
+scripts/
+
+# Research status (local research tracking)
+research/
 
 # Legacy code outputs (not needed in repository)
 src/TACTICS/thompson_sampling/legacy/src/

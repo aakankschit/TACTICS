@@ -1,11 +1,14 @@
 """Pydantic configuration models for selection strategies."""
 
 from pydantic import BaseModel, Field, field_validator
-from typing import Literal, Optional, Tuple, Union
+from typing import Literal, Optional, Tuple, Union, Annotated
 
 
 class GreedyConfig(BaseModel):
-    """Configuration for Greedy selection strategy."""
+    """Configuration for Greedy selection strategy.
+
+    Pure argmax Thompson Sampling: sample posteriors, pick the best.
+    """
 
     strategy_type: Literal["greedy"] = "greedy"
     mode: Literal["maximize", "minimize"] = "maximize"
@@ -74,22 +77,11 @@ class RouletteWheelConfig(BaseModel):
         ),
     )
 
-    # CATS criticality metric
-    criticality_metric: Literal["ipr", "shannon"] = Field(
-        default="ipr",
-        description=(
-            "Metric for computing component criticality. "
-            "'ipr' uses Inverse Participation Ratio (sensitive to probability concentration). "
-            "'shannon' uses Shannon entropy (legacy, insensitive at large N)."
-        ),
-    )
-    n_adaptive_sharpening: bool = Field(
-        default=True,
-        description=(
-            "Enable N-adaptive sharpening of z-scores before softmax. "
-            "Counteracts softmax flattening for components with many reagents (large N). "
-            "Only applies when criticality_metric='ipr'."
-        ),
+    # GMIC divergence gate
+    divergence_threshold: float = Field(
+        default=0.1,
+        gt=0,
+        description="KL divergence threshold for switching from diversity to GMIC criticality mode"
     )
 
     # Adaptive temperature parameters (legacy RWS-inspired)
@@ -149,6 +141,122 @@ class BoltzmannConfig(BaseModel):
     strategy_type: Literal["boltzmann"] = "boltzmann"
     mode: Literal["maximize_boltzmann", "minimize_boltzmann"] = "maximize_boltzmann"
     temperature: float = Field(default=1.0, gt=0, description="Temperature parameter (lower = more exploitation)")
+
+
+class TopTwoConfig(BaseModel):
+    """Configuration for Top-Two Thompson Sampling (TT-TS).
+
+    TT-TS targets best-arm identification rather than regret minimization.
+    It draws two independent posterior samples and explores challengers when
+    there is genuine uncertainty about which reagent is best.
+
+    Supports asymmetric thermal cycling via posterior std scaling. Criticality
+    is used strictly for weighted component rotation — it does NOT produce a
+    temperature multiplier.
+
+    Reference:
+        Russo, D. (2020). Simple Bayesian Algorithms for Best-Arm Identification.
+        Operations Research, 68(6), 1625-1647.
+    """
+
+    strategy_type: Literal["top_two"] = "top_two"
+    mode: Literal["maximize", "minimize"] = "maximize"
+    beta: float = Field(
+        default=0.5,
+        ge=0,
+        le=1,
+        description=(
+            "Probability of selecting the challenger when two posterior samples "
+            "disagree on the best reagent. β=0.5 gives equal weight to exploration "
+            "and exploitation. Higher β → more exploration of uncertain reagents."
+        ),
+    )
+
+    # Thermal cycling parameters
+    heated_scale: float = Field(
+        default=1.5,
+        gt=0,
+        description=(
+            "Multiplier on posterior std for the heated component. "
+            ">1 inflates uncertainty → more TT-TS disagreement → exploration. "
+            "Set to 1.0 to disable thermal cycling."
+        ),
+    )
+    cooled_scale: float = Field(
+        default=0.75,
+        gt=0,
+        description=(
+            "Multiplier on posterior std for cooled components. "
+            "<1 deflates uncertainty → more TT-TS agreement → exploitation. "
+            "Set to 1.0 to disable thermal cycling."
+        ),
+    )
+
+    # GMIC criticality (for weighted rotation only — does NOT affect temperature)
+    min_observations: int = Field(
+        default=5,
+        gt=0,
+        description="Minimum observations per reagent before trusting GMIC criticality",
+    )
+
+    # Adaptive thermal cycling parameters
+    adaptive_temperature: bool = Field(
+        default=False,
+        description=(
+            "Enable adaptive thermal cycling. Progressively increases heated_scale "
+            "and decreases cooled_scale when sampling efficiency drops, counteracting "
+            "posterior tightening over long searches."
+        ),
+    )
+    scale_increment: float = Field(
+        default=0.01,
+        ge=0,
+        description="Amount to increase heated_scale when efficiency drops below threshold",
+    )
+    cooled_scale_increment: float = Field(
+        default=0.001,
+        ge=0,
+        description="Amount to decrease cooled_scale when zero unique compounds found",
+    )
+    efficiency_threshold: float = Field(
+        default=0.10,
+        ge=0,
+        le=1,
+        description="Efficiency below which heated_scale is incremented",
+    )
+    heated_scale_max: float = Field(
+        default=5.0,
+        gt=0,
+        description="Maximum heated_scale value",
+    )
+
+    # Disagreement-rate adaptive thermal cycling
+    adaptive_disagreement: bool = Field(
+        default=False,
+        description=(
+            "Enable disagreement-rate adaptive thermal cycling. Tracks the "
+            "TT-TS disagreement rate (fraction of select_reagent calls where "
+            "two posterior samples disagree on the best reagent) and increases "
+            "heated_scale when disagreement drops below the threshold. "
+            "Recommended replacement for adaptive_temperature in TT-TS context."
+        ),
+    )
+    disagreement_window: int = Field(
+        default=200,
+        gt=1,
+        description="Rolling window size for computing disagreement rate.",
+    )
+    disagreement_threshold: float = Field(
+        default=0.3,
+        gt=0,
+        le=1,
+        description="Disagreement rate below which heated_scale is increased.",
+    )
+    disagreement_scale_increment: float = Field(
+        default=0.05,
+        ge=0,
+        description="Amount to increase heated_scale per trigger.",
+    )
 
 
 class BayesUCBConfig(BaseModel):

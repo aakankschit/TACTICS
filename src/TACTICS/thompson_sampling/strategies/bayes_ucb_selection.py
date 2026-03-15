@@ -610,7 +610,7 @@ class BayesUCBSelection(SelectionStrategy):
         """
         self.current_component_idx = (self.current_component_idx + 1) % n_components
 
-    def rotate_component_weighted(self, n_components, criticalities, rng=None):
+    def rotate_component_weighted(self, n_components, reagent_lists, rng=None):
         """
         Rotate to next component using criticality-weighted probabilities.
 
@@ -622,13 +622,17 @@ class BayesUCBSelection(SelectionStrategy):
         ----------
         n_components : int
             Total number of reagent components
-        criticalities : list of float
-            Per-component criticality values in [0, 1]
+        reagent_lists : list of list
+            List of reagent lists, one per component
         rng : numpy.random.Generator, optional
             Random number generator for reproducibility
         """
         if rng is None:
             rng = np.random.default_rng()
+        criticalities = [
+            self.get_component_criticality(rl) or 0.5
+            for rl in reagent_lists
+        ]
         crits = np.array(criticalities, dtype=float)
         self._mean_criticality = float(crits.mean())
         flexibility = np.maximum(1.0 - crits, 0.1)

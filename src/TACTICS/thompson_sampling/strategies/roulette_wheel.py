@@ -32,8 +32,7 @@ class RouletteWheelSelection(SelectionStrategy):
         alpha_max=2.0,
         cats_exploration_fraction=0.3,
         cats_range=None,
-        criticality_metric="ipr",
-        n_adaptive_sharpening=True,
+        divergence_threshold=0.1,
         **kwargs,
     ):
         """
@@ -56,12 +55,8 @@ class RouletteWheelSelection(SelectionStrategy):
                 criticality remains low. Set to None to disable decay (default: 0.5).
             cats_range: Override alpha/beta-derived CATS multiplier range. If set,
                 cats_max = cats_range, cats_min = 1/cats_range. (default: None)
-            criticality_metric: "ipr" (Inverse Participation Ratio) or "shannon"
-                (legacy Shannon entropy). IPR is more sensitive to probability
-                concentration, especially at large N. (default: "ipr")
-            n_adaptive_sharpening: If True and criticality_metric="ipr", apply
-                sqrt(log(N)) sharpening to z-scores before softmax to counteract
-                flattening at large N. (default: True)
+            divergence_threshold: KL divergence threshold for switching from diversity
+                to GMIC criticality mode (default: 0.1)
             **kwargs: Catches deprecated parameters with warnings
         """
         super().__init__(mode)
@@ -84,8 +79,6 @@ class RouletteWheelSelection(SelectionStrategy):
         self.transition_phase_end = transition_phase_end
         self.min_observations = min_observations
         self.cats_exploration_fraction = cats_exploration_fraction
-        self.criticality_metric = criticality_metric
-        self.n_adaptive_sharpening = n_adaptive_sharpening
 
         # Thermal cycling state
         self.current_component_idx = 0
@@ -105,6 +98,15 @@ class RouletteWheelSelection(SelectionStrategy):
         # Cache for last component state (avoids double computation)
         self._last_component_states: Dict[int, Dict[str, Any]] = {}
 
+        # GMIC + divergence state
+        self._divergence_threshold = divergence_threshold
+        # Per-component posterior snapshots: {comp_idx: (means_array, stds_array)}
+        self._posterior_snapshots: Dict[int, tuple] = {}
+        # Per-component divergence values: {comp_idx: float}
+        self._divergence_values: Dict[int, float] = {}
+        # Cached GMIC per component (updated by rotate_component_weighted)
+        self._cached_gmics: Dict[int, float] = {}
+
         # Validation warnings
         if abs(self.alpha - self.beta) < 1e-10:
             warnings.warn(
@@ -115,195 +117,211 @@ class RouletteWheelSelection(SelectionStrategy):
                 stacklevel=2,
             )
 
-    def _calculate_criticality(self, reagent_list, rng=None):
+    def _calculate_gmic(self, reagent_list) -> float:
         """
-        Calculate component criticality using z-score softmax with signal-to-noise
-        dampening. Supports IPR (default) and Shannon entropy metrics.
+        Calculate Gaussian Mutual Information Criticality (GMIC) for a component.
 
-        Converts posterior means to z-scores before softmax, making criticality
-        scale-invariant. A signal-to-noise ratio (SNR) check dampens the z-scores
-        when between-reagent spread is comparable to sampling noise, preventing
-        false criticality signals on balanced libraries.
+        GMIC measures how much information the posterior means carry about which
+        reagent is best, relative to the noise level. High GMIC = critical component
+        (clear winners), low GMIC = flexible component (all reagents similar).
 
-        SNR = std(posterior_means) / expected_noise_std
-        - SNR <= 1: noise dominates -> z-scores suppressed -> criticality -> 0
-        - SNR > 1: real signal -> z-scores preserved -> criticality reflects structure
+        Returns:
+            GMIC value >= 0. Returns 0.0 if insufficient data.
+        """
+        active = [r for r in reagent_list if r.n_samples > 0]
+        if len(active) < 2:
+            return 0.0
+        means = np.array([r.mean for r in active])
+        signal = np.var(means)
+        noise = np.mean([r.std ** 2 for r in active])
+        return 0.5 * np.log1p(signal / max(noise, 1e-10))
 
-        Criticality in [0, 1]:
-        - criticality ~ 0: Flexible component -> should EXPLORE
-        - criticality ~ 1: Critical component -> should EXPLOIT
+    def _calculate_gmic_details(self, reagent_list) -> tuple:
+        """
+        Calculate GMIC with full diagnostic details.
+
+        Returns:
+            Tuple of (gmic, details_dict) where details_dict contains
+            signal_var, mean_noise_var, n_active_reagents.
+        """
+        active = [r for r in reagent_list if r.n_samples > 0]
+        details = {
+            "signal_var": float("nan"),
+            "mean_noise_var": float("nan"),
+            "n_active_reagents": len(active),
+        }
+        if len(active) < 2:
+            return 0.0, details
+        means = np.array([r.mean for r in active])
+        signal = float(np.var(means))
+        noise = float(np.mean([r.std ** 2 for r in active]))
+        details["signal_var"] = signal
+        details["mean_noise_var"] = noise
+        gmic = 0.5 * np.log1p(signal / max(noise, 1e-10))
+        return float(gmic), details
+
+    def _update_divergence(self, component_idx: int, reagent_list) -> float:
+        """
+        Update posterior divergence tracker for a component.
+
+        Computes the average KL divergence between current and previous posterior
+        snapshots across all active reagents. Uses Gaussian KL:
+            D_KL(N(mu1,s1^2) || N(mu2,s2^2)) = log(s2/s1) + (s1^2 + (mu1-mu2)^2)/(2*s2^2) - 0.5
 
         Args:
-            reagent_list: List of Reagent objects with posterior distributions
-            rng: Unused, kept for API compatibility
+            component_idx: Index of the component
+            reagent_list: List of Reagent objects
 
         Returns:
-            Criticality score in [0, 1]. Returns 0.5 (neutral) if insufficient data.
+            Average KL divergence (inf if no prior snapshot).
         """
-        # Filter out retired reagents (those that never got warmup observations)
-        active_reagents = [r for r in reagent_list if r.n_samples > 0]
-        if len(active_reagents) < 2:
-            return 0.5  # Not enough active reagents for entropy
+        active = [r for r in reagent_list if r.n_samples > 0]
+        if len(active) < 2:
+            return float("inf")
 
-        # Check if we have sufficient data
-        observations = [r.n_samples for r in active_reagents]
-        if min(observations) < self.min_observations:
-            return 0.5  # Neutral criticality if insufficient data
+        current_means = np.array([r.mean for r in active])
+        current_stds = np.array([np.maximum(r.std, 1e-10) for r in active])
 
-        # Extract posterior means
-        means = np.array([r.mean for r in active_reagents])
+        if component_idx not in self._posterior_snapshots:
+            # First call: store snapshot, return inf (no comparison possible)
+            self._posterior_snapshots[component_idx] = (
+                current_means.copy(),
+                current_stds.copy(),
+            )
+            self._divergence_values[component_idx] = float("inf")
+            return float("inf")
 
-        # Handle edge case: all means identical
-        if np.std(means) < 1e-10:
-            return 0.0  # Perfectly flexible (all equally good)
+        prev_means, prev_stds = self._posterior_snapshots[component_idx]
 
-        # For minimization, negate means (want higher probability for lower scores)
-        if self.mode == "minimize":
-            means = -means
+        # Handle size changes (e.g., new active reagents)
+        n = min(len(current_means), len(prev_means))
+        if n < 2:
+            self._posterior_snapshots[component_idx] = (
+                current_means.copy(),
+                current_stds.copy(),
+            )
+            self._divergence_values[component_idx] = float("inf")
+            return float("inf")
 
-        # Normalize to z-scores so criticality is scale-invariant.
-        mean_std = np.std(means)
-        if mean_std < 1e-10:
-            return 0.0  # All means identical after sign flip
+        mu1 = current_means[:n]
+        s1 = current_stds[:n]
+        mu2 = prev_means[:n]
+        s2 = prev_stds[:n]
 
-        # Signal-to-noise dampening
-        se_squared = np.array([
-            r.std ** 2 / max(r.n_samples, 1) for r in active_reagents
-        ])
-        noise_std = np.sqrt(np.mean(se_squared))
-        snr = mean_std / max(noise_std, 1e-10)
+        # Gaussian KL: D_KL(current || previous)
+        kl_per_reagent = (
+            np.log(s2 / s1)
+            + (s1 ** 2 + (mu1 - mu2) ** 2) / (2.0 * s2 ** 2)
+            - 0.5
+        )
+        avg_kl = float(np.mean(kl_per_reagent))
 
-        imbalance_strength = 1.0 - np.exp(-max(snr - 1.0, 0.0))
+        # Update snapshot
+        self._posterior_snapshots[component_idx] = (
+            current_means.copy(),
+            current_stds.copy(),
+        )
+        self._divergence_values[component_idx] = avg_kl
+        return avg_kl
 
-        z_scores = (means - np.mean(means)) / mean_std
-        z_scores *= imbalance_strength  # Dampen toward 0 when SNR is low
+    def _get_component_state_gmic(
+        self,
+        reagent_list: List,
+        component_idx: int,
+        current_cycle: int,
+        total_cycles: int,
+    ) -> Dict[str, Any]:
+        """
+        Compute full intermediate state for a component using GMIC + Divergence gate.
 
-        # N-adaptive sharpening (counteracts softmax flattening for large N)
-        N = len(active_reagents)
-        if self.criticality_metric == "ipr" and self.n_adaptive_sharpening and N > 2:
-            sharpening = max(1.0, np.sqrt(np.log(N)))
-            z_scores *= sharpening
-
-        exp_means = np.exp(z_scores - z_scores.max())  # numerical stability
-        probabilities = exp_means / exp_means.sum()
-
-        if self.criticality_metric == "ipr":
-            # Inverse Participation Ratio: sensitive to probability concentration
-            ipr = np.sum(probabilities ** 2)
-            effective_N = 1.0 / ipr
-            criticality = 1.0 - (effective_N / N)
-        else:  # shannon (legacy)
-            entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
-            max_entropy = np.log(N)
-            if max_entropy < 1e-10:
-                return 0.5
-            criticality = 1.0 - (entropy / max_entropy)
-
-        return float(np.clip(criticality, 0.0, 1.0))
-
-    def _calculate_criticality_details(self, reagent_list, rng=None):
-        """Calculate criticality and return all intermediate values.
+        1. Compute GMIC + details
+        2. Update divergence tracker
+        3. Check stability: is_stable = divergence < threshold
+        4. Base temp from thermal cycling (alpha/beta)
+        5. If stable: apply GMIC-based directional multiplier
+        6. If not stable: use base temp (diversity fallback)
 
         Returns:
-            Tuple of (criticality, details_dict) where details_dict contains
-            snr, imbalance_strength, normalized_entropy, n_active_reagents,
-            participation_ratio, effective_n, sharpening_factor.
+            Dict with all intermediate values.
         """
-        details = {
-            "snr": float("nan"),
-            "imbalance_strength": float("nan"),
-            "normalized_entropy": float("nan"),
-            "n_active_reagents": 0,
-            "participation_ratio": float("nan"),
-            "effective_n": float("nan"),
-            "sharpening_factor": float("nan"),
+        # Step 1: GMIC with details
+        gmic, gmic_details = self._calculate_gmic_details(reagent_list)
+
+        # Step 2: Update divergence
+        divergence = self._update_divergence(component_idx, reagent_list)
+
+        # Step 3: Stability check
+        is_stable = divergence < self._divergence_threshold
+
+        # Step 4: Base temperature from thermal cycling
+        is_heated = component_idx == self.current_component_idx
+        base_temp = self.alpha if is_heated else self.beta
+
+        # Step 5/6: GMIC-based multiplier or diversity fallback
+        if is_stable and gmic > 0:
+            # Use cached mean GMIC for relative comparison
+            mean_gmic = np.mean(list(self._cached_gmics.values())) if self._cached_gmics else gmic
+            mean_gmic = max(mean_gmic, 1e-10)
+
+            # Relative GMIC: >1 = more critical than average, <1 = more flexible
+            relative_gmic = gmic / mean_gmic
+
+            if is_heated:
+                # Flexible components (low relative GMIC) get amplified heating
+                if relative_gmic < 1.0:
+                    t = 1.0 - relative_gmic  # 0 to ~1
+                    cats_mult = 1.0 + t * (self.cats_max_mult - 1.0)
+                else:
+                    cats_mult = 1.0
+            else:
+                # Critical components (high relative GMIC) get amplified cooling
+                if relative_gmic > 1.0:
+                    t = min(relative_gmic - 1.0, 1.0)  # 0 to 1, capped
+                    cats_mult = 1.0 + t * (self.cats_min_mult - 1.0)
+                else:
+                    cats_mult = 1.0
+
+            cats_mode = "criticality"
+            effective_mult = cats_mult
+        else:
+            # Diversity fallback: base temperature only
+            cats_mult = 1.0
+            effective_mult = 1.0
+            cats_mode = "diversity"
+
+        # Step 7: Final temperature
+        final_temp = base_temp * effective_mult
+
+        state = {
+            # Metadata
+            "component_idx": component_idx,
+            "current_cycle": current_cycle,
+            "total_cycles": total_cycles,
+            # GMIC details
+            "gmic": gmic,
+            "criticality": gmic,
+            "signal_var": gmic_details["signal_var"],
+            "mean_noise_var": gmic_details["mean_noise_var"],
+            "n_active_reagents": gmic_details["n_active_reagents"],
+            # Divergence gate
+            "divergence": divergence,
+            "divergence_threshold": self._divergence_threshold,
+            "is_stable": is_stable,
+            "cats_mode": cats_mode,
+            # Temperature pipeline
+            "base_temp": base_temp,
+            "is_heated": is_heated,
+            "cats_multiplier": cats_mult,
+            "effective_multiplier": effective_mult,
+            "final_temperature": final_temp,
         }
 
-        active_reagents = [r for r in reagent_list if r.n_samples > 0]
-        details["n_active_reagents"] = len(active_reagents)
-
-        if len(active_reagents) < 2:
-            return 0.5, details
-
-        observations = [r.n_samples for r in active_reagents]
-        if min(observations) < self.min_observations:
-            return 0.5, details
-
-        means = np.array([r.mean for r in active_reagents])
-
-        if np.std(means) < 1e-10:
-            details["snr"] = 0.0
-            details["imbalance_strength"] = 0.0
-            details["normalized_entropy"] = 1.0
-            details["participation_ratio"] = 1.0 / len(active_reagents)
-            details["effective_n"] = float(len(active_reagents))
-            details["sharpening_factor"] = 1.0
-            return 0.0, details
-
-        if self.mode == "minimize":
-            means = -means
-
-        mean_std = np.std(means)
-        if mean_std < 1e-10:
-            details["snr"] = 0.0
-            details["imbalance_strength"] = 0.0
-            details["normalized_entropy"] = 1.0
-            details["participation_ratio"] = 1.0 / len(active_reagents)
-            details["effective_n"] = float(len(active_reagents))
-            details["sharpening_factor"] = 1.0
-            return 0.0, details
-
-        se_squared = np.array([
-            r.std ** 2 / max(r.n_samples, 1) for r in active_reagents
-        ])
-        noise_std = np.sqrt(np.mean(se_squared))
-        snr = mean_std / max(noise_std, 1e-10)
-        imbalance_strength = 1.0 - np.exp(-max(snr - 1.0, 0.0))
-
-        details["snr"] = float(snr)
-        details["imbalance_strength"] = float(imbalance_strength)
-
-        z_scores = (means - np.mean(means)) / mean_std
-        z_scores *= imbalance_strength
-
-        # N-adaptive sharpening
-        N = len(active_reagents)
-        sharpening = 1.0
-        if self.criticality_metric == "ipr" and self.n_adaptive_sharpening and N > 2:
-            sharpening = max(1.0, np.sqrt(np.log(N)))
-            z_scores *= sharpening
-        details["sharpening_factor"] = float(sharpening)
-
-        exp_means = np.exp(z_scores - z_scores.max())  # numerical stability
-        probabilities = exp_means / exp_means.sum()
-
-        # Always compute IPR-based metrics for details
-        ipr = float(np.sum(probabilities ** 2))
-        effective_n = 1.0 / ipr
-        details["participation_ratio"] = ipr
-        details["effective_n"] = float(effective_n)
-
-        if self.criticality_metric == "ipr":
-            criticality = 1.0 - (effective_n / N)
-            # Compute normalized entropy for the details dict
-            entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
-            max_entropy = np.log(N)
-            details["normalized_entropy"] = float(entropy / max_entropy) if max_entropy > 1e-10 else float("nan")
-        else:  # shannon (legacy)
-            entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
-            max_entropy = np.log(N)
-            if max_entropy < 1e-10:
-                details["normalized_entropy"] = float("nan")
-                return 0.5, details
-            normalized_entropy = entropy / max_entropy
-            details["normalized_entropy"] = float(normalized_entropy)
-            criticality = 1.0 - normalized_entropy
-
-        return float(np.clip(criticality, 0.0, 1.0)), details
+        self._last_component_states[component_idx] = state
+        return state
 
     def get_component_criticality(self, reagent_list) -> float:
-        """Return CATS criticality score for a component."""
-        return self._calculate_criticality(reagent_list)
+        """Return GMIC criticality score for a component."""
+        return self._calculate_gmic(reagent_list)
 
     def get_component_state(
         self,
@@ -314,152 +332,15 @@ class RouletteWheelSelection(SelectionStrategy):
     ) -> Optional[Dict[str, Any]]:
         """Return full intermediate state for a component.
 
-        Computes all values from the criticality + temperature pipeline and
-        caches the result on ``self._last_component_states[component_idx]``.
+        Computes GMIC criticality with divergence-gated temperature adjustment.
+        Caches the result on ``self._last_component_states[component_idx]``.
 
         Returns:
             Dict with all intermediate values.
         """
-        # Step 1: Criticality with details
-        criticality, crit_details = self._calculate_criticality_details(reagent_list)
-
-        # Step 2: Base temperature from thermal cycling
-        is_heated = component_idx == self.current_component_idx
-        base_temp = self.alpha if is_heated else self.beta
-
-        # Step 3: Observation-gated weight
-        weight = self._get_criticality_weight(reagent_list)
-
-        # Step 4: Exploration decay
-        decay = 1.0
-        if (
-            self.cats_exploration_fraction is not None
-            and total_cycles > 0
-            and current_cycle is not None
-        ):
-            exploration_end = self.cats_exploration_fraction * total_cycles
-            if current_cycle > exploration_end:
-                remaining = total_cycles - exploration_end
-                progress = (current_cycle - exploration_end) / max(remaining, 1)
-                decay = criticality + (1.0 - criticality) * (1.0 - progress)
-                weight *= decay
-
-        # Step 5: CATS multiplier
-        cats_mult = self._get_cats_multiplier(criticality)
-
-        # Step 6: Blend
-        effective_mult = (1.0 - weight) * 1.0 + weight * cats_mult
-
-        # Step 7: Final temperature
-        final_temp = base_temp * effective_mult
-
-        state = {
-            # Metadata
-            "component_idx": component_idx,
-            "current_cycle": current_cycle,
-            "total_cycles": total_cycles,
-            # Criticality details
-            "criticality": criticality,
-            "snr": crit_details["snr"],
-            "imbalance_strength": crit_details["imbalance_strength"],
-            "normalized_entropy": crit_details["normalized_entropy"],
-            "n_active_reagents": crit_details["n_active_reagents"],
-            # IPR details
-            "participation_ratio": crit_details["participation_ratio"],
-            "effective_n": crit_details["effective_n"],
-            "sharpening_factor": crit_details["sharpening_factor"],
-            # Temperature pipeline
-            "base_temp": base_temp,
-            "is_heated": is_heated,
-            "criticality_weight": weight,
-            "decay": decay,
-            "cats_multiplier": cats_mult,
-            "effective_multiplier": effective_mult,
-            "final_temperature": final_temp,
-        }
-
-        # Cache for sampler to read without recomputing
-        self._last_component_states[component_idx] = state
-        return state
-
-    def _get_criticality_weight(self, reagent_list, current_cycle=None, total_cycles=None):
-        """
-        Calculate observation-gated criticality weight.
-
-        Instead of a fixed three-phase schedule, weight is determined by how
-        many observations we have — i.e. how much we can trust the criticality
-        estimate. This is data-driven rather than schedule-driven.
-
-        Uses the 25th percentile of observation counts rather than the minimum.
-        With large components (e.g., 3844 dipeptides), the least-sampled reagent
-        may never be re-sampled after warmup, permanently pinning min_obs at the
-        warmup count. The 25th percentile reflects the bulk of the distribution,
-        allowing CATS to ramp up as the majority of reagents accumulate data.
-
-        Weight ramps from 0 to 1 as p25 observations go from 0 to
-        2 * min_observations, then stays at 1.0.
-
-        Args:
-            reagent_list: List of Reagent objects (used to check observation counts)
-            current_cycle: Unused, kept for API compatibility
-            total_cycles: Unused, kept for API compatibility
-
-        Returns:
-            Criticality weight in [0, 1]
-        """
-        # Filter out retired reagents (those that never got warmup observations)
-        active_obs = [r.n_samples for r in reagent_list if r.n_samples > 0]
-        if not active_obs:
-            return 0.0
-
-        # Use 25th percentile instead of min to avoid a single never-resampled
-        # reagent throttling the entire component's CATS weight.
-        p25_obs = float(np.percentile(active_obs, 25))
-        # Ramp from 0 → 1 as p25 observations go from 0 → 2*min_observations
-        # Below min_observations: low confidence, partial weight
-        # Above 2*min_observations: full confidence, weight = 1.0
-        weight = p25_obs / (2.0 * self.min_observations) if self.min_observations > 0 else 1.0
-        return float(np.clip(weight, 0.0, 1.0))
-
-    def _get_cats_multiplier(self, criticality):
-        """
-        Map component criticality to a bidirectional temperature multiplier
-        using a relative neutral point.
-
-        The neutral point (multiplier = 1.0) is at the mean criticality across
-        all components, updated each cycle by ``rotate_component_weighted``.
-        Components below the mean get an exploration boost (multiplier > 1);
-        components above the mean get an exploitation reduction (multiplier < 1).
-
-        This ensures CATS always differentiates between components regardless
-        of the absolute criticality scale. With IPR + N-adaptive sharpening,
-        online criticalities cluster in [0.6, 1.0], so a fixed neutral point
-        at 0.5 would put all components in the exploit zone, nullifying the
-        exploration boost entirely.
-
-        Mapping (with mean_crit as the neutral point):
-            criticality = 0.0        →  mult = cats_max_mult  (max exploration)
-            criticality = mean_crit  →  mult = 1.0            (neutral)
-            criticality = 1.0        →  mult = cats_min_mult  (max exploitation)
-
-        Args:
-            criticality: Component criticality in [0, 1]
-
-        Returns:
-            CATS multiplier in [cats_min_mult, cats_max_mult]
-        """
-        neutral = self._mean_criticality
-
-        if criticality <= neutral:
-            # Below mean → explore: interpolate [cats_max_mult, 1.0]
-            t = criticality / max(neutral, 1e-10)
-            multiplier = self.cats_max_mult + t * (1.0 - self.cats_max_mult)
-        else:
-            # Above mean → exploit: interpolate [1.0, cats_min_mult]
-            t = (criticality - neutral) / max(1.0 - neutral, 1e-10)
-            multiplier = 1.0 + t * (self.cats_min_mult - 1.0)
-
-        return multiplier
+        return self._get_component_state_gmic(
+            reagent_list, component_idx, current_cycle, total_cycles
+        )
 
     def _get_component_temperature(
         self, component_idx, reagent_list, current_cycle, total_cycles, rng=None
@@ -649,33 +530,40 @@ class RouletteWheelSelection(SelectionStrategy):
         """
         self.current_component_idx = (self.current_component_idx + 1) % n_components
 
-    def rotate_component_weighted(self, n_components, criticalities, rng=None):
+    def rotate_component_weighted(self, n_components, reagent_lists, rng=None):
         """
-        Rotate to next component using criticality-weighted probabilities.
+        Rotate to next component using GMIC-weighted probabilities.
 
-        Flexible components (low criticality) get heated more often because
-        they benefit more from exploration. Critical components (high criticality)
-        already have strong signal and need less heating.
-
-        Also caches the mean criticality so that ``_get_cats_multiplier`` can
-        use a relative neutral point instead of a fixed 0.5.
+        Flexible components (low GMIC) get heated more often. Weight = 1 / (1 + gmic).
+        Also caches per-component GMIC values for use by get_component_state().
 
         Parameters:
         -----------
         n_components : int
             Total number of reagent components
-        criticalities : list of float
-            Per-component criticality values in [0, 1]
+        reagent_lists : list of list
+            List of reagent lists, one per component
         rng : numpy.random.Generator, optional
             Random number generator for reproducibility
         """
         if rng is None:
             rng = np.random.default_rng()
-        crits = np.array(criticalities, dtype=float)
-        self._mean_criticality = float(crits.mean())
-        flexibility = np.maximum(1.0 - crits, 0.1)
+
+        gmics = []
+        for i in range(n_components):
+            g = self._calculate_gmic(reagent_lists[i])
+            self._cached_gmics[i] = g
+            gmics.append(g)
+
+        gmics_arr = np.array(gmics)
+        # Weight by flexibility: low GMIC → more heating
+        flexibility = 1.0 / (1.0 + gmics_arr)
         heat_probs = flexibility / flexibility.sum()
+
         self.current_component_idx = int(rng.choice(n_components, p=heat_probs))
+
+        # Cache mean GMIC for relative comparison
+        self._mean_criticality = float(gmics_arr.mean())
 
     def reset_temperature(self):
         """Reset temperature parameters to initial values."""

@@ -15,6 +15,7 @@ from .strategies.config import (
     EpsilonGreedyConfig,
     BoltzmannConfig,
     BayesUCBConfig,
+    TopTwoConfig,
 )
 from .warmup.config import (
     StandardWarmupConfig,
@@ -43,6 +44,7 @@ StrategyConfigType = Union[
     EpsilonGreedyConfig,
     BoltzmannConfig,
     BayesUCBConfig,
+    TopTwoConfig,
 ]
 
 WarmupConfigType = Union[

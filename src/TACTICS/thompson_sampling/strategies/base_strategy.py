@@ -66,10 +66,10 @@ class SelectionStrategy(ABC):
         """Return criticality score for a component, or None if not supported.
 
         Strategies with CATS (e.g., RouletteWheelSelection, BayesUCBSelection)
-        override this to delegate to their ``_calculate_criticality`` method.
+        override this to compute component criticality.
 
         Returns:
-            Criticality in [0, 1], or None if the strategy doesn't compute it.
+            Criticality score >= 0, or None if the strategy doesn't compute it.
         """
         return None
 
@@ -84,16 +84,6 @@ class SelectionStrategy(ABC):
 
         CATS-aware strategies (RouletteWheelSelection, BayesUCBSelection) override
         this to expose the complete criticality + temperature/percentile pipeline.
-
-        The returned dict has a consistent schema across strategies so that
-        diagnostics DataFrames can be combined for comparison:
-
-        - ``component_idx``, ``current_cycle``, ``total_cycles`` — metadata
-        - ``criticality``, ``snr``, ``imbalance_strength``,
-          ``normalized_entropy``, ``n_active_reagents`` — from criticality calc
-        - ``base_temp``, ``is_heated``, ``criticality_weight``, ``decay``,
-          ``cats_multiplier``, ``effective_multiplier``,
-          ``final_temperature`` — from temperature/percentile pipeline
 
         Returns:
             Dict with all intermediate values, or None if the strategy

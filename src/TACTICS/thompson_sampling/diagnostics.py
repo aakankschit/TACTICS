@@ -270,11 +270,11 @@ def format_sar_report(summary: Dict[str, Any]) -> str:
             idx = dyn["component_idx"]
             first = dyn["cycle_first_structured"]
             stable = dyn["cycle_stable"]
-            slope = dyn["snr_trajectory_slope"]
+            slope = dyn["signal_trajectory_slope"]
             lines.append(f"\nComponent {idx}:")
             lines.append(f"  First structured:  cycle {first}")
             lines.append(f"  Stable from:       cycle {stable}")
             if np.isfinite(slope):
-                lines.append(f"  SNR trend:         {slope:+.4f}/cycle")
+                lines.append(f"  Signal trend:      {slope:+.4f}/cycle")
 
     return "\n".join(lines)

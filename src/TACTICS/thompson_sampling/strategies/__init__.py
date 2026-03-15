@@ -10,6 +10,7 @@ from .roulette_wheel import RouletteWheelSelection
 from .ucb_selection import UCBSelection
 from .epsilon_greedy import EpsilonGreedySelection
 from .bayes_ucb_selection import BayesUCBSelection
+from .top_two_selection import TopTwoSelection
 
 __all__ = [
     'SelectionStrategy',
@@ -18,4 +19,5 @@ __all__ = [
     'UCBSelection',
     'EpsilonGreedySelection',
     'BayesUCBSelection',
+    'TopTwoSelection',
 ]

@@ -624,12 +624,8 @@ class ThompsonSampler:
 
             # Rotate thermal cycling component (weighted by criticality if available)
             if hasattr(self.selection_strategy, "rotate_component_weighted"):
-                criticalities = [
-                    self.selection_strategy.get_component_criticality(rl) or 0.5
-                    for rl in self.reagent_lists
-                ]
                 self.selection_strategy.rotate_component_weighted(
-                    n_components, criticalities, rng=rng
+                    n_components, self.reagent_lists, rng=rng,
                 )
             elif hasattr(self.selection_strategy, "rotate_component"):
                 self.selection_strategy.rotate_component(n_components)
@@ -671,9 +667,13 @@ class ThompsonSampler:
 
                 # Process results WITHOUT scaling
                 # Strategies handle mode logic themselves
+                valid_combs = []
+                valid_scores = []
                 for comb, (smiles, name, score) in zip(compounds_to_evaluate, results):
                     if np.isfinite(score):
                         out_list.append([score, smiles, name])
+                        valid_combs.append(comb)
+                        valid_scores.append(score)
 
                         # Update reagent posteriors WITHOUT scaling
                         for comp_idx, reagent_idx in enumerate(comb):
@@ -730,7 +730,29 @@ class ThompsonSampler:
         return search_df
 
     # Schema for the enhanced 18-column diagnostics DataFrame
-    _ENHANCED_DIAGNOSTICS_SCHEMA = {
+    # Schema for GMIC-based CATS diagnostics (RouletteWheel)
+    _GMIC_DIAGNOSTICS_SCHEMA = {
+        "component_idx": pl.Int64,
+        "current_cycle": pl.Int64,
+        "total_cycles": pl.Int64,
+        "gmic": pl.Float64,
+        "criticality": pl.Float64,
+        "signal_var": pl.Float64,
+        "mean_noise_var": pl.Float64,
+        "n_active_reagents": pl.Int64,
+        "divergence": pl.Float64,
+        "divergence_threshold": pl.Float64,
+        "is_stable": pl.Boolean,
+        "cats_mode": pl.Utf8,
+        "base_temp": pl.Float64,
+        "is_heated": pl.Boolean,
+        "cats_multiplier": pl.Float64,
+        "effective_multiplier": pl.Float64,
+        "final_temperature": pl.Float64,
+    }
+
+    # Schema for IPR-based CATS diagnostics (BayesUCB)
+    _IPR_DIAGNOSTICS_SCHEMA = {
         "component_idx": pl.Int64,
         "current_cycle": pl.Int64,
         "total_cycles": pl.Int64,
@@ -778,11 +800,17 @@ class ThompsonSampler:
 
         # Detect schema from first record
         first = self._diagnostics_records[0]
-        if "current_cycle" in first:
-            # Enhanced schema
+        if "gmic" in first:
+            # GMIC schema (RouletteWheel)
             return pl.DataFrame(
                 self._diagnostics_records,
-                schema=self._ENHANCED_DIAGNOSTICS_SCHEMA,
+                schema=self._GMIC_DIAGNOSTICS_SCHEMA,
+            )
+        elif "current_cycle" in first:
+            # IPR schema (BayesUCB)
+            return pl.DataFrame(
+                self._diagnostics_records,
+                schema=self._IPR_DIAGNOSTICS_SCHEMA,
             )
         else:
             # Legacy 3-column schema
@@ -1046,13 +1074,14 @@ class ThompsonSampler:
                         cycle_stable = int(cycles[i])
                         break
 
-            # SNR trajectory slope (linear regression)
-            snr_values = comp_df["snr"].to_numpy()
-            valid_snr = np.isfinite(snr_values)
-            if valid_snr.sum() >= 2:
-                valid_cycles = cycles[valid_snr].astype(float)
-                valid_snr_vals = snr_values[valid_snr]
-                slope = float(np.polyfit(valid_cycles, valid_snr_vals, 1)[0])
+            # Signal trajectory slope (linear regression on SNR or GMIC)
+            signal_col = "snr" if "snr" in comp_df.columns else "gmic"
+            signal_values = comp_df[signal_col].to_numpy()
+            valid = np.isfinite(signal_values)
+            if valid.sum() >= 2:
+                valid_cycles = cycles[valid].astype(float)
+                valid_vals = signal_values[valid]
+                slope = float(np.polyfit(valid_cycles, valid_vals, 1)[0])
             else:
                 slope = float("nan")
 
@@ -1060,7 +1089,7 @@ class ThompsonSampler:
                 "component_idx": comp_idx,
                 "cycle_first_structured": cycle_first,
                 "cycle_stable": cycle_stable,
-                "snr_trajectory_slope": slope,
+                "signal_trajectory_slope": slope,
             })
 
         return dynamics

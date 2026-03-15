@@ -9,14 +9,16 @@ from .strategies.config import (
     UCBConfig,
     EpsilonGreedyConfig,
     BoltzmannConfig,
-    BayesUCBConfig
+    BayesUCBConfig,
+    TopTwoConfig,
 )
 from .strategies import (
     GreedySelection,
     RouletteWheelSelection,
     UCBSelection,
     EpsilonGreedySelection,
-    BayesUCBSelection
+    BayesUCBSelection,
+    TopTwoSelection,
 )
 from .strategies.base_strategy import SelectionStrategy
 
@@ -60,7 +62,8 @@ StrategyConfig = Union[
     UCBConfig,
     EpsilonGreedyConfig,
     BoltzmannConfig,
-    BayesUCBConfig
+    BayesUCBConfig,
+    TopTwoConfig,
 ]
 
 WarmupConfig = Union[
@@ -114,8 +117,7 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             alpha_max=config.alpha_max,
             cats_exploration_fraction=config.cats_exploration_fraction,
             cats_range=config.cats_range,
-            criticality_metric=config.criticality_metric,
-            n_adaptive_sharpening=config.n_adaptive_sharpening,
+            divergence_threshold=config.divergence_threshold,
         )
 
     elif isinstance(config, UCBConfig):
@@ -139,6 +141,24 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             cats_exploration_fraction=config.cats_exploration_fraction,
             criticality_metric=config.criticality_metric,
             n_adaptive_sharpening=config.n_adaptive_sharpening,
+        )
+
+    elif isinstance(config, TopTwoConfig):
+        return TopTwoSelection(
+            mode=config.mode,
+            beta=config.beta,
+            heated_scale=config.heated_scale,
+            cooled_scale=config.cooled_scale,
+            min_observations=config.min_observations,
+            adaptive_temperature=config.adaptive_temperature,
+            scale_increment=config.scale_increment,
+            cooled_scale_increment=config.cooled_scale_increment,
+            efficiency_threshold=config.efficiency_threshold,
+            heated_scale_max=config.heated_scale_max,
+            adaptive_disagreement=config.adaptive_disagreement,
+            disagreement_window=config.disagreement_window,
+            disagreement_threshold=config.disagreement_threshold,
+            disagreement_scale_increment=config.disagreement_scale_increment,
         )
 
     elif isinstance(config, BoltzmannConfig):
