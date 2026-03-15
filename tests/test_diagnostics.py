@@ -168,8 +168,8 @@ class TestDiagnosticsRWS:
 
         sampler.close()
 
-    def test_criticality_in_valid_range(self, pipeline, thrombin_paths):
-        """All criticality values should be in [0, 1]."""
+    def test_criticality_non_negative(self, pipeline, thrombin_paths):
+        """All GMIC criticality values should be >= 0."""
         strategy = RouletteWheelSelection(mode="minimize")
         sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
 
@@ -178,7 +178,6 @@ class TestDiagnosticsRWS:
 
         diag = sampler.get_diagnostics()
         assert diag["criticality"].min() >= 0.0
-        assert diag["criticality"].max() <= 1.0
 
         sampler.close()
 
@@ -248,14 +247,14 @@ class TestGetComponentCriticality:
         assert strategy.get_component_criticality([]) is None
 
     def test_rws_returns_float(self, pipeline, thrombin_paths):
-        """RWS get_component_criticality returns a float after warmup."""
+        """RWS get_component_criticality returns a non-negative float (GMIC) after warmup."""
         strategy = RouletteWheelSelection(mode="minimize")
         sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=False)
         sampler.warm_up(num_warmup_trials=5)
 
         crit = strategy.get_component_criticality(sampler.reagent_lists[0])
         assert isinstance(crit, float)
-        assert 0.0 <= crit <= 1.0
+        assert crit >= 0.0
 
         sampler.close()
 
@@ -278,9 +277,19 @@ class TestGetComponentCriticality:
 
 
 class TestEnhancedDiagnosticsRWS:
-    """Verify 18-column enhanced diagnostics schema for RouletteWheelSelection."""
+    """Verify GMIC diagnostics schema for RouletteWheelSelection."""
 
     EXPECTED_COLUMNS = {
+        "component_idx", "current_cycle", "total_cycles",
+        "gmic", "criticality", "signal_var", "mean_noise_var",
+        "n_active_reagents",
+        "divergence", "divergence_threshold", "is_stable", "cats_mode",
+        "base_temp", "is_heated",
+        "cats_multiplier", "effective_multiplier", "final_temperature",
+    }
+
+    # BayesUCB still uses IPR-based schema
+    BAYES_UCB_COLUMNS = {
         "component_idx", "current_cycle", "total_cycles",
         "criticality", "snr", "imbalance_strength",
         "normalized_entropy", "n_active_reagents",
@@ -290,7 +299,7 @@ class TestEnhancedDiagnosticsRWS:
     }
 
     def test_schema_columns(self, pipeline, thrombin_paths):
-        """Enhanced diagnostics has all 18 columns."""
+        """GMIC diagnostics has correct columns."""
         strategy = RouletteWheelSelection(mode="minimize")
         sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
         sampler.warm_up(num_warmup_trials=3)
@@ -300,17 +309,15 @@ class TestEnhancedDiagnosticsRWS:
         assert set(diag.columns) == self.EXPECTED_COLUMNS
         sampler.close()
 
-    def test_snr_non_negative(self, pipeline, thrombin_paths):
-        """SNR values should be >= 0 (or NaN for insufficient data)."""
+    def test_gmic_non_negative(self, pipeline, thrombin_paths):
+        """GMIC values should be >= 0."""
         strategy = RouletteWheelSelection(mode="minimize")
         sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
         sampler.warm_up(num_warmup_trials=3)
         sampler.search(num_cycles=50)
 
         diag = sampler.get_diagnostics()
-        snr_vals = diag["snr"].to_numpy()
-        finite = np.isfinite(snr_vals)
-        assert np.all(snr_vals[finite] >= 0.0)
+        assert diag["gmic"].min() >= 0.0
         sampler.close()
 
     def test_final_temperature_positive(self, pipeline, thrombin_paths):
@@ -324,16 +331,16 @@ class TestEnhancedDiagnosticsRWS:
         assert diag["final_temperature"].min() > 0.0
         sampler.close()
 
-    def test_criticality_weight_bounded(self, pipeline, thrombin_paths):
-        """Criticality weight should be in [0, 1]."""
+    def test_cats_mode_valid(self, pipeline, thrombin_paths):
+        """CATS mode should be 'criticality' or 'diversity'."""
         strategy = RouletteWheelSelection(mode="minimize")
         sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
         sampler.warm_up(num_warmup_trials=3)
         sampler.search(num_cycles=50)
 
         diag = sampler.get_diagnostics()
-        assert diag["criticality_weight"].min() >= 0.0
-        assert diag["criticality_weight"].max() <= 1.0
+        modes = set(diag["cats_mode"].unique().to_list())
+        assert modes <= {"criticality", "diversity"}
         sampler.close()
 
 
@@ -355,15 +362,15 @@ class TestEnhancedDiagnosticsBayesUCB:
         assert np.all(snr_vals[finite] >= 0.0)
         sampler.close()
 
-    def test_same_schema_as_rws(self, pipeline, thrombin_paths):
-        """BayesUCB uses the same 18-column schema as RWS."""
+    def test_schema_columns(self, pipeline, thrombin_paths):
+        """BayesUCB uses IPR-based diagnostics schema."""
         strategy = BayesUCBSelection(mode="minimize")
         sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
         sampler.warm_up(num_warmup_trials=3)
         sampler.search(num_cycles=50)
 
         diag = sampler.get_diagnostics()
-        assert set(diag.columns) == TestEnhancedDiagnosticsRWS.EXPECTED_COLUMNS
+        assert set(diag.columns) == TestEnhancedDiagnosticsRWS.BAYES_UCB_COLUMNS
         sampler.close()
 
 
@@ -376,7 +383,7 @@ class TestGetComponentState:
         assert strategy.get_component_state([], 0, 0, 100) is None
 
     def test_rws_returns_dict_with_all_keys(self, pipeline, thrombin_paths):
-        """RWS get_component_state returns dict with all expected keys."""
+        """RWS get_component_state returns dict with all expected GMIC keys."""
         strategy = RouletteWheelSelection(mode="minimize")
         sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=False)
         sampler.warm_up(num_warmup_trials=5)
@@ -387,17 +394,17 @@ class TestGetComponentState:
         assert isinstance(state, dict)
         expected_keys = {
             "component_idx", "current_cycle", "total_cycles",
-            "criticality", "snr", "imbalance_strength",
-            "normalized_entropy", "n_active_reagents",
-            "participation_ratio", "effective_n", "sharpening_factor",
-            "base_temp", "is_heated", "criticality_weight", "decay",
+            "gmic", "criticality", "signal_var", "mean_noise_var",
+            "n_active_reagents",
+            "divergence", "divergence_threshold", "is_stable", "cats_mode",
+            "base_temp", "is_heated",
             "cats_multiplier", "effective_multiplier", "final_temperature",
         }
         assert set(state.keys()) == expected_keys
         assert state["component_idx"] == 0
         assert state["current_cycle"] == 10
         assert state["total_cycles"] == 100
-        assert 0.0 <= state["criticality"] <= 1.0
+        assert state["criticality"] >= 0.0
         assert state["final_temperature"] > 0
         sampler.close()
 
@@ -609,14 +616,13 @@ class TestDiagnosticAnalysisFunctions:
         sampler.close()
 
 
-class TestIPRCriticality:
-    """Tests for IPR-based criticality metric."""
+class TestGMICCriticality:
+    """Tests for GMIC-based criticality metric (RouletteWheel)."""
 
-    def test_ipr_higher_than_shannon_for_peaked(self):
-        """IPR should produce higher criticality than Shannon for peaked distributions."""
+    def test_peaked_distribution_high_gmic(self):
+        """GMIC should be high for peaked distributions (one dominant reagent)."""
         from TACTICS.thompson_sampling.core.reagent import Reagent
 
-        # Create peaked distribution: one dominant reagent
         reagents = []
         for i in range(20):
             r = Reagent(f"reagent_{i}", "CC")
@@ -625,87 +631,60 @@ class TestIPRCriticality:
             r.n_samples = 10
             reagents.append(r)
 
-        strategy_ipr = RouletteWheelSelection(
-            mode="maximize", criticality_metric="ipr", n_adaptive_sharpening=True
-        )
-        strategy_shannon = RouletteWheelSelection(
-            mode="maximize", criticality_metric="shannon", n_adaptive_sharpening=False
-        )
+        strategy = RouletteWheelSelection(mode="maximize")
+        gmic = strategy.get_component_criticality(reagents)
+        assert gmic > 0.01, f"GMIC should be positive for peaked distribution, got {gmic:.6f}"
 
-        crit_ipr = strategy_ipr._calculate_criticality(reagents)
-        crit_shannon = strategy_shannon._calculate_criticality(reagents)
-
-        assert crit_ipr > crit_shannon, (
-            f"IPR criticality ({crit_ipr:.4f}) should exceed Shannon ({crit_shannon:.4f}) "
-            f"for peaked distributions"
-        )
-
-    def test_nonzero_criticality_at_large_n(self):
-        """IPR should produce nonzero criticality even at N=100."""
+    def test_nonzero_gmic_at_large_n(self):
+        """GMIC should produce nonzero value even at N=100."""
         from TACTICS.thompson_sampling.core.reagent import Reagent
 
         rng = np.random.default_rng(42)
         reagents = []
         for i in range(100):
             r = Reagent(f"reagent_{i}", "CC")
-            # Create some structure: means drawn from bimodal distribution
             r.mean = rng.choice([0.3, 0.7]) + rng.normal(0, 0.05)
             r.std = 0.2
             r.n_samples = 10
             reagents.append(r)
 
-        strategy = RouletteWheelSelection(
-            mode="maximize", criticality_metric="ipr", n_adaptive_sharpening=True
-        )
+        strategy = RouletteWheelSelection(mode="maximize")
+        gmic = strategy.get_component_criticality(reagents)
+        assert gmic > 0.01, f"GMIC at N=100 should be nonzero, got {gmic:.6f}"
 
-        crit = strategy._calculate_criticality(reagents)
-        assert crit > 0.01, (
-            f"IPR criticality at N=100 should be nonzero, got {crit:.6f}"
-        )
-
-    def test_sharpening_increases_criticality(self):
-        """N-adaptive sharpening should increase criticality for large N."""
+    def test_uniform_distribution_low_gmic(self):
+        """GMIC should be near zero for uniform distributions."""
         from TACTICS.thompson_sampling.core.reagent import Reagent
 
-        rng = np.random.default_rng(42)
         reagents = []
         for i in range(50):
             r = Reagent(f"reagent_{i}", "CC")
-            r.mean = rng.normal(0.5, 0.1)
-            r.std = 0.2
-            r.n_samples = 10
-            reagents.append(r)
-
-        strategy_sharp = RouletteWheelSelection(
-            mode="maximize", criticality_metric="ipr", n_adaptive_sharpening=True
-        )
-        strategy_no_sharp = RouletteWheelSelection(
-            mode="maximize", criticality_metric="ipr", n_adaptive_sharpening=False
-        )
-
-        crit_sharp = strategy_sharp._calculate_criticality(reagents)
-        crit_no_sharp = strategy_no_sharp._calculate_criticality(reagents)
-
-        assert crit_sharp >= crit_no_sharp, (
-            f"Sharpening ({crit_sharp:.4f}) should >= no sharpening ({crit_no_sharp:.4f})"
-        )
-
-    def test_shannon_backward_compat(self):
-        """Shannon metric should produce same results as legacy behavior."""
-        from TACTICS.thompson_sampling.core.reagent import Reagent
-
-        reagents = []
-        for i in range(5):
-            r = Reagent(f"reagent_{i}", "CC")
-            r.mean = float(i) * 0.5
+            r.mean = 5.0  # All identical
             r.std = 0.5
             r.n_samples = 10
             reagents.append(r)
 
-        strategy = RouletteWheelSelection(
-            mode="maximize", criticality_metric="shannon", n_adaptive_sharpening=False
-        )
+        strategy = RouletteWheelSelection(mode="maximize")
+        gmic = strategy.get_component_criticality(reagents)
+        assert gmic < 0.001, f"GMIC should be near zero for uniform means, got {gmic:.6f}"
 
-        crit = strategy._calculate_criticality(reagents)
-        assert 0.0 <= crit <= 1.0
-        assert isinstance(crit, float)
+    def test_gmic_scales_with_signal(self):
+        """GMIC should increase as signal-to-noise increases."""
+        from TACTICS.thompson_sampling.core.reagent import Reagent
+
+        def make_reagents(spread):
+            rs = []
+            for i in range(5):
+                r = Reagent(f"reagent_{i}", "CC")
+                r.mean = float(i) * spread
+                r.std = 0.5
+                r.n_samples = 10
+                rs.append(r)
+            return rs
+
+        strategy = RouletteWheelSelection(mode="maximize")
+        gmic_low = strategy.get_component_criticality(make_reagents(0.01))
+        gmic_high = strategy.get_component_criticality(make_reagents(1.0))
+        assert gmic_high > gmic_low, (
+            f"Higher signal spread should produce higher GMIC: {gmic_high:.4f} vs {gmic_low:.4f}"
+        )

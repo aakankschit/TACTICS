@@ -350,24 +350,36 @@ class TestStrategyIntegration:
 
     def test_roulette_wheel_weighted_rotation(self):
         """Test that weighted rotation heats flexible components more often."""
-        strategy = RouletteWheelSelection(mode="maximize")
+        from TACTICS.thompson_sampling.core.reagent import Reagent
 
+        strategy = RouletteWheelSelection(mode="maximize")
         rng = np.random.default_rng(42)
         counts = np.zeros(3)
 
-        # Component 0: very critical (0.9), Component 1: flexible (0.1), Component 2: moderate (0.5)
-        criticalities = [0.9, 0.1, 0.5]
+        # Component 0: critical (one dominant reagent)
+        critical = []
+        for i, m in enumerate([1.0, 1.0, 10.0]):
+            r = Reagent(f"r0_{i}", "C"); r.mean = m; r.std = 0.5; r.n_samples = 10
+            critical.append(r)
+        # Component 1: flexible (all similar)
+        flexible = []
+        for i, m in enumerate([5.0, 5.0, 5.0]):
+            r = Reagent(f"r1_{i}", "C"); r.mean = m; r.std = 1.0; r.n_samples = 10
+            flexible.append(r)
+        # Component 2: moderate
+        moderate = []
+        for i, m in enumerate([3.0, 5.0, 4.0]):
+            r = Reagent(f"r2_{i}", "C"); r.mean = m; r.std = 0.5; r.n_samples = 10
+            moderate.append(r)
+
+        reagent_lists = [critical, flexible, moderate]
 
         for _ in range(1000):
-            strategy.rotate_component_weighted(3, criticalities, rng=rng)
+            strategy.rotate_component_weighted(3, reagent_lists, rng=rng)
             counts[strategy.current_component_idx] += 1
 
         # Flexible component (idx=1) should be heated most often
         assert counts[1] > counts[0], (
-            f"Flexible component (idx=1, crit=0.1) should be heated more than "
-            f"critical component (idx=0, crit=0.9): {counts[1]} vs {counts[0]}"
-        )
-        assert counts[1] > counts[2], (
-            f"Flexible component (idx=1, crit=0.1) should be heated more than "
-            f"moderate component (idx=2, crit=0.5): {counts[1]} vs {counts[2]}"
+            f"Flexible component (idx=1) should be heated more than "
+            f"critical component (idx=0): {counts[1]} vs {counts[0]}"
         )

@@ -395,7 +395,16 @@ class TestBayesUCBIPR:
 
         import numpy as np
         rng = np.random.default_rng(42)
-        strategy.rotate_component_weighted(3, [0.9, 0.1, 0.5], rng=rng)
+        # Create reagent lists (new signature takes reagent_lists, not criticalities)
+        reagent_lists = []
+        for comp_means in [[1.0, 1.0, 10.0], [5.0, 5.0, 5.0], [3.0, 5.0, 4.0]]:
+            comp = []
+            for i, m in enumerate(comp_means):
+                r = Reagent(f"r_{i}", "CC")
+                r.mean = m; r.std = 0.5; r.n_samples = 10
+                comp.append(r)
+            reagent_lists.append(comp)
+        strategy.rotate_component_weighted(3, reagent_lists, rng=rng)
         assert 0 <= strategy.current_component_idx < 3
 
 
