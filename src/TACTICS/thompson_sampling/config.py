@@ -30,6 +30,7 @@ from .core.evaluator_config import (
     ROCSEvaluatorConfig,
     FredEvaluatorConfig,
     MLClassifierEvaluatorConfig,
+    CustomEvaluatorConfig,
 )
 
 if TYPE_CHECKING:
@@ -59,6 +60,7 @@ EvaluatorConfigType = Union[
     ROCSEvaluatorConfig,
     FredEvaluatorConfig,
     MLClassifierEvaluatorConfig,
+    CustomEvaluatorConfig,
 ]
 
 
