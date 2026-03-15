@@ -53,13 +53,15 @@ Module Architecture
             UCB [label="UCBSelection", fillcolor="#FFB6C1"];
             EpsilonGreedy [label="EpsilonGreedySelection", fillcolor="#FFB6C1"];
             BayesUCB [label="BayesUCBSelection", fillcolor="#FFB6C1"];
-            
+            TopTwo [label="TopTwoSelection", fillcolor="#FFB6C1"];
+
             // Force vertical
             BaseStrategy -> Greedy [style=invis];
             Greedy -> RouletteWheel [style=invis];
             RouletteWheel -> UCB [style=invis];
             UCB -> EpsilonGreedy [style=invis];
             EpsilonGreedy -> BayesUCB [style=invis];
+            BayesUCB -> TopTwo [style=invis];
         }
 
         // Warmup - vertical list
@@ -110,6 +112,7 @@ Module Architecture
         BaseStrategy -> UCB [style=dashed, constraint=false];
         BaseStrategy -> EpsilonGreedy [style=dashed, constraint=false];
         BaseStrategy -> BayesUCB [style=dashed, constraint=false];
+        BaseStrategy -> TopTwo [style=dashed, constraint=false];
 
         BaseWarmup -> Balanced [style=dashed, constraint=false];
         BaseWarmup -> Standard [style=dashed, constraint=false];
@@ -540,6 +543,7 @@ All strategies implement the ``SelectionStrategy`` abstract base class.
         UCB [label="UCB (Confidence Bounds)", fillcolor="#FFB6C1"];
         BayesUCB [label="BayesUCB (Student-t + CATS)", fillcolor="#E6E6FA"];
         EpsilonGreedy [label="EpsilonGreedy (Random/Greedy)", fillcolor="#FFFACD"];
+        TopTwo [label="TopTwo (Best-Arm ID + TC)", fillcolor="#98FB98"];
 
         // Force vertical layout
         SelectReagent -> Greedy;
@@ -547,11 +551,13 @@ All strategies implement the ``SelectionStrategy`` abstract base class.
         RouletteWheel -> UCB [style=invis];
         UCB -> BayesUCB [style=invis];
         BayesUCB -> EpsilonGreedy [style=invis];
-        
+        EpsilonGreedy -> TopTwo [style=invis];
+
         SelectReagent -> RouletteWheel;
         SelectReagent -> UCB;
         SelectReagent -> BayesUCB;
         SelectReagent -> EpsilonGreedy;
+        SelectReagent -> TopTwo;
     }
 
 SelectionStrategy (Base Class)
@@ -621,8 +627,8 @@ Roulette wheel selection with thermal cycling and Component-Aware Thompson Sampl
 **Extends:** :ref:`SelectionStrategy <selection-strategy>`
 
 - Boltzmann-weighted selection with adaptive temperature control
-- Criticality-weighted component rotation for efficient exploration
-- CATS: IPR-based criticality analysis with SNR dampening
+- GMIC criticality-weighted component rotation for efficient exploration
+- Divergence-gated temperature modulation (switches between diversity and criticality modes)
 - Best for: Complex multi-modal landscapes, large libraries
 
 .. list-table:: Parameters
@@ -848,6 +854,92 @@ Bayesian UCB with Student-t quantiles and CATS integration.
        initial_p_high=0.95,
        initial_p_low=0.70,
        exploration_phase_end=0.25
+   )
+
+
+.. _top-two-selection:
+
+TopTwoSelection
+~~~~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Top-Two Thompson Sampling for best-arm identification with asymmetric thermal cycling.
+
+**Extends:** :ref:`SelectionStrategy <selection-strategy>`
+
+- Draws two independent posterior samples per selection; explores the challenger when they disagree
+- Asymmetric thermal cycling: heated component gets inflated uncertainty, cooled components deflated
+- GMIC criticality-weighted component rotation (flexible components heated more often)
+- Disagreement-rate adaptive cycling: increases heated_scale when posteriors tighten
+- Best for: Top-K recovery tasks, combinatorial libraries with component criticality imbalance
+
+**Reference:** Russo, D. (2020). Simple Bayesian Algorithms for Best-Arm Identification.
+Operations Research, 68(6), 1625-1647.
+
+.. list-table:: Parameters
+   :header-rows: 1
+   :widths: 26 15 8 51
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``mode``
+     - ``str``
+     - No
+     - ``"maximize"`` or ``"minimize"``. Default: ``"maximize"``.
+   * - ``beta``
+     - ``float``
+     - No
+     - Probability of selecting challenger when samples disagree [0, 1]. Default: 0.5.
+   * - ``heated_scale``
+     - ``float``
+     - No
+     - Multiplier on posterior std for heated component (>1 = more exploration). Default: 1.5.
+   * - ``cooled_scale``
+     - ``float``
+     - No
+     - Multiplier on posterior std for cooled components (<1 = more exploitation). Default: 0.75.
+   * - ``min_observations``
+     - ``int``
+     - No
+     - Min observations before trusting GMIC criticality. Default: 5.
+   * - ``adaptive_disagreement``
+     - ``bool``
+     - No
+     - Auto-increase heated_scale when disagreement rate drops. Default: False.
+   * - ``disagreement_window``
+     - ``int``
+     - No
+     - Rolling window for disagreement rate. Default: 200.
+   * - ``disagreement_threshold``
+     - ``float``
+     - No
+     - Disagreement rate below which heated_scale is increased. Default: 0.3.
+
+**Example**
+
+.. code-block:: python
+
+   from TACTICS.thompson_sampling.strategies import TopTwoSelection
+
+   # Standard TT-TS with thermal cycling
+   strategy = TopTwoSelection(
+       mode="maximize",
+       beta=0.5,
+       heated_scale=1.5,
+       cooled_scale=0.75
+   )
+
+   # With disagreement-rate adaptive cycling
+   strategy = TopTwoSelection(
+       mode="minimize",
+       beta=0.5,
+       heated_scale=1.5,
+       cooled_scale=0.75,
+       adaptive_disagreement=True,
+       disagreement_threshold=0.3
    )
 
 
@@ -1336,6 +1428,10 @@ Choose the right strategy based on your use case:
      - Baseline comparisons
      - Very simple
      - Less sophisticated
+   * - **TopTwo**
+     - Top-K recovery, combinatorial libraries
+     - Best-arm ID, thermal cycling, GMIC rotation
+     - Slightly more complex than RouletteWheel
 
 
 Evaluator Selection Guide
