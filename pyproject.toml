@@ -11,7 +11,7 @@ license = {text = "MIT"}
 authors = [
   {name = "Aakankschit Nandkeolyar", email = "anandkeo@uci.edu"},
   {name = "Remco L. van den Broek", email = "r.l.van.den.broek@lacdr.leidenuniv.nl"},
-  {name = "Willem Jespers", email = "w.jespers@rug.nl"}
+  {name = "Willem Jespers", email = "w.jespers@rug.nl"},
   {name = "David Mobley", email = "dmobley@uci.edu"}
 ]
 requires-python = ">=3.11"
