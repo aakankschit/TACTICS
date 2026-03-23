@@ -503,6 +503,61 @@ Configuration for Bayesian UCB with CATS integration.
      - Apply sqrt(log(N)) z-score sharpening (IPR mode only). Default: True.
 
 
+.. _top-two-config:
+
+TopTwoConfig (Recommended)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. rst-class:: class-config
+
+Configuration for Top-Two Thompson Sampling — the best-performing selection
+strategy (86.1% mean recovery across 21 libraries). Uses posterior disagreement
+to target best-arm identification with adaptive per-component thermal cycling
+and GMIC-weighted component rotation.
+
+**Creates:** :ref:`TopTwoSelection <top-two-selection>`
+
+.. list-table:: Key Parameters
+   :header-rows: 1
+   :widths: 26 15 8 51
+
+   * - Parameter
+     - Type
+     - Required
+     - Description
+   * - ``strategy_type``
+     - ``Literal``
+     - Auto
+     - Set automatically to ``"top_two"``.
+   * - ``mode``
+     - ``str``
+     - No
+     - ``"maximize"`` (default) or ``"minimize"``.
+   * - ``beta``
+     - ``float``
+     - No
+     - Challenger selection probability (0-1). Default: 0.5.
+   * - ``heated_scale``
+     - ``float``
+     - No
+     - Posterior std multiplier for heated component. Default: 1.5.
+   * - ``cooled_scale``
+     - ``float``
+     - No
+     - Posterior std multiplier for cooled components. Default: 0.75.
+   * - ``adaptive_disagreement``
+     - ``bool``
+     - No
+     - Per-component adaptive heated_scale via EMA disagreement tracking. Default: True.
+   * - ``min_observations``
+     - ``int``
+     - No
+     - Min observations for GMIC criticality. Default: 5.
+
+See :ref:`TopTwoSelection <top-two-selection>` in the Thompson Sampling reference
+for the full parameter list and thermal cycling details.
+
+
 .. _warmup-configs:
 
 Warmup Configurations
@@ -512,8 +567,8 @@ All warmup configs are used with ``ThompsonSamplingConfig.warmup_config``.
 
 .. _balanced-warmup-config:
 
-BalancedWarmupConfig (Recommended)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+BalancedWarmupConfig
+~~~~~~~~~~~~~~~~~~~~
 
 .. rst-class:: class-config
 
@@ -585,7 +640,9 @@ EnhancedWarmupConfig
 
 .. rst-class:: class-config
 
-Configuration for legacy enhanced warmup (stochastic parallel pairing).
+Configuration for Enhanced warmup (stochastic parallel pairing). Universally
+optimal across both balanced and imbalanced libraries. Used by all recommended
+presets.
 
 **Creates:** :ref:`EnhancedWarmup <enhanced-warmup>`
 
@@ -830,24 +887,30 @@ TACTICS provides pre-configured setups for common use cases via ``get_preset()``
 
 .. list-table::
    :header-rows: 1
-   :widths: 22 78
+   :widths: 22 16 16 46
 
    * - Preset Name
+     - Strategy
+     - Warmup
      - Description
-   * - ``fast_exploration``
-     - Quick screening with epsilon-greedy (epsilon=0.2, decay=0.995).
-   * - ``parallel_batch``
-     - Batch processing for slow evaluators with RouletteWheel.
-   * - ``conservative_exploit``
-     - Hit optimization with greedy strategy.
-   * - ``balanced_sampling``
-     - General-purpose with UCB (c=2.0).
-   * - ``diverse_coverage``
-     - Maximum diversity with high-temperature RouletteWheel.
-   * - ``legacy_rws_maximize``
-     - Original RWS algorithm for maximize mode.
-   * - ``legacy_rws_minimize``
-     - Original RWS algorithm for minimize mode (docking).
+   * - **recommended** (default)
+     - TopTwo TS
+     - Enhanced
+     - Best overall method (86.1% recovery). Adaptive thermal cycling + GMIC rotation + Boltzmann weighting. ``batch_size=100``.
+   * - **recommended_rws**
+     - RWS / CATS
+     - Enhanced
+     - Close second (85.5% recovery). Original TACTICS method with GMIC rotation + Boltzmann weighting. ``batch_size=100``.
+   * - **baseline**
+     - Greedy
+     - Balanced
+     - Isolates warmup contribution. Reference for measuring strategy gains (+1.5 pts on 2-comp).
+   * - **legacy_rws**
+     - RWS
+     - Enhanced
+     - Reproduces Zhao et al. 2025. Round-robin rotation, no GMIC. Pass ``mode="minimize"`` for docking.
+
+See the :doc:`strategies` guide for detailed guidance on choosing a preset.
 
 **Example usage:**
 
@@ -858,33 +921,27 @@ TACTICS provides pre-configured setups for common use cases via ``get_preset()``
    from TACTICS.thompson_sampling import get_preset
    from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
-   # Create synthesis pipeline
-   rxn_config = ReactionConfig(
+   pipeline = SynthesisPipeline(ReactionConfig(
        reactions=[ReactionDef(
            reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
            step_index=0
        )],
        reagent_file_list=["acids.smi", "amines.smi"]
-   )
-   pipeline = SynthesisPipeline(rxn_config)
+   ))
 
-   # Fast exploration for initial screening
+   # Best method — uses "recommended" by default
    config = get_preset(
-       "fast_exploration",
        synthesis_pipeline=pipeline,
        evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
-       num_iterations=1000
    )
 
-   # Parallel batch for docking
+   # Docking with minimize mode
    from TACTICS.thompson_sampling.core.evaluator_config import FredEvaluatorConfig
 
    config = get_preset(
-       "parallel_batch",
        synthesis_pipeline=pipeline,
        evaluator_config=FredEvaluatorConfig(design_unit_file="receptor.oedu"),
        mode="minimize",
-       batch_size=100
    )
 
 

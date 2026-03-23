@@ -3,7 +3,14 @@ from .base_strategy import SelectionStrategy
 
 
 class UCBSelection(SelectionStrategy):
-    """Upper Confidence Bound selection"""
+    """Upper Confidence Bound selection.
+
+    .. note::
+        Baseline strategy. Benchmarking (114,450+ trials, 21 libraries) shows
+        :class:`TopTwoSelection` and :class:`RouletteWheelSelection` consistently
+        outperform UCB. Use :func:`~TACTICS.thompson_sampling.presets.get_preset`
+        for recommended defaults.
+    """
 
     def __init__(self, mode="maximize", c=2.0):
         super().__init__(mode)

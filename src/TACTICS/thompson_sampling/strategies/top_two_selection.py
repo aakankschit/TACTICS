@@ -16,7 +16,7 @@ Reference:
 """
 
 import numpy as np
-from typing import List
+from typing import Any, Dict, List, Optional
 
 from .base_strategy import SelectionStrategy
 
@@ -59,10 +59,13 @@ class TopTwoSelection(SelectionStrategy):
         cooled_scale_increment: float = 0.001,
         efficiency_threshold: float = 0.10,
         heated_scale_max: float = 5.0,
-        adaptive_disagreement: bool = False,
+        adaptive_disagreement: bool = True,
         disagreement_window: int = 200,
-        disagreement_threshold: float = 0.3,
-        disagreement_scale_increment: float = 0.05,
+        disagreement_high_threshold: float = 0.8,
+        disagreement_low_threshold: float = 0.3,
+        disagreement_decay_rate: float = 0.95,
+        ema_alpha: float = 0.02,
+        heated_scale_min: float = 1.0,
     ):
         super().__init__(mode)
         self.beta = beta
@@ -72,19 +75,28 @@ class TopTwoSelection(SelectionStrategy):
         self.cooled_scale = cooled_scale
         self.min_observations = min_observations
 
-        # Adaptive thermal cycling parameters
+        # Adaptive thermal cycling parameters (legacy efficiency-based)
         self.adaptive_temperature = adaptive_temperature
         self.scale_increment = scale_increment
         self.cooled_scale_increment = cooled_scale_increment
         self.efficiency_threshold = efficiency_threshold
         self.heated_scale_max = heated_scale_max
 
-        # Disagreement-rate adaptive thermal cycling
+        # Bidirectional disagreement-rate adaptation
         self.adaptive_disagreement = adaptive_disagreement
-        self.disagreement_window = disagreement_window
-        self.disagreement_threshold = disagreement_threshold
-        self.disagreement_scale_increment = disagreement_scale_increment
+        self.disagreement_high_threshold = disagreement_high_threshold
+        self.disagreement_low_threshold = disagreement_low_threshold
+        self.disagreement_decay_rate = disagreement_decay_rate
+        self.ema_alpha = ema_alpha
+        self.heated_scale_min = heated_scale_min
 
+        # Per-component state
+        self._heated_scale_per_component: Dict[int, float] = {}
+        self._component_disagreement_ema: Dict[int, float] = {}
+        self._component_disagreement_counts: Dict[int, int] = {}
+
+        # Global disagreement tracking (for diagnostics / backward compat)
+        self.disagreement_window = disagreement_window
         self._disagreement_buffer: list = []
         self._disagreement_rate: float = 1.0
         self._total_selections: int = 0
@@ -108,9 +120,14 @@ class TopTwoSelection(SelectionStrategy):
         mu = np.array([r.mean for r in reagent_list])
         n = len(reagent_list)
 
-        # Thermal cycling: scale posterior std
+        # Thermal cycling: scale posterior std (per-component heated_scale)
         is_heated = component_idx == self.current_component_idx
-        scale = self.heated_scale if is_heated else self.cooled_scale
+        if is_heated:
+            scale = self._heated_scale_per_component.get(
+                component_idx, self.heated_scale
+            )
+        else:
+            scale = self.cooled_scale
         effective_stds = stds * scale
 
         # Draw two independent posterior samples
@@ -131,9 +148,9 @@ class TopTwoSelection(SelectionStrategy):
             best_1 = int(np.nanargmin(sample_1))
             best_2 = int(np.nanargmin(sample_2))
 
-        # Track disagreement for adaptive cycling
+        # Track disagreement for adaptive cycling (per-component)
         disagreed = best_1 != best_2
-        self._record_disagreement(disagreed)
+        self._record_disagreement(disagreed, component_idx)
 
         # Top-Two decision
         if disagreed:
@@ -143,33 +160,100 @@ class TopTwoSelection(SelectionStrategy):
 
     # ===== Disagreement-rate adaptive thermal cycling =====
 
-    def _record_disagreement(self, disagreed: bool) -> None:
-        """Record a disagreement event and adapt heated_scale if needed."""
-        self._total_selections += 1
-        self._disagreement_buffer.append(disagreed)
+    def _record_disagreement(self, disagreed: bool, component_idx: int = 0) -> None:
+        """Record a disagreement event and update per-component EMA.
 
+        Args:
+            disagreed: Whether the two posterior samples disagreed.
+            component_idx: Which component this selection was for.
+        """
+        self._total_selections += 1
+
+        # Per-component EMA update
+        if component_idx not in self._component_disagreement_ema:
+            self._component_disagreement_ema[component_idx] = 1.0
+            self._component_disagreement_counts[component_idx] = 0
+
+        self._component_disagreement_counts[component_idx] += 1
+        old_ema = self._component_disagreement_ema[component_idx]
+        self._component_disagreement_ema[component_idx] = (
+            self.ema_alpha * float(disagreed) + (1.0 - self.ema_alpha) * old_ema
+        )
+
+        # Global rolling window (for diagnostics / backward compat)
+        self._disagreement_buffer.append(disagreed)
         if len(self._disagreement_buffer) > self.disagreement_window:
             self._disagreement_buffer.pop(0)
-
         if len(self._disagreement_buffer) >= self.disagreement_window:
             self._disagreement_rate = (
                 sum(self._disagreement_buffer) / len(self._disagreement_buffer)
             )
 
-            if (
-                self.adaptive_disagreement
-                and self._disagreement_rate < self.disagreement_threshold
-                and self.heated_scale < self.heated_scale_max
-            ):
-                self.heated_scale = min(
-                    self.heated_scale + self.disagreement_scale_increment,
-                    self.heated_scale_max,
-                )
+    def adapt_heated_scale(self) -> bool:
+        """Adapt per-component heated_scale based on disagreement rate.
+
+        Called once per iteration (after rotation). Checks the EMA
+        disagreement rate for the currently-heated component and adjusts
+        its per-component heated_scale:
+
+        - If disagreement > high_threshold: decay toward 1.0
+        - If disagreement < low_threshold: grow away from 1.0
+        - Otherwise: stable, no change
+
+        Returns:
+            True if heated_scale was adjusted, False otherwise.
+        """
+        if not self.adaptive_disagreement:
+            return False
+
+        comp_idx = self.current_component_idx
+        if comp_idx not in self._component_disagreement_ema:
+            return False
+
+        # Require minimum observations before adapting
+        min_obs = max(20, int(1.0 / self.ema_alpha))
+        if self._component_disagreement_counts.get(comp_idx, 0) < min_obs:
+            return False
+
+        rate = self._component_disagreement_ema[comp_idx]
+        current_scale = self._heated_scale_per_component.get(
+            comp_idx, self.heated_scale
+        )
+
+        if rate > self.disagreement_high_threshold:
+            # Too much disagreement — reduce toward 1.0
+            new_scale = 1.0 + (current_scale - 1.0) * self.disagreement_decay_rate
+            self._heated_scale_per_component[comp_idx] = max(
+                self.heated_scale_min, new_scale
+            )
+            return True
+
+        elif rate < self.disagreement_low_threshold:
+            # Too little disagreement — increase away from 1.0
+            new_scale = 1.0 + (current_scale - 1.0) / self.disagreement_decay_rate
+            self._heated_scale_per_component[comp_idx] = min(
+                self.heated_scale_max, new_scale
+            )
+            return True
+
+        return False
 
     @property
     def disagreement_rate(self) -> float:
-        """Current rolling disagreement rate."""
+        """Current global rolling disagreement rate."""
         return self._disagreement_rate
+
+    @property
+    def component_disagreement_rates(self) -> Dict[int, float]:
+        """Per-component EMA disagreement rates."""
+        return dict(self._component_disagreement_ema)
+
+    @property
+    def effective_heated_scale(self) -> float:
+        """Current heated_scale for the heated component."""
+        return self._heated_scale_per_component.get(
+            self.current_component_idx, self.heated_scale
+        )
 
     # ===== GMIC criticality (for rotation weighting only) =====
 
@@ -246,9 +330,43 @@ class TopTwoSelection(SelectionStrategy):
         """Reset thermal cycling scales and disagreement state to initial values."""
         self.heated_scale = self.initial_heated_scale
         self.cooled_scale = self.initial_cooled_scale
+        self._heated_scale_per_component = {}
+        self._component_disagreement_ema = {}
+        self._component_disagreement_counts = {}
         self._disagreement_buffer = []
         self._disagreement_rate = 1.0
         self._total_selections = 0
+
+    def get_component_state(
+        self,
+        reagent_list: List,
+        component_idx: int,
+        current_cycle: int,
+        total_cycles: int,
+    ) -> Optional[Dict[str, Any]]:
+        """Return TT-TS diagnostic state for a component."""
+        gmic = self._calculate_gmic(reagent_list)
+        is_heated = component_idx == self.current_component_idx
+        comp_scale = self._heated_scale_per_component.get(
+            component_idx, self.heated_scale
+        )
+        ema_rate = self._component_disagreement_ema.get(
+            component_idx, float("nan")
+        )
+
+        return {
+            "component_idx": component_idx,
+            "current_cycle": current_cycle,
+            "total_cycles": total_cycles,
+            "gmic": gmic,
+            "is_heated": is_heated,
+            "heated_scale": comp_scale,
+            "cooled_scale": self.cooled_scale,
+            "effective_scale": comp_scale if is_heated else self.cooled_scale,
+            "disagreement_ema": ema_rate,
+            "disagreement_global": self._disagreement_rate,
+            "n_active_reagents": sum(1 for r in reagent_list if r.n_samples > 0),
+        }
 
     def rotate_component_weighted(self, n_components: int, reagent_lists, rng=None):
         """Rotate to next heated component using GMIC-weighted probabilities.

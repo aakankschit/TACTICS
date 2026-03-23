@@ -6,7 +6,7 @@ from .base import WarmupStrategy
 
 if TYPE_CHECKING:
     from ..core.reagent import Reagent
-    from ..legacy.disallow_tracker import DisallowTracker
+    from ..core.disallow_tracker import DisallowTracker
 
 
 class BalancedWarmup(WarmupStrategy):

@@ -5,7 +5,7 @@ from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..core.reagent import Reagent
-    from ..legacy.disallow_tracker import DisallowTracker
+    from ..core.disallow_tracker import DisallowTracker
 
 
 class WarmupStrategy(ABC):

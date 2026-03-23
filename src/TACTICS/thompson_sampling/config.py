@@ -13,7 +13,6 @@ from .strategies.config import (
     RouletteWheelConfig,
     UCBConfig,
     EpsilonGreedyConfig,
-    BoltzmannConfig,
     BayesUCBConfig,
     TopTwoConfig,
 )
@@ -42,7 +41,6 @@ StrategyConfigType = Union[
     RouletteWheelConfig,
     UCBConfig,
     EpsilonGreedyConfig,
-    BoltzmannConfig,
     BayesUCBConfig,
     TopTwoConfig,
 ]
@@ -199,7 +197,7 @@ class ThompsonSamplingConfig(BaseModel):
         """Set defaults and validate configuration."""
         # Set default warmup if not provided
         if self.warmup_config is None:
-            object.__setattr__(self, "warmup_config", BalancedWarmupConfig())
+            object.__setattr__(self, "warmup_config", EnhancedWarmupConfig())
 
     # === Convenience Properties ===
 

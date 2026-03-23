@@ -16,7 +16,6 @@ from TACTICS.thompson_sampling.strategies.config import (
     RouletteWheelConfig,
     UCBConfig,
     EpsilonGreedyConfig,
-    BoltzmannConfig,
     BayesUCBConfig,
 )
 from TACTICS.thompson_sampling.core.evaluator_config import (
@@ -257,7 +256,6 @@ class TestConfigValidation:
             RouletteWheelConfig(mode="maximize"),
             UCBConfig(mode="maximize"),
             EpsilonGreedyConfig(mode="maximize"),
-            BoltzmannConfig(mode="maximize_boltzmann"),
             BayesUCBConfig(mode="maximize"),
         ]
 

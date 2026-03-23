@@ -461,10 +461,8 @@ def _(SCORES_PTH, pipeline):
     print("  - fast_exploration: Quick screening with epsilon-greedy")
     print("  - parallel_batch: Parallel processing for slow evaluators")
     print("  - conservative_exploit: Greedy exploitation")
-    print("  - balanced_sampling: UCB for exploration/exploitation balance")
-    print("  - diverse_coverage: Maximum diversity with roulette wheel")
-    print("  - legacy_rws_maximize: Original RWS algorithm (maximize)")
-    print("  - legacy_rws_minimize: Original RWS algorithm (minimize)")
+    print("  - baseline: Balanced warmup + Greedy (isolates warmup contribution)")
+    print("  - legacy_rws: Original RWS algorithm (pass mode='minimize' for docking)")
 
     # Get a preset configuration
     preset_config = get_preset(

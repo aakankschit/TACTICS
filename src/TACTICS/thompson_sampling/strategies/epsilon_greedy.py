@@ -3,7 +3,14 @@ from .base_strategy import SelectionStrategy
 
 
 class EpsilonGreedySelection(SelectionStrategy):
-    """Epsilon-greedy selection with decaying epsilon"""
+    """Epsilon-greedy selection with decaying epsilon.
+
+    .. note::
+        Baseline strategy. Benchmarking (114,450+ trials, 21 libraries) shows
+        :class:`TopTwoSelection` and :class:`RouletteWheelSelection` consistently
+        outperform epsilon-greedy. Use :func:`~TACTICS.thompson_sampling.presets.get_preset`
+        for recommended defaults.
+    """
 
     def __init__(self, mode="maximize", epsilon=0.1, decay=0.995):
         super().__init__(mode)

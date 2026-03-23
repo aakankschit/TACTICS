@@ -8,7 +8,6 @@ from .strategies.config import (
     RouletteWheelConfig,
     UCBConfig,
     EpsilonGreedyConfig,
-    BoltzmannConfig,
     BayesUCBConfig,
     TopTwoConfig,
 )
@@ -61,7 +60,6 @@ StrategyConfig = Union[
     RouletteWheelConfig,
     UCBConfig,
     EpsilonGreedyConfig,
-    BoltzmannConfig,
     BayesUCBConfig,
     TopTwoConfig,
 ]
@@ -157,16 +155,11 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             heated_scale_max=config.heated_scale_max,
             adaptive_disagreement=config.adaptive_disagreement,
             disagreement_window=config.disagreement_window,
-            disagreement_threshold=config.disagreement_threshold,
-            disagreement_scale_increment=config.disagreement_scale_increment,
-        )
-
-    elif isinstance(config, BoltzmannConfig):
-        # Note: BoltzmannSelection not yet implemented in strategies/
-        # This would need to be created similar to other strategies
-        raise NotImplementedError(
-            "BoltzmannSelection strategy not yet implemented. "
-            "Use RouletteWheelSelection as an alternative."
+            disagreement_high_threshold=config.disagreement_high_threshold,
+            disagreement_low_threshold=config.disagreement_low_threshold,
+            disagreement_decay_rate=config.disagreement_decay_rate,
+            ema_alpha=config.ema_alpha,
+            heated_scale_min=config.heated_scale_min,
         )
 
     else:

@@ -6,7 +6,7 @@ from rdkit import Chem
 from tqdm.auto import tqdm
 
 from ..strategies.base_strategy import SelectionStrategy
-from ..legacy.disallow_tracker import DisallowTracker
+from .disallow_tracker import DisallowTracker
 from .reagent import Reagent
 from ..utils.ts_logger import get_logger
 from ..utils.ts_utils import read_reagents
@@ -641,6 +641,10 @@ class ThompsonSampler:
                 _proxy_attempted = self.batch_size
                 _proxy_unique = max(1, int(self.batch_size * (1.0 - _coverage)))
                 self.selection_strategy.adapt_temperatures(_proxy_unique, _proxy_attempted)
+
+            # Adaptive heated_scale: bidirectional disagreement adaptation
+            if hasattr(self.selection_strategy, "adapt_heated_scale"):
+                self.selection_strategy.adapt_heated_scale()
 
             # Check stopping criteria
             if self.max_resamples and n_resamples >= self.max_resamples:

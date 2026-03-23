@@ -135,14 +135,6 @@ class EpsilonGreedyConfig(BaseModel):
     decay: float = Field(default=0.995, gt=0, le=1, description="Decay rate for epsilon per iteration")
 
 
-class BoltzmannConfig(BaseModel):
-    """Configuration for Boltzmann/Softmax selection."""
-
-    strategy_type: Literal["boltzmann"] = "boltzmann"
-    mode: Literal["maximize_boltzmann", "minimize_boltzmann"] = "maximize_boltzmann"
-    temperature: float = Field(default=1.0, gt=0, description="Temperature parameter (lower = more exploitation)")
-
-
 class TopTwoConfig(BaseModel):
     """Configuration for Top-Two Thompson Sampling (TT-TS).
 
@@ -230,33 +222,69 @@ class TopTwoConfig(BaseModel):
         description="Maximum heated_scale value",
     )
 
-    # Disagreement-rate adaptive thermal cycling
+    # Bidirectional disagreement-rate adaptive thermal cycling
     adaptive_disagreement: bool = Field(
-        default=False,
+        default=True,
         description=(
-            "Enable disagreement-rate adaptive thermal cycling. Tracks the "
-            "TT-TS disagreement rate (fraction of select_reagent calls where "
-            "two posterior samples disagree on the best reagent) and increases "
-            "heated_scale when disagreement drops below the threshold. "
-            "Recommended replacement for adaptive_temperature in TT-TS context."
+            "Enable bidirectional disagreement-rate adaptation. Tracks per-component "
+            "TT-TS disagreement rate via exponential moving average. Reduces "
+            "heated_scale when disagreement is saturated (>high_threshold) and "
+            "increases it when too low (<low_threshold). Ensures TT-TS works "
+            "optimally on both balanced and imbalanced libraries."
         ),
     )
-    disagreement_window: int = Field(
-        default=200,
-        gt=1,
-        description="Rolling window size for computing disagreement rate.",
+    disagreement_high_threshold: float = Field(
+        default=0.8,
+        gt=0,
+        le=1,
+        description="Disagreement rate above which heated_scale is reduced toward 1.0.",
     )
-    disagreement_threshold: float = Field(
+    disagreement_low_threshold: float = Field(
         default=0.3,
         gt=0,
         le=1,
         description="Disagreement rate below which heated_scale is increased.",
     )
-    disagreement_scale_increment: float = Field(
-        default=0.05,
-        ge=0,
-        description="Amount to increase heated_scale per trigger.",
+    disagreement_decay_rate: float = Field(
+        default=0.95,
+        gt=0,
+        lt=1,
+        description=(
+            "Multiplicative decay factor for heated_scale adaptation. "
+            "Applied to the excess (heated_scale - 1.0) each adaptation step."
+        ),
     )
+    ema_alpha: float = Field(
+        default=0.02,
+        gt=0,
+        lt=1,
+        description=(
+            "Exponential moving average smoothing factor for per-component "
+            "disagreement tracking. Smaller = smoother (longer memory)."
+        ),
+    )
+    heated_scale_min: float = Field(
+        default=1.0,
+        gt=0,
+        description="Minimum heated_scale value (floor). Default 1.0 = raw posteriors.",
+    )
+    # Legacy fields kept for backward compatibility of disagreement_window
+    disagreement_window: int = Field(
+        default=200,
+        gt=1,
+        description="Rolling window size for global disagreement rate (diagnostics).",
+    )
+
+    @field_validator("disagreement_low_threshold")
+    @classmethod
+    def validate_threshold_ordering(cls, v, info):
+        high = info.data.get("disagreement_high_threshold")
+        if high is not None and v >= high:
+            raise ValueError(
+                f"disagreement_low_threshold ({v}) must be < "
+                f"disagreement_high_threshold ({high})"
+            )
+        return v
 
 
 class BayesUCBConfig(BaseModel):

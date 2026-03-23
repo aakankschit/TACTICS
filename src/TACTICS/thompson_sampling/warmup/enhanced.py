@@ -1,4 +1,4 @@
-"""Enhanced warmup strategy with parallel pairing (legacy implementation)."""
+"""Enhanced warmup strategy with stochastic parallel pairing (recommended)."""
 
 import random
 import numpy as np
@@ -7,7 +7,7 @@ from .base import WarmupStrategy
 
 if TYPE_CHECKING:
     from ..core.reagent import Reagent
-    from ..legacy.disallow_tracker import DisallowTracker
+    from ..core.disallow_tracker import DisallowTracker
 
 
 class EnhancedWarmup(WarmupStrategy):

@@ -269,7 +269,7 @@ class RWSSampler:
                 out_df = pd.DataFrame(results)
                 out_df.to_csv(results_filename, mode="a", header=False, index=False, na_rep="nan")
                 # logging
-                if count % 100 == 0:
+                if count % 100 == 0 and out_list:
                     if self.scaling > 0:
                         top_score, top_smiles, top_name = max(out_list)
                     else:

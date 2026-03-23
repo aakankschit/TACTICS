@@ -61,7 +61,7 @@ evaluator = LookupEvaluatorConfig(ref_filename="scores.csv")
 
 # 2. Get a preset configuration
 config = get_preset(
-    "fast_exploration",  # Quick screening with epsilon-greedy
+    "recommended",  # Top-Two TS + Enhanced warmup (best method)
     reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
     reagent_file_list=["aldehydes.smi", "amines.smi"],
     evaluator_config=evaluator,
@@ -74,11 +74,12 @@ results_df = run_ts(config)
 ```
 
 **Available Presets:**
-- `"fast_exploration"` - Epsilon-greedy strategy, quick screening
-- `"parallel_batch"` - Batch processing with multiprocessing (for slow evaluators)
-- `"conservative_exploit"` - Greedy strategy, focus on best reagents
-- `"balanced_sampling"` - UCB strategy with theoretical guarantees
-- `"diverse_coverage"` - Maximum diversity exploration
+- `"recommended"` - Top-Two TS + Enhanced warmup + Boltzmann (best overall, 86.1% recovery)
+- `"recommended_rws"` - RWS/CATS + Enhanced warmup + Boltzmann (85.5% recovery)
+- `"baseline"` - Balanced warmup + Greedy (isolates framework contribution)
+- `"legacy_rws"` - Reproduces Zhao et al. 2025 (pass ``mode="minimize"`` for docking)
+
+All recommended presets default to ``batch_size=100``; pass ``batch_size=1`` for single-compound mode.
 
 ### Parallel Batch Processing (for Expensive Evaluators)
 
@@ -93,7 +94,7 @@ evaluator = FredEvaluatorConfig(design_unit_file="receptor.oedu")
 
 # Get parallel batch preset
 config = get_preset(
-    "parallel_batch",
+    "recommended_batch",
     reaction_smarts="[C:1]=[O:2]>>[C:1][O:2]",
     reagent_file_list=["aldehydes.smi", "amines.smi"],
     evaluator_config=evaluator,

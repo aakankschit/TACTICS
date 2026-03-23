@@ -1076,18 +1076,22 @@ Standard warmup testing each reagent with random partners.
 
 .. _enhanced-warmup:
 
-EnhancedWarmup (Legacy)
-~~~~~~~~~~~~~~~~~~~~~~~
+EnhancedWarmup (Recommended)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. rst-class:: class-config
 
-Stochastic parallel pairing with shuffling from the original RWS algorithm.
+Stochastic parallel pairing. Universally optimal across both balanced and
+imbalanced libraries — used by all recommended presets (114,450+ trials,
+21 libraries). On imbalanced libraries, its natural over-sampling of the
+small component pre-solves that component's ranking, which GMIC-weighted
+rotation then exploits during search.
 
 **Extends:** :ref:`WarmupStrategy <warmup-strategy>`
 
 - Parallel pairing of reagents across components
-- Required for replicating legacy RWS results
-- Best for: legacy_rws_maximize and legacy_rws_minimize presets
+- Universally optimal for both balanced and imbalanced libraries
+- Used by: ``recommended``, ``recommended_rws``, and legacy presets
 
 .. list-table:: Parameters
    :header-rows: 1

@@ -10,8 +10,8 @@ from TACTICS.thompson_sampling.strategies.config import (
     RouletteWheelConfig,
     UCBConfig,
     EpsilonGreedyConfig,
-    BoltzmannConfig,
     BayesUCBConfig,
+    TopTwoConfig,
 )
 from TACTICS.thompson_sampling.warmup.config import (
     StandardWarmupConfig,
@@ -293,62 +293,68 @@ class TestPresets:
 
         shutil.rmtree(self.temp_dir)
 
-    def test_fast_exploration_preset(self):
-        """Test fast_exploration preset."""
-        config = ConfigPresets.fast_exploration(
+    def test_recommended_preset(self):
+        """Test recommended preset uses TopTwo + Enhanced + Boltzmann."""
+        config = ConfigPresets.recommended(
             synthesis_pipeline=self.pipeline,
             evaluator_config=MWEvaluatorConfig(),
             num_iterations=500,
         )
         assert config.num_ts_iterations == 500
-        assert isinstance(config.strategy_config, EpsilonGreedyConfig)
+        assert isinstance(config.strategy_config, TopTwoConfig)
         assert config.strategy_config.mode == "maximize"
-        assert config.batch_size == 1
+        assert config.batch_size == 100
+        assert config.use_boltzmann_weighting is True
 
-    def test_fast_exploration_minimize_mode(self):
-        """Test fast_exploration preset with minimize mode."""
-        config = ConfigPresets.fast_exploration(
-            synthesis_pipeline=self.pipeline,
-            evaluator_config=MWEvaluatorConfig(),
-            mode="minimize",
-        )
-        assert config.strategy_config.mode == "minimize"
-        assert isinstance(config.strategy_config, EpsilonGreedyConfig)
-
-    def test_parallel_batch_preset(self):
-        """Test parallel_batch preset."""
-        config = ConfigPresets.parallel_batch(
+    def test_recommended_custom_batch_size(self):
+        """Test recommended preset with custom batch size."""
+        config = ConfigPresets.recommended(
             synthesis_pipeline=self.pipeline,
             evaluator_config=MWEvaluatorConfig(),
             batch_size=50,
         )
         assert config.batch_size == 50
-        assert isinstance(config.strategy_config, RouletteWheelConfig)
-        assert config.strategy_config.mode == "maximize"
+        assert isinstance(config.strategy_config, TopTwoConfig)
 
-    def test_parallel_batch_minimize_mode(self):
-        """Test parallel_batch preset with minimize mode for docking."""
-        config = ConfigPresets.parallel_batch(
+    def test_recommended_minimize_mode(self):
+        """Test recommended preset with minimize mode."""
+        config = ConfigPresets.recommended(
             synthesis_pipeline=self.pipeline,
             evaluator_config=MWEvaluatorConfig(),
             mode="minimize",
-            batch_size=100,
         )
         assert config.strategy_config.mode == "minimize"
+        assert isinstance(config.strategy_config, TopTwoConfig)
+
+    def test_recommended_rws_preset(self):
+        """Test recommended_rws preset uses RWS + Enhanced + Boltzmann."""
+        config = ConfigPresets.recommended_rws(
+            synthesis_pipeline=self.pipeline,
+            evaluator_config=MWEvaluatorConfig(),
+        )
+        assert isinstance(config.strategy_config, RouletteWheelConfig)
         assert config.batch_size == 100
+        assert config.use_boltzmann_weighting is True
+
+    def test_baseline_preset(self):
+        """Test baseline preset uses Greedy + Balanced warmup."""
+        config = ConfigPresets.baseline(
+            synthesis_pipeline=self.pipeline,
+            evaluator_config=MWEvaluatorConfig(),
+        )
+        assert isinstance(config.strategy_config, GreedyConfig)
+        from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
+        assert isinstance(config.warmup_config, BalancedWarmupConfig)
 
     def test_all_presets_support_mode(self):
         """Test that all presets support mode parameter."""
         presets = [
-            "fast_exploration",
-            "parallel_batch",
-            "conservative_exploit",
-            "balanced_sampling",
-            "diverse_coverage",
+            "recommended",
+            "recommended_rws",
+            "baseline",
         ]
 
         for preset_name in presets:
-            # Test maximize
             config = get_preset(
                 preset_name,
                 synthesis_pipeline=self.pipeline,
@@ -357,7 +363,6 @@ class TestPresets:
             )
             assert config.strategy_config.mode == "maximize"
 
-            # Test minimize
             config = get_preset(
                 preset_name,
                 synthesis_pipeline=self.pipeline,
@@ -366,14 +371,13 @@ class TestPresets:
             )
             assert config.strategy_config.mode == "minimize"
 
-    def test_get_preset_function(self):
-        """Test get_preset convenience function."""
+    def test_get_preset_default(self):
+        """Test get_preset defaults to recommended."""
         config = get_preset(
-            "balanced_sampling",
             synthesis_pipeline=self.pipeline,
             evaluator_config=MWEvaluatorConfig(),
         )
-        assert isinstance(config.strategy_config, UCBConfig)
+        assert isinstance(config.strategy_config, TopTwoConfig)
 
     def test_get_preset_invalid_name(self):
         """Test get_preset with invalid name."""

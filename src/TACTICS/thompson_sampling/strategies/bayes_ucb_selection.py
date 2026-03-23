@@ -28,6 +28,12 @@ class BayesUCBSelection(SelectionStrategy):
     Combines percentile-based thermal cycling with component criticality analysis
     for efficient exploration of ultra-large combinatorial libraries.
 
+    .. note::
+        Baseline strategy. Benchmarking (114,450+ trials, 21 libraries) shows
+        :class:`TopTwoSelection` and :class:`RouletteWheelSelection` consistently
+        outperform BayesUCB. Use :func:`~TACTICS.thompson_sampling.presets.get_preset`
+        for recommended defaults.
+
     Uses Student-t quantiles for proper Bayesian treatment of uncertainty.
     Percentile levels serve as analog to temperature in RWS:
     - Higher percentile → wider confidence bounds → more exploration
