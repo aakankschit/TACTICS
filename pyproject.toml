@@ -4,14 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chem-tactics"
-version = "1.0.1"
+version = "1.1.0"
 description = "Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = {text = "MIT"}
 authors = [
   {name = "Aakankschit Nandkeolyar", email = "anandkeo@uci.edu"},
   {name = "Remco L. van den Broek", email = "r.l.van.den.broek@lacdr.leidenuniv.nl"},
-  {name = "Willem Jespers", email = "w.jespers@rug.nl"}
+  {name = "Willem Jespers", email = "w.jespers@rug.nl"},
+  {name = "David Mobley", email = "dmobley@uci.edu"}
 ]
 requires-python = ">=3.11"
 dependencies = [
