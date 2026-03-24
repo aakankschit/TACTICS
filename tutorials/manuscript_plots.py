@@ -10,7 +10,7 @@ Edit mode:  marimo edit tutorials/manuscript_plots.py
 
 import marimo
 
-__generated_with = "0.19.11"
+__generated_with = "0.21.1"
 app = marimo.App(width="full", app_title="TACTICS Manuscript Plots")
 
 
@@ -86,13 +86,6 @@ def _(mo, pl, project_root, topn_slider):
     anova_df = pl.read_parquet(analysis_dir / "anova_results.parquet")
     anova_at_n = anova_df.filter(pl.col("top_n") == TOP_N)
 
-    friedman_df = pl.read_parquet(analysis_dir / "friedman_results.parquet")
-    nemenyi_df = (
-        pl.read_parquet(analysis_dir / "nemenyi_results.parquet")
-        if (analysis_dir / "nemenyi_results.parquet").exists()
-        else pl.DataFrame()
-    )
-
     n_trials = len(df)
     n_libraries = df["library_id"].n_unique()
     libraries = sorted(df["library_id"].unique().to_list())
@@ -113,7 +106,7 @@ def _(mo, pl, project_root, topn_slider):
         - **ANOVA tests**: {len(anova_at_n)} ({anova_at_n.filter(pl.col('significance') != 'ns').height} significant)
         """
     )
-    return TOP_N, df, friedman_df, nemenyi_df, tukey_at_n
+    return TOP_N, df, recovery_all, tukey_at_n
 
 
 @app.cell
@@ -210,7 +203,7 @@ def _(mo, tukey_at_n):
             """
             ## Pairwise Significance Tests (Tukey HSD)
 
-            FWER-controlled pairwise comparisons with Cohen's d effect sizes.
+            FWER-controlled pairwise comparisons.
             Following Ash et al. 2025 (JCIM) guidelines.
             """
         ),
@@ -218,7 +211,7 @@ def _(mo, tukey_at_n):
             tukey_at_n.select([
                 "library_id", "n_components", "group1", "group2",
                 "mean_diff", "p_adj", "significance", "ci_low", "ci_high",
-                "cohens_d", "effect_size", "n_pairs",
+                "n_pairs",
             ]).to_pandas()
         ),
     ])
@@ -281,8 +274,6 @@ def _(baseline_dropdown, challenger_dropdown, mo, pl, tukey_at_n):
                 "ci_high": _row["ci_high"],
                 "p_value": _row["p_adj"],
                 "significance": _row["significance"],
-                "cohens_d": _row["cohens_d"],
-                "effect_size": _row["effect_size"],
                 "n_pairs": _row["n_pairs"],
             })
         else:
@@ -294,8 +285,6 @@ def _(baseline_dropdown, challenger_dropdown, mo, pl, tukey_at_n):
                 "ci_high": -_row["ci_low"],
                 "p_value": _row["p_adj"],
                 "significance": _row["significance"],
-                "cohens_d": -_row["cohens_d"],
-                "effect_size": _row["effect_size"],
                 "n_pairs": _row["n_pairs"],
             })
 
@@ -375,7 +364,7 @@ def _(
     _ax.set_xticklabels(_labels, rotation=45, ha="right", fontsize=12, color="black")
     _ax.set_ylabel(
         "\u0394 % Recovery of Top-N Hits",
-        fontsize=13, color="black",
+        fontsize=14, color="black",
     )
     _ax.set_title(
         f"Per-Library Recovery of Top-N Hit Molecules: {_challenger} vs {_baseline}",
@@ -600,7 +589,7 @@ def _(
         _ax.set_ylim(_y_min, _y_max)
 
     _axes[0].set_ylabel("\u0394 % Recovery of Top-N Hits\n(TACTICS TT-TS \u2212 Legacy Enhanced-RWS)",
-                        fontsize=13, color="black")
+                        fontsize=14, color="black")
 
     _legend_elements = [
         Patch(facecolor=_crit_color, edgecolor="black", label="Criticality weighting"),
@@ -678,49 +667,73 @@ def _(mo):
 
 
 @app.cell
-def _(mo, pl, project_root):
-    """Load top-N sensitivity benchmark results."""
-    _topn_dir = (
-        project_root / "outputs" / "topn_sensitivity_benchmark_array"
-        / "topn_sensitivity_benchmark"
-    )
-    topn_df = pl.read_parquet(_topn_dir / "benchmark_results.parquet")
-
-    _n_rows = len(topn_df)
-    _n_libs = topn_df["library_id"].n_unique()
-    _thresholds = sorted(topn_df["top_n"].unique().to_list())
+def _(mo, recovery_all):
+    """Summary of recovery data available for sensitivity analysis."""
+    _n_rows = len(recovery_all)
+    _n_libs = recovery_all["library_id"].n_unique()
+    _thresholds = sorted(recovery_all["top_n"].unique().to_list())
+    _methods = sorted(recovery_all["method"].unique().to_list())
 
     mo.vstack([
         mo.md(
             f"""
-            ## Top-N Sensitivity Data Loaded
+            ## Top-N Sensitivity Data (from Post-Hoc Analysis)
 
-            - **Source**: `{_topn_dir}`
             - **Rows**: {_n_rows:,}
             - **Libraries**: {_n_libs}
             - **Top-N thresholds**: {_thresholds}
+            - **Methods**: {', '.join(_methods)}
             """
         ),
     ])
-    return (topn_df,)
+    return
 
 
 @app.cell
-def _(fig_to_pdf_bytes, mo, pl, plt, topn_df):
-    """Overall recovery vs top-N by component count (2-comp and 3-comp panels)."""
+def _(fig_to_pdf_bytes, mo, pl, plt, recovery_all):
+    """Overall % recovery vs top-N by component count (ROCS libraries, 10 thresholds)."""
+
+    _DOCK_LIBS = {"thrombin", "adenine", "amide", "quinazoline"}
+    _ROCS_NCOMP = {
+        "rxn101": 2, "rxn102a": 2, "rxn108b": 2, "rxn111b": 2, "rxn114b": 2,
+        "rxn203": 2, "rxn205": 2, "rxn206": 2, "rxn207": 2, "rxn208": 2,
+        "amide-suzuki": 3, "betti": 3, "dobener": 3,
+        "groebke-blackburn-bienayme": 3, "mannich": 3, "niementowski": 3,
+        "orru": 3, "passerini": 3, "petasis": 3, "poparov": 3,
+    }
+
+    _rocs_all = (
+        recovery_all
+        .filter(~pl.col("library_id").is_in(_DOCK_LIBS))
+        .filter(pl.col("library_id").is_in(set(_ROCS_NCOMP.keys())))
+        .with_columns(
+            pl.col("library_id").replace(_ROCS_NCOMP).cast(pl.Int64).alias("n_components")
+        )
+    )
+
+    mo.stop(len(_rocs_all) == 0, mo.md("No ROCS library data available."))
 
     _method_colors = {
-        "Legacy TS": "#76B7B2",
-        "Legacy RWS": "#B07AA1",
-        "TACTICS RWS": "#4C78A8",
-        "TACTICS TT-TS": "#E45756",
+        "TACTICS Enhanced-TT-TS (GMIC)": "#E45756",
+        "TACTICS Enhanced-RWS (GMIC)": "#4C78A8",
+        "TACTICS Balanced-Greedy": "#F28E2B",
+        "Legacy Standard-Greedy": "#76B7B2",
+        "Legacy Enhanced-RWS": "#B07AA1",
     }
     _method_markers = {
-        "Legacy TS": "s",
-        "Legacy RWS": "^",
-        "TACTICS RWS": "o",
-        "TACTICS TT-TS": "D",
+        "TACTICS Enhanced-TT-TS (GMIC)": "D",
+        "TACTICS Enhanced-RWS (GMIC)": "o",
+        "TACTICS Balanced-Greedy": "P",
+        "Legacy Standard-Greedy": "s",
+        "Legacy Enhanced-RWS": "^",
     }
+    _method_order = [
+        "TACTICS Enhanced-TT-TS (GMIC)",
+        "TACTICS Enhanced-RWS (GMIC)",
+        "TACTICS Balanced-Greedy",
+        "Legacy Standard-Greedy",
+        "Legacy Enhanced-RWS",
+    ]
 
     _fig, _axes = plt.subplots(1, 2, figsize=(16, 6), facecolor="white",
                                sharey=True)
@@ -729,7 +742,7 @@ def _(fig_to_pdf_bytes, mo, pl, plt, topn_df):
         _ax = _axes[_panel_idx]
         _ax.set_facecolor("white")
 
-        _comp_data = topn_df.filter(pl.col("n_components") == _nc)
+        _comp_data = _rocs_all.filter(pl.col("n_components") == _nc)
 
         _agg = (
             _comp_data.group_by(["method", "top_n"])
@@ -744,10 +757,10 @@ def _(fig_to_pdf_bytes, mo, pl, plt, topn_df):
             .sort(["method", "top_n"])
         )
 
-        _methods = sorted(_agg["method"].unique().to_list())
-
-        for _method in _methods:
+        for _method in _method_order:
             _mdata = _agg.filter(pl.col("method") == _method).sort("top_n")
+            if len(_mdata) == 0:
+                continue
             _x = _mdata["top_n"].to_numpy()
             _y = _mdata["mean_frac"].to_numpy() * 100
             _se = _mdata["se_frac"].to_numpy() * 100
@@ -759,8 +772,8 @@ def _(fig_to_pdf_bytes, mo, pl, plt, topn_df):
             _ax.fill_between(_x, _y - 1.96 * _se, _y + 1.96 * _se,
                              alpha=0.15, color=_color, zorder=2)
 
-        _ax.set_xlabel("Top-N Threshold", fontsize=13, color="black")
-        _ax.set_title(f"{_nc}-Component Libraries", fontsize=14,
+        _ax.set_xlabel("Top-N Threshold", fontsize=14, color="black")
+        _ax.set_title(f"{_nc}-Component Libraries", fontsize=15,
                       fontweight="bold", color="black")
         _ax.set_xticks(sorted(_agg["top_n"].unique().to_list()))
         _ax.tick_params(colors="black", labelsize=12)
@@ -768,11 +781,18 @@ def _(fig_to_pdf_bytes, mo, pl, plt, topn_df):
         for _spine in _ax.spines.values():
             _spine.set_color("black")
 
-    _axes[0].set_ylabel("% Recovery", fontsize=13, color="black")
-    _axes[1].legend(fontsize=11, facecolor="white", edgecolor="black",
-                    labelcolor="black", loc="lower right")
+    _axes[0].set_ylabel("% Recovery", fontsize=14, color="black")
 
-    _fig.suptitle("Mean Recovery Rate vs Top-N Threshold (All Libraries)",
+    # Legend outside the figure below the panels
+    _handles, _labels = _axes[0].get_legend_handles_labels()
+    _fig.legend(
+        _handles, _labels,
+        loc="lower center", ncol=3, fontsize=12,
+        facecolor="white", edgecolor="black", labelcolor="black",
+        bbox_to_anchor=(0.5, -0.08),
+    )
+
+    _fig.suptitle("Mean % Recovery vs Top-N Threshold (ROCS Libraries)",
                   fontsize=15, fontweight="bold", color="black", y=1.01)
     _fig.tight_layout()
 
@@ -789,13 +809,132 @@ def _(fig_to_pdf_bytes, mo, pl, plt, topn_df):
 
 
 @app.cell
-def _(mo, topn_df):
-    """Select library for top-N recovery curve."""
-    _libs = sorted(topn_df["library_id"].unique().to_list())
+def _(fig_to_pdf_bytes, mo, pl, plt, recovery_all):
+    """Mean % recovery vs top-N for docking libraries (2-comp and 3-comp panels)."""
+
+    _DOCK_LIBS = {"adenine", "amide", "quinazoline", "thrombin"}
+    # n_components is 0 for thrombin/quinazoline in the data — fix with known values
+    _DOCK_NCOMP = {"thrombin": 2, "amide": 2, "adenine": 3, "quinazoline": 3}
+
+    _dock_all = (
+        recovery_all
+        .filter(pl.col("library_id").is_in(_DOCK_LIBS))
+        .with_columns(
+            pl.col("library_id").replace(_DOCK_NCOMP).cast(pl.Int64).alias("n_components")
+        )
+    )
+
+    mo.stop(len(_dock_all) == 0, mo.md("No docking library data available."))
+
+    _method_colors = {
+        "TACTICS Enhanced-TT-TS (GMIC)": "#E45756",
+        "TACTICS Enhanced-RWS (GMIC)": "#4C78A8",
+        "TACTICS Balanced-Greedy": "#F28E2B",
+        "Legacy Standard-Greedy": "#76B7B2",
+        "Legacy Enhanced-RWS": "#B07AA1",
+    }
+    _method_markers = {
+        "TACTICS Enhanced-TT-TS (GMIC)": "D",
+        "TACTICS Enhanced-RWS (GMIC)": "o",
+        "TACTICS Balanced-Greedy": "P",
+        "Legacy Standard-Greedy": "s",
+        "Legacy Enhanced-RWS": "^",
+    }
+    _method_order = [
+        "TACTICS Enhanced-TT-TS (GMIC)",
+        "TACTICS Enhanced-RWS (GMIC)",
+        "TACTICS Balanced-Greedy",
+        "Legacy Standard-Greedy",
+        "Legacy Enhanced-RWS",
+    ]
+
+    _fig, _axes = plt.subplots(1, 2, figsize=(16, 6), facecolor="white",
+                               sharey=True)
+
+    for _panel_idx, _nc in enumerate([2, 3]):
+        _ax = _axes[_panel_idx]
+        _ax.set_facecolor("white")
+
+        _comp_data = _dock_all.filter(pl.col("n_components") == _nc)
+
+        # Aggregate: mean and SE of recovery fraction across libraries and replicates
+        _agg = (
+            _comp_data.group_by(["method", "top_n"])
+            .agg([
+                pl.col("recovery_frac").mean().alias("mean_frac"),
+                pl.col("recovery_frac").std().alias("std_frac"),
+                pl.col("recovery_frac").count().alias("n"),
+            ])
+            .with_columns(
+                (pl.col("std_frac") / pl.col("n").sqrt()).alias("se_frac")
+            )
+            .sort(["method", "top_n"])
+        )
+
+        for _method in _method_order:
+            _mdata = _agg.filter(pl.col("method") == _method).sort("top_n")
+            if len(_mdata) == 0:
+                continue
+            _x = _mdata["top_n"].to_numpy()
+            _y = _mdata["mean_frac"].to_numpy() * 100
+            _se = _mdata["se_frac"].to_numpy() * 100
+            _color = _method_colors.get(_method, "#999999")
+            _marker = _method_markers.get(_method, "o")
+
+            _ax.plot(_x, _y, marker=_marker, color=_color, linewidth=2,
+                     markersize=7, label=_method, zorder=3)
+            _ax.fill_between(_x, _y - 1.96 * _se, _y + 1.96 * _se,
+                             alpha=0.15, color=_color, zorder=2)
+
+        _libs_in_panel = sorted(
+            _comp_data["library_id"].unique().to_list()
+        )
+        _ax.set_xlabel("Top-N Threshold", fontsize=14, color="black")
+        _ax.set_title(
+            f"{_nc}-Component Docking Libraries\n({', '.join(_libs_in_panel)})",
+            fontsize=15, fontweight="bold", color="black",
+        )
+        _ax.set_xticks(sorted(_agg["top_n"].unique().to_list()))
+        _ax.tick_params(colors="black", labelsize=12)
+        _ax.grid(axis="both", alpha=0.3, color="grey", zorder=1)
+        for _spine in _ax.spines.values():
+            _spine.set_color("black")
+
+    _axes[0].set_ylabel("% Recovery", fontsize=14, color="black")
+
+    # Legend outside the figure below the panels
+    _handles, _labels = _axes[0].get_legend_handles_labels()
+    _fig.legend(
+        _handles, _labels,
+        loc="lower center", ncol=3, fontsize=12,
+        facecolor="white", edgecolor="black", labelcolor="black",
+        bbox_to_anchor=(0.5, -0.08),
+    )
+
+    _fig.suptitle("Mean % Recovery vs Top-N Threshold (Docking Libraries)",
+                  fontsize=15, fontweight="bold", color="black", y=1.01)
+    _fig.tight_layout()
+
+    mo.vstack([
+        plt.gcf(),
+        mo.download(
+            data=fig_to_pdf_bytes(_fig),
+            filename="docking_recovery_vs_topn.pdf",
+            mimetype="application/pdf",
+            label="Download as PDF",
+        ),
+    ])
+    return
+
+
+@app.cell
+def _(mo, recovery_all):
+    """Select library for top-N recovery curve (all libraries)."""
+    _all_libs = sorted(recovery_all["library_id"].unique().to_list())
 
     topn_library_dropdown = mo.ui.dropdown(
-        options=_libs,
-        value=_libs[0],
+        options=_all_libs,
+        value=_all_libs[0],
         label="Library",
     )
     topn_library_dropdown
@@ -803,11 +942,11 @@ def _(mo, topn_df):
 
 
 @app.cell
-def _(fig_to_pdf_bytes, mo, pl, plt, topn_df, topn_library_dropdown):
-    """Top-N recovery curve: recovery rate vs top-N threshold per method."""
+def _(fig_to_pdf_bytes, mo, pl, plt, recovery_all, topn_library_dropdown):
+    """Top-N recovery curve: % recovery vs top-N threshold per method."""
 
     _lib_id = topn_library_dropdown.value
-    _lib_data = topn_df.filter(pl.col("library_id") == _lib_id)
+    _lib_data = recovery_all.filter(pl.col("library_id") == _lib_id)
 
     # Aggregate: mean and SE of recovery_frac per (method, top_n)
     _agg = (
@@ -825,16 +964,18 @@ def _(fig_to_pdf_bytes, mo, pl, plt, topn_df, topn_library_dropdown):
 
     _methods = sorted(_agg["method"].unique().to_list())
     _method_colors = {
-        "Legacy TS": "#76B7B2",
-        "Legacy RWS": "#B07AA1",
-        "TACTICS RWS": "#4C78A8",
-        "TACTICS TT-TS": "#E45756",
+        "TACTICS Enhanced-TT-TS (GMIC)": "#E45756",
+        "TACTICS Enhanced-RWS (GMIC)": "#4C78A8",
+        "TACTICS Balanced-Greedy": "#F28E2B",
+        "Legacy Standard-Greedy": "#76B7B2",
+        "Legacy Enhanced-RWS": "#B07AA1",
     }
     _method_markers = {
-        "Legacy TS": "s",
-        "Legacy RWS": "^",
-        "TACTICS RWS": "o",
-        "TACTICS TT-TS": "D",
+        "TACTICS Enhanced-TT-TS (GMIC)": "D",
+        "TACTICS Enhanced-RWS (GMIC)": "o",
+        "TACTICS Balanced-Greedy": "P",
+        "Legacy Standard-Greedy": "s",
+        "Legacy Enhanced-RWS": "^",
     }
 
     _fig, _ax = plt.subplots(figsize=(10, 6), facecolor="white")
@@ -853,11 +994,11 @@ def _(fig_to_pdf_bytes, mo, pl, plt, topn_df, topn_library_dropdown):
         _ax.fill_between(_x, _y - 1.96 * _se, _y + 1.96 * _se,
                          alpha=0.15, color=_color, zorder=2)
 
-    _ax.set_xlabel("Top-N Threshold", fontsize=13, color="black")
-    _ax.set_ylabel("% Recovery", fontsize=13, color="black")
+    _ax.set_xlabel("Top-N Threshold", fontsize=14, color="black")
+    _ax.set_ylabel("% Recovery", fontsize=14, color="black")
     _ax.set_title(
-        f"Recovery Rate vs Top-N Threshold: {_lib_id}",
-        fontsize=14, fontweight="bold", color="black",
+        f"% Recovery vs Top-N Threshold: {_lib_id}",
+        fontsize=15, fontweight="bold", color="black",
     )
     _ax.set_xticks(sorted(_agg["top_n"].unique().to_list()))
     _ax.tick_params(colors="black", labelsize=12)
@@ -881,18 +1022,21 @@ def _(fig_to_pdf_bytes, mo, pl, plt, topn_df, topn_library_dropdown):
 
 
 @app.cell
-def _(mo, topn_df):
+def _(mo, recovery_all):
     """Select baseline and challenger methods for top-N difference plot."""
-    _methods = sorted(topn_df["method"].unique().to_list())
+    _all_methods = sorted(recovery_all["method"].unique().to_list())
+
+    _default_baseline = "Legacy Enhanced-RWS" if "Legacy Enhanced-RWS" in _all_methods else _all_methods[0]
+    _default_challenger = "TACTICS Enhanced-TT-TS (GMIC)" if "TACTICS Enhanced-TT-TS (GMIC)" in _all_methods else _all_methods[-1]
 
     topn_baseline_dropdown = mo.ui.dropdown(
-        options=_methods,
-        value="Legacy RWS",
+        options=_all_methods,
+        value=_default_baseline,
         label="Baseline method",
     )
     topn_challenger_dropdown = mo.ui.dropdown(
-        options=_methods,
-        value="TACTICS TT-TS",
+        options=_all_methods,
+        value=_default_challenger,
         label="Challenger method",
     )
 
@@ -911,10 +1055,10 @@ def _(
     np,
     pl,
     plt,
+    recovery_all,
     stats,
     topn_baseline_dropdown,
     topn_challenger_dropdown,
-    topn_df,
     topn_library_dropdown,
 ):
     """Bars showing Δ % recovery at each top-N threshold with significance stars."""
@@ -922,7 +1066,18 @@ def _(
     _lib_id = topn_library_dropdown.value
     _baseline = topn_baseline_dropdown.value
     _challenger = topn_challenger_dropdown.value
-    _lib_data = topn_df.filter(pl.col("library_id") == _lib_id)
+
+    _lib_data = recovery_all.filter(pl.col("library_id") == _lib_id)
+
+    _available_methods = set(_lib_data["method"].unique().to_list())
+    mo.stop(
+        _baseline not in _available_methods or _challenger not in _available_methods,
+        mo.md(
+            f"Methods **{_baseline}** and/or **{_challenger}** not found in `{_lib_id}`. "
+            f"Available: {sorted(_available_methods)}"
+        ),
+    )
+
     _thresholds = sorted(_lib_data["top_n"].unique().to_list())
 
     _topn_vals = []
@@ -1003,8 +1158,8 @@ def _(
 
     _ax.set_xticks(_x)
     _ax.set_xticklabels([str(v) for v in _x_vals], fontsize=12, color="black")
-    _ax.set_xlabel("Top-N Threshold", fontsize=13, color="black")
-    _ax.set_ylabel("\u0394 % Recovery", fontsize=13, color="black")
+    _ax.set_xlabel("Top-N Threshold", fontsize=14, color="black")
+    _ax.set_ylabel("\u0394 % Recovery", fontsize=14, color="black")
     _ax.set_title(
         f"Recovery Difference vs Top-N: {_challenger} \u2212 {_baseline} ({_lib_id})",
         fontsize=14, fontweight="bold", color="black",
@@ -1036,15 +1191,31 @@ def _(
     np,
     pl,
     plt,
+    recovery_all,
     stats,
     topn_baseline_dropdown,
     topn_challenger_dropdown,
-    topn_df,
 ):
-    """Component-aggregated Δ % recovery vs top-N (2-comp and 3-comp panels)."""
+    """Component-aggregated Δ % recovery vs top-N (2-comp and 3-comp panels, ROCS libraries)."""
 
     _baseline = topn_baseline_dropdown.value
     _challenger = topn_challenger_dropdown.value
+
+    _ROCS_NCOMP = {
+        "rxn101": 2, "rxn102a": 2, "rxn108b": 2, "rxn111b": 2, "rxn114b": 2,
+        "rxn203": 2, "rxn205": 2, "rxn206": 2, "rxn207": 2, "rxn208": 2,
+        "amide-suzuki": 3, "betti": 3, "dobener": 3,
+        "groebke-blackburn-bienayme": 3, "mannich": 3, "niementowski": 3,
+        "orru": 3, "passerini": 3, "petasis": 3, "poparov": 3,
+    }
+
+    _rocs_data = (
+        recovery_all
+        .filter(pl.col("library_id").is_in(set(_ROCS_NCOMP.keys())))
+        .with_columns(
+            pl.col("library_id").replace(_ROCS_NCOMP).cast(pl.Int64).alias("n_components")
+        )
+    )
 
     _fig, _axes = plt.subplots(1, 2, figsize=(16, 6), facecolor="white",
                                sharey=True)
@@ -1057,7 +1228,7 @@ def _(
         _ax = _axes[_panel_idx]
         _ax.set_facecolor("white")
 
-        _comp_data = topn_df.filter(pl.col("n_components") == _nc)
+        _comp_data = _rocs_data.filter(pl.col("n_components") == _nc)
         _thresholds = sorted(_comp_data["top_n"].unique().to_list())
 
         _topn_vals = []
@@ -1069,6 +1240,166 @@ def _(
         for _tn in _thresholds:
             _tn_data = _comp_data.filter(pl.col("top_n") == _tn)
             # Pool all libraries: pair by (library_id, query_id, replicate)
+            _a = (
+                _tn_data.filter(pl.col("method") == _baseline)
+
+                .sort(["library_id", "query_id", "replicate"])["recovery_frac"]
+                .to_numpy()
+            )
+            _b = (
+                _tn_data.filter(pl.col("method") == _challenger)
+                .sort(["library_id", "query_id", "replicate"])["recovery_frac"]
+                .to_numpy()
+            )
+            _n = min(len(_a), len(_b))
+            if _n < 2:
+                continue
+            _a, _b = _a[:_n], _b[:_n]
+            _diffs = (_b - _a) * 100
+            _mean_d = float(np.mean(_diffs))
+            _se_d = float(np.std(_diffs, ddof=1) / np.sqrt(_n))
+            _t_crit = float(stats.t.ppf(0.975, df=_n - 1))
+            _, _p = stats.ttest_rel(_a, _b)
+            _sig = (
+                "****" if _p <= 0.0001
+                else "***" if _p <= 0.001
+                else "**" if _p <= 0.01
+                else "*" if _p <= 0.05
+                else "ns"
+            )
+
+            _topn_vals.append(_tn)
+            _mean_diffs.append(_mean_d)
+            _ci_lows.append(_mean_d - _t_crit * _se_d)
+            _ci_highs.append(_mean_d + _t_crit * _se_d)
+            _sigs.append(_sig)
+
+        _y = np.array(_mean_diffs)
+        _lo = np.array(_ci_lows)
+        _hi = np.array(_ci_highs)
+        _x = np.arange(len(_topn_vals))
+
+        _color = "#4C78A8" if _nc == 2 else "#E45756"
+        _yerr = np.array([_y - _lo, _hi - _y])
+        _ax.bar(_x, _y, width=0.6, color=_color, alpha=0.75,
+                edgecolor="white", linewidth=0.5, zorder=3,
+                yerr=_yerr, capsize=4,
+                error_kw={"linewidth": 1.2, "color": "black"})
+
+        _ax.axhline(0, color="black", linewidth=0.8, zorder=2)
+
+        _ax.set_xticks(_x)
+        _ax.set_xticklabels([str(v) for v in _topn_vals], fontsize=12, color="black")
+        _ax.set_xlabel("Top-N Threshold", fontsize=14, color="black")
+        _ax.set_title(f"{_nc}-Component Libraries", fontsize=14,
+                      fontweight="bold", color="black")
+        _ax.tick_params(colors="black", labelsize=12)
+        _ax.grid(axis="y", alpha=0.3, color="grey", zorder=1)
+        for _spine in _ax.spines.values():
+            _spine.set_color("black")
+
+        _global_ymin = min(_global_ymin, _lo.min() if len(_lo) else 0)
+        _global_ymax = max(_global_ymax, _hi.max() if len(_hi) else 0)
+
+        _panel_annots.append((_sigs, _y, _hi, _lo))
+
+    # Second pass: uniform y-limits and significance stars
+    _data_range = max(abs(_global_ymax), abs(_global_ymin), 1)
+    _offset = _data_range * 0.04
+    _y_min = _global_ymin - _data_range * 0.20
+    _y_max = _global_ymax + _data_range * 0.20
+
+    for _panel_idx in range(2):
+        _ax = _axes[_panel_idx]
+        _ax.set_ylim(_y_min, _y_max)
+        _sigs, _y_arr, _hi_arr, _lo_arr = _panel_annots[_panel_idx]
+        for _i in range(len(_sigs)):
+            _y_pos = _hi_arr[_i] + _offset if _y_arr[_i] >= 0 else _lo_arr[_i] - _offset
+            _va = "bottom" if _y_arr[_i] >= 0 else "top"
+            _ax.text(_i, _y_pos, _sigs[_i], ha="center", va=_va,
+                     fontsize=12, fontweight="bold", color="black")
+
+    _axes[0].set_ylabel("\u0394 % Recovery", fontsize=14, color="black")
+
+    _fig.suptitle(
+        f"Mean Recovery Difference vs Top-N (ROCS): {_challenger} \u2212 {_baseline}",
+        fontsize=15, fontweight="bold", color="black", y=1.01,
+    )
+    _fig.tight_layout()
+
+    _pdf_name = f"component_agg_diff_vs_topn_rocs_{_challenger}_{_baseline}.pdf".replace(" ", "_")
+    mo.vstack([
+        plt.gcf(),
+        mo.download(
+            data=fig_to_pdf_bytes(_fig),
+            filename=_pdf_name,
+            mimetype="application/pdf",
+            label="Download as PDF",
+        ),
+    ])
+    return
+
+
+@app.cell
+def _(
+    fig_to_pdf_bytes,
+    mo,
+    np,
+    pl,
+    plt,
+    recovery_all,
+    stats,
+    topn_baseline_dropdown,
+    topn_challenger_dropdown,
+):
+    """Component-aggregated Δ % recovery vs top-N (2-comp and 3-comp panels, docking libraries)."""
+
+    _baseline = topn_baseline_dropdown.value
+    _challenger = topn_challenger_dropdown.value
+
+    _DOCK_NCOMP = {"thrombin": 2, "amide": 2, "adenine": 3, "quinazoline": 3}
+
+    _dock_data = (
+        recovery_all
+        .filter(pl.col("library_id").is_in(set(_DOCK_NCOMP.keys())))
+        .with_columns(
+            pl.col("library_id").replace(_DOCK_NCOMP).cast(pl.Int64).alias("n_components")
+        )
+    )
+
+    _available_methods = set(_dock_data["method"].unique().to_list())
+    mo.stop(
+        _baseline not in _available_methods or _challenger not in _available_methods,
+        mo.md(
+            f"Methods **{_baseline}** and/or **{_challenger}** not found in docking data. "
+            f"Available: {sorted(_available_methods)}"
+        ),
+    )
+
+    _fig, _axes = plt.subplots(1, 2, figsize=(16, 6), facecolor="white",
+                               sharey=True)
+
+    _global_ymin = 0.0
+    _global_ymax = 0.0
+    _panel_annots = []
+
+    for _panel_idx, _nc in enumerate([2, 3]):
+        _ax = _axes[_panel_idx]
+        _ax.set_facecolor("white")
+
+        _comp_data = _dock_data.filter(pl.col("n_components") == _nc)
+        _thresholds = sorted(_comp_data["top_n"].unique().to_list())
+
+        _libs_in_panel = sorted(_comp_data["library_id"].unique().to_list())
+
+        _topn_vals = []
+        _mean_diffs = []
+        _ci_lows = []
+        _ci_highs = []
+        _sigs = []
+
+        for _tn in _thresholds:
+            _tn_data = _comp_data.filter(pl.col("top_n") == _tn)
             _a = (
                 _tn_data.filter(pl.col("method") == _baseline)
                 .sort(["library_id", "query_id", "replicate"])["recovery_frac"]
@@ -1118,9 +1449,11 @@ def _(
 
         _ax.set_xticks(_x)
         _ax.set_xticklabels([str(v) for v in _topn_vals], fontsize=12, color="black")
-        _ax.set_xlabel("Top-N Threshold", fontsize=13, color="black")
-        _ax.set_title(f"{_nc}-Component Libraries", fontsize=14,
-                      fontweight="bold", color="black")
+        _ax.set_xlabel("Top-N Threshold", fontsize=14, color="black")
+        _ax.set_title(
+            f"{_nc}-Component Docking\n({', '.join(_libs_in_panel)})",
+            fontsize=15, fontweight="bold", color="black",
+        )
         _ax.tick_params(colors="black", labelsize=12)
         _ax.grid(axis="y", alpha=0.3, color="grey", zorder=1)
         for _spine in _ax.spines.values():
@@ -1147,149 +1480,15 @@ def _(
             _ax.text(_i, _y_pos, _sigs[_i], ha="center", va=_va,
                      fontsize=12, fontweight="bold", color="black")
 
-    _axes[0].set_ylabel("\u0394 % Recovery", fontsize=13, color="black")
+    _axes[0].set_ylabel("\u0394 % Recovery", fontsize=14, color="black")
 
     _fig.suptitle(
-        f"Mean Recovery Difference vs Top-N: {_challenger} \u2212 {_baseline}",
+        f"Mean Recovery Difference vs Top-N (Docking): {_challenger} \u2212 {_baseline}",
         fontsize=15, fontweight="bold", color="black", y=1.01,
     )
     _fig.tight_layout()
 
-    _pdf_name = f"component_agg_diff_vs_topn_{_challenger}_{_baseline}.pdf".replace(" ", "_")
-    mo.vstack([
-        plt.gcf(),
-        mo.download(
-            data=fig_to_pdf_bytes(_fig),
-            filename=_pdf_name,
-            mimetype="application/pdf",
-            label="Download as PDF",
-        ),
-    ])
-    return
-
-
-@app.cell
-def _(mo):
-    mo.md(r"""
-    ## Effect Size and Statistical Summary Plots
-    """)
-    return
-
-
-@app.cell
-def _(
-    Patch,
-    baseline_dropdown,
-    challenger_dropdown,
-    diff_df,
-    fig_to_pdf_bytes,
-    mo,
-    np,
-    plt,
-):
-    """Option 2: Paired panel — recovery difference + Cohen's d."""
-    _baseline = baseline_dropdown.value
-    _challenger = challenger_dropdown.value
-    _n_libs = len(diff_df)
-
-    mo.stop(_n_libs == 0, mo.md("No data for this comparison."))
-
-    _labels = diff_df["library_id"].to_list()
-    _means = diff_df["mean_diff"].to_numpy()
-    _ci_low = diff_df["ci_low"].to_numpy()
-    _ci_high = diff_df["ci_high"].to_numpy()
-    _n_comps = diff_df["n_components"].to_list()
-    _sigs = diff_df["significance"].to_list()
-    _cohens = diff_df["cohens_d"].to_numpy()
-
-    _color_map = {2: "#4C78A8", 3: "#E45756"}
-    _colors = [_color_map.get(nc, "#999999") for nc in _n_comps]
-
-    _fig_width = max(14, _n_libs * 0.55)
-    _fig, (_ax1, _ax2) = plt.subplots(
-        1, 2, figsize=(_fig_width, max(6, _n_libs * 0.35)),
-        sharey=True, facecolor="white",
-        gridspec_kw={"width_ratios": [3, 2], "wspace": 0.05},
-    )
-
-    _y = np.arange(_n_libs)
-
-    # --- Left panel: recovery difference with CIs ---
-    _ax1.set_facecolor("white")
-    _xerr = np.array([_means - _ci_low, _ci_high - _means])
-    _ax1.barh(
-        _y, _means, xerr=_xerr,
-        color=_colors, edgecolor="white", linewidth=0.5,
-        capsize=3, error_kw={"linewidth": 1.0, "color": "black"},
-        height=0.7, zorder=3,
-    )
-    _ax1.axvline(0, color="black", linewidth=0.8, zorder=2)
-
-    # Significance stars
-    _data_range = max(abs(_ci_high.max()), abs(_ci_low.min()), 1)
-    _offset = _data_range * 0.04
-    for _i, (_sig, _ci_h, _ci_l, _m) in enumerate(
-        zip(_sigs, _ci_high, _ci_low, _means)
-    ):
-        _x_pos = _ci_h + _offset if _m >= 0 else _ci_l - _offset
-        _ha = "left" if _m >= 0 else "right"
-        _ax1.text(
-            _x_pos, _i, _sig,
-            ha=_ha, va="center",
-            fontsize=10, fontweight="bold", color="black",
-        )
-
-    _ax1.set_yticks(_y)
-    _ax1.set_yticklabels(_labels, fontsize=11, color="black")
-    _ax1.set_xlabel(f"\u0394 Recovery (top-N hits)", fontsize=12, color="black")
-    _ax1.set_title(f"Recovery Difference", fontsize=13, fontweight="bold", color="black")
-    _ax1.grid(axis="x", alpha=0.3, zorder=1, color="grey")
-    _ax1.tick_params(colors="black", labelsize=11)
-    for _spine in _ax1.spines.values():
-        _spine.set_color("black")
-
-    # --- Right panel: Cohen's d with threshold lines ---
-    _ax2.set_facecolor("white")
-    _ax2.barh(
-        _y, np.abs(_cohens),
-        color=_colors, edgecolor="white", linewidth=0.5,
-        height=0.7, zorder=3, alpha=0.8,
-    )
-
-    # Effect size threshold lines
-    for _thresh, _label in [(0.2, "small"), (0.5, "medium"), (0.8, "large")]:
-        _ax2.axvline(_thresh, color="grey", linewidth=1.0, linestyle="--", zorder=2)
-        _ax2.text(
-            _thresh, _n_libs - 0.5, _label,
-            ha="center", va="bottom", fontsize=9, color="grey", fontstyle="italic",
-        )
-
-    _ax2.set_xlabel("|Cohen's d|", fontsize=12, color="black")
-    _ax2.set_title("Effect Size", fontsize=13, fontweight="bold", color="black")
-    _ax2.grid(axis="x", alpha=0.3, zorder=1, color="grey")
-    _ax2.tick_params(colors="black", labelsize=11)
-    _ax2.set_xlim(0, max(np.abs(_cohens).max() * 1.15, 1.0))
-    for _spine in _ax2.spines.values():
-        _spine.set_color("black")
-
-    # Invert y so first library is at top
-    _ax1.invert_yaxis()
-
-    # Legend
-    _legend_elements = [
-        Patch(facecolor="#4C78A8", edgecolor="black", label="2-component"),
-        Patch(facecolor="#E45756", edgecolor="black", label="3-component"),
-    ]
-    _ax1.legend(handles=_legend_elements, loc="lower right", fontsize=10,
-                facecolor="white", edgecolor="black", labelcolor="black")
-
-    _fig.suptitle(
-        f"{_challenger} vs {_baseline}",
-        fontsize=14, fontweight="bold", color="black", y=1.01,
-    )
-    _fig.tight_layout()
-
-    _pdf_name = f"recovery_diff_cohens_d_{_challenger}_{_baseline}.pdf".replace(" ", "_")
+    _pdf_name = f"component_agg_diff_vs_topn_docking_{_challenger}_{_baseline}.pdf".replace(" ", "_")
     mo.vstack([
         plt.gcf(),
         mo.download(
@@ -1308,7 +1507,7 @@ def _(mo):
     ## Simultaneous Confidence Interval Plots (Tukey HSD)
 
     Per-library: select a library to view all pairwise method comparisons.
-    Overall: aggregated across all libraries via Friedman/Nemenyi ranking.
+    Overall: aggregated across ROCS libraries and docking libraries separately.
     """)
     return
 
@@ -1352,7 +1551,6 @@ def _(
     _ci_lows = []
     _ci_highs = []
     _rejects = []
-    _effect_sizes = []
 
     # Normalize: mean_diff = group2 - group1 from Tukey HSD.
     # Ensure the better method (higher recovery) is always the challenger (right).
@@ -1372,13 +1570,11 @@ def _(
             _ci_lows.append(-_row["ci_high"])
             _ci_highs.append(-_row["ci_low"])
         _rejects.append(_row["reject"])
-        _effect_sizes.append(_row["effect_size"])
 
     # Sort by mean_diff descending after normalization
     _order = np.argsort(_means)[::-1]
     _left_labels = [_left_labels[i] for i in _order]
     _right_labels = [_right_labels[i] for i in _order]
-    _effect_sizes = [_effect_sizes[i] for i in _order]
     _rejects = [_rejects[i] for i in _order]
     _means = np.array([_means[i] for i in _order])
     _ci_lows = np.array([_ci_lows[i] for i in _order])
@@ -1388,14 +1584,20 @@ def _(
     _ci_lows = np.array(_ci_lows)
     _ci_highs = np.array(_ci_highs)
 
+    # Extract p-values for significance stars
+    _p_values = []
+    for _row in _lib_tukey.iter_rows(named=True):
+        _p_values.append(_row["p_adj"])
+    _p_values = np.array([_p_values[i] for i in _order])
+
     _fig, _ax = plt.subplots(
-        figsize=(12, max(3, _n_comparisons * 0.45)),
+        figsize=(12, max(4, _n_comparisons * 0.55)),
         facecolor="white",
     )
     _ax.set_facecolor("white")
     _y = np.arange(_n_comparisons)
 
-    _colors = ["#E45756" if r else "#999999" for r in _rejects]
+    _colors = ["#4C78A8" if r else "#999999" for r in _rejects]
 
     for _i in range(_n_comparisons):
         _ax.plot(
@@ -1403,47 +1605,91 @@ def _(
             color=_colors[_i], linewidth=2.5, solid_capstyle="round", zorder=3,
         )
         _ax.plot(_means[_i], _i, "o", color=_colors[_i], markersize=8, zorder=4)
-        # Effect size label centered above the CI line
+        # Significance stars
+        _p = _p_values[_i]
+        _sig_str = (
+            "****" if _p <= 0.0001
+            else "***" if _p <= 0.001
+            else "**" if _p <= 0.01
+            else "*" if _p <= 0.05
+            else "ns"
+        )
         _ax.text(
-            _means[_i], _i - 0.25, _effect_sizes[_i],
-            va="bottom", ha="center", fontsize=8, color="grey", fontstyle="italic",
+            _ci_highs[_i] + 0.15, _i, _sig_str,
+            ha="left", va="center",
+            fontsize=12, fontweight="bold", color="black",
         )
 
     _ax.axvline(0, color="black", linewidth=0.8, linestyle="-", zorder=2)
 
-    # Left y-axis: group1 (baseline)
+    # Expand x-limits so stars fit inside the axes
+    _x_pad = max(_ci_highs.max(), abs(_ci_lows.min())) * 0.18
+    _ax.set_xlim(
+        min(_ci_lows.min(), 0) - _x_pad * 0.5,
+        _ci_highs.max() + _x_pad,
+    )
+
+    # Define key comparisons
+    _legacy_methods = {"Legacy Enhanced-RWS", "Legacy Standard-Greedy"}
+    _tactics_adaptive = {"TACTICS Enhanced-RWS (GMIC)", "TACTICS Enhanced-TT-TS (GMIC)"}
+
+    def _is_tactics_vs_legacy(_left, _right):
+        return (
+            (_left in _legacy_methods and _right in _tactics_adaptive)
+            or (_left in _tactics_adaptive and _right in _legacy_methods)
+        )
+
+    _COLOR_KEY_TICK = "#4C78A8"
+
+    # Left y-axis: challenger (better method)
     _ax.set_yticks(_y)
-    _ax.set_yticklabels(_left_labels, fontsize=10, color="black")
-    _ax.set_ylabel("Baseline", fontsize=11, color="black")
+    _ax.set_yticklabels(_right_labels, fontsize=12, color="black")
+    _ax.set_ylabel("Challenger", fontsize=14, color="black")
+
+    # Pad y-limits so effect size labels above top row aren't clipped
+    _ax.set_ylim(-0.6, _n_comparisons - 0.4)
 
     # Invert y so largest diff is at top (do this BEFORE twinx so both share orientation)
     _ax.invert_yaxis()
 
-    # Right y-axis: group2 (challenger)
+    # Right y-axis: baseline (worse method)
     _ax_right = _ax.twinx()
     _ax_right.set_ylim(_ax.get_ylim())
     _ax_right.set_yticks(_y)
-    _ax_right.set_yticklabels(_right_labels, fontsize=10, color="black")
-    _ax_right.set_ylabel("Challenger", fontsize=11, color="black")
-    _ax_right.tick_params(colors="black", labelsize=10)
+    _ax_right.set_yticklabels(_left_labels, fontsize=12, color="black")
+    _ax_right.set_ylabel("Baseline", fontsize=14, color="black")
+    _ax_right.tick_params(colors="black", labelsize=12)
     for _spine in _ax_right.spines.values():
         _spine.set_color("black")
 
-    _ax.set_xlabel(f"\u0394 Recovery: Challenger \u2212 Baseline (top-{TOP_N})", fontsize=12, color="black")
+    # Per-tick styling: challenger red+bold, baseline bold for key comparisons
+    for _i in range(_n_comparisons):
+        if _is_tactics_vs_legacy(_left_labels[_i], _right_labels[_i]):
+            _ax.get_yticklabels()[_i].set_color(_COLOR_KEY_TICK)
+            _ax.get_yticklabels()[_i].set_fontweight("bold")
+            _ax_right.get_yticklabels()[_i].set_fontweight("bold")
+
+    _ax.set_xlabel(
+        f"\u0394 Recovery: Challenger \u2212 Baseline (top-{TOP_N})",
+        fontsize=14, color="black",
+    )
     _ax.set_title(
         f"Tukey HSD Pairwise CIs: {_lib_id} (top-{TOP_N})",
-        fontsize=13, fontweight="bold", color="black",
+        fontsize=15, fontweight="bold", color="black",
     )
     _ax.grid(axis="x", alpha=0.3, zorder=1, color="grey")
-    _ax.tick_params(colors="black", labelsize=10)
+    _ax.tick_params(axis="x", colors="black", labelsize=12)
+    _ax.tick_params(axis="y", color="black", labelsize=12)
     for _spine in _ax.spines.values():
         _spine.set_color("black")
 
     _legend_elements = [
-        Line2D([0], [0], color="#E45756", linewidth=2.5, label="Significant (p < 0.05)"),
-        Line2D([0], [0], color="#999999", linewidth=2.5, label="Not significant"),
+        Line2D([0], [0], color="#4C78A8", linewidth=2.5, marker="o",
+               markersize=8, label="Significant (p < 0.05)"),
+        Line2D([0], [0], color="#999999", linewidth=2.5, marker="o",
+               markersize=8, label="Not significant"),
     ]
-    _ax.legend(handles=_legend_elements, loc="lower right", fontsize=10,
+    _ax.legend(handles=_legend_elements, loc="lower right", fontsize=12,
                facecolor="white", edgecolor="black", labelcolor="black")
 
     _fig.tight_layout()
@@ -1502,7 +1748,6 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
     _ci_highs = []
     _p_values = []
     _rejects = []
-    _effect_sizes = []
 
     for _row in _summary.data[1:]:  # skip header row
         _g1, _g2, _meandiff, _p_adj, _lower, _upper, _reject = _row
@@ -1510,26 +1755,6 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
         _p_adj = float(_p_adj)
         _lower = float(_lower)
         _upper = float(_upper)
-
-        # Cohen's d from paired differences (not Tukey pooled SD, which is
-        # inflated by between-query difficulty variance). The paired SD
-        # captures only the method effect + noise, giving the correct
-        # effect size for this repeated-measures design.
-        _a = _query_means.filter(pl.col("method") == _g1)
-        _b = _query_means.filter(pl.col("method") == _g2)
-        _joined = _a.join(_b, on=["library_id", "query_id"], suffix="_b")
-        _diffs = (
-            _joined["mean_recovered_b"].to_numpy()
-            - _joined["mean_recovered"].to_numpy()
-        )
-        _paired_sd = float(np.std(_diffs, ddof=1))
-        _d = abs(_meandiff) / _paired_sd if _paired_sd > 0 else 0.0
-        _es_label = (
-            "large" if _d >= 0.8
-            else "medium" if _d >= 0.5
-            else "small" if _d >= 0.2
-            else "negligible"
-        )
 
         # Normalize direction: positive = challenger (right) is better.
         if _meandiff >= 0:
@@ -1547,7 +1772,6 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
 
         _p_values.append(_p_adj)
         _rejects.append(bool(_reject))
-        _effect_sizes.append(_es_label)
 
     _grand_means = np.array(_grand_means)
     _ci_lows = np.array(_ci_lows)
@@ -1558,7 +1782,6 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
     _order = np.argsort(_grand_means)[::-1]
     _left_labels = [_left_labels[i] for i in _order]
     _right_labels = [_right_labels[i] for i in _order]
-    _effect_sizes = [_effect_sizes[i] for i in _order]
     _rejects = [_rejects[i] for i in _order]
     _grand_means = _grand_means[_order]
     _ci_lows = _ci_lows[_order]
@@ -1585,17 +1808,12 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
             or (_left in _tactics_adaptive and _right in _legacy_methods)
         )
 
-    _COLOR_HIGHLIGHT = "#4C78A8"  # blue — TACTICS vs Legacy (key claim)
-    _COLOR_SIG = "#E45756"        # red — other significant pairs
+    _COLOR_SIG = "#4C78A8"        # blue — significant pairs
     _COLOR_NS = "#999999"          # grey — not significant
+    _COLOR_KEY_TICK = "#4C78A8"    # blue — TACTICS vs Legacy tick labels
 
     for _i in range(_n_comparisons):
-        if _rejects[_i] and _is_tactics_vs_legacy(_left_labels[_i], _right_labels[_i]):
-            _color = _COLOR_HIGHLIGHT
-        elif _rejects[_i]:
-            _color = _COLOR_SIG
-        else:
-            _color = _COLOR_NS
+        _color = _COLOR_SIG if _rejects[_i] else _COLOR_NS
 
         # CI line
         _ax.plot(
@@ -1606,11 +1824,6 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
         _ax.plot(
             _grand_means[_i], _i, "o",
             color=_color, markersize=8, zorder=4,
-        )
-        # Effect size label centered above the CI line
-        _ax.text(
-            _grand_means[_i], _i - 0.25, _effect_sizes[_i],
-            va="bottom", ha="center", fontsize=12, color="grey", fontstyle="italic",
         )
         # Significance stars (Tukey HSD adjusted p-values, FWER=0.05)
         _p = _p_values[_i]
@@ -1636,10 +1849,10 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
         _ci_highs.max() + _x_pad,
     )
 
-    # Left y-axis: baseline (worse method)
+    # Left y-axis: challenger (better method)
     _ax.set_yticks(_y)
-    _ax.set_yticklabels(_left_labels, fontsize=12, color="black")
-    _ax.set_ylabel("Baseline", fontsize=14, color="black")
+    _ax.set_yticklabels(_right_labels, fontsize=12, color="black")
+    _ax.set_ylabel("Challenger", fontsize=14, color="black")
 
     # Pad y-limits so effect size labels above top/bottom rows aren't clipped
     _ax.set_ylim(-0.6, _n_comparisons - 0.4)
@@ -1647,15 +1860,23 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
     # Invert y so largest diff is at top (before twinx so both share orientation)
     _ax.invert_yaxis()
 
-    # Right y-axis: challenger (better method)
+    # Right y-axis: baseline (worse method)
     _ax_right = _ax.twinx()
     _ax_right.set_ylim(_ax.get_ylim())
     _ax_right.set_yticks(_y)
-    _ax_right.set_yticklabels(_right_labels, fontsize=12, color="black")
-    _ax_right.set_ylabel("Challenger", fontsize=14, color="black")
+    _ax_right.set_yticklabels(_left_labels, fontsize=12, color="black")
+    _ax_right.set_ylabel("Baseline", fontsize=14, color="black")
     _ax_right.tick_params(colors="black", labelsize=12)
     for _spine in _ax_right.spines.values():
         _spine.set_color("black")
+
+    # Per-tick styling: challenger red+bold, baseline bold for key comparisons
+    # Applied after both axes are fully configured so nothing resets them
+    for _i in range(_n_comparisons):
+        if _is_tactics_vs_legacy(_left_labels[_i], _right_labels[_i]):
+            _ax.get_yticklabels()[_i].set_color(_COLOR_KEY_TICK)
+            _ax.get_yticklabels()[_i].set_fontweight("bold")
+            _ax_right.get_yticklabels()[_i].set_fontweight("bold")
 
     _ax.set_xlabel(
         f"\u0394 Recovery: Challenger \u2212 Baseline (top-{TOP_N})",
@@ -1667,15 +1888,14 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
         fontsize=15, fontweight="bold", color="black",
     )
     _ax.grid(axis="x", alpha=0.3, zorder=1, color="grey")
-    _ax.tick_params(colors="black", labelsize=12)
+    _ax.tick_params(axis="x", colors="black", labelsize=12)
+    _ax.tick_params(axis="y", color="black", labelsize=12)
     for _spine in _ax.spines.values():
         _spine.set_color("black")
 
     _legend_elements = [
-        Line2D([0], [0], color=_COLOR_HIGHLIGHT, linewidth=2.5, marker="o",
-               markersize=8, label="TACTICS vs Legacy (p < 0.05)"),
         Line2D([0], [0], color=_COLOR_SIG, linewidth=2.5, marker="o",
-               markersize=8, label="Other significant (p < 0.05)"),
+               markersize=8, label="Significant (p < 0.05)"),
         Line2D([0], [0], color=_COLOR_NS, linewidth=2.5, marker="o",
                markersize=8, label="Not significant"),
     ]
@@ -1734,7 +1954,6 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
     dock_ci_hi = []
     dock_pvals = []
     dock_reject = []
-    dock_esizes = []
 
     for dock_row in dock_summary.data[1:]:
         dg1, dg2, d_meandiff, d_padj, d_lower, d_upper, d_reject = dock_row
@@ -1742,24 +1961,6 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
         d_padj = float(d_padj)
         d_lower = float(d_lower)
         d_upper = float(d_upper)
-
-        # Paired Cohen's d from replicate-level differences
-        da = dock_df.filter(pl.col("method") == dg1).sort(
-            ["library_id", "query_id", "replicate"]
-        )
-        db = dock_df.filter(pl.col("method") == dg2).sort(
-            ["library_id", "query_id", "replicate"]
-        )
-        dn = min(len(da), len(db))
-        d_diffs = db["recovered"].to_numpy()[:dn] - da["recovered"].to_numpy()[:dn]
-        d_paired_sd = float(np.std(d_diffs, ddof=1))
-        d_cohen = abs(d_meandiff) / d_paired_sd if d_paired_sd > 0 else 0.0
-        d_es_label = (
-            "large" if d_cohen >= 0.8
-            else "medium" if d_cohen >= 0.5
-            else "small" if d_cohen >= 0.2
-            else "negligible"
-        )
 
         if d_meandiff >= 0:
             dock_left.append(dg1)
@@ -1776,7 +1977,6 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
 
         dock_pvals.append(d_padj)
         dock_reject.append(bool(d_reject))
-        dock_esizes.append(d_es_label)
 
     dock_means = np.array(dock_means)
     dock_ci_lo = np.array(dock_ci_lo)
@@ -1786,7 +1986,6 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
     dock_order = np.argsort(dock_means)[::-1]
     dock_left = [dock_left[i] for i in dock_order]
     dock_right = [dock_right[i] for i in dock_order]
-    dock_esizes = [dock_esizes[i] for i in dock_order]
     dock_reject = [dock_reject[i] for i in dock_order]
     dock_means = dock_means[dock_order]
     dock_ci_lo = dock_ci_lo[dock_order]
@@ -1804,21 +2003,18 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
 
     _LEGACY = {"Legacy Enhanced-RWS", "Legacy Standard-Greedy"}
     _TACTICS = {"TACTICS Enhanced-RWS (GMIC)", "TACTICS Enhanced-TT-TS (GMIC)"}
-    _CLR_KEY = "#4C78A8"
-    _CLR_SIG = "#E45756"
+    _CLR_SIG = "#4C78A8"
     _CLR_NS = "#999999"
+    _CLR_KEY_TICK = "#4C78A8"
+
+    def _is_tvl(left, right):
+        return (
+            (left in _LEGACY and right in _TACTICS)
+            or (left in _TACTICS and right in _LEGACY)
+        )
 
     for di in range(dock_n_comp):
-        is_tvl = (
-            (dock_left[di] in _LEGACY and dock_right[di] in _TACTICS)
-            or (dock_left[di] in _TACTICS and dock_right[di] in _LEGACY)
-        )
-        if dock_reject[di] and is_tvl:
-            clr = _CLR_KEY
-        elif dock_reject[di]:
-            clr = _CLR_SIG
-        else:
-            clr = _CLR_NS
+        clr = _CLR_SIG if dock_reject[di] else _CLR_NS
 
         dock_ax.plot(
             [dock_ci_lo[di], dock_ci_hi[di]], [di, di],
@@ -1827,10 +2023,6 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
         dock_ax.plot(
             dock_means[di], di, "o",
             color=clr, markersize=8, zorder=4,
-        )
-        dock_ax.text(
-            dock_means[di], di - 0.25, dock_esizes[di],
-            va="bottom", ha="center", fontsize=12, color="grey", fontstyle="italic",
         )
         dp = dock_pvals[di]
         d_sig = (
@@ -1855,8 +2047,8 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
     )
 
     dock_ax.set_yticks(dock_y)
-    dock_ax.set_yticklabels(dock_left, fontsize=12, color="black")
-    dock_ax.set_ylabel("Baseline", fontsize=14, color="black")
+    dock_ax.set_yticklabels(dock_right, fontsize=12, color="black")
+    dock_ax.set_ylabel("Challenger", fontsize=14, color="black")
 
     dock_ax.set_ylim(-0.6, dock_n_comp - 0.4)
     dock_ax.invert_yaxis()
@@ -1864,32 +2056,36 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
     dock_ax_right = dock_ax.twinx()
     dock_ax_right.set_ylim(dock_ax.get_ylim())
     dock_ax_right.set_yticks(dock_y)
-    dock_ax_right.set_yticklabels(dock_right, fontsize=12, color="black")
-    dock_ax_right.set_ylabel("Challenger", fontsize=14, color="black")
+    dock_ax_right.set_yticklabels(dock_left, fontsize=12, color="black")
+    dock_ax_right.set_ylabel("Baseline", fontsize=14, color="black")
     dock_ax_right.tick_params(colors="black", labelsize=12)
     for sp in dock_ax_right.spines.values():
         sp.set_color("black")
 
-    dock_libs_str = ", ".join(sorted(_DOCK_LIBS))
+    # Per-tick styling applied last so nothing resets them
+    for di in range(dock_n_comp):
+        if _is_tvl(dock_left[di], dock_right[di]):
+            dock_ax.get_yticklabels()[di].set_color(_CLR_KEY_TICK)
+            dock_ax.get_yticklabels()[di].set_fontweight("bold")
+            dock_ax_right.get_yticklabels()[di].set_fontweight("bold")
+
     dock_ax.set_xlabel(
         f"\u0394 Recovery: Challenger \u2212 Baseline (top-{TOP_N})",
         fontsize=14, color="black",
     )
     dock_ax.set_title(
-        f"Tukey HSD Pairwise CIs \u2014 Docking Libraries (top-{TOP_N}, FWER=0.05)\n"
-        f"{dock_libs_str}",
+        f"Tukey HSD Pairwise CIs \u2014 4 Docking Datasets (top-{TOP_N}, FWER=0.05)",
         fontsize=15, fontweight="bold", color="black",
     )
     dock_ax.grid(axis="x", alpha=0.3, zorder=1, color="grey")
-    dock_ax.tick_params(colors="black", labelsize=12)
+    dock_ax.tick_params(axis="x", colors="black", labelsize=12)
+    dock_ax.tick_params(axis="y", color="black", labelsize=12)
     for sp in dock_ax.spines.values():
         sp.set_color("black")
 
     dock_legend = [
-        Line2D([0], [0], color=_CLR_KEY, linewidth=2.5, marker="o",
-               markersize=8, label="TACTICS vs Legacy (p < 0.05)"),
         Line2D([0], [0], color=_CLR_SIG, linewidth=2.5, marker="o",
-               markersize=8, label="Other significant (p < 0.05)"),
+               markersize=8, label="Significant (p < 0.05)"),
         Line2D([0], [0], color=_CLR_NS, linewidth=2.5, marker="o",
                markersize=8, label="Not significant"),
     ]
@@ -1912,119 +2108,313 @@ def _(Line2D, TOP_N, df, fig_to_pdf_bytes, mo, np, pl, plt):
 
 
 @app.cell
-def _(
-    Line2D,
-    TOP_N,
-    fig_to_pdf_bytes,
-    friedman_df,
-    mo,
-    nemenyi_df,
-    np,
-    pl,
-    plt,
-):
-    """Option 4 (across-library): Overall method ranking with Nemenyi CIs."""
-    _tn_friedman = friedman_df.filter(pl.col("top_n") == TOP_N)
-    _tn_nemenyi = nemenyi_df.filter(pl.col("top_n") == TOP_N) if len(nemenyi_df) > 0 else pl.DataFrame()
+def _(mo):
+    mo.md(r"""
+    ## SAR Landscape Characterization — Reagent Posterior Separation
 
-    mo.stop(len(_tn_friedman) == 0, mo.md(f"No Friedman results at top-{TOP_N}."))
+    Riley (2024) showed that for ROCS, reagents producing top compounds have high means
+    and low variance (they "stand out from the crowd"), while for docking, top-hit reagents
+    are statistically indistinguishable from mediocre ones. This plot reproduces that
+    analysis for adenine and quinazoline docking libraries.
+    """)
+    return
 
-    _friedman_p = float(_tn_friedman["p_value"].first())
-    _friedman_chi2 = float(_tn_friedman["chi2"].first())
-    _n_libs = int(_tn_friedman["n_libraries"].first())
 
-    mo.stop(
-        len(_tn_nemenyi) == 0,
-        mo.md(f"Friedman \u03c7\u00b2={_friedman_chi2:.1f}, p={_friedman_p:.2e}, but no Nemenyi results."),
+@app.cell
+def _(fig_to_pdf_bytes, mo, np, pl, plt, project_root):
+    """Reagent posterior separation plot (Riley-style) for docking libraries.
+
+    For each reagent, computes (mean score, std score) across all products containing
+    that reagent. Colors reagents by whether they appear in top-100 compounds.
+    Shows whether reagent-level statistics predict top-compound membership.
+    """
+    import re
+
+    _SCORES_DIR = project_root / "data" / "scores"
+    _TOP_N = 100
+
+    # Library configs: (library_id, score_path, component_names, parse_function)
+    def _parse_adenine(code):
+        m = re.match(r"(amidine_\d+)_(isocyanide_db_\d+)_(aldehyde_\d+)", code)
+        return m.groups() if m else (None, None, None)
+
+    def _parse_quinazoline(code):
+        parts = code.split("_")
+        return tuple(parts) if len(parts) == 3 else (None, None, None)
+
+    _libraries = [
+        {
+            "lib_id": "adenine",
+            "components": ["Amidines", "Isocyanides", "Aldehydes"],
+            "parse": _parse_adenine,
+        },
+        {
+            "lib_id": "quinazoline",
+            "components": ["Aminobenzoics", "Amines", "Acids"],
+            "parse": _parse_quinazoline,
+        },
+    ]
+
+    _fig, _axes = plt.subplots(
+        2, 3, figsize=(18, 10), facecolor="white",
     )
 
-    _methods_set = set()
-    for _row in _tn_nemenyi.iter_rows(named=True):
-        _methods_set.add(_row["group1"])
-        _methods_set.add(_row["group2"])
+    for _row_idx, _lib_cfg in enumerate(_libraries):
+        _lib_id = _lib_cfg["lib_id"]
+        _parse_fn = _lib_cfg["parse"]
+        _comp_names = _lib_cfg["components"]
 
-    # Invert ranks: stored ranks have 1=lowest recovery, but we want 1=best (highest)
-    _n_methods_total = len(_methods_set)
-    _rank_map = {}
-    for _row in _tn_nemenyi.iter_rows(named=True):
-        _rank_map[_row["group1"]] = (_n_methods_total + 1) - _row["mean_rank_group1"]
-        _rank_map[_row["group2"]] = (_n_methods_total + 1) - _row["mean_rank_group2"]
+        _score_df = pl.read_parquet(_SCORES_DIR / f"{_lib_id}.parquet")
 
-    _methods = sorted(_rank_map.keys(), key=lambda m: _rank_map[m])
-    _ranks = np.array([_rank_map[m] for m in _methods])
-    _n_methods = len(_methods)
+        # Filter NaN scores (docking failures)
+        _score_df = _score_df.filter(pl.col("Scores").is_not_nan())
 
-    _sig_matrix = {}
-    for _row in _tn_nemenyi.iter_rows(named=True):
-        _sig_matrix[(_row["group1"], _row["group2"])] = _row["p_value"] < 0.05
-        _sig_matrix[(_row["group2"], _row["group1"])] = _row["p_value"] < 0.05
-
-    _fig, _ax = plt.subplots(figsize=(12, max(3, _n_methods * 0.8)), facecolor="white")
-    _ax.set_facecolor("white")
-
-    _y = np.arange(_n_methods)
-
-    _best_method = _methods[0]
-    _method_colors = []
-    for _m in _methods:
-        if _m == _best_method:
-            _method_colors.append("#4C78A8")
-        elif _sig_matrix.get((_best_method, _m), False):
-            _method_colors.append("#E45756")
-        else:
-            _method_colors.append("#999999")
-
-    for _i, (_m, _r, _c) in enumerate(zip(_methods, _ranks, _method_colors)):
-        _ax.plot(_r, _i, "D", color=_c, markersize=12, zorder=4)
-        _ax.text(
-            _r, _i + 0.3, f"{_r:.2f}",
-            ha="center", va="bottom", fontsize=10, color=_c, fontweight="bold",
+        # Identify top-N compounds (minimize for docking)
+        _top_n_names = set(
+            _score_df.sort("Scores", descending=False)
+            .head(_TOP_N)["Product_Code"]
+            .to_list()
         )
 
-    for _i, _m1 in enumerate(_methods):
-        for _j, _m2 in enumerate(_methods):
-            if _j <= _i:
-                continue
-            if not _sig_matrix.get((_m1, _m2), False):
-                _ax.plot(
-                    [_ranks[_i], _ranks[_j]], [_i, _j],
-                    color="#CCCCCC", linewidth=3, solid_capstyle="round", zorder=2,
-                )
+        # Parse product codes into component reagent IDs
+        _codes = _score_df["Product_Code"].to_list()
+        _scores = _score_df["Scores"].to_numpy()
+        _is_top = np.array([c in _top_n_names for c in _codes])
 
-    _ax.set_yticks(_y)
-    _ax.set_yticklabels(_methods, fontsize=12, color="black")
-    _ax.set_xlabel("Mean Rank (lower = better)", fontsize=12, color="black")
-    _ax.set_title(
-        f"Method Ranking Across {_n_libs} Libraries (top-{TOP_N})\n"
-        f"Friedman \u03c7\u00b2={_friedman_chi2:.1f}, p={_friedman_p:.1e}",
-        fontsize=13, fontweight="bold", color="black",
+        _parsed = [_parse_fn(c) for c in _codes]
+        _n_comp = len(_comp_names)
+
+        for _comp_idx in range(_n_comp):
+            _ax = _axes[_row_idx, _comp_idx]
+            _ax.set_facecolor("white")
+
+            # Extract reagent IDs for this component
+            _reagent_ids = [p[_comp_idx] for p in _parsed if p[_comp_idx] is not None]
+            _reagent_scores = _scores[[i for i, p in enumerate(_parsed) if p[_comp_idx] is not None]]
+            _reagent_top = _is_top[[i for i, p in enumerate(_parsed) if p[_comp_idx] is not None]]
+
+            # Get unique reagents
+            _unique_reagents = sorted(set(_reagent_ids))
+
+            # Compute per-reagent mean and std
+            _means = []
+            _stds = []
+            _in_top = []
+            _reagent_labels = []
+
+            # Build reagent → indices mapping
+            _reagent_to_idx = {}
+            for _i, _rid in enumerate(_reagent_ids):
+                _reagent_to_idx.setdefault(_rid, []).append(_i)
+
+            # Find which reagents appear in top-N products
+            _top_reagent_ids = set()
+            for _i, _rid in enumerate(_reagent_ids):
+                if _reagent_top[_i]:
+                    _top_reagent_ids.add(_rid)
+
+            for _rid in _unique_reagents:
+                _idxs = _reagent_to_idx[_rid]
+                _s = _reagent_scores[_idxs]
+                _means.append(float(np.mean(_s)))
+                _stds.append(float(np.std(_s)))
+                _in_top.append(_rid in _top_reagent_ids)
+                _reagent_labels.append(_rid)
+
+            _means = np.array(_means)
+            _stds = np.array(_stds)
+            _in_top = np.array(_in_top)
+
+            # Plot non-top reagents first (grey), then top reagents (red)
+            _ax.scatter(
+                _means[~_in_top], _stds[~_in_top],
+                c="#CCCCCC", s=40, alpha=0.6, edgecolors="none",
+                label="Not in top-100", zorder=2,
+            )
+            _ax.scatter(
+                _means[_in_top], _stds[_in_top],
+                c="#E45756", s=60, alpha=0.9, edgecolors="black", linewidths=0.5,
+                label="In top-100", zorder=3,
+            )
+
+            _ax.set_xlabel("Reagent Mean Score", fontsize=14, color="black")
+            if _comp_idx == 0:
+                _ax.set_ylabel("Reagent Std Score", fontsize=14, color="black")
+            _ax.set_title(
+                f"{_comp_names[_comp_idx]} ({sum(_in_top)}/{len(_in_top)} in top-100)",
+                fontsize=14, fontweight="bold", color="black",
+            )
+            _ax.tick_params(colors="black", labelsize=12)
+            _ax.grid(alpha=0.3, color="grey", zorder=1)
+            for _spine in _ax.spines.values():
+                _spine.set_color("black")
+
+            if _comp_idx == 2:
+                _ax.legend(fontsize=12, facecolor="white", edgecolor="black",
+                           labelcolor="black", loc="upper right")
+
+        # Row label
+        _axes[_row_idx, 0].annotate(
+            _lib_id.capitalize(),
+            xy=(-0.35, 0.5), xycoords="axes fraction",
+            fontsize=16, fontweight="bold", color="black",
+            rotation=90, va="center", ha="center",
+        )
+
+    _fig.suptitle(
+        f"SAR Landscape: Reagent Score Distributions vs Top-{_TOP_N} Membership (Docking)",
+        fontsize=16, fontweight="bold", color="black", y=1.01,
     )
-    _ax.grid(axis="x", alpha=0.3, zorder=1, color="grey")
-    _ax.tick_params(colors="black", labelsize=11)
-    for _spine in _ax.spines.values():
-        _spine.set_color("black")
-
-    _legend_elements = [
-        Line2D([0], [0], marker="D", color="#4C78A8", linestyle="None",
-               markersize=10, label="Best method"),
-        Line2D([0], [0], marker="D", color="#999999", linestyle="None",
-               markersize=10, label="Equivalent to best"),
-        Line2D([0], [0], marker="D", color="#E45756", linestyle="None",
-               markersize=10, label="Significantly worse"),
-        Line2D([0], [0], color="#CCCCCC", linewidth=3, label="Not significantly different"),
-    ]
-    _ax.legend(handles=_legend_elements, loc="lower right", fontsize=10,
-               facecolor="white", edgecolor="black", labelcolor="black")
-
-    _ax.invert_yaxis()
     _fig.tight_layout()
 
-    _pdf_name = f"method_ranking_nemenyi_top{TOP_N}.pdf"
     mo.vstack([
         plt.gcf(),
         mo.download(
             data=fig_to_pdf_bytes(_fig),
-            filename=_pdf_name,
+            filename="reagent_posterior_separation_docking.pdf",
+            mimetype="application/pdf",
+            label="Download as PDF",
+        ),
+    ])
+    return
+
+
+@app.cell
+def _(fig_to_pdf_bytes, mo, np, pl, plt, project_root):
+    """Reagent posterior separation plot for 2-component docking libraries (thrombin, amide)."""
+
+    _SCORES_DIR = project_root / "data" / "scores"
+    _TOP_N = 100
+
+    def _parse_thrombin(code):
+        parts = code.split("_")
+        if len(parts) == 3:
+            return (parts[0], parts[1] + "_" + parts[2])
+        return (None, None)
+
+    def _parse_amide(code):
+        parts = code.split("_")
+        return tuple(parts) if len(parts) == 2 else (None, None)
+
+    _libraries = [
+        {
+            "lib_id": "thrombin",
+            "components": ["Acids (130)", "Amines (3,844)"],
+            "parse": _parse_thrombin,
+        },
+        {
+            "lib_id": "amide",
+            "components": ["Acids (10,000)", "Amines (1,000)"],
+            "parse": _parse_amide,
+        },
+    ]
+
+    _fig, _axes = plt.subplots(
+        2, 2, figsize=(14, 10), facecolor="white",
+    )
+
+    for _row_idx, _lib_cfg in enumerate(_libraries):
+        _lib_id = _lib_cfg["lib_id"]
+        _parse_fn = _lib_cfg["parse"]
+        _comp_names = _lib_cfg["components"]
+        _n_comp = len(_comp_names)
+
+        _score_df = pl.read_parquet(_SCORES_DIR / f"{_lib_id}.parquet")
+        _score_df = _score_df.filter(pl.col("Scores").is_not_nan())
+
+        # Top-N compounds (minimize for docking)
+        _top_n_names = set(
+            _score_df.sort("Scores", descending=False)
+            .head(_TOP_N)["Product_Code"]
+            .to_list()
+        )
+
+        _codes = _score_df["Product_Code"].to_list()
+        _scores = _score_df["Scores"].to_numpy()
+        _is_top = np.array([c in _top_n_names for c in _codes])
+
+        _parsed = [_parse_fn(c) for c in _codes]
+
+        for _comp_idx in range(_n_comp):
+            _ax = _axes[_row_idx, _comp_idx]
+            _ax.set_facecolor("white")
+
+            _reagent_ids = [p[_comp_idx] for p in _parsed if p[_comp_idx] is not None]
+            _reagent_scores = _scores[[i for i, p in enumerate(_parsed) if p[_comp_idx] is not None]]
+            _reagent_top = _is_top[[i for i, p in enumerate(_parsed) if p[_comp_idx] is not None]]
+
+            _unique_reagents = sorted(set(_reagent_ids))
+
+            _means = []
+            _stds = []
+            _in_top = []
+
+            _reagent_to_idx = {}
+            for _i, _rid in enumerate(_reagent_ids):
+                _reagent_to_idx.setdefault(_rid, []).append(_i)
+
+            _top_reagent_ids = set()
+            for _i, _rid in enumerate(_reagent_ids):
+                if _reagent_top[_i]:
+                    _top_reagent_ids.add(_rid)
+
+            for _rid in _unique_reagents:
+                _idxs = _reagent_to_idx[_rid]
+                _s = _reagent_scores[_idxs]
+                _means.append(float(np.mean(_s)))
+                _stds.append(float(np.std(_s)))
+                _in_top.append(_rid in _top_reagent_ids)
+
+            _means = np.array(_means)
+            _stds = np.array(_stds)
+            _in_top = np.array(_in_top)
+
+            _ax.scatter(
+                _means[~_in_top], _stds[~_in_top],
+                c="#CCCCCC", s=40, alpha=0.6, edgecolors="none",
+                label="Not in top-100", zorder=2,
+            )
+            _ax.scatter(
+                _means[_in_top], _stds[_in_top],
+                c="#E45756", s=60, alpha=0.9, edgecolors="black", linewidths=0.5,
+                label="In top-100", zorder=3,
+            )
+
+            _ax.set_xlabel("Reagent Mean Score", fontsize=14, color="black")
+            if _comp_idx == 0:
+                _ax.set_ylabel("Reagent Std Score", fontsize=14, color="black")
+            _ax.set_title(
+                f"{_comp_names[_comp_idx]} ({sum(_in_top)}/{len(_in_top)} in top-100)",
+                fontsize=14, fontweight="bold", color="black",
+            )
+            _ax.tick_params(colors="black", labelsize=12)
+            _ax.grid(alpha=0.3, color="grey", zorder=1)
+            for _spine in _ax.spines.values():
+                _spine.set_color("black")
+
+            if _comp_idx == 1:
+                _ax.legend(fontsize=12, facecolor="white", edgecolor="black",
+                           labelcolor="black", loc="upper right")
+
+        _axes[_row_idx, 0].annotate(
+            _lib_cfg["lib_id"].capitalize(),
+            xy=(-0.35, 0.5), xycoords="axes fraction",
+            fontsize=16, fontweight="bold", color="black",
+            rotation=90, va="center", ha="center",
+        )
+
+    _fig.suptitle(
+        f"SAR Landscape: Reagent Score Distributions vs Top-{_TOP_N} Membership\n"
+        f"2-Component Docking Libraries",
+        fontsize=16, fontweight="bold", color="black", y=1.02,
+    )
+    _fig.tight_layout()
+
+    mo.vstack([
+        plt.gcf(),
+        mo.download(
+            data=fig_to_pdf_bytes(_fig),
+            filename="reagent_posterior_separation_2comp_docking.pdf",
             mimetype="application/pdf",
             label="Download as PDF",
         ),
