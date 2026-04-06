@@ -163,6 +163,8 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             disagreement_decay_rate=config.disagreement_decay_rate,
             ema_alpha=config.ema_alpha,
             heated_scale_min=config.heated_scale_min,
+            gmic_convergence_gate=config.gmic_convergence_gate,
+            max_growth_per_step=config.max_growth_per_step,
         )
 
     else:

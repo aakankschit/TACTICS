@@ -66,6 +66,8 @@ class TopTwoSelection(SelectionStrategy):
         disagreement_decay_rate: float = 0.95,
         ema_alpha: float = 0.02,
         heated_scale_min: float = 1.0,
+        gmic_convergence_gate: Optional[float] = None,
+        max_growth_per_step: Optional[float] = None,
     ):
         super().__init__(mode)
         self.beta = beta
@@ -90,10 +92,15 @@ class TopTwoSelection(SelectionStrategy):
         self.ema_alpha = ema_alpha
         self.heated_scale_min = heated_scale_min
 
+        # Growth limiters for adaptive disagreement
+        self.gmic_convergence_gate = gmic_convergence_gate
+        self.max_growth_per_step = max_growth_per_step
+
         # Per-component state
         self._heated_scale_per_component: Dict[int, float] = {}
         self._component_disagreement_ema: Dict[int, float] = {}
         self._component_disagreement_counts: Dict[int, int] = {}
+        self._component_gmic: Dict[int, float] = {}
 
         # Global disagreement tracking (for diagnostics / backward compat)
         self.disagreement_window = disagreement_window
@@ -229,8 +236,19 @@ class TopTwoSelection(SelectionStrategy):
             return True
 
         elif rate < self.disagreement_low_threshold:
+            # GMIC convergence gate: skip inflation if component is already solved
+            if self.gmic_convergence_gate is not None:
+                gmic = self._component_gmic.get(comp_idx, 0.0)
+                if gmic > self.gmic_convergence_gate:
+                    return False
+
             # Too little disagreement — increase away from 1.0
             new_scale = 1.0 + (current_scale - 1.0) / self.disagreement_decay_rate
+
+            # Optional per-step growth cap
+            if self.max_growth_per_step is not None:
+                new_scale = min(new_scale, current_scale + self.max_growth_per_step)
+
             self._heated_scale_per_component[comp_idx] = min(
                 self.heated_scale_max, new_scale
             )
@@ -333,6 +351,7 @@ class TopTwoSelection(SelectionStrategy):
         self._heated_scale_per_component = {}
         self._component_disagreement_ema = {}
         self._component_disagreement_counts = {}
+        self._component_gmic = {}
         self._disagreement_buffer = []
         self._disagreement_rate = 1.0
         self._total_selections = 0
@@ -359,6 +378,7 @@ class TopTwoSelection(SelectionStrategy):
             "current_cycle": current_cycle,
             "total_cycles": total_cycles,
             "gmic": gmic,
+            "criticality": gmic,
             "is_heated": is_heated,
             "heated_scale": comp_scale,
             "cooled_scale": self.cooled_scale,
@@ -380,6 +400,11 @@ class TopTwoSelection(SelectionStrategy):
         if rng is None:
             rng = np.random.default_rng()
         gmics = np.array([self._calculate_gmic(rl) for rl in reagent_lists], dtype=float)
+
+        # Cache GMIC values for adaptive disagreement gate
+        for i, g in enumerate(gmics):
+            self._component_gmic[i] = float(g)
+
         flexibility = 1.0 / (1.0 + gmics)
         heat_probs = flexibility / flexibility.sum()
 

@@ -733,7 +733,6 @@ class ThompsonSampler:
         )
         return search_df
 
-    # Schema for the enhanced 18-column diagnostics DataFrame
     # Schema for GMIC-based CATS diagnostics (RouletteWheel)
     _GMIC_DIAGNOSTICS_SCHEMA = {
         "component_idx": pl.Int64,
@@ -753,6 +752,22 @@ class ThompsonSampler:
         "cats_multiplier": pl.Float64,
         "effective_multiplier": pl.Float64,
         "final_temperature": pl.Float64,
+    }
+
+    # Schema for TT-TS diagnostics (TopTwoSelection)
+    _TTTS_DIAGNOSTICS_SCHEMA = {
+        "component_idx": pl.Int64,
+        "current_cycle": pl.Int64,
+        "total_cycles": pl.Int64,
+        "gmic": pl.Float64,
+        "criticality": pl.Float64,
+        "is_heated": pl.Boolean,
+        "heated_scale": pl.Float64,
+        "cooled_scale": pl.Float64,
+        "effective_scale": pl.Float64,
+        "disagreement_ema": pl.Float64,
+        "disagreement_global": pl.Float64,
+        "n_active_reagents": pl.Int64,
     }
 
     # Schema for IPR-based CATS diagnostics (BayesUCB)
@@ -788,23 +803,37 @@ class ThompsonSampler:
 
         Requires ``track_diagnostics=True`` in config.
 
-        For CATS-aware strategies (RouletteWheelSelection, BayesUCBSelection),
-        returns the enhanced 15-column schema with full intermediate values.
-        The ``current_cycle`` column serves the same role as ``cycle`` in the
-        legacy schema.
+        Returns strategy-specific schemas:
 
-        For non-CATS strategies that only support ``get_component_criticality()``,
-        returns the legacy 3-column schema (cycle, component_idx, criticality).
+        - **TopTwoSelection**: 12-column TT-TS schema with disagreement EMA,
+          adaptive heated_scale, and GMIC per component.
+        - **RouletteWheelSelection**: 17-column GMIC schema with full
+          temperature pipeline (base_temp, cats_multiplier, final_temperature).
+        - **BayesUCBSelection**: 18-column IPR schema with participation ratio,
+          SNR dampening, and observation-gated weights.
+        - **Other strategies**: 3-column legacy schema (cycle, component_idx,
+          criticality).
 
-        Returns an empty DataFrame (with the correct schema) if diagnostics
+        All enhanced schemas share ``current_cycle`` (not ``cycle``) and
+        ``criticality`` columns, so downstream analysis functions work
+        across strategies.
+
+        Returns an empty DataFrame (with the legacy schema) if diagnostics
         were not tracked or the strategy doesn't support criticality.
         """
         if not self._diagnostics_records:
             return pl.DataFrame(schema=self._LEGACY_DIAGNOSTICS_SCHEMA)
 
-        # Detect schema from first record
+        # Detect schema from first record.
+        # Order matters: TT-TS check before GMIC (both have "gmic").
         first = self._diagnostics_records[0]
-        if "gmic" in first:
+        if "disagreement_ema" in first:
+            # TT-TS schema (TopTwoSelection)
+            return pl.DataFrame(
+                self._diagnostics_records,
+                schema=self._TTTS_DIAGNOSTICS_SCHEMA,
+            )
+        elif "gmic" in first:
             # GMIC schema (RouletteWheel)
             return pl.DataFrame(
                 self._diagnostics_records,

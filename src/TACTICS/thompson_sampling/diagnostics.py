@@ -229,6 +229,153 @@ def compare_trajectory_vs_snapshot(
     return pl.DataFrame(records)
 
 
+def compute_disagreement_convergence(
+    diagnostics_df: pl.DataFrame,
+    stability_window: int = 10,
+    low_threshold: float = 0.3,
+    high_threshold: float = 0.8,
+) -> pl.DataFrame:
+    """Analyze per-component disagreement EMA convergence from TT-TS diagnostics.
+
+    Identifies when each component's disagreement rate stabilizes, indicating
+    that TT-TS has resolved uncertainty about reagent rankings.
+
+    Args:
+        diagnostics_df: TT-TS diagnostics DataFrame (must have
+            ``current_cycle``, ``component_idx``, ``disagreement_ema``).
+        stability_window: Consecutive cycles within threshold band for
+            stability (default 10).
+        low_threshold: Disagreement below this means component is
+            well-resolved (default 0.3).
+        high_threshold: Disagreement above this means component is
+            saturated / exploration is random (default 0.8).
+
+    Returns:
+        DataFrame with ``component_idx``, ``final_disagreement``,
+        ``cycle_below_low``, ``cycle_stable_low``, ``mean_disagreement``,
+        ``regime`` ("resolved" / "saturated" / "exploring").
+    """
+    cycle_col = "current_cycle" if "current_cycle" in diagnostics_df.columns else "cycle"
+
+    records = []
+    for comp_idx in diagnostics_df["component_idx"].unique().sort().to_list():
+        comp = diagnostics_df.filter(
+            pl.col("component_idx") == comp_idx
+        ).sort(cycle_col)
+
+        ema_vals = comp["disagreement_ema"].to_numpy()
+        cycles = comp[cycle_col].to_numpy()
+        valid = np.isfinite(ema_vals)
+
+        if not valid.any():
+            records.append({
+                "component_idx": comp_idx,
+                "final_disagreement": float("nan"),
+                "cycle_below_low": None,
+                "cycle_stable_low": None,
+                "mean_disagreement": float("nan"),
+                "regime": "insufficient_data",
+            })
+            continue
+
+        final_val = float(ema_vals[valid][-1])
+        mean_val = float(np.mean(ema_vals[valid]))
+
+        # First cycle below low threshold
+        below_low = ema_vals < low_threshold
+        cycle_below = int(cycles[below_low][0]) if below_low.any() else None
+
+        # Stable below low: stays below for stability_window
+        cycle_stable = None
+        if below_low.any():
+            for i in range(len(ema_vals)):
+                end = i + stability_window
+                if end <= len(ema_vals) and np.all(ema_vals[i:end] < low_threshold):
+                    cycle_stable = int(cycles[i])
+                    break
+
+        # Classify regime
+        if final_val < low_threshold:
+            regime = "resolved"
+        elif final_val > high_threshold:
+            regime = "saturated"
+        else:
+            regime = "exploring"
+
+        records.append({
+            "component_idx": comp_idx,
+            "final_disagreement": final_val,
+            "cycle_below_low": cycle_below,
+            "cycle_stable_low": cycle_stable,
+            "mean_disagreement": mean_val,
+            "regime": regime,
+        })
+
+    return pl.DataFrame(records)
+
+
+def compute_scale_adaptation(
+    diagnostics_df: pl.DataFrame,
+) -> pl.DataFrame:
+    """Summarize per-component adaptive heated_scale evolution from TT-TS diagnostics.
+
+    Args:
+        diagnostics_df: TT-TS diagnostics DataFrame (must have
+            ``current_cycle``, ``component_idx``, ``heated_scale``).
+
+    Returns:
+        DataFrame with ``component_idx``, ``initial_scale``, ``final_scale``,
+        ``min_scale``, ``max_scale``, ``scale_range``, ``adaptation_direction``
+        ("decayed" / "grew" / "stable").
+    """
+    cycle_col = "current_cycle" if "current_cycle" in diagnostics_df.columns else "cycle"
+
+    records = []
+    for comp_idx in diagnostics_df["component_idx"].unique().sort().to_list():
+        comp = diagnostics_df.filter(
+            pl.col("component_idx") == comp_idx
+        ).sort(cycle_col)
+
+        scales = comp["heated_scale"].to_numpy()
+        valid = np.isfinite(scales)
+
+        if not valid.any():
+            records.append({
+                "component_idx": comp_idx,
+                "initial_scale": float("nan"),
+                "final_scale": float("nan"),
+                "min_scale": float("nan"),
+                "max_scale": float("nan"),
+                "scale_range": float("nan"),
+                "adaptation_direction": "insufficient_data",
+            })
+            continue
+
+        valid_scales = scales[valid]
+        initial = float(valid_scales[0])
+        final = float(valid_scales[-1])
+        delta = final - initial
+
+        if abs(delta) < 0.01:
+            direction = "stable"
+        elif delta < 0:
+            direction = "decayed"
+        else:
+            direction = "grew"
+
+        records.append({
+            "component_idx": comp_idx,
+            "initial_scale": initial,
+            "final_scale": final,
+            "min_scale": float(valid_scales.min()),
+            "max_scale": float(valid_scales.max()),
+            "scale_range": float(valid_scales.max() - valid_scales.min()),
+            "adaptation_direction": direction,
+        })
+
+    return pl.DataFrame(records)
+
+
 def format_sar_report(summary: Dict[str, Any]) -> str:
     """Format a ``get_sar_summary()`` dict into a publication-ready text block.
 

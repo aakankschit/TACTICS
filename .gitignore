@@ -202,8 +202,5 @@ slurm-*.err
 # HPC scripts (local infrastructure)
 scripts/
 
-# Research status (local research tracking)
-research/
-
 # Legacy code outputs (not needed in repository)
 src/TACTICS/thompson_sampling/legacy/src/

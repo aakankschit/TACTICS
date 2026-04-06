@@ -13,6 +13,7 @@ Verifies:
 7. get_component_state() interface and implementations
 8. get_sar_summary() works for CATS and non-CATS strategies
 9. Pure analysis functions in diagnostics.py
+10. TT-TS diagnostics schema with disagreement EMA and adaptive scale
 """
 
 import pytest
@@ -25,11 +26,14 @@ from TACTICS.thompson_sampling.core.sampler import ThompsonSampler
 from TACTICS.thompson_sampling.core.evaluators import LookupEvaluator
 from TACTICS.thompson_sampling.strategies.greedy_selection import GreedySelection
 from TACTICS.thompson_sampling.strategies.roulette_wheel import RouletteWheelSelection
+from TACTICS.thompson_sampling.strategies.top_two_selection import TopTwoSelection
 from TACTICS.thompson_sampling.strategies.bayes_ucb_selection import BayesUCBSelection
 from TACTICS.thompson_sampling.diagnostics import (
     compute_posterior_entropy,
     compute_convergence_point,
     compare_trajectory_vs_snapshot,
+    compute_disagreement_convergence,
+    compute_scale_adaptation,
     format_sar_report,
 )
 from TACTICS.library_enumeration import SynthesisPipeline
@@ -238,6 +242,99 @@ class TestDiagnosticsGreedy:
         sampler.close()
 
 
+class TestDiagnosticsTTTS:
+    """Tests with track_diagnostics=True using TopTwoSelection."""
+
+    EXPECTED_COLUMNS = {
+        "component_idx", "current_cycle", "total_cycles",
+        "gmic", "criticality", "is_heated",
+        "heated_scale", "cooled_scale", "effective_scale",
+        "disagreement_ema", "disagreement_global",
+        "n_active_reagents",
+    }
+
+    def test_populated_dataframe(self, pipeline, thrombin_paths):
+        """get_diagnostics() returns populated DataFrame with TT-TS strategy."""
+        strategy = TopTwoSelection(mode="minimize")
+        sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
+
+        sampler.warm_up(num_warmup_trials=3)
+        sampler.search(num_cycles=50)
+
+        diag = sampler.get_diagnostics()
+
+        assert isinstance(diag, pl.DataFrame)
+        assert len(diag) > 0
+        assert "current_cycle" in diag.columns
+        assert "disagreement_ema" in diag.columns
+        assert "heated_scale" in diag.columns
+
+        sampler.close()
+
+    def test_schema_columns(self, pipeline, thrombin_paths):
+        """TT-TS diagnostics has correct columns."""
+        strategy = TopTwoSelection(mode="minimize")
+        sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
+        sampler.warm_up(num_warmup_trials=3)
+        sampler.search(num_cycles=50)
+
+        diag = sampler.get_diagnostics()
+        assert set(diag.columns) == self.EXPECTED_COLUMNS
+        sampler.close()
+
+    def test_criticality_equals_gmic(self, pipeline, thrombin_paths):
+        """TT-TS criticality should equal gmic (alias)."""
+        strategy = TopTwoSelection(mode="minimize")
+        sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
+        sampler.warm_up(num_warmup_trials=3)
+        sampler.search(num_cycles=50)
+
+        diag = sampler.get_diagnostics()
+        np.testing.assert_array_equal(
+            diag["criticality"].to_numpy(),
+            diag["gmic"].to_numpy(),
+        )
+        sampler.close()
+
+    def test_both_components_tracked(self, pipeline, thrombin_paths):
+        """Both component indices should appear in diagnostics."""
+        strategy = TopTwoSelection(mode="minimize")
+        sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
+        sampler.warm_up(num_warmup_trials=3)
+        sampler.search(num_cycles=50)
+
+        diag = sampler.get_diagnostics()
+        assert set(diag["component_idx"].unique().to_list()) == {0, 1}
+        sampler.close()
+
+    def test_disagreement_ema_in_range(self, pipeline, thrombin_paths):
+        """Disagreement EMA should be in [0, 1]."""
+        strategy = TopTwoSelection(mode="minimize")
+        sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
+        sampler.warm_up(num_warmup_trials=3)
+        sampler.search(num_cycles=50)
+
+        diag = sampler.get_diagnostics()
+        ema = diag["disagreement_ema"].to_numpy()
+        valid = np.isfinite(ema)
+        assert np.all(ema[valid] >= 0.0)
+        assert np.all(ema[valid] <= 1.0)
+        sampler.close()
+
+    def test_heated_scale_positive(self, pipeline, thrombin_paths):
+        """Heated scale should always be positive."""
+        strategy = TopTwoSelection(mode="minimize")
+        sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
+        sampler.warm_up(num_warmup_trials=3)
+        sampler.search(num_cycles=50)
+
+        diag = sampler.get_diagnostics()
+        scales = diag["heated_scale"].to_numpy()
+        valid = np.isfinite(scales)
+        assert np.all(scales[valid] > 0.0)
+        sampler.close()
+
+
 class TestGetComponentCriticality:
     """Unit tests for the get_component_criticality interface."""
 
@@ -406,6 +503,30 @@ class TestGetComponentState:
         assert state["total_cycles"] == 100
         assert state["criticality"] >= 0.0
         assert state["final_temperature"] > 0
+        sampler.close()
+
+    def test_ttts_returns_dict_with_all_keys(self, pipeline, thrombin_paths):
+        """TT-TS get_component_state returns dict with all expected TT-TS keys."""
+        strategy = TopTwoSelection(mode="minimize")
+        sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=False)
+        sampler.warm_up(num_warmup_trials=5)
+
+        state = strategy.get_component_state(
+            sampler.reagent_lists[0], 0, 10, 100
+        )
+        assert isinstance(state, dict)
+        expected_keys = {
+            "component_idx", "current_cycle", "total_cycles",
+            "gmic", "criticality", "is_heated",
+            "heated_scale", "cooled_scale", "effective_scale",
+            "disagreement_ema", "disagreement_global",
+            "n_active_reagents",
+        }
+        assert set(state.keys()) == expected_keys
+        assert state["component_idx"] == 0
+        assert state["current_cycle"] == 10
+        assert state["total_cycles"] == 100
+        assert state["criticality"] == state["gmic"]
         sampler.close()
 
     def test_bayes_ucb_returns_dict(self, pipeline, thrombin_paths):
@@ -613,6 +734,74 @@ class TestDiagnosticAnalysisFunctions:
         assert "Component 0" in report
         assert "Component 1" in report
 
+        sampler.close()
+
+
+class TestTTTSAnalysisFunctions:
+    """Tests for TT-TS-specific analysis functions in diagnostics.py."""
+
+    def test_compute_disagreement_convergence(self, pipeline, thrombin_paths):
+        """compute_disagreement_convergence returns correct schema."""
+        strategy = TopTwoSelection(mode="minimize")
+        sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
+        sampler.warm_up(num_warmup_trials=3)
+        sampler.search(num_cycles=50)
+
+        diag = sampler.get_diagnostics()
+        conv = compute_disagreement_convergence(diag)
+
+        assert isinstance(conv, pl.DataFrame)
+        assert set(conv.columns) == {
+            "component_idx", "final_disagreement", "cycle_below_low",
+            "cycle_stable_low", "mean_disagreement", "regime",
+        }
+        assert len(conv) == 2  # Two components
+
+        # Regime should be a valid value
+        regimes = set(conv["regime"].to_list())
+        assert regimes <= {"resolved", "saturated", "exploring", "insufficient_data"}
+
+        sampler.close()
+
+    def test_compute_scale_adaptation(self, pipeline, thrombin_paths):
+        """compute_scale_adaptation returns correct schema."""
+        strategy = TopTwoSelection(mode="minimize")
+        sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
+        sampler.warm_up(num_warmup_trials=3)
+        sampler.search(num_cycles=50)
+
+        diag = sampler.get_diagnostics()
+        adapt = compute_scale_adaptation(diag)
+
+        assert isinstance(adapt, pl.DataFrame)
+        assert set(adapt.columns) == {
+            "component_idx", "initial_scale", "final_scale",
+            "min_scale", "max_scale", "scale_range",
+            "adaptation_direction",
+        }
+        assert len(adapt) == 2
+
+        # Direction should be valid
+        directions = set(adapt["adaptation_direction"].to_list())
+        assert directions <= {"decayed", "grew", "stable", "insufficient_data"}
+
+        sampler.close()
+
+    def test_convergence_point_works_with_ttts(self, pipeline, thrombin_paths):
+        """compute_convergence_point works with TT-TS diagnostics (has criticality)."""
+        strategy = TopTwoSelection(mode="minimize")
+        sampler = _make_sampler(pipeline, thrombin_paths, strategy, track_diagnostics=True)
+        sampler.warm_up(num_warmup_trials=3)
+        sampler.search(num_cycles=50)
+
+        diag = sampler.get_diagnostics()
+        conv = compute_convergence_point(diag)
+
+        assert isinstance(conv, pl.DataFrame)
+        assert set(conv.columns) == {
+            "component_idx", "cycle_first_above", "cycle_stable",
+        }
+        assert len(conv) == 2
         sampler.close()
 
 

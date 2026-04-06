@@ -268,6 +268,29 @@ class TopTwoConfig(BaseModel):
         gt=0,
         description="Minimum heated_scale value (floor). Default 1.0 = raw posteriors.",
     )
+    gmic_convergence_gate: Optional[float] = Field(
+        default=None,
+        description=(
+            "GMIC threshold above which heated_scale inflation is suppressed. "
+            "When a component's GMIC exceeds this value, the adaptive rule will "
+            "not inflate its heated_scale even if disagreement is low — the "
+            "component is already converged and low disagreement is correct. "
+            "Set to None to disable (default). Typical values: 0.5–1.0."
+        ),
+    )
+    max_growth_per_step: Optional[float] = Field(
+        default=None,
+        description=(
+            "Maximum heated_scale increase per adaptation step. Caps the "
+            "per-step growth when a component converges rapidly "
+            "(disagreement drops below low_threshold). "
+            "Set to None for uncapped growth (default). "
+            "Disabled after diagnostic analysis showed the 'runaway' on "
+            "balanced 3-comp libraries has no measurable recovery impact — "
+            "the smaller TACTICS advantage on those libraries is due to "
+            "easier SAR (higher min_GMIC), not mechanism malfunction."
+        ),
+    )
     # Legacy fields kept for backward compatibility of disagreement_window
     disagreement_window: int = Field(
         default=200,
