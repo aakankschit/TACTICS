@@ -622,30 +622,6 @@ class ThompsonSampler:
                 n_unique += 1
                 n_resamples = 0
 
-            # Rotate thermal cycling component (weighted by criticality if available)
-            if hasattr(self.selection_strategy, "rotate_component_weighted"):
-                self.selection_strategy.rotate_component_weighted(
-                    n_components, self.reagent_lists, rng=rng,
-                )
-            elif hasattr(self.selection_strategy, "rotate_component"):
-                self.selection_strategy.rotate_component(n_components)
-
-            # Adaptive temperature: signal efficiency to strategy
-            if hasattr(self.selection_strategy, "adapt_temperatures"):
-                # With DisallowTracker all compounds are unique, so use
-                # library coverage as a proxy for sampling efficiency.
-                # As coverage grows, the strategy should increase temperatures.
-                _total_evaluated = len(out_list) + len(compounds_to_evaluate)
-                _coverage = _total_evaluated / max(self.num_prods, 1)
-                # Map coverage to efficiency: high coverage → low efficiency
-                _proxy_attempted = self.batch_size
-                _proxy_unique = max(1, int(self.batch_size * (1.0 - _coverage)))
-                self.selection_strategy.adapt_temperatures(_proxy_unique, _proxy_attempted)
-
-            # Adaptive heated_scale: bidirectional disagreement adaptation
-            if hasattr(self.selection_strategy, "adapt_heated_scale"):
-                self.selection_strategy.adapt_heated_scale()
-
             # Check stopping criteria
             if self.max_resamples and n_resamples >= self.max_resamples:
                 self.logger.info(f"Stopping: {n_resamples} consecutive resamples")
@@ -706,6 +682,31 @@ class ThompsonSampler:
                 # Clear accumulator
                 compounds_to_evaluate = []
 
+            # Rotate thermal cycling component AFTER evaluation so rotation
+            # uses freshly updated posteriors (not stale by one batch).
+            if hasattr(self.selection_strategy, "rotate_component_weighted"):
+                self.selection_strategy.rotate_component_weighted(
+                    n_components, self.reagent_lists, rng=rng,
+                )
+            elif hasattr(self.selection_strategy, "rotate_component"):
+                self.selection_strategy.rotate_component(n_components)
+
+            # Adaptive temperature: signal efficiency to strategy
+            if hasattr(self.selection_strategy, "adapt_temperatures"):
+                # With DisallowTracker all compounds are unique, so use
+                # library coverage as a proxy for sampling efficiency.
+                # As coverage grows, the strategy should increase temperatures.
+                _total_evaluated = len(out_list) + len(compounds_to_evaluate)
+                _coverage = _total_evaluated / max(self.num_prods, 1)
+                # Map coverage to efficiency: high coverage → low efficiency
+                _proxy_attempted = self.batch_size
+                _proxy_unique = max(1, int(self.batch_size * (1.0 - _coverage)))
+                self.selection_strategy.adapt_temperatures(_proxy_unique, _proxy_attempted)
+
+            # Adaptive heated_scale: bidirectional disagreement adaptation
+            if hasattr(self.selection_strategy, "adapt_heated_scale"):
+                self.selection_strategy.adapt_heated_scale()
+
             # Logging
             if cycle % 100 == 0 and out_list:
                 best_score = max([x[0] for x in out_list])
@@ -752,6 +753,7 @@ class ThompsonSampler:
         "cats_multiplier": pl.Float64,
         "effective_multiplier": pl.Float64,
         "final_temperature": pl.Float64,
+        "ema_relative_gmic": pl.Float64,
     }
 
     # Schema for TT-TS diagnostics (TopTwoSelection)

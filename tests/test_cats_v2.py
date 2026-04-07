@@ -366,3 +366,114 @@ class TestConfigIntegration:
         assert "base_temp" in state
         assert "final_temperature" in state
         assert "is_heated" in state
+
+
+class TestCATSEmaSmoothing:
+    """Tests for EMA-smoothed relative GMIC in the CATS multiplier."""
+
+    def test_ema_disabled_by_default(self):
+        """Default cats_ema_decay is None, EMA state is empty."""
+        strategy = RouletteWheelSelection(mode="maximize", alpha=0.1, beta=0.05)
+        assert strategy.cats_ema_decay is None
+        assert strategy._ema_relative_gmic == {}
+
+    def test_ema_state_nan_when_disabled(self):
+        """When EMA is disabled, diagnostics reports NaN for ema_relative_gmic."""
+        strategy = RouletteWheelSelection(mode="maximize", alpha=0.1, beta=0.05)
+        reagents = _make_reagents(
+            [0.5, 0.3, 0.1], [0.1, 0.1, 0.1], [10, 10, 10]
+        )
+        # Seed cached GMICs so relative_gmic can be computed
+        strategy._cached_gmics = {0: 0.5, 1: 0.5}
+        state = strategy.get_component_state(reagents, 0, 5, 100)
+        assert np.isnan(state["ema_relative_gmic"])
+
+    def _warm_divergence(self, strategy, reagents, comp_idx):
+        """Call get_component_state twice to seed divergence snapshot so is_stable=True."""
+        strategy.get_component_state(reagents, comp_idx, 0, 100)
+        # Second call compares against snapshot from first → low divergence → stable
+        strategy.get_component_state(reagents, comp_idx, 1, 100)
+
+    def test_ema_initializes_to_first_value(self):
+        """First stable call initializes EMA to the instantaneous relative_gmic."""
+        strategy = RouletteWheelSelection(
+            mode="maximize", alpha=0.1, beta=0.05, cats_ema_decay=0.1
+        )
+        reagents = _make_reagents(
+            [0.5, 0.3, 0.1], [0.1, 0.1, 0.1], [10, 10, 10]
+        )
+        strategy._cached_gmics = {0: 0.8, 1: 1.2}
+        # Warm up divergence tracker so is_stable=True
+        self._warm_divergence(strategy, reagents, 0)
+
+        state = strategy.get_component_state(reagents, 0, 5, 100)
+
+        # EMA should be initialized (not NaN)
+        assert not np.isnan(state["ema_relative_gmic"])
+        assert 0 in strategy._ema_relative_gmic
+
+    def test_ema_smooths_relative_gmic(self):
+        """EMA changes more slowly than instantaneous relative_gmic."""
+        strategy = RouletteWheelSelection(
+            mode="maximize", alpha=0.1, beta=0.05, cats_ema_decay=0.1
+        )
+        reagents = _make_reagents(
+            [0.5, 0.3, 0.1], [0.1, 0.1, 0.1], [10, 10, 10]
+        )
+        # Warm up divergence so is_stable=True
+        strategy._cached_gmics = {0: 0.5, 1: 1.5}
+        self._warm_divergence(strategy, reagents, 0)
+
+        # First stable call: component 0 is flexible (low GMIC)
+        state1 = strategy.get_component_state(reagents, 0, 5, 100)
+        ema1 = state1["ema_relative_gmic"]
+
+        # Shift GMIC: component 0 is now critical (high GMIC)
+        strategy._cached_gmics = {0: 1.5, 1: 0.5}
+        state2 = strategy.get_component_state(reagents, 0, 6, 100)
+        ema2 = state2["ema_relative_gmic"]
+
+        # The instantaneous relative_gmic flipped from <1 to >1,
+        # but EMA should be closer to ema1 than to the new instantaneous value
+        # because decay=0.1 means only 10% weight on new observation
+        assert abs(ema2 - ema1) < abs(ema2 - (1.5 / 1.0))
+
+    def test_ema_per_component_independence(self):
+        """EMA state is tracked independently per component."""
+        strategy = RouletteWheelSelection(
+            mode="maximize", alpha=0.1, beta=0.05, cats_ema_decay=0.1
+        )
+        # Component 0: high signal spread → high GMIC
+        reagents_a = _make_reagents(
+            [0.9, 0.3, 0.1], [0.05, 0.05, 0.05], [10, 10, 10]
+        )
+        # Component 1: low signal spread → low GMIC
+        reagents_b = _make_reagents(
+            [0.31, 0.30, 0.29], [0.05, 0.05, 0.05], [10, 10, 10]
+        )
+        strategy._cached_gmics = {0: 0.5, 1: 1.5}
+        # Warm up divergence for both components
+        self._warm_divergence(strategy, reagents_a, 0)
+        self._warm_divergence(strategy, reagents_b, 1)
+
+        state_a = strategy.get_component_state(reagents_a, 0, 5, 100)
+        state_b = strategy.get_component_state(reagents_b, 1, 5, 100)
+
+        assert 0 in strategy._ema_relative_gmic
+        assert 1 in strategy._ema_relative_gmic
+        # Components with different GMIC have different relative_gmic → different EMA
+        assert strategy._ema_relative_gmic[0] != strategy._ema_relative_gmic[1]
+
+    def test_config_cats_ema_decay_roundtrip(self):
+        """cats_ema_decay passes through config → factory → strategy."""
+        config = RouletteWheelConfig(
+            mode="maximize", alpha=0.1, beta=0.05, cats_ema_decay=0.1
+        )
+        strategy = create_strategy(config)
+        assert isinstance(strategy, RouletteWheelSelection)
+        assert strategy.cats_ema_decay == 0.1
+
+    def test_config_default_none(self):
+        """Default config has cats_ema_decay=None."""
+        config = RouletteWheelConfig(mode="maximize")
+        assert config.cats_ema_decay is None

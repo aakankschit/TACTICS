@@ -77,6 +77,26 @@ class RouletteWheelConfig(BaseModel):
         ),
     )
 
+    # CATS EMA smoothing for relative GMIC
+    cats_ema_decay: Optional[float] = Field(
+        default=None,
+        description=(
+            "EMA decay factor for smoothing relative GMIC in the CATS multiplier. "
+            "When set, relative_gmic is replaced by an EMA that accumulates "
+            "directional signal across cycles. Smaller values = smoother. "
+            "None disables smoothing (default, backward compatible). "
+            "Must be in (0, 1) when set. Typical range: 0.05-0.15."
+        ),
+    )
+
+    @field_validator('cats_ema_decay')
+    @classmethod
+    def validate_cats_ema_decay(cls, v):
+        """Validate cats_ema_decay is in (0, 1) when set."""
+        if v is not None and (v <= 0 or v >= 1):
+            raise ValueError(f"cats_ema_decay must be in (0, 1), got {v}")
+        return v
+
     # GMIC divergence gate
     divergence_threshold: float = Field(
         default=0.1,

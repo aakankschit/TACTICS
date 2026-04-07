@@ -383,6 +383,7 @@ class TestEnhancedDiagnosticsRWS:
         "divergence", "divergence_threshold", "is_stable", "cats_mode",
         "base_temp", "is_heated",
         "cats_multiplier", "effective_multiplier", "final_temperature",
+        "ema_relative_gmic",
     }
 
     # BayesUCB still uses IPR-based schema
@@ -496,6 +497,7 @@ class TestGetComponentState:
             "divergence", "divergence_threshold", "is_stable", "cats_mode",
             "base_temp", "is_heated",
             "cats_multiplier", "effective_multiplier", "final_temperature",
+            "ema_relative_gmic",
         }
         assert set(state.keys()) == expected_keys
         assert state["component_idx"] == 0

@@ -33,6 +33,7 @@ class RouletteWheelSelection(SelectionStrategy):
         cats_exploration_fraction=0.3,
         cats_range=None,
         divergence_threshold=0.1,
+        cats_ema_decay=None,
         **kwargs,
     ):
         """
@@ -106,6 +107,9 @@ class RouletteWheelSelection(SelectionStrategy):
         self._divergence_values: Dict[int, float] = {}
         # Cached GMIC per component (updated by rotate_component_weighted)
         self._cached_gmics: Dict[int, float] = {}
+        # CATS EMA smoothing for relative GMIC
+        self.cats_ema_decay = cats_ema_decay
+        self._ema_relative_gmic: Dict[int, float] = {}
 
         # Validation warnings
         if abs(self.alpha - self.beta) < 1e-10:
@@ -266,6 +270,17 @@ class RouletteWheelSelection(SelectionStrategy):
             # Relative GMIC: >1 = more critical than average, <1 = more flexible
             relative_gmic = gmic / mean_gmic
 
+            # EMA smoothing: accumulate directional signal across cycles
+            if self.cats_ema_decay is not None:
+                if component_idx in self._ema_relative_gmic:
+                    self._ema_relative_gmic[component_idx] = (
+                        self.cats_ema_decay * relative_gmic
+                        + (1.0 - self.cats_ema_decay) * self._ema_relative_gmic[component_idx]
+                    )
+                else:
+                    self._ema_relative_gmic[component_idx] = relative_gmic
+                relative_gmic = self._ema_relative_gmic[component_idx]
+
             if is_heated:
                 # Flexible components (low relative GMIC) get amplified heating
                 if relative_gmic < 1.0:
@@ -314,6 +329,8 @@ class RouletteWheelSelection(SelectionStrategy):
             "cats_multiplier": cats_mult,
             "effective_multiplier": effective_mult,
             "final_temperature": final_temp,
+            # EMA smoothing state
+            "ema_relative_gmic": self._ema_relative_gmic.get(component_idx, float("nan")),
         }
 
         self._last_component_states[component_idx] = state

@@ -119,6 +119,7 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             cats_exploration_fraction=config.cats_exploration_fraction,
             cats_range=config.cats_range,
             divergence_threshold=config.divergence_threshold,
+            cats_ema_decay=config.cats_ema_decay,
         )
 
     elif isinstance(config, UCBConfig):
