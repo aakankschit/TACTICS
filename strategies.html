@@ -1,0 +1,858 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Strategies Guide &#8212; TACTICS 0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=5ce0522f" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="_static/documentation_options.js?v=837179f8"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=b8b12719"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'strategies';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Thompson Sampling" href="thompson_sampling.html" />
+    <link rel="prev" title="Welcome to TACTICS documentation!" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.0" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Strategies Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="thompson_sampling.html">
+    Thompson Sampling
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="configuration.html">
+    Configuration System
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_enumeration.html">
+    Library Enumeration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_analysis.html">
+    Library Analysis
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Strategies Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="thompson_sampling.html">
+    Thompson Sampling
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="configuration.html">
+    Configuration System
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_enumeration.html">
+    Library Enumeration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="library_analysis.html">
+    Library Analysis
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Strategies Guide</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="strategies-guide">
+<span id="id1"></span><h1>Strategies Guide<a class="headerlink" href="#strategies-guide" title="Link to this heading">#</a></h1>
+<p>This guide helps you choose the right TACTICS configuration for your use case.
+If you just want the best method, use <code class="docutils literal notranslate"><span class="pre">get_preset()</span></code> with no arguments — it
+defaults to the best-performing configuration from large-scale benchmarking.</p>
+<nav class="contents local" id="on-this-page">
+<p class="topic-title">On this page</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#which-preset-should-i-use" id="id2">Which Preset Should I Use?</a></p>
+<ul>
+<li><p><a class="reference internal" href="#basic-usage" id="id3">Basic Usage</a></p></li>
+<li><p><a class="reference internal" href="#docking-minimize-mode" id="id4">Docking (Minimize Mode)</a></p></li>
+<li><p><a class="reference internal" href="#custom-batch-size" id="id5">Custom Batch Size</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#understanding-the-methods" id="id6">Understanding the Methods</a></p>
+<ul>
+<li><p><a class="reference internal" href="#how-thompson-sampling-works" id="id7">How Thompson Sampling Works</a></p></li>
+<li><p><a class="reference internal" href="#top-two-thompson-sampling-recommended" id="id8">Top-Two Thompson Sampling (Recommended)</a></p></li>
+<li><p><a class="reference internal" href="#roulette-wheel-selection-cats" id="id9">Roulette Wheel Selection / CATS</a></p></li>
+<li><p><a class="reference internal" href="#gmic-criticality" id="id10">GMIC Criticality</a></p></li>
+<li><p><a class="reference internal" href="#enhanced-vs-balanced-warmup" id="id11">Enhanced vs Balanced Warmup</a></p></li>
+<li><p><a class="reference internal" href="#boltzmann-weighting" id="id12">Boltzmann Weighting</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#custom-configuration" id="id13">Custom Configuration</a></p></li>
+<li><p><a class="reference internal" href="#selection-strategies-reference" id="id14">Selection Strategies Reference</a></p></li>
+<li><p><a class="reference internal" href="#warmup-strategies-reference" id="id15">Warmup Strategies Reference</a></p></li>
+</ul>
+</nav>
+<section id="which-preset-should-i-use">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Which Preset Should I Use?</a><a class="headerlink" href="#which-preset-should-i-use" title="Link to this heading">#</a></h2>
+<p>TACTICS provides five presets. Each corresponds to a method configuration
+validated across 21 combinatorial libraries (114,450+ total trials).</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 22.0%" />
+<col style="width: 18.0%" />
+<col style="width: 18.0%" />
+<col style="width: 22.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Preset</p></th>
+<th class="head"><p>Selection Strategy</p></th>
+<th class="head"><p>Warmup</p></th>
+<th class="head"><p>Recovery</p></th>
+<th class="head"><p>When to use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>recommended</strong> (default)</p></td>
+<td><p>Top-Two TS</p></td>
+<td><p>Enhanced</p></td>
+<td><p><strong>86.1%</strong></p></td>
+<td><p>New work. Best overall.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>recommended_rws</strong></p></td>
+<td><p>RWS / CATS</p></td>
+<td><p>Enhanced</p></td>
+<td><p>85.5%</p></td>
+<td><p>When you want the original TACTICS method.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>baseline</strong></p></td>
+<td><p>Greedy</p></td>
+<td><p>Balanced</p></td>
+<td><p>~81%</p></td>
+<td><p>Reference point to measure strategy gains.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>legacy_rws</strong></p></td>
+<td><p>RWS (round-robin)</p></td>
+<td><p>Enhanced</p></td>
+<td><p>~76%</p></td>
+<td><p>Reproducing Zhao et al. 2025 results. Pass <code class="docutils literal notranslate"><span class="pre">mode=&quot;minimize&quot;</span></code> for docking.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Recovery is mean top-100 recovery across all benchmark libraries and queries.
+Both <code class="docutils literal notranslate"><span class="pre">recommended</span></code> and <code class="docutils literal notranslate"><span class="pre">recommended_rws</span></code> default to <code class="docutils literal notranslate"><span class="pre">batch_size=100</span></code>.</p>
+<section id="basic-usage">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Basic Usage</a><a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThompsonSampler</span><span class="p">,</span> <span class="n">get_preset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.library_enumeration.smarts_toolkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactionConfig</span><span class="p">,</span> <span class="n">ReactionDef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.core.evaluator_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LookupEvaluatorConfig</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">SynthesisPipeline</span><span class="p">(</span><span class="n">ReactionConfig</span><span class="p">(</span>
+    <span class="n">reactions</span><span class="o">=</span><span class="p">[</span><span class="n">ReactionDef</span><span class="p">(</span><span class="n">reaction_smarts</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">step_index</span><span class="o">=</span><span class="mi">0</span><span class="p">)],</span>
+    <span class="n">reagent_file_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;acids.smi&quot;</span><span class="p">,</span> <span class="s2">&quot;amines.smi&quot;</span><span class="p">]</span>
+<span class="p">))</span>
+
+<span class="c1"># Best method — no need to specify a preset name</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_preset</span><span class="p">(</span>
+    <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">evaluator_config</span><span class="o">=</span><span class="n">LookupEvaluatorConfig</span><span class="p">(</span><span class="n">ref_filename</span><span class="o">=</span><span class="s2">&quot;scores.csv&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">ThompsonSampler</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">warmup_df</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">warm_up</span><span class="p">(</span><span class="n">num_warmup_trials</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">num_warmup_trials</span><span class="p">)</span>
+<span class="n">results_df</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">num_cycles</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">num_ts_iterations</span><span class="p">)</span>
+<span class="n">sampler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="docking-minimize-mode">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Docking (Minimize Mode)</a><a class="headerlink" href="#docking-minimize-mode" title="Link to this heading">#</a></h3>
+<p>For scoring functions where lower is better (docking scores, binding energies):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">get_preset</span><span class="p">(</span>
+    <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">evaluator_config</span><span class="o">=</span><span class="n">FredEvaluatorConfig</span><span class="p">(</span><span class="n">design_unit_file</span><span class="o">=</span><span class="s2">&quot;receptor.oedu&quot;</span><span class="p">),</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-batch-size">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Custom Batch Size</a><a class="headerlink" href="#custom-batch-size" title="Link to this heading">#</a></h3>
+<p>Both <code class="docutils literal notranslate"><span class="pre">recommended</span></code> and <code class="docutils literal notranslate"><span class="pre">recommended_rws</span></code> accept a <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> parameter
+(default 100). Adjust based on your evaluator speed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Slow evaluator — larger batches for better throughput</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_preset</span><span class="p">(</span>
+    <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">evaluator_config</span><span class="o">=</span><span class="n">evaluator</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Fast evaluator — single compound per cycle for tightest feedback loop</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_preset</span><span class="p">(</span>
+    <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">evaluator_config</span><span class="o">=</span><span class="n">evaluator</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="understanding-the-methods">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Understanding the Methods</a><a class="headerlink" href="#understanding-the-methods" title="Link to this heading">#</a></h2>
+<p>This section explains <em>why</em> the recommended methods work. Skip this if you
+just want to run TACTICS — the presets handle everything.</p>
+<section id="how-thompson-sampling-works">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">How Thompson Sampling Works</a><a class="headerlink" href="#how-thompson-sampling-works" title="Link to this heading">#</a></h3>
+<p>TACTICS maintains a Bayesian posterior distribution (Normal-Normal conjugate)
+for each reagent in the combinatorial library. At each iteration:</p>
+<ol class="arabic simple">
+<li><p><strong>Sample</strong> from each reagent’s posterior</p></li>
+<li><p><strong>Select</strong> reagents to form a compound (using the selection strategy)</p></li>
+<li><p><strong>Evaluate</strong> the compound (using the evaluator)</p></li>
+<li><p><strong>Update</strong> the posteriors with the observed score</p></li>
+</ol>
+<p>The selection strategy determines <em>how</em> reagents are chosen from the sampled
+posteriors. This is where the methods differ.</p>
+</section>
+<section id="top-two-thompson-sampling-recommended">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Top-Two Thompson Sampling (Recommended)</a><a class="headerlink" href="#top-two-thompson-sampling-recommended" title="Link to this heading">#</a></h3>
+<p>Top-Two TS targets <strong>best-arm identification</strong> rather than cumulative regret
+minimization. At each step, it samples posteriors twice:</p>
+<ul class="simple">
+<li><p>The <strong>leader</strong> is the reagent with the best first sample</p></li>
+<li><p>The <strong>challenger</strong> is the reagent with the best second sample (excluding the leader)</p></li>
+<li><p>With probability <span class="math notranslate nohighlight">\(\beta\)</span>, the challenger is selected instead of the leader</p></li>
+</ul>
+<p>This mechanism allocates exploration budget toward reagents where posterior
+uncertainty matters — exactly the reagents whose top-K membership is ambiguous.</p>
+<p>TACTICS adds <strong>adaptive per-component thermal cycling</strong> on top of TT-TS:
+posteriors are scaled up (heated) or down (cooled) to control exploration
+intensity. The adaptive mechanism tracks per-component disagreement rates
+via exponential moving averages and self-tunes the heated scale, which is
+critical for imbalanced libraries (e.g., 130 acids x 3,844 amines).</p>
+</section>
+<section id="roulette-wheel-selection-cats">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Roulette Wheel Selection / CATS</a><a class="headerlink" href="#roulette-wheel-selection-cats" title="Link to this heading">#</a></h3>
+<p>RWS uses <strong>Boltzmann-weighted selection</strong> with thermal cycling. Instead of
+always picking the best-sampled reagent (greedy), it converts sampled
+posteriors into selection probabilities via a Boltzmann distribution and
+samples from that.</p>
+<p><strong>CATS</strong> (Component-Aware Thompson Sampling) adds <strong>GMIC-weighted component
+rotation</strong>: instead of cycling through components in round-robin order, it
+measures each component’s GMIC criticality score and preferentially heats
+the most “flexible” component (the one where the top-K set is least certain).</p>
+<p>This is the mechanism responsible for the largest gains over legacy methods
+(+4.3 pts on 2-component libraries).</p>
+</section>
+<section id="gmic-criticality">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">GMIC Criticality</a><a class="headerlink" href="#gmic-criticality" title="Link to this heading">#</a></h3>
+<p>GMIC (Generalized Mean Information Coefficient) measures how concentrated
+or spread the posterior means are for a component’s reagents. A high GMIC
+indicates a component where a few reagents dominate — this component is
+“solved” and needs less exploration. A low GMIC indicates a flat landscape
+where more exploration would help.</p>
+<p>TACTICS uses GMIC to allocate thermal cycling budget: components with lower
+GMIC get heated more often, directing search toward unsolved parts of the
+chemical space.</p>
+</section>
+<section id="enhanced-vs-balanced-warmup">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Enhanced vs Balanced Warmup</a><a class="headerlink" href="#enhanced-vs-balanced-warmup" title="Link to this heading">#</a></h3>
+<p><strong>Enhanced warmup</strong> (recommended) uses stochastic parallel pairing: all
+reagents are shuffled and paired exhaustively in each warmup trial. On
+imbalanced libraries, this naturally over-samples the small component,
+pre-solving its ranking during warmup. GMIC then detects this differential
+posterior quality and redirects search to the unsolved large component.</p>
+<p><strong>Balanced warmup</strong> guarantees exactly K observations per reagent via
+stratified partner selection. It is useful for isolating the framework’s
+warmup contribution (Balanced-Greedy provides +1.5 pts over Legacy-Greedy
+on 2-component libraries), but Enhanced warmup is universally better when
+paired with GMIC rotation.</p>
+</section>
+<section id="boltzmann-weighting">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Boltzmann Weighting</a><a class="headerlink" href="#boltzmann-weighting" title="Link to this heading">#</a></h3>
+<p>When <code class="docutils literal notranslate"><span class="pre">use_boltzmann_weighting=True</span></code> (enabled in all recommended presets),
+the posterior update weights observations exponentially: good scores have
+more influence on the posterior than bad scores. This accelerates
+convergence toward high-scoring reagents.</p>
+</section>
+</section>
+<section id="custom-configuration">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Custom Configuration</a><a class="headerlink" href="#custom-configuration" title="Link to this heading">#</a></h2>
+<p>For full control, construct a <code class="docutils literal notranslate"><span class="pre">ThompsonSamplingConfig</span></code> directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThompsonSamplingConfig</span><span class="p">,</span> <span class="n">ThompsonSampler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.strategies.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">TopTwoConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.warmup.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnhancedWarmupConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.core.evaluator_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LookupEvaluatorConfig</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ThompsonSamplingConfig</span><span class="p">(</span>
+    <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">num_ts_iterations</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+    <span class="n">num_warmup_trials</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">strategy_config</span><span class="o">=</span><span class="n">TopTwoConfig</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;maximize&quot;</span><span class="p">,</span>
+        <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>              <span class="c1"># Challenger selection probability</span>
+        <span class="n">heated_scale</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>      <span class="c1"># Posterior inflation for heated component</span>
+        <span class="n">cooled_scale</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>     <span class="c1"># Posterior deflation for cooled component</span>
+        <span class="n">adaptive_disagreement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Per-component adaptive scaling</span>
+    <span class="p">),</span>
+    <span class="n">warmup_config</span><span class="o">=</span><span class="n">EnhancedWarmupConfig</span><span class="p">(),</span>
+    <span class="n">evaluator_config</span><span class="o">=</span><span class="n">LookupEvaluatorConfig</span><span class="p">(</span>
+        <span class="n">ref_filename</span><span class="o">=</span><span class="s2">&quot;scores.csv&quot;</span><span class="p">,</span>
+        <span class="n">score_col</span><span class="o">=</span><span class="s2">&quot;binding_affinity&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">use_boltzmann_weighting</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">ThompsonSampler</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">warmup_df</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">warm_up</span><span class="p">(</span><span class="n">num_warmup_trials</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">num_warmup_trials</span><span class="p">)</span>
+<span class="n">results_df</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">num_cycles</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">num_ts_iterations</span><span class="p">)</span>
+<span class="n">sampler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="configuration.html"><span class="doc">Configuration System</span></a> reference for all available parameters.</p>
+</section>
+<section id="selection-strategies-reference">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Selection Strategies Reference</a><a class="headerlink" href="#selection-strategies-reference" title="Link to this heading">#</a></h2>
+<p>All strategies inherit from <code class="docutils literal notranslate"><span class="pre">SelectionStrategy</span></code> and are interchangeable
+via the <code class="docutils literal notranslate"><span class="pre">strategy_config</span></code> parameter.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 12.0%" />
+<col style="width: 66.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Strategy</p></th>
+<th class="head"><p>Tier</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="thompson_sampling.html#top-two-selection"><span class="std std-ref">TopTwoSelection</span></a></p></td>
+<td><p>Recommended</p></td>
+<td><p>Top-Two TS with adaptive thermal cycling and GMIC rotation.
+Best overall (86.1% recovery).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="thompson_sampling.html#roulette-wheel-selection"><span class="std std-ref">RouletteWheelSelection</span></a></p></td>
+<td><p>Recommended</p></td>
+<td><p>CATS with Boltzmann thermal cycling and GMIC rotation.
+Close second (85.5% recovery).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="thompson_sampling.html#greedy-selection"><span class="std std-ref">GreedySelection</span></a></p></td>
+<td><p>Baseline</p></td>
+<td><p>Pure argmax. Simplest strategy — sample posteriors, pick the best.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="thompson_sampling.html#ucb-selection"><span class="std std-ref">UCBSelection</span></a></p></td>
+<td><p>Baseline</p></td>
+<td><p>Upper Confidence Bound. Consistently outperformed by TopTwo/RWS.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="thompson_sampling.html#epsilon-greedy-selection"><span class="std std-ref">EpsilonGreedySelection</span></a></p></td>
+<td><p>Baseline</p></td>
+<td><p>Epsilon-greedy with decay. Consistently outperformed by TopTwo/RWS.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="thompson_sampling.html#bayes-ucb-selection"><span class="std std-ref">BayesUCBSelection</span></a></p></td>
+<td><p>Baseline</p></td>
+<td><p>Bayesian UCB with Student-t quantiles. Consistently outperformed by TopTwo/RWS.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>See the <a class="reference internal" href="thompson_sampling.html"><span class="doc">Thompson Sampling</span></a> reference for detailed parameter documentation
+for each strategy.</p>
+</section>
+<section id="warmup-strategies-reference">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Warmup Strategies Reference</a><a class="headerlink" href="#warmup-strategies-reference" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 12.0%" />
+<col style="width: 66.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Strategy</p></th>
+<th class="head"><p>Tier</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="thompson_sampling.html#enhanced-warmup"><span class="std std-ref">EnhancedWarmup</span></a></p></td>
+<td><p>Recommended</p></td>
+<td><p>Stochastic parallel pairing. Universally optimal — used by all
+recommended presets.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="thompson_sampling.html#balanced-warmup"><span class="std std-ref">BalancedWarmup</span></a></p></td>
+<td><p>Alternative</p></td>
+<td><p>Exactly K observations per reagent. Useful for controlled experiments
+isolating warmup contribution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="thompson_sampling.html#standard-warmup"><span class="std std-ref">StandardWarmup</span></a></p></td>
+<td><p>Baseline</p></td>
+<td><p>Random partner selection. For comparison only.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Welcome to TACTICS documentation!</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="thompson_sampling.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Thompson Sampling</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-preset-should-i-use">Which Preset Should I Use?</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic Usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#docking-minimize-mode">Docking (Minimize Mode)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-batch-size">Custom Batch Size</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-methods">Understanding the Methods</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-thompson-sampling-works">How Thompson Sampling Works</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-two-thompson-sampling-recommended">Top-Two Thompson Sampling (Recommended)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roulette-wheel-selection-cats">Roulette Wheel Selection / CATS</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gmic-criticality">GMIC Criticality</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#enhanced-vs-balanced-warmup">Enhanced vs Balanced Warmup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boltzmann-weighting">Boltzmann Weighting</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-configuration">Custom Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#selection-strategies-reference">Selection Strategies Reference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#warmup-strategies-reference">Warmup Strategies Reference</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
