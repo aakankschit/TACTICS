@@ -74,6 +74,10 @@ class ThompsonSampler:
         self.warmup_strategy = warmup_strategy or StandardWarmup()
         self.reagent_lists = []
         self.evaluator = None
+        # Picklable recipe for self.evaluator, when known. Workers use this to
+        # build their own evaluator instead of receiving one over a pipe.
+        self.evaluator_config = None
+        self._log_filename = log_filename
         self.logger = get_logger(__name__, filename=log_filename)
         self._disallow_tracker = None
         self.batch_size = batch_size
@@ -181,16 +185,18 @@ class ThompsonSampler:
             log_filename=config.log_filename,
             batch_size=config.batch_size,
             max_resamples=config.max_resamples,
-            processes=1,  # Default to 1, compound generation is fast
-            min_cpds_per_core=10,
+            processes=config.processes,
+            min_cpds_per_core=config.min_cpds_per_core,
             product_library_file=config.product_library_file,
             use_boltzmann_weighting=config.use_boltzmann_weighting,
             seed=seed,
             track_diagnostics=config.track_diagnostics,
         )
 
-        # Set up sampler
-        sampler.set_evaluator(evaluator)
+        # Set up sampler. The evaluator config is passed through so that, when
+        # processes > 1, each worker can construct its own evaluator instead of
+        # receiving an unpicklable one over the pipe.
+        sampler.set_evaluator(evaluator, evaluator_config=config.evaluator_config)
         sampler.read_reagents(pipeline.reagent_file_list)
 
         # Auto-detect SMARTS compatibility if enabled
@@ -281,14 +287,69 @@ class ThompsonSampler:
         """Get the total number of possible products"""
         return self.num_prods
 
-    def set_evaluator(self, evaluator):
+    def __getstate__(self):
+        """Support pickling so workers can be initialized with this sampler.
+
+        Three attributes are dropped rather than pickled:
+
+        - ``evaluator``: may wrap a SWIG object (OpenEye ``OEDock``, ROCS shape
+          engine) that raises TypeError on pickle. Each worker rebuilds its own
+          from ``evaluator_config`` in ``parallel_evaluator._init_worker``.
+        - ``parallel_evaluator``: owns a ``multiprocessing.Pool``, which cannot
+          be pickled and must not be inherited by a worker (that would nest
+          pools recursively).
+        - ``logger``: a ``logging.Logger`` holding file handles and locks;
+          rebuilt from ``_log_filename`` in ``__setstate__``.
+        """
+        state = self.__dict__.copy()
+        state["evaluator"] = None
+        state["parallel_evaluator"] = None
+        state["logger"] = None
+        return state
+
+    def __setstate__(self, state):
+        """Restore a pickled sampler inside a worker process."""
+        self.__dict__.update(state)
+        # Rebuild the dropped logger. The evaluator is installed separately by
+        # _init_worker; parallel_evaluator stays None because a worker never
+        # spawns its own pool.
+        if self.logger is None:
+            self.logger = get_logger(
+                __name__, filename=self.__dict__.get("_log_filename")
+            )
+
+    def set_evaluator(self, evaluator, evaluator_config=None):
         """
         Define the evaluator.
 
         Automatically disables multiprocessing for fast evaluators (LookupEvaluator, DBEvaluator)
         where pickle overhead exceeds evaluation time.
+
+        Args:
+            evaluator: The evaluator instance used to score compounds.
+            evaluator_config: Optional picklable config (Pydantic model) that can
+                recreate ``evaluator``. Required for ``processes > 1`` with
+                OpenEye-backed evaluators, whose SWIG objects cannot be pickled:
+                each worker builds its own evaluator from this config instead of
+                receiving one over the pipe. ``from_config`` supplies it
+                automatically.
         """
         self.evaluator = evaluator
+        self.evaluator_config = evaluator_config
+
+        # Give workers the recipe they need to construct their own evaluator.
+        if self.parallel_evaluator is not None:
+            self.parallel_evaluator.bind_worker_context(self, evaluator_config)
+
+        if self.processes > 1 and evaluator_config is None:
+            self.logger.warning(
+                "processes=%d but no evaluator_config was provided. Workers "
+                "cannot rebuild the evaluator, so it must be picklable. "
+                "OpenEye-backed evaluators (Fred, ROCS) will fail; use "
+                "ThompsonSampler.from_config() or pass evaluator_config=... "
+                "to set_evaluator().",
+                self.processes,
+            )
 
         # Auto-detect fast evaluators and warn about multiprocessing inefficiency
         if self.processes > 1:
