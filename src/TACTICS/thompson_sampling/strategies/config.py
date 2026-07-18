@@ -208,7 +208,14 @@ class TopTwoConfig(BaseModel):
     min_observations: int = Field(
         default=5,
         gt=0,
-        description="Minimum observations per reagent before trusting GMIC criticality",
+        description=(
+            "DEPRECATED and inert. Formerly gated GMIC to 0.0 until every "
+            "active reagent had this many observations. The gate was removed "
+            "for consistency with RouletteWheelSelection, which never gated: "
+            "on large components a single under-observed reagent pinned the "
+            "whole component's GMIC to zero. Accepted only for backward "
+            "compatibility with existing configs."
+        ),
     )
 
     # Adaptive thermal cycling parameters
