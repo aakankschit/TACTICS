@@ -199,8 +199,24 @@ reorganization.md
 slurm-*.out
 slurm-*.err
 
+# Generated Slurm job directory (.sub files, MANIFEST, backups)
+jobs/
+
+# Generated figures (regenerate from tutorials/ notebooks)
+plots/
+
 # HPC scripts (local infrastructure)
 scripts/
+
+# Manual/editor backup copies
+*.bak
+*.bak2
+
+# OpenEye run artifacts (Omega logs, Spruce/HYBRID parameter + status dumps)
+oeomega_*.txt
+*_settings.param
+*_status.txt
+*.oedu
 
 # Legacy code outputs (not needed in repository)
 src/TACTICS/thompson_sampling/legacy/src/

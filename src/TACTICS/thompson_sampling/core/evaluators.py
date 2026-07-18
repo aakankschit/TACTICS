@@ -5,16 +5,59 @@ import numpy as np
 
 import useful_rdkit_utils as uru
 
-try:
-    from openeye import oechem
-    from openeye import oeomega
-    from openeye import oeshape
-    from openeye import oedocking
-    import joblib
-except ImportError:
-    # Since openeye is a commercial software package, just pass with a warning if not available
-    warnings.warn(f"Openeye packages not available in this environment; do not attempt to use ROCSEvaluator or "
-                  f"FredEvaluator")
+# OpenEye toolkit modules are loaded lazily by _ensure_openeye() rather than
+# at module import time. They stay None until an OpenEye-backed evaluator is
+# actually constructed.
+oechem = None
+oeomega = None
+oeshape = None
+oedocking = None
+
+
+def _ensure_openeye():
+    """Import the OpenEye toolkits on first use and cache them as module globals.
+
+    Deferred rather than imported at module level for two reasons:
+
+    1. Segfault avoidance. OpenEye's shared libraries load libexpat.so.1 and
+       initialize its global C-level XML parser state. tqdm pulls in
+       prompt_toolkit, whose progress-bar formatter calls
+       xml.dom.minidom.parseString() at *module* level, re-entering libexpat
+       through Python's pyexpat extension. When OpenEye initialized expat
+       first, that second entry conflicts with the existing global state and
+       segfaults the interpreter (exit 139) during `import TACTICS`, before
+       any user code runs. Deferring the OpenEye load until an evaluator is
+       constructed lets Python own and initialize expat first.
+
+    2. Import cost. Most TACTICS runs use Lookup, FP, MW or DB evaluators and
+       never need the OpenEye toolkits at all.
+
+    Safe to call repeatedly; the import happens once.
+
+    Raises:
+        ImportError: if the OpenEye toolkits are not installed.
+    """
+    global oechem, oeomega, oeshape, oedocking
+
+    if oechem is not None:
+        return
+
+    try:
+        from openeye import oechem as _oechem
+        from openeye import oeomega as _oeomega
+        from openeye import oeshape as _oeshape
+        from openeye import oedocking as _oedocking
+    except ImportError as exc:
+        raise ImportError(
+            "The OpenEye toolkits are required for ROCSEvaluator and "
+            "FredEvaluator but are not installed in this environment. "
+            "Install them with `pip install openeye-toolkits` (a valid "
+            "OpenEye license is required)."
+        ) from exc
+
+    oechem, oeomega, oeshape, oedocking = _oechem, _oeomega, _oeshape, _oedocking
+
+
 from rdkit import Chem, DataStructs
 import pandas as pd
 from sqlitedict import SqliteDict
@@ -70,6 +113,7 @@ class ROCSEvaluator(Evaluator):
     """
 
     def __init__(self, input_dict):
+        _ensure_openeye()
         ref_filename = input_dict['query_molfile']
         ref_fs = oechem.oemolistream(ref_filename)
         self.ref_mol = oechem.OEMol()
@@ -141,6 +185,10 @@ class LookupEvaluator(Evaluator):
         ref_filename = input_dictionary['ref_filename']
         compound_col = input_dictionary.get('compound_col', 'Product_Code')
         score_col = input_dictionary.get('score_col', 'Scores')
+        # Score for product codes absent from the table. None preserves the
+        # historical np.nan behavior; 0.0 is used for sparse DEL read-count
+        # libraries where an unmeasured combination is a true non-binder.
+        self.default_score = input_dictionary.get('default_score', None)
 
         # Determine file type and read accordingly
         if ref_filename.endswith('.parquet'):
@@ -158,8 +206,11 @@ class LookupEvaluator(Evaluator):
 
     def evaluate(self, product_name):
         self.num_evaluations += 1
-        # Return score from lookup, or np.nan if product not in reference
-        return self.ref_dict.get(product_name, np.nan)
+        # Return score from lookup. If the product is absent, return the
+        # configured default (e.g. 0.0 for sparse read-count libraries) or
+        # np.nan when no default is set (sampler skips NaN evaluations).
+        missing = self.default_score if self.default_score is not None else np.nan
+        return self.ref_dict.get(product_name, missing)
 
 class DBEvaluator(Evaluator):
     """A simple evaluator class that looks up values from a database.
@@ -197,6 +248,7 @@ class FredEvaluator(Evaluator):
     """
 
     def __init__(self, input_dict):
+        _ensure_openeye()
         du_file = input_dict["design_unit_file"]
         if not os.path.isfile(du_file):
             raise FileNotFoundError(f"{du_file} was not found or is a directory")
@@ -277,6 +329,7 @@ def generate_confs(mol, max_confs):
     :param mol: input OEMolecule
     :return: Boolean Omega return code indicating success of conformer generation
     """
+    _ensure_openeye()
     rms = 0.5
     strict_stereo = False
     omega = oeomega.OEOmega()
@@ -297,6 +350,7 @@ def read_design_unit(filename):
     :param filename: design unit filename (.oedu)
     :return: a docking grid
     """
+    _ensure_openeye()
     du = oechem.OEDesignUnit()
     rfs = oechem.oeifstream()
     if not rfs.open(filename):
@@ -342,6 +396,11 @@ class MLClassifierEvaluator(Evaluator):
     """
 
     def __init__(self, input_dict):
+        # joblib was previously imported inside the OpenEye try/except, so it
+        # was undefined whenever OpenEye was absent even though it has nothing
+        # to do with OpenEye. Import it where it is actually used.
+        import joblib
+
         self.cls = joblib.load(input_dict["model_filename"])
         self.num_evaluations = 0
 

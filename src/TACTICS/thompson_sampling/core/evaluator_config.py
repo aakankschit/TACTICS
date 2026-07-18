@@ -16,6 +16,15 @@ class LookupEvaluatorConfig(BaseModel):
     ref_filename: str = Field(..., description="Path to CSV file with pre-computed scores")
     compound_col: str = Field(default="Product_Code", description="Column name for compound identifiers")
     score_col: str = Field(default="Scores", description="Column name for scores in CSV")
+    default_score: Optional[float] = Field(
+        default=None,
+        description=(
+            "Score returned for product codes absent from the lookup table. "
+            "None → np.nan (the sampler skips NaN evaluations). Set to 0.0 for "
+            "sparse lookup libraries such as DEL read counts, where a combination "
+            "absent from the measured set is a true non-binder (score 0)."
+        ),
+    )
 
 
 class DBEvaluatorConfig(BaseModel):

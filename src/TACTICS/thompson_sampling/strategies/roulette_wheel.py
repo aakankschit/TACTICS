@@ -425,7 +425,13 @@ class RouletteWheelSelection(SelectionStrategy):
             # All scores identical, use uniform distribution
             probs = np.ones(len(reagent_list)) / len(reagent_list)
         else:
-            scores = np.exp((scores - np.mean(scores)) / score_std / effective_temp)
+            # Numerically stable softmax: subtract the max of the exponent
+            # argument (shift-invariant, so probabilities are identical) to
+            # avoid exp() overflow when the sampled-score spread is large
+            # relative to a small CATS temperature — as on the heavy-tailed,
+            # zero-inflated read-count landscape.
+            z = (scores - np.mean(scores)) / score_std / effective_temp
+            scores = np.exp(z - np.max(z))
             # Normalize to probabilities
             probs = scores / np.sum(scores)
 
@@ -485,7 +491,13 @@ class RouletteWheelSelection(SelectionStrategy):
             # All scores identical, use uniform distribution
             probs = np.ones(len(reagent_list)) / len(reagent_list)
         else:
-            scores = np.exp((scores - np.mean(scores)) / score_std / effective_temp)
+            # Numerically stable softmax: subtract the max of the exponent
+            # argument (shift-invariant, so probabilities are identical) to
+            # avoid exp() overflow when the sampled-score spread is large
+            # relative to a small CATS temperature — as on the heavy-tailed,
+            # zero-inflated read-count landscape.
+            z = (scores - np.mean(scores)) / score_std / effective_temp
+            scores = np.exp(z - np.max(z))
             # Normalize to probabilities
             probs = scores / np.sum(scores)
 

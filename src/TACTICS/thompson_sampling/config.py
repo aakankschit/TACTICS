@@ -138,8 +138,30 @@ class ThompsonSamplingConfig(BaseModel):
     )
     log_filename: Optional[str] = Field(default=None, description="Log file path")
 
-    # Performance (Note: multiprocessing typically not needed for compound generation)
+    # Performance
     hide_progress: bool = Field(default=False, description="Hide progress bars")
+    processes: int = Field(
+        default=1,
+        ge=1,
+        description=(
+            "Number of worker processes used for batch evaluation. Leave at 1 "
+            "for fast evaluators (Lookup, DB, FP, MW), where process overhead "
+            "exceeds the cost of scoring and parallelism makes runs slower. "
+            "Set it to the number of allocated cores for slow evaluators "
+            "(Fred docking, ROCS, ML models), where evaluation dominates "
+            "runtime. Compound generation itself is fast; this parameter "
+            "exists for the evaluation step."
+        ),
+    )
+    min_cpds_per_core: int = Field(
+        default=10,
+        ge=1,
+        description=(
+            "Minimum compounds per worker before a batch is evaluated in "
+            "parallel. Batches smaller than processes * min_cpds_per_core are "
+            "evaluated sequentially to avoid process overhead on small batches."
+        ),
+    )
 
     # Diagnostics
     track_diagnostics: bool = Field(

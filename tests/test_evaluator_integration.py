@@ -246,3 +246,83 @@ class TestEvaluatorIntegration:
         assert evaluator.counter == 1
 
         sampler.close()
+
+
+class TestLookupEvaluatorDefaultScore:
+    """Test LookupEvaluator handling of product codes missing from the table.
+
+    Sparse lookup libraries (e.g. DEL read counts) only measure a small
+    fraction of the combinatorial space. There, an absent combination is a
+    true non-binder (score 0), not missing data. `default_score` makes that
+    distinction configurable while preserving the historical NaN default.
+    """
+
+    def setup_method(self):
+        self.temp_dir = tempfile.mkdtemp()
+        self.lookup_file = os.path.join(self.temp_dir, "sparse_scores.csv")
+        with open(self.lookup_file, "w") as f:
+            f.write("Product_Code,Scores\n")
+            f.write("measured_a,12.5\n")
+            f.write("measured_b,3.0\n")
+
+    def teardown_method(self):
+        shutil.rmtree(self.temp_dir)
+
+    def test_missing_product_returns_nan_by_default(self):
+        """Without default_score, absent products keep the historical NaN."""
+        evaluator = LookupEvaluator({"ref_filename": self.lookup_file})
+
+        assert np.isnan(evaluator.evaluate("never_measured"))
+        assert evaluator.evaluate("measured_a") == 12.5
+
+    def test_missing_product_returns_configured_default(self):
+        """With default_score=0.0, absent products score as true non-binders."""
+        evaluator = LookupEvaluator(
+            {"ref_filename": self.lookup_file, "default_score": 0.0}
+        )
+
+        assert evaluator.evaluate("never_measured") == 0.0
+        assert evaluator.evaluate("measured_a") == 12.5
+
+    def test_default_score_does_not_mask_measured_zeros(self):
+        """A measured score of 0.0 is returned from the table, not the default."""
+        zero_file = os.path.join(self.temp_dir, "with_zero.csv")
+        with open(zero_file, "w") as f:
+            f.write("Product_Code,Scores\n")
+            f.write("measured_zero,0.0\n")
+
+        evaluator = LookupEvaluator(
+            {"ref_filename": zero_file, "default_score": -99.0}
+        )
+
+        # Present-with-zero must not be confused with absent.
+        assert evaluator.evaluate("measured_zero") == 0.0
+        assert evaluator.evaluate("absent") == -99.0
+
+    def test_default_score_flows_through_config_and_factory(self):
+        """LookupEvaluatorConfig -> create_evaluator wires default_score through."""
+        from TACTICS.thompson_sampling.core.evaluator_config import (
+            LookupEvaluatorConfig,
+        )
+        from TACTICS.thompson_sampling.factories import create_evaluator
+
+        config = LookupEvaluatorConfig(
+            ref_filename=self.lookup_file, default_score=0.0
+        )
+        evaluator = create_evaluator(config)
+
+        assert evaluator.default_score == 0.0
+        assert evaluator.evaluate("never_measured") == 0.0
+
+    def test_config_default_is_none_preserving_nan_behavior(self):
+        """The config default must stay None so existing runs are unchanged."""
+        from TACTICS.thompson_sampling.core.evaluator_config import (
+            LookupEvaluatorConfig,
+        )
+        from TACTICS.thompson_sampling.factories import create_evaluator
+
+        config = LookupEvaluatorConfig(ref_filename=self.lookup_file)
+        evaluator = create_evaluator(config)
+
+        assert config.default_score is None
+        assert np.isnan(evaluator.evaluate("never_measured"))

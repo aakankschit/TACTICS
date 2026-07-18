@@ -383,3 +383,101 @@ class TestStrategyIntegration:
             f"Flexible component (idx=1) should be heated more than "
             f"critical component (idx=0): {counts[1]} vs {counts[0]}"
         )
+
+
+class TestRouletteWheelSoftmaxNumerics:
+    """Regression tests for exp() overflow in the CATS Boltzmann softmax.
+
+    The Boltzmann weight is exp(z) where z = (score - mean) / std / temperature.
+    Because z is standardized, it is O(1) for a well-behaved score distribution.
+    But on a heavy-tailed, zero-inflated landscape (e.g. DEL read counts, where
+    most reagents score 0 and a few score very high) a single extreme outlier
+    can push max(z) to ~sqrt(n), and a small CATS temperature divides that
+    further. The naive exp(z) then overflows to inf, and inf/sum(inf) = nan,
+    which makes rng.choice raise "probabilities contain NaN".
+
+    Subtracting max(z) before exponentiating is shift-invariant -- the
+    normalized probabilities are mathematically identical -- but keeps every
+    exponent <= 0, so the largest weight is exp(0) = 1 and overflow is
+    impossible.
+    """
+
+    def _heavy_tailed_reagents(self, n=500):
+        """Zero-inflated reagents: most near zero, one extreme outlier."""
+        from TACTICS.thompson_sampling.core.reagent import Reagent
+
+        reagents = []
+        for i in range(n):
+            r = Reagent(f"r_{i}", "C")
+            r.mean = 0.0
+            r.std = 1e-6  # near-deterministic, so sampled scores ~= means
+            r.n_samples = 10
+            reagents.append(r)
+        # One dominant reagent far out in the tail.
+        reagents[0].mean = 1e6
+        return reagents
+
+    def test_select_reagent_survives_extreme_z_scores(self, monkeypatch):
+        """A tiny temperature on a heavy tail must not produce NaN probabilities."""
+        strategy = RouletteWheelSelection(mode="maximize")
+        reagents = self._heavy_tailed_reagents()
+
+        # Force a very small temperature; the naive exp() would overflow here.
+        monkeypatch.setattr(
+            strategy, "_get_component_temperature", lambda *a, **k: 1e-3
+        )
+
+        rng = np.random.default_rng(42)
+        idx = strategy.select_reagent(reagents, rng=rng, component_idx=0)
+
+        assert 0 <= idx < len(reagents)
+
+    def test_select_batch_survives_extreme_z_scores(self, monkeypatch):
+        """Same guarantee for the batch selection path."""
+        strategy = RouletteWheelSelection(mode="maximize")
+        reagents = self._heavy_tailed_reagents()
+
+        monkeypatch.setattr(
+            strategy, "_get_component_temperature", lambda *a, **k: 1e-3
+        )
+
+        rng = np.random.default_rng(42)
+        indices = strategy.select_batch(reagents, batch_size=10, rng=rng,
+                                        component_idx=0)
+
+        assert len(indices) == 10
+        assert all(0 <= i < len(reagents) for i in indices)
+
+    def test_max_subtraction_is_shift_invariant(self):
+        """The stable form gives identical probabilities where naive doesn't overflow."""
+        rng = np.random.default_rng(0)
+        scores = rng.normal(size=200) * 3.0 + 10.0
+        z = (scores - np.mean(scores)) / np.std(scores) / 0.5
+
+        naive = np.exp(z)
+        naive_probs = naive / np.sum(naive)
+
+        stable = np.exp(z - np.max(z))
+        stable_probs = stable / np.sum(stable)
+
+        assert np.isfinite(naive_probs).all()  # guard: naive is valid here
+        np.testing.assert_allclose(stable_probs, naive_probs, rtol=1e-12)
+
+    def test_naive_softmax_would_overflow_on_this_input(self):
+        """Documents the failure mode the max-subtraction prevents."""
+        z = np.zeros(500)
+        z[0] = 1e4  # the standardized outlier / small-temperature case
+
+        with np.errstate(over="ignore"):
+            naive = np.exp(z)
+            naive_probs = naive / np.sum(naive)
+
+        # Naive overflows to inf and yields NaN after normalization.
+        assert np.isinf(naive).any()
+        assert np.isnan(naive_probs).any()
+
+        # Stable form stays finite and normalized.
+        stable = np.exp(z - np.max(z))
+        stable_probs = stable / np.sum(stable)
+        assert np.isfinite(stable_probs).all()
+        np.testing.assert_allclose(np.sum(stable_probs), 1.0)

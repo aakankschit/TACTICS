@@ -1,408 +1,227 @@
-# TACTICS: Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery
+# TACTICS
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/aakankschit/TACTICS/main/docs/source/_static/images/TACTICS_logo.png" alt="TACTICS Logo" width="600">
 </p>
 
-A comprehensive library for Thompson Sampling-based optimization of chemical combinatorial libraries, featuring a unified architecture with flexible strategy selection, modern Pydantic configuration, and preset configurations for out-of-the-box usage.
+**Find the best compounds in a combinatorial library without enumerating all of them.**
 
-## Quick Start with Interactive Tutorials
+TACTICS (Thompson Sampling-Assisted Chemical Targeting and Iterative Compound
+Selection) uses Thompson Sampling to search ultra-large combinatorial libraries,
+scoring only a small fraction of the products while still recovering most of the
+top hits. A typical run evaluates **1–2% of the library** and recovers **~85–95%
+of the true top-100**.
 
-TACTICS includes interactive [marimo](https://marimo.io) notebooks for learning and exploration.
-For full documentation, see the [TACTICS Documentation](https://aakankschit.github.io/TACTICS/).
+📖 [Documentation](https://aakankschit.github.io/TACTICS/) · 🧪 [Tutorials](#learn-more) · 📋 [Changelog](CHANGELOG.md)
 
-### Installation
+---
+
+## Is this for you?
+
+TACTICS fits if you have:
+
+- A **combinatorial library** defined by a reaction plus lists of reagents
+  (2 or 3 components), and
+- A **scoring function** that is too slow to run on every product — docking,
+  shape similarity, or an ML model — or a big table of precomputed scores.
+
+If your library is small enough to score exhaustively, you don't need TACTICS.
+
+## Install
 
 ```bash
-pip install chem-tactics[tutorials]  # Includes marimo
+pip install chem-tactics
 ```
 
-### Running Tutorials
+Requires Python 3.11+.
 
-**As an interactive app** (recommended for exploration):
+<details>
+<summary>Optional extras and development install</summary>
+
 ```bash
-marimo run tutorials/thompson_sampling_tutorial.py
+pip install chem-tactics[tutorials]   # interactive marimo notebooks
+pip install chem-tactics[test]        # test dependencies
+
+# development install
+git clone https://github.com/aakankschit/TACTICS.git
+cd TACTICS
+pip install -e ".[test]"
 ```
+</details>
 
-**In edit mode** (for learning/modification):
-```bash
-marimo edit tutorials/thompson_sampling_tutorial.py
-```
+## Quickstart
 
-### Available Tutorials
-
-| Tutorial | Description |
-|----------|-------------|
-| `library_enumeration_tutorial.py` | SynthesisPipeline and enumeration |
-| `thompson_sampling_tutorial.py` | Selection strategies comparison |
-| `reaction_config_builder.py` | ReactionConfig builder |
-| `library_component_comparison.py` | Library component analysis |
-| `legacy_vs_current_comparison.py` | Legacy vs current benchmark |
-
-> **Note**: Tutorials default to the bundled Thrombin dataset. Select "Local Data" mode to use your own files.
-
-## Key Features
-
-- **Unified Thompson Sampling Framework**: Single `ThompsonSampler` with pluggable selection strategies
-- **Multiple Selection Strategies**:
-  - Greedy (pure exploitation)
-  - Roulette Wheel (adaptive thermal cycling)
-  - UCB (Upper Confidence Bound)
-  - Epsilon-Greedy (balanced exploration/exploitation)
-  - Bayes-UCB (Bayesian upper confidence bound)
-  - Boltzmann (temperature-based selection)
-- **Warmup Strategies**: Balanced (recommended), Standard, Enhanced
-- **Preset Configurations**: 5 ready-to-use presets for common use cases
-- **Modern Pydantic Configuration**: Type-safe configuration with full validation
-- **Parallel Processing**: Batch mode with multiprocessing for expensive evaluators
-- **Multiple Evaluators**: Lookup, Database, ROCS, Fred, ML classifiers, and more
-- **Synthesis Pipeline**: `SynthesisPipeline` architecture for single-step, alternative SMARTS, and multi-step reactions
-- **SMARTS Toolkit**: `ReactionDef` with built-in validation, visualization, and protecting group support
-- **Library Enumeration**: Efficient generation of combinatorial reaction products with `write_enumerated_library()`
-- **Library Analysis**: Comprehensive analysis and visualization tools
-- **Polars DataFrames**: Fast, efficient data handling throughout
-
-## Package Structure
-
-```
-TACTICS/
-├── thompson_sampling/
-│   ├── config.py              # ThompsonSamplingConfig (Pydantic v2)
-│   ├── presets.py             # Preset configurations
-│   ├── factories.py           # Factory functions for component creation
-│   ├── core/                  # Core unified sampler
-│   │   ├── sampler.py         # ThompsonSampler (unified)
-│   │   ├── evaluators.py      # All evaluator classes
-│   │   └── evaluator_config.py # Evaluator Pydantic configs
-│   ├── strategies/            # Selection strategies
-│   │   ├── greedy.py
-│   │   ├── roulette_wheel.py
-│   │   ├── ucb.py
-│   │   ├── epsilon_greedy.py
-│   │   ├── bayes_ucb.py
-│   │   └── config.py          # Strategy Pydantic configs
-│   ├── warmup/                # Warmup strategies
-│   │   └── config.py          # Warmup Pydantic configs (Balanced, Standard, Enhanced)
-│   └── baseline.py            # Random baseline sampling
-├── library_enumeration/       # Library generation tools
-│   ├── synthesis_pipeline.py  # SynthesisPipeline - main entry point
-│   ├── enumeration_utils.py   # EnumerationResult, EnumerationError
-│   ├── file_writer.py         # write_enumerated_library()
-│   ├── generate_products.py   # Product generation utilities
-│   └── smarts_toolkit/        # SMARTS validation and configuration
-│       ├── config.py          # ReactionDef, ReactionConfig, StepInput, DeprotectionSpec
-│       ├── _validator.py      # ValidationResult, internal validation
-│       └── constants.py       # Protecting groups, salt fragments
-└── library_analysis/          # Analysis and visualization
-```
-
-## Repository Structure
-
-```
-TACTICS/
-├── src/TACTICS/              # Core package (pip installable)
-│   ├── thompson_sampling/    # Thompson Sampling algorithms
-│   ├── library_enumeration/  # Library generation tools
-│   ├── library_analysis/     # Analysis and visualization
-│   └── data/                 # Bundled tutorial datasets
-│       └── thrombin/         # Thrombin inhibitor dataset
-│
-├── tutorials/                # Interactive marimo tutorials
-├── tests/                    # Unit and integration tests
-└── docs/                     # Sphinx documentation
-```
-
-## Quick Start
-
-### Simple Out-of-the-Box Usage with Presets (Recommended)
-
-The easiest way to get started is using presets with `SynthesisPipeline`:
+Screen a two-component amide library against a table of precomputed scores:
 
 ```python
 from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
 from TACTICS.thompson_sampling import ThompsonSampler, get_preset
 from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
 
-# 1. Create synthesis pipeline (single source of truth for reactions)
-rxn_config = ReactionConfig(
+# 1. Describe the library: one reaction + one reagent file per component
+pipeline = SynthesisPipeline(ReactionConfig(
     reactions=[ReactionDef(
         reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
         step_index=0,
-        description="Amide coupling"
     )],
-    reagent_file_list=["acids.smi", "amines.smi"]
-)
-pipeline = SynthesisPipeline(rxn_config)
+    reagent_file_list=["acids.smi", "amines.smi"],
+))
 
-# 2. Create evaluator config
+# 2. Describe how to score a product
 evaluator = LookupEvaluatorConfig(ref_filename="scores.csv")
 
-# 3. Get a preset configuration
-config = get_preset(
-    "fast_exploration",  # Quick screening with epsilon-greedy
-    synthesis_pipeline=pipeline,
-    evaluator_config=evaluator,
-    mode="minimize",  # Use "minimize" for docking scores
-    num_iterations=1000
-)
-
-# 4. Create sampler from config and run
+# 3. Take a tuned preset and run
+config = get_preset(synthesis_pipeline=pipeline, evaluator_config=evaluator)
 sampler = ThompsonSampler.from_config(config)
-warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
-results_df = sampler.search(num_cycles=config.num_ts_iterations)
+
+sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
+results = sampler.search(num_cycles=config.num_ts_iterations)
 sampler.close()
 
-# 5. Analyze top results
-print(results_df.sort("score").head(10))
+print(results.sort("score", descending=True).head(10))
 ```
 
-**Available Presets:**
-- `"fast_exploration"` - Epsilon-greedy strategy, quick screening
-- `"parallel_batch"` - Batch processing with multiprocessing (for slow evaluators)
-- `"conservative_exploit"` - Greedy strategy, focus on best reagents
-- `"balanced_sampling"` - UCB strategy with theoretical guarantees
-- `"diverse_coverage"` - Maximum diversity exploration
+`results` is a Polars DataFrame of every product that was evaluated, with
+columns `score`, `SMILES` and `Name`.
 
-### Parallel Batch Processing (for Expensive Evaluators)
+> With `LookupEvaluator` and `DBEvaluator`, TACTICS skips molecule generation
+> entirely and scores by product code, so `SMILES` reads `FAIL` and products
+> are identified by `Name` (the underscore-joined reagent names). Evaluators
+> that need a molecule — docking, ROCS, fingerprints — populate `SMILES`.
 
-For slow evaluators (docking, ML models), use batch mode with multiprocessing:
+## Slow scoring functions: use more cores
+
+Docking and ROCS take seconds per molecule, so evaluation dominates runtime.
+Set `processes` to the number of cores you have — each worker builds its own
+docking session, so OpenEye evaluators parallelize correctly:
 
 ```python
-from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
-from TACTICS.thompson_sampling import ThompsonSampler, get_preset
 from TACTICS.thompson_sampling.core.evaluator_config import FredEvaluatorConfig
 
-# Create synthesis pipeline
-rxn_config = ReactionConfig(
-    reactions=[ReactionDef(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        step_index=0
-    )],
-    reagent_file_list=["acids.smi", "amines.smi"]
-)
-pipeline = SynthesisPipeline(rxn_config)
-
-# Configure slow evaluator (molecular docking)
-evaluator = FredEvaluatorConfig(design_unit_file="receptor.oedu")
-
-# Get parallel batch preset
 config = get_preset(
-    "parallel_batch",
+    synthesis_pipeline=pipeline,
+    evaluator_config=FredEvaluatorConfig(design_unit_file="receptor.oedu"),
+    mode="minimize",   # docking scores: lower is better
+    batch_size=100,
+)
+config.processes = 32   # or os.cpu_count()
+
+sampler = ThompsonSampler.from_config(config)
+```
+
+> **Leave `processes=1` for `LookupEvaluator` and `DBEvaluator`.** Their lookups
+> are faster than the cost of shipping work to a worker, so parallelism makes
+> those runs *slower*.
+
+> **On macOS/Windows**, guard your entry point with
+> `if __name__ == "__main__":` — the default `spawn` start method re-imports
+> your script in every worker. On a cluster, make sure the `.oedu` receptor is
+> readable from every node (automatic on NFS/GPFS).
+
+## What can I plug in?
+
+**Scoring functions** (`evaluator_config`):
+
+| Evaluator | Use it for | Speed |
+|---|---|---|
+| `LookupEvaluatorConfig` | A CSV/Parquet table of precomputed scores | instant |
+| `DBEvaluatorConfig` | Scores in a SQLite database | instant |
+| `FPEvaluatorConfig` | Fingerprint similarity to a reference ligand | fast |
+| `ROCSEvaluatorConfig` | 3D shape/colour overlay (OpenEye) | slow |
+| `FredEvaluatorConfig` | Docking into a receptor (OpenEye) | slow |
+| `MLClassifierEvaluatorConfig` | A trained scikit-learn model | varies |
+
+**Presets** (`get_preset(name, ...)`):
+
+| Preset | What it does |
+|---|---|
+| `recommended` *(default)* | Top-Two Thompson Sampling — best overall |
+| `recommended_rws` | Roulette wheel with criticality-aware thermal cycling |
+| `baseline` | Balanced warmup + greedy, for measuring what the search adds |
+| `legacy_rws` | Reproduces Zhao et al. 2025 |
+
+Start with `recommended`. If you are benchmarking, run `recommended` and
+`recommended_rws` and take the better result — they favour different library
+structures.
+
+<details>
+<summary>Building a config by hand instead of using a preset</summary>
+
+Presets are just `ThompsonSamplingConfig` objects, so you can construct one
+directly to control the strategy, warmup and search budget:
+
+```python
+from TACTICS.thompson_sampling import ThompsonSamplingConfig, ThompsonSampler
+from TACTICS.thompson_sampling.strategies.config import TopTwoConfig
+from TACTICS.thompson_sampling.warmup.config import EnhancedWarmupConfig
+
+config = ThompsonSamplingConfig(
     synthesis_pipeline=pipeline,
     evaluator_config=evaluator,
-    mode="minimize",  # Docking scores (lower is better)
-    batch_size=100,   # Sample 100 compounds per cycle
-)
-
-# Create sampler and run
-sampler = ThompsonSampler.from_config(config)
-warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
-results_df = sampler.search(num_cycles=config.num_ts_iterations)
-sampler.close()
-```
-
-### Custom Configuration (Advanced)
-
-For full control, create custom configurations:
-
-```python
-from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
-from TACTICS.thompson_sampling import ThompsonSampler, ThompsonSamplingConfig
-from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
-from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
-from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
-
-# Create synthesis pipeline
-rxn_config = ReactionConfig(
-    reactions=[ReactionDef(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        step_index=0
-    )],
-    reagent_file_list=["acids.smi", "amines.smi"]
-)
-pipeline = SynthesisPipeline(rxn_config)
-
-# Create fully customized configuration
-config = ThompsonSamplingConfig(
-    synthesis_pipeline=pipeline,
-    num_ts_iterations=5000,
-    num_warmup_trials=5,
-    strategy_config=RouletteWheelConfig(
-        mode="maximize",
-        alpha=0.1,  # Initial heating temperature
-        beta=0.1,   # Initial cooling temperature
-    ),
-    warmup_config=BalancedWarmupConfig(
-        observations_per_reagent=5,
-        use_per_reagent_variance=True,
-    ),
-    evaluator_config=LookupEvaluatorConfig(
-        ref_filename="scores.csv",
-        score_col="binding_affinity"
-    ),
-    batch_size=10,
-    log_filename="optimization.log"
-)
-
-# Create sampler and run
-sampler = ThompsonSampler.from_config(config)
-warmup_df = sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
-results_df = sampler.search(num_cycles=config.num_ts_iterations)
-sampler.close()
-
-# Save results
-results_df.write_csv("my_results.csv")
-```
-
-### Random Baseline Sampling
-
-```python
-from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
-from TACTICS.thompson_sampling import RandomBaselineConfig, run_random_baseline
-from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
-
-# Create synthesis pipeline
-rxn_config = ReactionConfig(
-    reactions=[ReactionDef(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        step_index=0
-    )],
-    reagent_file_list=["acids.smi", "amines.smi"]
-)
-pipeline = SynthesisPipeline(rxn_config)
-
-config = RandomBaselineConfig(
-    synthesis_pipeline=pipeline,
-    evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
-    num_trials=1000,
-    num_to_save=100,
-    ascending_output=False,
-    outfile_name="random_results.csv"
-)
-
-results_df = run_random_baseline(config)
-```
-
-## Configuration
-
-### Pydantic Configuration Models
-
-The package uses Pydantic v2 for robust configuration validation:
-
-```python
-from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
-from TACTICS.thompson_sampling import ThompsonSamplingConfig
-from TACTICS.thompson_sampling.strategies.config import EpsilonGreedyConfig
-from TACTICS.thompson_sampling.warmup.config import BalancedWarmupConfig
-from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
-
-# Create synthesis pipeline
-rxn_config = ReactionConfig(
-    reactions=[ReactionDef(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
-        step_index=0
-    )],
-    reagent_file_list=["acids.smi", "amines.smi"]
-)
-pipeline = SynthesisPipeline(rxn_config)
-
-# Automatic validation and type checking
-config = ThompsonSamplingConfig(
-    synthesis_pipeline=pipeline,  # Required: single source of truth
+    strategy_config=TopTwoConfig(mode="maximize", beta=0.5),
+    warmup_config=EnhancedWarmupConfig(),
+    num_warmup_trials=3,
     num_ts_iterations=1000,
-    strategy_config=EpsilonGreedyConfig(mode="maximize", epsilon=0.2),
-    warmup_config=BalancedWarmupConfig(),
-    evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
+    batch_size=100,
+    processes=1,
+    seed=42,
 )
+
+sampler = ThompsonSampler.from_config(config)
 ```
 
-### Configuration Validation
+Configs are Pydantic models, so invalid values raise `ValidationError` at
+construction rather than failing mid-run. Other selection strategies —
+`GreedyConfig`, `RouletteWheelConfig`, `UCBConfig`, `EpsilonGreedyConfig`,
+`BayesUCBConfig` — are available for baselines and comparisons.
 
-```python
-from pydantic import ValidationError
+See the [configuration docs](https://aakankschit.github.io/TACTICS/) for the
+full reference.
+</details>
 
-# Invalid configuration raises ValidationError
-try:
-    rxn = ReactionDef(
-        reaction_smarts="invalid-smarts",  # ValidationError: Invalid SMARTS
-        step_index=0
-    )
-except ValidationError as e:
-    print(f"Configuration error: {e}")
-```
+## Learn more
 
-## Testing
-
-The package includes comprehensive tests for configuration validation:
+Interactive [marimo](https://marimo.io) notebooks in `tutorials/` (they default
+to a bundled thrombin dataset, so they run with no setup):
 
 ```bash
-# Run all tests
-pytest tests/
-
-# Run configuration tests
-pytest tests/test_config_validation.py -v
-
-# Run with coverage
-pytest tests/ --cov=TACTICS --cov-report=html
+marimo run tutorials/thompson_sampling_tutorial.py    # compare strategies
+marimo edit tutorials/library_enumeration_tutorial.py # build a library
 ```
 
-## Documentation
+| Tutorial | What it covers |
+|---|---|
+| `thompson_sampling_tutorial.py` | Comparing selection strategies |
+| `library_enumeration_tutorial.py` | `SynthesisPipeline` and enumeration |
+| `reaction_config_builder.py` | Building and validating reaction SMARTS |
+| `custom_evaluator_tester.py` | Writing your own evaluator |
 
-- **Full Documentation**: [TACTICS Documentation](https://aakankschit.github.io/TACTICS/)
-- **Interactive Tutorials**: See `tutorials/` for marimo notebooks
-- **API Reference**: Build locally with `cd docs && make html`
-
-## Installation
-
-```bash
-# Clone repository and install package in development mode
-git clone https://github.com/aakankschit/TACTICS.git
-cd TACTICS
-pip install -e .
-
-# With interactive tutorials (marimo):
-pip install -e ".[tutorials]"
-
-# With test dependencies:
-pip install -e ".[test]"
-```
-
-## Requirements
-
-- Python 3.11+
-- Multiprocessing support
+- **API reference and guides**: [TACTICS Documentation](https://aakankschit.github.io/TACTICS/)
+- **Runnable scripts**: see `examples/`
+- **Build docs locally**: `cd docs && make html`
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass
-6. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+Fork, branch, add tests for new behaviour, make sure `pytest tests/` passes,
+then open a pull request.
 
 ## Citation
 
-If you use TACTICS in your research, please cite:
-
 ```bibtex
 @software{tactics,
-    title={TACTICS: Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery},
+    title={TACTICS: Thompson Sampling-Assisted Chemical Targeting and
+           Iterative Compound Selection for Drug Discovery},
     author={Aakankschit Nandkeolyar},
     year={2025},
-    url={https://github.com/your-org/TACTICS}
+    url={https://github.com/aakankschit/TACTICS}
 }
 ```
 
 ## Support
 
-For questions and support:
-- Open an issue on GitHub
-- Contact: anandkeo@uci.edu
+Open an issue on GitHub, or contact anandkeo@uci.edu.
+
+Licensed under the MIT License — see [LICENSE](LICENSE).
 
 ---
 
