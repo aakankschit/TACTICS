@@ -231,6 +231,7 @@ def create_evaluator(config: EvaluatorConfig) -> Evaluator:
             "ref_filename": config.ref_filename,
             "compound_col": config.compound_col,
             "score_col": config.score_col,
+            "default_score": config.default_score,
         }
         return LookupEvaluator(json.dumps(input_dict))
 

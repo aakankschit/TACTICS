@@ -141,6 +141,10 @@ class LookupEvaluator(Evaluator):
         ref_filename = input_dictionary['ref_filename']
         compound_col = input_dictionary.get('compound_col', 'Product_Code')
         score_col = input_dictionary.get('score_col', 'Scores')
+        # Score for product codes absent from the table. None preserves the
+        # historical np.nan behavior; 0.0 is used for sparse DEL read-count
+        # libraries where an unmeasured combination is a true non-binder.
+        self.default_score = input_dictionary.get('default_score', None)
 
         # Determine file type and read accordingly
         if ref_filename.endswith('.parquet'):
@@ -158,8 +162,11 @@ class LookupEvaluator(Evaluator):
 
     def evaluate(self, product_name):
         self.num_evaluations += 1
-        # Return score from lookup, or np.nan if product not in reference
-        return self.ref_dict.get(product_name, np.nan)
+        # Return score from lookup. If the product is absent, return the
+        # configured default (e.g. 0.0 for sparse read-count libraries) or
+        # np.nan when no default is set (sampler skips NaN evaluations).
+        missing = self.default_score if self.default_score is not None else np.nan
+        return self.ref_dict.get(product_name, missing)
 
 class DBEvaluator(Evaluator):
     """A simple evaluator class that looks up values from a database.
