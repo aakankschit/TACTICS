@@ -71,9 +71,6 @@ from .generate_products import (
     generate_all_combinations,
 )
 
-# Multiprocessing utilities
-from .multiprocessing_utils import initializer
-
 # Re-export smarts_toolkit classes for convenience
 from .smarts_toolkit import (
     ReactionDef,
@@ -102,8 +99,6 @@ __all__ = [
     # Product generation
     "enumerate_products",
     "generate_all_combinations",
-    # Multiprocessing
-    "initializer",
     # Config (re-exported from smarts_toolkit)
     "ReactionDef",
     "ReactionConfig",

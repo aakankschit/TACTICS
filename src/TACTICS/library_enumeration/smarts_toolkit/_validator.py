@@ -288,9 +288,7 @@ class _SMARTSValidator:
 
     def _load_csv_file(self, path: Path) -> Tuple[List[Tuple[str, str]], bool]:
         """Load SMILES from CSV file."""
-        import pandas as pd
-
-        df = pd.read_csv(path)
+        df = pl.read_csv(path)
 
         smiles_col = None
         name_col = None
@@ -308,7 +306,7 @@ class _SMARTSValidator:
         has_original_names = name_col is not None
 
         reagents = []
-        for idx, row in df.iterrows():
+        for idx, row in enumerate(df.iter_rows(named=True)):
             smiles = row[smiles_col]
             name = row[name_col] if name_col else f"R{idx}"
             reagents.append((smiles, name))

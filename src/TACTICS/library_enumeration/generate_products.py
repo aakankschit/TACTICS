@@ -19,7 +19,6 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 
 from .enumeration_utils import EnumerationError, EnumerationResult
-from .multiprocessing_utils import initializer
 
 logger = logging.getLogger(__name__)
 
@@ -253,7 +252,7 @@ def _enumerate_parallel(
 
     # Run in parallel
     ctx = get_context("spawn")
-    with ctx.Pool(n_jobs, initializer=initializer) as pool:
+    with ctx.Pool(n_jobs) as pool:
         func = partial(
             _worker_enumerate,
             worker_data=worker_data,

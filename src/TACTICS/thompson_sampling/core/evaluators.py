@@ -2,8 +2,7 @@ import os
 import warnings
 from abc import ABC, abstractmethod
 import numpy as np
-
-import useful_rdkit_utils as uru
+import polars as pl
 
 # OpenEye toolkit modules are loaded lazily by _ensure_openeye() rather than
 # at module import time. They stay None until an OpenEye-backed evaluator is
@@ -59,8 +58,11 @@ def _ensure_openeye():
 
 
 from rdkit import Chem, DataStructs
-import pandas as pd
+from rdkit.Chem import Descriptors, rdFingerprintGenerator
 from sqlitedict import SqliteDict
+
+# Shared Morgan (ECFP4-equivalent) generator: radius 2, 2048 bits.
+_MORGAN_GEN = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
 
 class Evaluator(ABC):
     @abstractmethod
@@ -86,7 +88,7 @@ class MWEvaluator(Evaluator):
 
     def evaluate(self, mol):
         self.num_evaluations += 1
-        return uru.MolWt(mol)
+        return Descriptors.MolWt(mol)
 
 
 class FPEvaluator(Evaluator):
@@ -95,7 +97,10 @@ class FPEvaluator(Evaluator):
 
     def __init__(self, input_dict):
         self.ref_smiles = input_dict["query_smiles"]
-        self.ref_fp = uru.smi2morgan_fp(self.ref_smiles)
+        ref_mol = Chem.MolFromSmiles(self.ref_smiles)
+        if ref_mol is None:
+            raise ValueError(f"Could not parse query_smiles: {self.ref_smiles!r}")
+        self.ref_fp = _MORGAN_GEN.GetFingerprint(ref_mol)
         self.num_evaluations = 0
 
     @property
@@ -104,7 +109,7 @@ class FPEvaluator(Evaluator):
 
     def evaluate(self, rd_mol_in):
         self.num_evaluations += 1
-        rd_mol_fp = uru.mol2morgan_fp(rd_mol_in)
+        rd_mol_fp = _MORGAN_GEN.GetFingerprint(rd_mol_in)
         return DataStructs.TanimotoSimilarity(self.ref_fp, rd_mol_fp)
 
 
@@ -192,13 +197,15 @@ class LookupEvaluator(Evaluator):
 
         # Determine file type and read accordingly
         if ref_filename.endswith('.parquet'):
-            ref_df = pd.read_parquet(ref_filename)
+            ref_df = pl.read_parquet(ref_filename, columns=[compound_col, score_col])
         elif ref_filename.endswith('.csv'):
-            ref_df = pd.read_csv(ref_filename)
+            ref_df = pl.read_csv(ref_filename, columns=[compound_col, score_col])
         else:
             raise ValueError(f"Unsupported file format: {ref_filename}. Supported formats: .csv, .parquet")
 
-        self.ref_dict = dict([(a, b) for a, b in ref_df[[compound_col, score_col]].values])
+        # Null score cells become NaN so the sampler's NaN-skip path applies.
+        scores = [s if s is not None else np.nan for s in ref_df[score_col].to_list()]
+        self.ref_dict = dict(zip(ref_df[compound_col].to_list(), scores))
 
     @property
     def counter(self):
@@ -386,6 +393,6 @@ class MLClassifierEvaluator(Evaluator):
 
     def evaluate(self, mol):
         self.num_evaluations += 1
-        fp = uru.mol2morgan_fp(mol)
+        fp = _MORGAN_GEN.GetFingerprint(mol)
         return self.cls.predict_proba([fp])[:,1][0]
 

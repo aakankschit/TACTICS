@@ -20,16 +20,12 @@ dependencies = [
     "rdkit",
     "numpy",
     "scipy",
-    "pandas",
     "polars",
     "tqdm",
     "sqlitedict",
-    "seaborn",
     "matplotlib",
     "altair",
     "joblib",
-    "dill",
-    "useful_rdkit_utils"
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",

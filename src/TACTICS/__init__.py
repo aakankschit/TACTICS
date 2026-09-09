@@ -28,9 +28,6 @@ Selection strategies (baselines):
     - :class:`BayesUCBSelection`: Bayesian UCB
 """
 
-# Library enumeration
-from .library_enumeration import initializer
-
 # Configuration
 from .thompson_sampling.config import ThompsonSamplingConfig
 
@@ -114,9 +111,6 @@ __all__ = [
     "FPEvaluator",
     "MWEvaluator",
     "MLClassifierEvaluator",
-
-    # Library enumeration
-    "initializer",
 
     # Utilities
     "get_logger",
