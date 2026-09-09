@@ -1,8 +1,8 @@
-from .library_analysis_utils import compile_product_scores, compile_product_smiles
-from .library_analysis import LibraryAnalysis
-from .visualization import LibraryVisualization
+"""Analysis and visualisation utilities for TACTICS benchmark output.
 
-__all__ = [
-    'LibraryAnalysis',
-    'LibraryVisualization'
-]
+Plotting requires the optional ``viz`` extra (``pip install chem-tactics[viz]``).
+"""
+
+from .visualization import TS_Benchmarks
+
+__all__ = ["TS_Benchmarks"]
