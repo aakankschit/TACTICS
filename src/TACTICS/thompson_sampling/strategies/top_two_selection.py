@@ -44,11 +44,6 @@ class TopTwoSelection(SelectionStrategy):
             >1 inflates uncertainty → more TT-TS disagreement → exploration.
         cooled_scale: Multiplier on posterior std for cooled components.
             <1 deflates uncertainty → more TT-TS agreement → exploitation.
-        min_observations: DEPRECATED and inert. Formerly gated GMIC to 0.0
-            until every active reagent had this many observations; that gate
-            was removed (see _calculate_gmic) because a single under-observed
-            reagent could pin a whole component's GMIC to zero. Accepted and
-            stored only for backward compatibility with existing configs.
     """
 
     def __init__(
@@ -57,7 +52,6 @@ class TopTwoSelection(SelectionStrategy):
         beta: float = 0.5,
         heated_scale: float = 1.5,
         cooled_scale: float = 0.75,
-        min_observations: int = 5,
         adaptive_temperature: bool = False,
         scale_increment: float = 0.01,
         cooled_scale_increment: float = 0.001,
@@ -79,7 +73,6 @@ class TopTwoSelection(SelectionStrategy):
         self.initial_cooled_scale = cooled_scale
         self.heated_scale = heated_scale
         self.cooled_scale = cooled_scale
-        self.min_observations = min_observations
 
         # Adaptive thermal cycling parameters (legacy efficiency-based)
         self.adaptive_temperature = adaptive_temperature

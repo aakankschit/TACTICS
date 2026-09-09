@@ -22,15 +22,11 @@ class RouletteWheelSelection(SelectionStrategy):
         mode="maximize",
         alpha=0.1,
         beta=0.1,
-        exploration_phase_end=0.20,
-        transition_phase_end=0.60,
-        min_observations=5,
         adaptive_temperature=False,
         alpha_increment=0.01,
         beta_increment=0.001,
         efficiency_threshold=0.10,
         alpha_max=2.0,
-        cats_exploration_fraction=0.3,
         cats_range=None,
         divergence_threshold=0.1,
         cats_ema_decay=None,
@@ -43,17 +39,11 @@ class RouletteWheelSelection(SelectionStrategy):
             mode: "maximize" or "minimize" optimization mode
             alpha: Base temperature for heated component (default: 0.1)
             beta: Base temperature for cooled component (default: 0.1)
-            exploration_phase_end: Fraction of iterations before CATS starts (default: 0.20)
-            transition_phase_end: Fraction of iterations when CATS is fully applied (default: 0.60)
-            min_observations: Minimum observations per reagent before trusting criticality (default: 5)
             adaptive_temperature: Enable legacy-inspired adaptive temperature control (default: False)
             alpha_increment: Amount to increase alpha when efficiency drops (default: 0.01)
             beta_increment: Amount to increase beta when zero unique found (default: 0.001)
             efficiency_threshold: Efficiency below which alpha is incremented (default: 0.10)
             alpha_max: Maximum alpha value (default: 2.0)
-            cats_exploration_fraction: Fraction of total cycles during which CATS explores
-                at full strength. After this point, CATS influence decays linearly if
-                criticality remains low. Set to None to disable decay (default: 0.5).
             cats_range: Override alpha/beta-derived CATS multiplier range. If set,
                 cats_max = cats_range, cats_min = 1/cats_range. (default: None)
             divergence_threshold: KL divergence threshold for switching from diversity
@@ -74,12 +64,6 @@ class RouletteWheelSelection(SelectionStrategy):
         self.beta_increment = beta_increment
         self.efficiency_threshold = efficiency_threshold
         self.alpha_max = alpha_max
-
-        # CATS parameters
-        self.exploration_phase_end = exploration_phase_end
-        self.transition_phase_end = transition_phase_end
-        self.min_observations = min_observations
-        self.cats_exploration_fraction = cats_exploration_fraction
 
         # Thermal cycling state
         self.current_component_idx = 0

@@ -45,8 +45,6 @@ class BayesUCBSelection(SelectionStrategy):
         mode="maximize",
         initial_p_high=0.90,
         initial_p_low=0.60,
-        exploration_phase_end=0.20,
-        transition_phase_end=0.60,
         min_observations=5,
         cats_exploration_fraction=0.3,
         criticality_metric="ipr",
@@ -60,8 +58,6 @@ class BayesUCBSelection(SelectionStrategy):
             mode: "maximize" or "minimize" optimization mode
             initial_p_high: Base percentile for heated component (default: 0.90)
             initial_p_low: Base percentile for cooled component (default: 0.60)
-            exploration_phase_end: Fraction of iterations before CATS starts (default: 0.20)
-            transition_phase_end: Fraction of iterations when CATS is fully applied (default: 0.60)
             min_observations: Minimum observations per reagent before trusting criticality (default: 5)
             cats_exploration_fraction: Fraction of total cycles during which CATS explores
                 at full strength. After this point, CATS influence decays linearly if
@@ -81,8 +77,6 @@ class BayesUCBSelection(SelectionStrategy):
         self.p_low = initial_p_low
 
         # CATS parameters
-        self.exploration_phase_end = exploration_phase_end
-        self.transition_phase_end = transition_phase_end
         self.min_observations = min_observations
         self.cats_exploration_fraction = cats_exploration_fraction
         self.criticality_metric = criticality_metric

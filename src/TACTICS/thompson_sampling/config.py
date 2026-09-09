@@ -127,9 +127,6 @@ class ThompsonSamplingConfig(BaseModel):
     batch_size: int = Field(
         default=1, gt=0, description="Compounds to sample per iteration"
     )
-    max_resamples: Optional[int] = Field(
-        default=None, gt=0, description="Max resampling attempts for duplicates"
-    )
 
     # Output
     results_filename: Optional[str] = Field(

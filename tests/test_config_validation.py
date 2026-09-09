@@ -135,13 +135,11 @@ class TestConfigValidation:
             results_filename="results.csv",
             log_filename="test.log",
             batch_size=5,
-            max_resamples=100,
         )
 
         assert config.results_filename == "results.csv"
         assert config.log_filename == "test.log"
         assert config.batch_size == 5
-        assert config.max_resamples == 100
 
     def test_validation_errors_missing_pipeline(self):
         """

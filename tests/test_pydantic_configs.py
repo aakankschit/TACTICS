@@ -256,21 +256,6 @@ class TestThompsonSamplingConfig:
                 evaluator_config=MWEvaluatorConfig(),
             )
 
-    def test_max_resamples_validation(self):
-        """Test max_resamples can be set."""
-        config = ThompsonSamplingConfig(
-            synthesis_pipeline=self.pipeline,
-            num_ts_iterations=100,
-            max_resamples=500,
-            strategy_config=GreedyConfig(),
-            evaluator_config=MWEvaluatorConfig(),
-        )
-        assert config.max_resamples == 500
-
-
-class TestPresets:
-    """Tests for configuration presets."""
-
     def setup_method(self):
         """Set up test fixtures."""
         self.temp_dir = tempfile.mkdtemp()

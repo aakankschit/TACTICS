@@ -60,7 +60,6 @@ class ThompsonSampler:
         warmup_strategy: WarmupStrategy = None,
         log_filename: str = None,
         batch_size: int = 1,
-        max_resamples: int = None,
         processes: int = 1,
         min_cpds_per_core: int = 10,
         product_library_file: Optional[str] = None,
@@ -81,7 +80,6 @@ class ThompsonSampler:
         self.logger = get_logger(__name__, filename=log_filename)
         self._disallow_tracker = None
         self.batch_size = batch_size
-        self.max_resamples = max_resamples
         self.hide_progress = False
         self.num_prods = 0
         self.processes = processes
@@ -184,7 +182,6 @@ class ThompsonSampler:
             warmup_strategy=warmup,
             log_filename=config.log_filename,
             batch_size=config.batch_size,
-            max_resamples=config.max_resamples,
             processes=config.processes,
             min_cpds_per_core=config.min_cpds_per_core,
             product_library_file=config.product_library_file,
@@ -620,7 +617,6 @@ class ThompsonSampler:
 
         out_list = []
         rng = self._rng
-        n_resamples = 0
         n_components = len(self.reagent_lists)
 
         # Accumulator for compounds to evaluate in parallel
@@ -681,12 +677,6 @@ class ThompsonSampler:
                 combinations.append(selected_reagents)
                 compounds_to_evaluate.append(selected_reagents)
                 n_unique += 1
-                n_resamples = 0
-
-            # Check stopping criteria
-            if self.max_resamples and n_resamples >= self.max_resamples:
-                self.logger.info(f"Stopping: {n_resamples} consecutive resamples")
-                break
 
             # Trigger evaluation when we have enough compounds OR at end of cycles
             should_evaluate = (
@@ -728,17 +718,6 @@ class ThompsonSampler:
                         )
                         if state is not None:
                             self._diagnostics_records.append(state)
-                        else:
-                            # Fallback to legacy 3-column schema
-                            crit = self.selection_strategy.get_component_criticality(
-                                reagent_list
-                            )
-                            if crit is not None:
-                                self._diagnostics_records.append({
-                                    "cycle": cycle,
-                                    "component_idx": comp_idx,
-                                    "criticality": crit,
-                                })
 
                 # Clear accumulator
                 compounds_to_evaluate = []
@@ -855,8 +834,10 @@ class ThompsonSampler:
         "final_temperature": pl.Float64,
     }
 
-    _LEGACY_DIAGNOSTICS_SCHEMA = {
-        "cycle": pl.Int64,
+    # Minimal schema for the empty frame: the three columns every
+    # strategy-specific schema above shares.
+    _EMPTY_DIAGNOSTICS_SCHEMA = {
+        "current_cycle": pl.Int64,
         "component_idx": pl.Int64,
         "criticality": pl.Float64,
     }
@@ -874,18 +855,17 @@ class ThompsonSampler:
           temperature pipeline (base_temp, cats_multiplier, final_temperature).
         - **BayesUCBSelection**: 18-column IPR schema with participation ratio,
           SNR dampening, and observation-gated weights.
-        - **Other strategies**: 3-column legacy schema (cycle, component_idx,
-          criticality).
 
-        All enhanced schemas share ``current_cycle`` (not ``cycle``) and
+        All schemas share ``current_cycle``, ``component_idx`` and
         ``criticality`` columns, so downstream analysis functions work
-        across strategies.
+        across strategies. Strategies without component state (Greedy, UCB,
+        EpsilonGreedy) record nothing.
 
-        Returns an empty DataFrame (with the legacy schema) if diagnostics
-        were not tracked or the strategy doesn't support criticality.
+        Returns an empty DataFrame with just those three shared columns if
+        diagnostics were not tracked or the strategy records no state.
         """
         if not self._diagnostics_records:
-            return pl.DataFrame(schema=self._LEGACY_DIAGNOSTICS_SCHEMA)
+            return pl.DataFrame(schema=self._EMPTY_DIAGNOSTICS_SCHEMA)
 
         # Detect schema from first record.
         # Order matters: TT-TS check before GMIC (both have "gmic").
@@ -902,17 +882,11 @@ class ThompsonSampler:
                 self._diagnostics_records,
                 schema=self._GMIC_DIAGNOSTICS_SCHEMA,
             )
-        elif "current_cycle" in first:
+        else:
             # IPR schema (BayesUCB)
             return pl.DataFrame(
                 self._diagnostics_records,
                 schema=self._IPR_DIAGNOSTICS_SCHEMA,
-            )
-        else:
-            # Legacy 3-column schema
-            return pl.DataFrame(
-                self._diagnostics_records,
-                schema=self._LEGACY_DIAGNOSTICS_SCHEMA,
             )
 
     def get_posterior_landscape(self) -> pl.DataFrame:
