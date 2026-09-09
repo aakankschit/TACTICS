@@ -14,9 +14,9 @@ Preset hierarchy:
     ``"baseline"``
         Balanced warmup + Greedy selection. Isolates the framework's warmup
         contribution (+1.5 pts on 2-component libraries via warmup alone).
-    ``"legacy_rws"``
-        Reproduces the original RWS algorithm from Zhao et al. (2025).
-        Pass ``mode="minimize"`` for docking.
+
+The original Zhao et al. (2025) RWS reproduction (``legacy_rws``) was removed
+in 2.0; use chem-tactics 1.2.0 to reproduce those numbers.
 """
 
 from typing import Literal, Optional, TYPE_CHECKING
@@ -64,9 +64,6 @@ class ConfigPresets:
 
     Baseline:
         - ``baseline``: Balanced + Greedy (isolates warmup contribution)
-
-    Legacy (for reproducing published results):
-        - ``legacy_rws``: Original RWS algorithm (pass ``mode`` for direction)
     """
 
     @staticmethod
@@ -189,56 +186,6 @@ class ConfigPresets:
             log_filename=log_filename,
         )
 
-    @staticmethod
-    def legacy_rws(
-        synthesis_pipeline: "SynthesisPipeline",
-        evaluator_config,
-        num_iterations: int = 18500,
-        max_resamples: int = 6000,
-        mode: Literal["maximize", "minimize"] = "maximize",
-        output_dir: Optional[str] = None,
-    ) -> ThompsonSamplingConfig:
-        """
-        Legacy RWS (reproduces Zhao et al. 2025).
-
-        Replicates the original Enhanced Thompson Sampling algorithm:
-        - Enhanced warmup (stochastic parallel pairing)
-        - Roulette Wheel Selection with Boltzmann thermal cycling
-        - Unweighted round-robin component rotation (no GMIC)
-
-        Use this only for reproducing published results. For new work,
-        use ``"recommended"`` or ``"recommended_rws"`` instead.
-
-        The ``mode`` parameter controls optimization direction:
-        - ``"maximize"``: higher scores are better (e.g., ROCS similarity)
-        - ``"minimize"``: lower scores are better (e.g., docking scores)
-
-        Internally, minimize mode negates scores before Boltzmann weighting
-        so that lower raw scores receive higher Boltzmann weights.
-
-        Args:
-            synthesis_pipeline: SynthesisPipeline with reaction config and reagent files
-            evaluator_config: Evaluator configuration
-            num_iterations: Number of iterations (default: 18500, matching paper)
-            max_resamples: Early stopping after consecutive duplicates (default: 6000)
-            mode: "maximize" or "minimize" (default: "maximize")
-            output_dir: Directory to save output files (optional)
-        """
-        results_filename, log_filename = _output_paths(output_dir, "legacy_rws")
-        return ThompsonSamplingConfig(
-            synthesis_pipeline=synthesis_pipeline,
-            num_ts_iterations=num_iterations,
-            num_warmup_trials=5,
-            strategy_config=RouletteWheelConfig(mode=mode, alpha=0.1, beta=0.1),
-            warmup_config=EnhancedWarmupConfig(),
-            evaluator_config=evaluator_config,
-            batch_size=1,
-            max_resamples=max_resamples,
-            use_boltzmann_weighting=True,
-            results_filename=results_filename,
-            log_filename=log_filename,
-        )
-
 
 def get_preset(
     preset_name: str = "recommended",
@@ -255,7 +202,6 @@ def get_preset(
             - ``"recommended"``: Enhanced + TT-TS + Boltzmann (best overall, 86.1%)
             - ``"recommended_rws"``: Enhanced + RWS/CATS + Boltzmann (85.5%)
             - ``"baseline"``: Balanced + Greedy (isolates warmup contribution)
-            - ``"legacy_rws"``: Original RWS algorithm (reproduces Zhao et al. 2025)
 
         synthesis_pipeline: SynthesisPipeline with reaction config and reagent files
         evaluator_config: Evaluator configuration
@@ -287,7 +233,6 @@ def get_preset(
         "recommended": ConfigPresets.recommended,
         "recommended_rws": ConfigPresets.recommended_rws,
         "baseline": ConfigPresets.baseline,
-        "legacy_rws": ConfigPresets.legacy_rws,
     }
 
     if preset_name not in presets:
