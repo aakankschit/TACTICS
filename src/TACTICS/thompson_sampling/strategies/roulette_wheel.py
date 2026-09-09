@@ -2,9 +2,10 @@ import warnings
 from typing import Any, Dict, List, Optional
 import numpy as np
 from .base_strategy import SelectionStrategy
+from ._thermal import GMICCriticalityMixin
 
 
-class RouletteWheelSelection(SelectionStrategy):
+class RouletteWheelSelection(GMICCriticalityMixin, SelectionStrategy):
     """
     Roulette wheel selection with Component-Aware Thompson Sampling (CATS).
 
@@ -65,10 +66,8 @@ class RouletteWheelSelection(SelectionStrategy):
         self.efficiency_threshold = efficiency_threshold
         self.alpha_max = alpha_max
 
-        # Thermal cycling state
-        self.current_component_idx = 0
-        # Mean criticality across components (updated by rotate_component_weighted)
-        self._mean_criticality: float = 0.5
+        # Thermal cycling + GMIC cache (see _thermal.GMICCriticalityMixin)
+        self._init_gmic_state()
 
         # Derive CATS range from alpha/beta ratio or explicit override
         if cats_range is not None:
@@ -89,8 +88,6 @@ class RouletteWheelSelection(SelectionStrategy):
         self._posterior_snapshots: Dict[int, tuple] = {}
         # Per-component divergence values: {comp_idx: float}
         self._divergence_values: Dict[int, float] = {}
-        # Cached GMIC per component (updated by rotate_component_weighted)
-        self._cached_gmics: Dict[int, float] = {}
         # CATS EMA smoothing for relative GMIC
         self.cats_ema_decay = cats_ema_decay
         self._ema_relative_gmic: Dict[int, float] = {}
@@ -104,49 +101,6 @@ class RouletteWheelSelection(SelectionStrategy):
                 UserWarning,
                 stacklevel=2,
             )
-
-    def _calculate_gmic(self, reagent_list) -> float:
-        """
-        Calculate Gaussian Mutual Information Criticality (GMIC) for a component.
-
-        GMIC measures how much information the posterior means carry about which
-        reagent is best, relative to the noise level. High GMIC = critical component
-        (clear winners), low GMIC = flexible component (all reagents similar).
-
-        Returns:
-            GMIC value >= 0. Returns 0.0 if insufficient data.
-        """
-        active = [r for r in reagent_list if r.n_samples > 0]
-        if len(active) < 2:
-            return 0.0
-        means = np.array([r.mean for r in active])
-        signal = np.var(means)
-        noise = np.mean([r.std ** 2 for r in active])
-        return 0.5 * np.log1p(signal / max(noise, 1e-10))
-
-    def _calculate_gmic_details(self, reagent_list) -> tuple:
-        """
-        Calculate GMIC with full diagnostic details.
-
-        Returns:
-            Tuple of (gmic, details_dict) where details_dict contains
-            signal_var, mean_noise_var, n_active_reagents.
-        """
-        active = [r for r in reagent_list if r.n_samples > 0]
-        details = {
-            "signal_var": float("nan"),
-            "mean_noise_var": float("nan"),
-            "n_active_reagents": len(active),
-        }
-        if len(active) < 2:
-            return 0.0, details
-        means = np.array([r.mean for r in active])
-        signal = float(np.var(means))
-        noise = float(np.mean([r.std ** 2 for r in active]))
-        details["signal_var"] = signal
-        details["mean_noise_var"] = noise
-        gmic = 0.5 * np.log1p(signal / max(noise, 1e-10))
-        return float(gmic), details
 
     def _update_divergence(self, component_idx: int, reagent_list) -> float:
         """
@@ -320,10 +274,6 @@ class RouletteWheelSelection(SelectionStrategy):
         self._last_component_states[component_idx] = state
         return state
 
-    def get_component_criticality(self, reagent_list) -> float:
-        """Return GMIC criticality score for a component."""
-        return self._calculate_gmic(reagent_list)
-
     def get_component_state(
         self,
         reagent_list: List,
@@ -429,74 +379,6 @@ class RouletteWheelSelection(SelectionStrategy):
 
         return rng.choice(len(reagent_list), p=probs)
 
-    def select_batch(self, reagent_list, batch_size, disallow_mask=None, **kwargs):
-        """
-        Select multiple reagents using roulette wheel selection with CATS (batch mode).
-
-        This is more efficient than calling select_reagent multiple times
-        as it computes probabilities once and samples multiple times.
-
-        Args:
-            reagent_list: List of Reagent objects with posterior distributions
-            batch_size: Number of reagents to select
-            disallow_mask: Optional set of indices to exclude from selection
-            **kwargs: Additional context:
-                - rng: Random number generator
-                - component_idx: Which reaction component
-                - current_cycle: Current search cycle (for CATS)
-                - total_cycles: Total number of cycles (for CATS)
-
-        Returns:
-            Array of selected reagent indices
-        """
-        rng = kwargs.get("rng", np.random.default_rng())
-        component_idx = kwargs.get("component_idx", 0)
-        current_cycle = kwargs.get("current_cycle", 0)
-        total_cycles = kwargs.get("total_cycles", 1)
-
-        # Sample base scores
-        stds = np.array([r.std for r in reagent_list])
-        mu = np.array([r.mean for r in reagent_list])
-        scores = rng.normal(size=len(reagent_list)) * stds + mu
-
-        # Invert scores for minimize mode
-        if self.mode not in ["maximize", "maximize_boltzmann"]:
-            scores = -scores
-
-        # Get CATS-adjusted temperature
-        effective_temp = self._get_component_temperature(
-            component_idx, reagent_list, current_cycle, total_cycles, rng=rng
-        )
-
-        # Apply temperature via Boltzmann distribution
-        # Handle case where all scores are identical (std=0)
-        score_std = np.std(scores)
-        if score_std < 1e-10:
-            # All scores identical, use uniform distribution
-            probs = np.ones(len(reagent_list)) / len(reagent_list)
-        else:
-            # Numerically stable softmax: subtract the max of the exponent
-            # argument (shift-invariant, so probabilities are identical) to
-            # avoid exp() overflow when the sampled-score spread is large
-            # relative to a small CATS temperature — as on the heavy-tailed,
-            # zero-inflated read-count landscape.
-            z = (scores - np.mean(scores)) / score_std / effective_temp
-            scores = np.exp(z - np.max(z))
-            # Normalize to probabilities
-            probs = scores / np.sum(scores)
-
-        # Apply disallow mask
-        if disallow_mask:
-            probs[np.array(list(disallow_mask))] = 0
-            if np.sum(probs) > 0:
-                probs = probs / np.sum(probs)  # Renormalize
-            else:
-                # All reagents disallowed - uniform fallback
-                probs = np.ones(len(reagent_list)) / len(reagent_list)
-
-        # Sample batch_size reagents with replacement
-        return rng.choice(len(reagent_list), size=batch_size, p=probs)
-
     def adapt_temperatures(self, n_unique, n_attempted):
         """
         Adapt temperatures based on sampling efficiency (legacy RWS-inspired).
@@ -508,6 +390,10 @@ class RouletteWheelSelection(SelectionStrategy):
         Mirrors the adaptive mechanism from the ETS paper's RWSSampler:
         - alpha += alpha_increment when efficiency < threshold
         - beta += beta_increment when zero unique compounds found
+
+        Kept separate from TopTwoSelection.adapt_temperatures on purpose: the
+        zero-unique branches differ in direction (this heats beta upward;
+        TT-TS cools cooled_scale downward with a floor).
 
         Args:
             n_unique: Number of unique compounds generated in this batch
@@ -531,52 +417,6 @@ class RouletteWheelSelection(SelectionStrategy):
             adjusted = True
 
         return adjusted
-
-    def rotate_component(self, n_components: int):
-        """
-        Rotate to the next component for thermal cycling.
-
-        Parameters:
-        -----------
-        n_components : int
-            Total number of reagent components
-        """
-        self.current_component_idx = (self.current_component_idx + 1) % n_components
-
-    def rotate_component_weighted(self, n_components, reagent_lists, rng=None):
-        """
-        Rotate to next component using GMIC-weighted probabilities.
-
-        Flexible components (low GMIC) get heated more often. Weight = 1 / (1 + gmic).
-        Also caches per-component GMIC values for use by get_component_state().
-
-        Parameters:
-        -----------
-        n_components : int
-            Total number of reagent components
-        reagent_lists : list of list
-            List of reagent lists, one per component
-        rng : numpy.random.Generator, optional
-            Random number generator for reproducibility
-        """
-        if rng is None:
-            rng = np.random.default_rng()
-
-        gmics = []
-        for i in range(n_components):
-            g = self._calculate_gmic(reagent_lists[i])
-            self._cached_gmics[i] = g
-            gmics.append(g)
-
-        gmics_arr = np.array(gmics)
-        # Weight by flexibility: low GMIC → more heating
-        flexibility = 1.0 / (1.0 + gmics_arr)
-        heat_probs = flexibility / flexibility.sum()
-
-        self.current_component_idx = int(rng.choice(n_components, p=heat_probs))
-
-        # Cache mean GMIC for relative comparison
-        self._mean_criticality = float(gmics_arr.mean())
 
     def reset_temperature(self):
         """Reset temperature parameters to initial values."""

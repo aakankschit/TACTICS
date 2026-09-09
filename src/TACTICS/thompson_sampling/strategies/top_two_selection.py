@@ -19,9 +19,10 @@ import numpy as np
 from typing import Any, Dict, List, Optional
 
 from .base_strategy import SelectionStrategy
+from ._thermal import GMICCriticalityMixin
 
 
-class TopTwoSelection(SelectionStrategy):
+class TopTwoSelection(GMICCriticalityMixin, SelectionStrategy):
     """Top-Two Thompson Sampling with asymmetric thermal cycling.
 
     Two orthogonal mechanisms:
@@ -97,7 +98,6 @@ class TopTwoSelection(SelectionStrategy):
         self._heated_scale_per_component: Dict[int, float] = {}
         self._component_disagreement_ema: Dict[int, float] = {}
         self._component_disagreement_counts: Dict[int, int] = {}
-        self._component_gmic: Dict[int, float] = {}
 
         # Global disagreement tracking (for diagnostics / backward compat)
         self.disagreement_window = disagreement_window
@@ -105,8 +105,8 @@ class TopTwoSelection(SelectionStrategy):
         self._disagreement_rate: float = 1.0
         self._total_selections: int = 0
 
-        # Thermal cycling state
-        self.current_component_idx = 0
+        # Thermal cycling + GMIC cache (see _thermal.GMICCriticalityMixin)
+        self._init_gmic_state()
 
     def select_reagent(self, reagent_list: List, disallow_mask=None, **kwargs) -> int:
         """Select a reagent using Top-Two Thompson Sampling.
@@ -235,7 +235,7 @@ class TopTwoSelection(SelectionStrategy):
         elif rate < self.disagreement_low_threshold:
             # GMIC convergence gate: skip inflation if component is already solved
             if self.gmic_convergence_gate is not None:
-                gmic = self._component_gmic.get(comp_idx, 0.0)
+                gmic = self._cached_gmics.get(comp_idx, 0.0)
                 if gmic > self.gmic_convergence_gate:
                     return False
 
@@ -260,58 +260,15 @@ class TopTwoSelection(SelectionStrategy):
             self.current_component_idx, self.heated_scale
         )
 
-    # ===== GMIC criticality (for rotation weighting only) =====
-
-    def _calculate_gmic(self, reagent_list: List) -> float:
-        """Calculate Gaussian Mutual Information Criticality for a component.
-
-        GMIC = 0.5 * log(1 + var(means) / mean(noise_vars))
-
-        High GMIC = critical component (clear winners among reagents).
-        Low GMIC = flexible component (all reagents similar).
-
-        Used strictly for weighted rotation — does NOT affect temperature
-        or selection.
-
-        Returns:
-            GMIC value >= 0. Returns 0.0 only when fewer than two reagents
-            have been observed.
-        """
-        active = [r for r in reagent_list if r.n_samples > 0]
-        if len(active) < 2:
-            return 0.0
-
-        # NOTE (2026-06): a min-observation gate used to live here — it returned
-        # 0.0 whenever the least-observed active reagent had fewer than
-        # self.min_observations samples. It was REMOVED for consistency with
-        # RouletteWheelSelection._calculate_gmic, which never gated. On large
-        # components (e.g. adenine's 688 isocyanides) a single sub-5-obs
-        # straggler forced the whole component's GMIC to 0 every cycle —
-        # firing on 25/28 benchmark libraries — which over-weighted that
-        # component in the GMIC rotation. A paired counterfactual showed
-        # removing the gate lifts adenine TT-TS top-100 recovery 87.1 -> 93.2
-        # and halves its replicate variance (sd 18.4 -> 10.6), with no change
-        # on the 3 libraries where the gate never fired.
-        means = np.array([r.mean for r in active])
-        signal = np.var(means)
-        noise = np.mean([r.std ** 2 for r in active])
-        return float(0.5 * np.log1p(signal / max(noise, 1e-10)))
-
-    def get_component_criticality(self, reagent_list: List) -> float:
-        """Return GMIC criticality for a component (used by sampler for rotation)."""
-        return self._calculate_gmic(reagent_list)
-
     # ===== Thermal cycling rotation =====
-
-    def rotate_component(self, n_components: int):
-        """Round-robin component rotation (fallback)."""
-        self.current_component_idx = (self.current_component_idx + 1) % n_components
 
     def adapt_temperatures(self, n_unique, n_attempted):
         """Adapt thermal cycling scales based on sampling efficiency.
 
         Mirrors RouletteWheelSelection.adapt_temperatures but operates on
-        posterior std scales instead of Boltzmann temperatures. When posteriors
+        posterior std scales instead of Boltzmann temperatures, and its
+        zero-unique branch cools cooled_scale downward (with a floor) where
+        RWS heats beta upward -- kept separate for that reason. When posteriors
         tighten, TT-TS samples agree more often (less challenger exploration),
         causing recovery to stall. Increasing heated_scale counteracts this by
         inflating uncertainty on the heated component, generating more
@@ -347,7 +304,7 @@ class TopTwoSelection(SelectionStrategy):
         self._heated_scale_per_component = {}
         self._component_disagreement_ema = {}
         self._component_disagreement_counts = {}
-        self._component_gmic = {}
+        self._cached_gmics = {}
         self._disagreement_buffer = []
         self._disagreement_rate = 1.0
         self._total_selections = 0
@@ -383,25 +340,3 @@ class TopTwoSelection(SelectionStrategy):
             "disagreement_global": self._disagreement_rate,
             "n_active_reagents": sum(1 for r in reagent_list if r.n_samples > 0),
         }
-
-    def rotate_component_weighted(self, n_components: int, reagent_lists, rng=None):
-        """Rotate to next heated component using GMIC-weighted probabilities.
-
-        Flexible components (low GMIC) get heated more often because they
-        benefit most from the inflated uncertainty that TT-TS uses to
-        generate challenger candidates.
-
-        Weight = 1 / (1 + gmic): high GMIC → low weight → less heating.
-        """
-        if rng is None:
-            rng = np.random.default_rng()
-        gmics = np.array([self._calculate_gmic(rl) for rl in reagent_lists], dtype=float)
-
-        # Cache GMIC values for adaptive disagreement gate
-        for i, g in enumerate(gmics):
-            self._component_gmic[i] = float(g)
-
-        flexibility = 1.0 / (1.0 + gmics)
-        heat_probs = flexibility / flexibility.sum()
-
-        self.current_component_idx = int(rng.choice(n_components, p=heat_probs))
