@@ -319,16 +319,6 @@ class Reagent:
 
     # ===== SMARTS Compatibility Methods =====
 
-    @property
-    def compatible_smarts(self) -> Set[str]:
-        """
-        Get the set of SMARTS pattern IDs this reagent is compatible with.
-
-        Returns:
-            Set of pattern_id strings
-        """
-        return self._compatible_smarts.copy()
-
     def set_compatible_smarts(self, pattern_ids: Set[str]) -> None:
         """
         Set the SMARTS patterns this reagent is compatible with.
@@ -339,27 +329,6 @@ class Reagent:
             pattern_ids: Set of compatible pattern IDs
         """
         self._compatible_smarts = set(pattern_ids)
-
-    def add_compatible_smarts(self, pattern_id: str) -> None:
-        """
-        Add a single SMARTS pattern to the compatibility set.
-
-        Parameters:
-            pattern_id: Pattern ID to add
-        """
-        self._compatible_smarts.add(pattern_id)
-
-    def is_compatible_with(self, pattern_id: str) -> bool:
-        """
-        Check if reagent is compatible with a specific SMARTS pattern.
-
-        Parameters:
-            pattern_id: Pattern ID to check
-
-        Returns:
-            True if compatible, False otherwise
-        """
-        return pattern_id in self._compatible_smarts
 
     @property
     def reagent_key(self) -> str:

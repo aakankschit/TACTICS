@@ -367,30 +367,6 @@ def read_design_unit(filename):
     return dock
 
 
-def test_fred_eval():
-    """Test function for the Fred docking Evaluator
-    :return: None
-    """
-    input_dict = {"design_unit_file": "data/2zdt_receptor.oedu"}
-    fred_eval = FredEvaluator(input_dict)
-    smi = "CCSc1ncc2c(=O)n(-c3c(C)nc4ccccn34)c(-c3[nH]nc(C)c3F)nc2n1"
-    mol = Chem.MolFromSmiles(smi)
-    score = fred_eval.evaluate(mol)
-    print(score)
-
-
-def test_rocs_eval():
-    """Test function for the ROCS evaluator
-    :return: None
-    """
-    input_dict = {"query_molfile": "data/2chw_lig.sdf"}
-    rocs_eval = ROCSEvaluator(input_dict)
-    smi = "CCSc1ncc2c(=O)n(-c3c(C)nc4ccccn34)c(-c3[nH]nc(C)c3F)nc2n1"
-    mol = Chem.MolFromSmiles(smi)
-    combo_score = rocs_eval.evaluate(mol)
-    print(combo_score)
-
-
 class MLClassifierEvaluator(Evaluator):
     """An evaluator class the calculates a score based on a trained ML model
     """
@@ -413,18 +389,3 @@ class MLClassifierEvaluator(Evaluator):
         fp = uru.mol2morgan_fp(mol)
         return self.cls.predict_proba([fp])[:,1][0]
 
-
-def test_ml_classifier_eval():
-    """Test function for the ML Classifier Evaluator
-    :return: None
-    """
-    input_dict = {"model_filename": "mapk1_modl.pkl"}
-    ml_cls_eval = MLClassifierEvaluator(input_dict)
-    smi = "CCSc1ncc2c(=O)n(-c3c(C)nc4ccccn34)c(-c3[nH]nc(C)c3F)nc2n1"
-    mol = Chem.MolFromSmiles(smi)
-    score = ml_cls_eval.evaluate(mol)
-    print(score)
-
-
-if __name__ == "__main__":
-    test_rocs_eval()

@@ -261,16 +261,6 @@ class TopTwoSelection(SelectionStrategy):
         return False
 
     @property
-    def disagreement_rate(self) -> float:
-        """Current global rolling disagreement rate."""
-        return self._disagreement_rate
-
-    @property
-    def component_disagreement_rates(self) -> Dict[int, float]:
-        """Per-component EMA disagreement rates."""
-        return dict(self._component_disagreement_ema)
-
-    @property
     def effective_heated_scale(self) -> float:
         """Current heated_scale for the heated component."""
         return self._heated_scale_per_component.get(

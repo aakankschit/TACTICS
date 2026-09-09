@@ -4,9 +4,8 @@ Thompson Sampling configuration.
 Provides Pydantic configuration classes for Thompson Sampling optimization.
 """
 
-from pydantic import BaseModel, Field, field_validator, model_validator
-from typing import Literal, Optional, Union, List, TYPE_CHECKING, Any
-import logging
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional, Union, List, TYPE_CHECKING, Any
 
 from .strategies.config import (
     GreedyConfig,
