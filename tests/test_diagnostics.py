@@ -53,7 +53,7 @@ def thrombin_paths():
     return {
         "acids": str(data / "acids.smi"),
         "amines": str(data / "coupled_aa_sub.smi"),
-        "scores": str(data / "product_scores.csv"),
+        "scores": str(data / "product_scores.parquet"),
     }
 
 

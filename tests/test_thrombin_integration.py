@@ -3,7 +3,7 @@ Integration tests using bundled Thrombin dataset.
 
 These tests verify that:
 1. Bundled data files are accessible via importlib.resources
-2. LookupEvaluator works with real product_scores.csv
+2. LookupEvaluator works with real product_scores.parquet
 3. SynthesisPipeline works with real reagent files
 4. Full Thompson Sampling workflow (warmup → search) works with real data
 5. Product naming matches scores file
@@ -40,12 +40,12 @@ class TestThrombinDataAccess:
         acids = data_files / "acids.smi"
         coupled_aa = data_files / "coupled_aa_sub.smi"
         amino_acids = data_files / "amino_acids_no_fmoc.smi"
-        scores = data_files / "product_scores.csv"
+        scores = data_files / "product_scores.parquet"
 
         assert acids.is_file(), "acids.smi not found"
         assert coupled_aa.is_file(), "coupled_aa_sub.smi not found"
         assert amino_acids.is_file(), "amino_acids_no_fmoc.smi not found"
-        assert scores.is_file(), "product_scores.csv not found"
+        assert scores.is_file(), "product_scores.parquet not found"
 
     def test_acids_file_format(self):
         """Verify acids.smi has correct format."""
@@ -75,11 +75,11 @@ class TestThrombinDataAccess:
         assert "_" in parts[-1], "Name should have underscore (AA#_AA#)"
 
     def test_scores_file_format(self):
-        """Verify product_scores.csv has correct format."""
+        """Verify product_scores.parquet has correct format."""
         data_files = importlib.resources.files("TACTICS.data.thrombin")
-        scores_path = str(data_files / "product_scores.csv")
+        scores_path = str(data_files / "product_scores.parquet")
 
-        df = pl.read_csv(scores_path, n_rows=10)
+        df = pl.scan_parquet(scores_path).head(10).collect()
 
         assert "Product_Code" in df.columns, "Missing Product_Code column"
         assert "Scores" in df.columns, "Missing Scores column"
@@ -90,11 +90,11 @@ class TestThrombinDataAccess:
         assert "_AA" in first_code, "Product code should contain '_AA'"
 
     def test_scores_count(self):
-        """Verify product_scores.csv has expected row count."""
+        """Verify product_scores.parquet has expected row count."""
         data_files = importlib.resources.files("TACTICS.data.thrombin")
-        scores_path = str(data_files / "product_scores.csv")
+        scores_path = str(data_files / "product_scores.parquet")
 
-        df = pl.read_csv(scores_path)
+        df = pl.read_parquet(scores_path)
 
         # Should have ~500K products
         assert len(df) > 400000, f"Expected ~500K products, got {len(df)}"
@@ -107,7 +107,7 @@ class TestThrombinLookupEvaluator:
     def evaluator(self):
         """Create LookupEvaluator with Thrombin scores."""
         data_files = importlib.resources.files("TACTICS.data.thrombin")
-        scores_path = str(data_files / "product_scores.csv")
+        scores_path = str(data_files / "product_scores.parquet")
 
         return LookupEvaluator({"ref_filename": scores_path})
 
@@ -120,8 +120,8 @@ class TestThrombinLookupEvaluator:
         """Test that lookup returns a valid score for known product."""
         # Get a known product code from the file
         data_files = importlib.resources.files("TACTICS.data.thrombin")
-        scores_path = str(data_files / "product_scores.csv")
-        df = pl.read_csv(scores_path, n_rows=1)
+        scores_path = str(data_files / "product_scores.parquet")
+        df = pl.scan_parquet(scores_path).head(1).collect()
         known_product = df["Product_Code"][0]
         expected_score = df["Scores"][0]
 
@@ -200,7 +200,7 @@ class TestThrombinWorkflow:
         data_files = importlib.resources.files("TACTICS.data.thrombin")
         acids_path = str(data_files / "acids.smi")
         amines_path = str(data_files / "coupled_aa_sub.smi")
-        scores_path = str(data_files / "product_scores.csv")
+        scores_path = str(data_files / "product_scores.parquet")
 
         config = ReactionConfig(
             reactions=[
@@ -289,7 +289,7 @@ class TestThrombinProductNaming:
         data_files = importlib.resources.files("TACTICS.data.thrombin")
         acids_path = str(data_files / "acids.smi")
         amines_path = str(data_files / "coupled_aa_sub.smi")
-        scores_path = str(data_files / "product_scores.csv")
+        scores_path = str(data_files / "product_scores.parquet")
 
         config = ReactionConfig(
             reactions=[
@@ -334,7 +334,7 @@ class TestThrombinEpsilonGreedy:
         data_files = importlib.resources.files("TACTICS.data.thrombin")
         acids_path = str(data_files / "acids.smi")
         amines_path = str(data_files / "coupled_aa_sub.smi")
-        scores_path = str(data_files / "product_scores.csv")
+        scores_path = str(data_files / "product_scores.parquet")
 
         config = ReactionConfig(
             reactions=[

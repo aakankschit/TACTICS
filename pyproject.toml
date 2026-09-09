@@ -85,7 +85,7 @@ where = ["src"]
 include = ["TACTICS*"]
 
 [tool.setuptools.package-data]
-"TACTICS.data" = ["**/*.smi", "**/*.csv", "**/*.md"]
+"TACTICS.data" = ["**/*.smi", "**/*.parquet"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
