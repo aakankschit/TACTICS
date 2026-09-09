@@ -39,7 +39,8 @@ Requires Python 3.11+.
 <summary>Optional extras and development install</summary>
 
 ```bash
-pip install chem-tactics[tutorials]   # interactive marimo notebooks
+pip install chem-tactics[viz]         # matplotlib/altair plotting (TS_Benchmarks, diagnostic_plots)
+pip install chem-tactics[tutorials]   # interactive marimo notebooks (includes viz)
 pip install chem-tactics[test]        # test dependencies
 
 # development install
@@ -138,7 +139,6 @@ sampler = ThompsonSampler.from_config(config)
 | `recommended` *(default)* | Top-Two Thompson Sampling — best overall |
 | `recommended_rws` | Roulette wheel with criticality-aware thermal cycling |
 | `baseline` | Balanced warmup + greedy, for measuring what the search adds |
-| `legacy_rws` | Reproduces Zhao et al. 2025 |
 
 Start with `recommended`. If you are benchmarking, run `recommended` and
 `recommended_rws` and take the better result — they favour different library

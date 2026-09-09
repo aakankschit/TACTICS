@@ -35,7 +35,7 @@ def _():
         from TACTICS.thompson_sampling.core.evaluator_config import CustomEvaluatorConfig
         from TACTICS.thompson_sampling.core.evaluators import CustomEvaluator
         from TACTICS.thompson_sampling.strategies.config import GreedyConfig
-        from TACTICS.thompson_sampling.warmup.config import StandardWarmupConfig
+        from TACTICS.thompson_sampling.warmup.config import EnhancedWarmupConfig
     except ModuleNotFoundError:
         project_root = Path(__file__).resolve().parents[1]
         src_root = project_root / "src"
@@ -48,7 +48,7 @@ def _():
         from TACTICS.thompson_sampling.core.evaluator_config import CustomEvaluatorConfig
         from TACTICS.thompson_sampling.core.evaluators import CustomEvaluator
         from TACTICS.thompson_sampling.strategies.config import GreedyConfig
-        from TACTICS.thompson_sampling.warmup.config import StandardWarmupConfig
+        from TACTICS.thompson_sampling.warmup.config import EnhancedWarmupConfig
 
     _data_files = importlib.resources.files("TACTICS.data.thrombin")
     acids_file = str(_data_files / "acids.smi")
@@ -78,7 +78,7 @@ def _():
         Path,
         ReactionConfig,
         ReactionDef,
-        StandardWarmupConfig,
+        EnhancedWarmupConfig,
         SynthesisPipeline,
         ThompsonSampler,
         ThompsonSamplingConfig,
@@ -594,7 +594,7 @@ def _(
     ReactionConfig,
     ReactionDef,
     StringIO,
-    StandardWarmupConfig,
+    EnhancedWarmupConfig,
     SynthesisPipeline,
     ThompsonSampler,
     ThompsonSamplingConfig,
@@ -690,10 +690,9 @@ def _(
                     num_ts_iterations=3,
                     num_warmup_trials=3,
                     strategy_config=GreedyConfig(mode="maximize"),
-                    warmup_config=StandardWarmupConfig(),
+                    warmup_config=EnhancedWarmupConfig(),
                     evaluator_config=CustomEvaluatorConfig(scoring_function=loaded_function),
                     batch_size=1,
-                    max_resamples=10,
                     hide_progress=True,
                 )
 

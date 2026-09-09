@@ -49,14 +49,9 @@ autodoc_mock_imports = [
     "altair",
     "rdkit",
     "numpy",
-    "pandas",
     "matplotlib",
-    "seaborn",
-    "IPython",
     "openeye",
     "tqdm",
-    "dill",
-    "useful_rdkit_utils",
     "scipy",
     "sklearn",
 ]
@@ -123,6 +118,5 @@ html_context = {
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
-    "pandas": ("https://pandas.pydata.org/docs/", None),
     "polars": ("https://pola-rs.github.io/polars/py-polars/html/", None),
 }

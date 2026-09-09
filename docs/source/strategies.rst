@@ -41,11 +41,6 @@ validated across 21 combinatorial libraries (114,450+ total trials).
      - Balanced
      - ~81%
      - Reference point to measure strategy gains.
-   * - **legacy_rws**
-     - RWS (round-robin)
-     - Enhanced
-     - ~76%
-     - Reproducing Zhao et al. 2025 results. Pass ``mode="minimize"`` for docking.
 
 Recovery is mean top-100 recovery across all benchmark libraries and queries.
 Both ``recommended`` and ``recommended_rws`` default to ``batch_size=100``.
@@ -298,6 +293,3 @@ Warmup Strategies Reference
      - Alternative
      - Exactly K observations per reagent. Useful for controlled experiments
        isolating warmup contribution.
-   * - :ref:`StandardWarmup <standard-warmup>`
-     - Baseline
-     - Random partner selection. For comparison only.

@@ -72,13 +72,11 @@ Module Architecture
 
             BaseWarmup [label="WarmupStrategy (ABC)", fillcolor="white"];
             Balanced [label="BalancedWarmup", fillcolor="#00CED1"];
-            Standard [label="StandardWarmup", fillcolor="#AFEEEE"];
             Enhanced [label="EnhancedWarmup", fillcolor="#AFEEEE"];
             
             // Force vertical
             BaseWarmup -> Balanced [style=invis];
-            Balanced -> Standard [style=invis];
-            Standard -> Enhanced [style=invis];
+            Balanced -> Enhanced [style=invis];
         }
 
         // Evaluators - vertical list
@@ -234,7 +232,7 @@ warmup strategies, and evaluators to efficiently explore combinatorial chemical 
 
    - :ref:`SynthesisPipeline <synthesis-pipeline>` - single source of truth for reactions and reagents
    - :ref:`SelectionStrategy <selection-strategy>` - for reagent selection during search
-   - :ref:`WarmupStrategy <warmup-strategy>` - for initializing priors (optional, defaults to StandardWarmup)
+   - :ref:`WarmupStrategy <warmup-strategy>` - for initializing priors (optional, defaults to EnhancedWarmup)
    - :ref:`Evaluator <evaluator-base>` - for scoring compounds (set via ``set_evaluator()``)
 
 **Depends on:** :ref:`SynthesisPipeline <synthesis-pipeline>`, :ref:`SelectionStrategy <selection-strategy>`, :ref:`WarmupStrategy <warmup-strategy>`, :ref:`Evaluator <evaluator-base>`
@@ -261,7 +259,7 @@ Constructor
    * - ``warmup_strategy``
      - ``WarmupStrategy``
      - No
-     - Warmup strategy. Default: StandardWarmup().
+     - Warmup strategy. Default: EnhancedWarmup().
    * - ``batch_size``
      - ``int``
      - No
@@ -274,10 +272,6 @@ Constructor
      - ``int``
      - No
      - Min compounds per core before batch evaluation. Default: 10.
-   * - ``max_resamples``
-     - ``int``
-     - No
-     - Stop after this many consecutive duplicates. Default: None.
    * - ``log_filename``
      - ``str``
      - No
@@ -651,18 +645,6 @@ Roulette wheel selection with thermal cycling and Component-Aware Thompson Sampl
      - ``float``
      - No
      - Base temperature for cooled components. Default: 0.05.
-   * - ``exploration_phase_end``
-     - ``float``
-     - No
-     - Fraction before CATS starts. Default: 0.20.
-   * - ``transition_phase_end``
-     - ``float``
-     - No
-     - Fraction when CATS fully applied. Default: 0.60.
-   * - ``min_observations``
-     - ``int``
-     - No
-     - Min observations before trusting criticality. Default: 5.
    * - ``criticality_metric``
      - ``str``
      - No
@@ -819,14 +801,6 @@ Bayesian UCB with Student-t quantiles and CATS integration.
      - ``float``
      - No
      - Base percentile for cooled components [0.5, 0.999]. Default: 0.60.
-   * - ``exploration_phase_end``
-     - ``float``
-     - No
-     - Fraction before CATS starts. Default: 0.20.
-   * - ``transition_phase_end``
-     - ``float``
-     - No
-     - Fraction when CATS fully applied. Default: 0.60.
    * - ``min_observations``
      - ``int``
      - No
@@ -853,7 +827,6 @@ Bayesian UCB with Student-t quantiles and CATS integration.
        mode="maximize",
        initial_p_high=0.95,
        initial_p_low=0.70,
-       exploration_phase_end=0.25
    )
 
 
@@ -959,12 +932,10 @@ before the main search begins.
 
         Init [label="Initialize Priors", fillcolor="#FFFACD"];
 
-        Balanced [label="BalancedWarmup (Recommended)\nK obs per reagent", fillcolor="#00CED1"];
-        Standard [label="StandardWarmup\nRandom partners", fillcolor="#AFEEEE"];
-        Enhanced [label="EnhancedWarmup\nParallel pairing (Legacy RWS)", fillcolor="#AFEEEE"];
+        Balanced [label="BalancedWarmup\nK obs per reagent", fillcolor="#AFEEEE"];
+        Enhanced [label="EnhancedWarmup (Recommended)\nStochastic parallel pairing", fillcolor="#00CED1"];
 
         Init -> Balanced;
-        Init -> Standard;
         Init -> Enhanced;
     }
 
@@ -1046,34 +1017,6 @@ Balanced warmup guaranteeing exactly K observations per reagent with stratified 
        shrinkage_strength=3.0
    )
 
-.. _standard-warmup:
-
-StandardWarmup
-~~~~~~~~~~~~~~
-
-.. rst-class:: class-config
-
-Standard warmup testing each reagent with random partners.
-
-**Extends:** :ref:`WarmupStrategy <warmup-strategy>`
-
-- Simple and straightforward
-- Ensures all reagents evaluated
-- Expected evaluations: sum(reagent_counts) * num_trials
-
-.. list-table:: Parameters
-   :header-rows: 1
-   :widths: 20 15 10 55
-
-   * - Parameter
-     - Type
-     - Required
-     - Description
-   * - ``seed``
-     - ``int``
-     - No
-     - Random seed for reproducibility.
-
 .. _enhanced-warmup:
 
 EnhancedWarmup (Recommended)
@@ -1091,7 +1034,7 @@ rotation then exploits during search.
 
 - Parallel pairing of reagents across components
 - Universally optimal for both balanced and imbalanced libraries
-- Used by: ``recommended``, ``recommended_rws``, and legacy presets
+- Used by: ``recommended`` and ``recommended_rws``; also the default for direct ``ThompsonSampler(...)`` construction
 
 .. list-table:: Parameters
    :header-rows: 1

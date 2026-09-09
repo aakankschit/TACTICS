@@ -35,7 +35,6 @@ Configuration Hierarchy
         
         // Warmup configs - stacked vertically
         BalancedWarmupConfig [label="BalancedWarmupConfig", fillcolor="#00CED1"];
-        StandardWarmupConfig [label="StandardWarmupConfig", fillcolor="#AFEEEE"];
         EnhancedWarmupConfig [label="EnhancedWarmupConfig", fillcolor="#AFEEEE"];
 
         // Evaluator section header
@@ -59,8 +58,7 @@ Configuration Hierarchy
         EpsilonGreedyConfig -> BayesUCBConfig [style=invis];
         BayesUCBConfig -> warmup_label [style=invis];
         warmup_label -> BalancedWarmupConfig [style=invis];
-        BalancedWarmupConfig -> StandardWarmupConfig [style=invis];
-        StandardWarmupConfig -> EnhancedWarmupConfig [style=invis];
+        BalancedWarmupConfig -> EnhancedWarmupConfig [style=invis];
         EnhancedWarmupConfig -> evaluator_label [style=invis];
         evaluator_label -> LookupEvaluatorConfig [style=invis];
         LookupEvaluatorConfig -> DBEvaluatorConfig [style=invis];
@@ -83,7 +81,6 @@ Configuration Hierarchy
         strategy_label -> BayesUCBConfig [style=dashed];
 
         warmup_label -> BalancedWarmupConfig [style=dashed, label="one of"];
-        warmup_label -> StandardWarmupConfig [style=dashed];
         warmup_label -> EnhancedWarmupConfig [style=dashed];
 
         evaluator_label -> LookupEvaluatorConfig [style=dashed, label="one of"];
@@ -240,10 +237,6 @@ The main configuration class for Thompson Sampling optimization.
      - ``int``
      - No
      - Min compounds per core before batch evaluation. Default: 10.
-   * - ``max_resamples``
-     - ``int``
-     - No
-     - Stop after this many consecutive duplicates.
 
 .. list-table:: Output & Advanced
    :header-rows: 1
@@ -357,18 +350,6 @@ Configuration for roulette wheel selection with thermal cycling and CATS.
      - ``float``
      - No
      - Base temperature for cooled components. Default: 0.05.
-   * - ``exploration_phase_end``
-     - ``float``
-     - No
-     - Fraction before CATS starts [0, 1]. Default: 0.20.
-   * - ``transition_phase_end``
-     - ``float``
-     - No
-     - Fraction when CATS fully applied [0, 1]. Default: 0.60.
-   * - ``min_observations``
-     - ``int``
-     - No
-     - Min observations for criticality trust. Default: 5.
    * - ``criticality_metric``
      - ``str``
      - No
@@ -481,14 +462,6 @@ Configuration for Bayesian UCB with CATS integration.
      - ``float``
      - No
      - Percentile for cooled components [0.5, 0.999]. Default: 0.60.
-   * - ``exploration_phase_end``
-     - ``float``
-     - No
-     - Fraction before CATS starts. Default: 0.20.
-   * - ``transition_phase_end``
-     - ``float``
-     - No
-     - Fraction when CATS fully applied. Default: 0.60.
    * - ``min_observations``
      - ``int``
      - No
@@ -600,34 +573,6 @@ Configuration for balanced warmup with per-reagent variance estimation.
      - ``float``
      - No
      - James-Stein shrinkage strength. Default: 3.0.
-   * - ``seed``
-     - ``int``
-     - No
-     - Random seed for reproducibility.
-
-.. _standard-warmup-config:
-
-StandardWarmupConfig
-~~~~~~~~~~~~~~~~~~~~
-
-.. rst-class:: class-config
-
-Configuration for standard warmup with random partners.
-
-**Creates:** :ref:`StandardWarmup <standard-warmup>`
-
-.. list-table:: Parameters
-   :header-rows: 1
-   :widths: 20 18 10 52
-
-   * - Parameter
-     - Type
-     - Required
-     - Description
-   * - ``warmup_type``
-     - ``Literal``
-     - Auto
-     - Set automatically.
    * - ``seed``
      - ``int``
      - No
@@ -905,10 +850,6 @@ TACTICS provides pre-configured setups for common use cases via ``get_preset()``
      - Greedy
      - Balanced
      - Isolates warmup contribution. Reference for measuring strategy gains (+1.5 pts on 2-comp).
-   * - **legacy_rws**
-     - RWS
-     - Enhanced
-     - Reproduces Zhao et al. 2025. Round-robin rotation, no GMIC. Pass ``mode="minimize"`` for docking.
 
 See the :doc:`strategies` guide for detailed guidance on choosing a preset.
 

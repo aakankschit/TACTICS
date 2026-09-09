@@ -24,7 +24,6 @@ def _():
     from io import BytesIO
 
     import numpy as np
-    import pandas as pd
     import polars as pl
     import plotly.express as px
     import molplotly
@@ -168,7 +167,7 @@ def _(library_selector, mo, pl, re, SCORES_DIR, REAGENTS_DIR):
 
 
 @app.cell
-def _(lib_cfg, query_selector, top_n_selector, score_df, smiles_maps, np, pd, pl):
+def _(lib_cfg, query_selector, top_n_selector, score_df, smiles_maps, np, pl):
     """Compute per-reagent stats and build chart DataFrame."""
     _score_col = query_selector.value
     _top_n = top_n_selector.value
@@ -236,7 +235,7 @@ def _(lib_cfg, query_selector, top_n_selector, score_df, smiles_maps, np, pd, pl
                 "oracle_gmic": round(_oracle_gmic, 3),
             })
 
-    chart_df = pd.DataFrame(_rows)
+    chart_df = pl.DataFrame(_rows)
     return (chart_df,)
 
 

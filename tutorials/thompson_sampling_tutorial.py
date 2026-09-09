@@ -51,10 +51,8 @@ def _():
         RouletteWheelConfig,
         UCBConfig,
         EpsilonGreedyConfig,
-        BoltzmannConfig,
     )
     from TACTICS.thompson_sampling.warmup.config import (
-        StandardWarmupConfig,
         BalancedWarmupConfig,
         EnhancedWarmupConfig,
     )
@@ -68,7 +66,6 @@ def _():
     from TACTICS.library_analysis.visualization import TS_Benchmarks
     return (
         BalancedWarmupConfig,
-        BoltzmannConfig,
         EnhancedWarmupConfig,
         EpsilonGreedyConfig,
         GreedyConfig,
@@ -76,7 +73,6 @@ def _():
         ReactionConfig,
         ReactionDef,
         RouletteWheelConfig,
-        StandardWarmupConfig,
         SynthesisPipeline,
         TS_Benchmarks,
         ThompsonSampler,
@@ -134,20 +130,16 @@ def _(mo):
     strategy_roulette = mo.ui.checkbox(value=False, label="Roulette Wheel (CATS)")
     strategy_ucb = mo.ui.checkbox(value=False, label="UCB")
     strategy_greedy = mo.ui.checkbox(value=True, label="Greedy (baseline)")
-    strategy_boltzmann = mo.ui.checkbox(value=False, label="Boltzmann")
 
     # Strategy parameters
     epsilon_value = mo.ui.slider(start=0.05, stop=0.5, value=0.2, step=0.05, label="Epsilon")
     epsilon_decay = mo.ui.slider(start=0.9, stop=1.0, value=0.995, step=0.005, label="Decay")
     ucb_c = mo.ui.slider(start=0.5, stop=4.0, value=2.0, step=0.5, label="UCB c")
     rw_alpha = mo.ui.slider(start=0.05, stop=0.5, value=0.1, step=0.05, label="RW alpha")
-    boltz_temp = mo.ui.slider(start=0.1, stop=2.0, value=1.0, step=0.1, label="Temperature")
     return (
-        boltz_temp,
         epsilon_decay,
         epsilon_value,
         rw_alpha,
-        strategy_boltzmann,
         strategy_epsilon,
         strategy_greedy,
         strategy_roulette,
@@ -158,12 +150,10 @@ def _(mo):
 
 @app.cell
 def _(
-    boltz_temp,
     epsilon_decay,
     epsilon_value,
     mo,
     rw_alpha,
-    strategy_boltzmann,
     strategy_epsilon,
     strategy_greedy,
     strategy_roulette,
@@ -174,14 +164,13 @@ def _(
     _strategy_grid = mo.vstack([
         mo.hstack([
             strategy_epsilon, strategy_roulette, strategy_ucb,
-            strategy_greedy, strategy_boltzmann
+            strategy_greedy
         ], justify="start", gap=2),
         mo.md("**Strategy Parameters:**"),
         mo.hstack([
             mo.vstack([mo.md("*Epsilon-Greedy:*"), epsilon_value, epsilon_decay]),
             mo.vstack([mo.md("*UCB:*"), ucb_c]),
             mo.vstack([mo.md("*Roulette Wheel:*"), rw_alpha]),
-            mo.vstack([mo.md("*Boltzmann:*"), boltz_temp]),
         ], justify="start", gap=4),
     ])
     _strategy_grid
@@ -199,7 +188,6 @@ def _(mo):
 @app.cell
 def _(mo):
     """Warmup strategy selection."""
-    warmup_standard = mo.ui.checkbox(value=False, label="Standard (random)")
     warmup_balanced_3 = mo.ui.checkbox(value=True, label="Balanced K=3")
     warmup_balanced_5 = mo.ui.checkbox(value=False, label="Balanced K=5")
     warmup_enhanced = mo.ui.checkbox(value=False, label="Enhanced (stochastic)")
@@ -207,7 +195,6 @@ def _(mo):
         warmup_balanced_3,
         warmup_balanced_5,
         warmup_enhanced,
-        warmup_standard,
     )
 
 
@@ -217,11 +204,10 @@ def _(
     warmup_balanced_3,
     warmup_balanced_5,
     warmup_enhanced,
-    warmup_standard,
 ):
     """Display warmup controls."""
     mo.hstack([
-        warmup_standard, warmup_balanced_3, warmup_balanced_5, warmup_enhanced
+        warmup_balanced_3, warmup_balanced_5, warmup_enhanced
     ], justify="start", gap=2)
     return
 
@@ -287,7 +273,6 @@ def _(mo):
 def _(
     AMIDE_COUPLING_SMARTS,
     BalancedWarmupConfig,
-    BoltzmannConfig,
     EnhancedWarmupConfig,
     EpsilonGreedyConfig,
     GreedyConfig,
@@ -297,12 +282,10 @@ def _(
     ReactionDef,
     RouletteWheelConfig,
     SCORES_FILE,
-    StandardWarmupConfig,
     SynthesisPipeline,
     ThompsonSampler,
     ThompsonSamplingConfig,
     UCBConfig,
-    boltz_temp,
     combination_mode,
     cycles_slider,
     epsilon_decay,
@@ -312,7 +295,6 @@ def _(
     pl,
     run_button,
     rw_alpha,
-    strategy_boltzmann,
     strategy_epsilon,
     strategy_greedy,
     strategy_roulette,
@@ -322,7 +304,6 @@ def _(
     warmup_balanced_3,
     warmup_balanced_5,
     warmup_enhanced,
-    warmup_standard,
 ):
     """Execute Thompson Sampling benchmark."""
     mo.stop(not run_button.value, mo.md("*Click 'Run Thompson Sampling Benchmark' to start*"))
@@ -341,18 +322,12 @@ def _(
         selected_strategies["UCB"] = lambda: UCBConfig(mode="minimize", c=ucb_c.value)
     if strategy_greedy.value:
         selected_strategies["Greedy"] = lambda: GreedyConfig(mode="minimize")
-    if strategy_boltzmann.value:
-        selected_strategies["Boltzmann"] = lambda: BoltzmannConfig(
-            mode="minimize", temperature=boltz_temp.value
-        )
 
     if not selected_strategies:
         mo.stop(True, mo.md("**Error:** Select at least one strategy."))
 
     # Build selected warmups
     selected_warmups = {}
-    if warmup_standard.value:
-        selected_warmups["Standard"] = StandardWarmupConfig()
     if warmup_balanced_3.value:
         selected_warmups["Balanced-K3"] = BalancedWarmupConfig(observations_per_reagent=3)
     if warmup_balanced_5.value:
@@ -416,7 +391,6 @@ def _(
                 warmup_config=w_config,
                 evaluator_config=_evaluator_config,
                 batch_size=1,
-                max_resamples=1000,
                 hide_progress=True,
             )
 
@@ -726,7 +700,6 @@ def _(mo):
     | **Epsilon-Greedy** | Random exploration with probability epsilon | `epsilon`, `decay` |
     | **UCB** | Upper confidence bound exploration | `c` (exploration weight) |
     | **Roulette Wheel** | Thermal cycling (CATS) | `alpha`, `beta` |
-    | **Boltzmann** | Softmax selection | `temperature` |
 
     ### Warmup Strategies
 
