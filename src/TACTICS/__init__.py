@@ -32,7 +32,7 @@ Selection strategies (baselines):
 from .library_enumeration import LibraryEnumerator, initializer
 
 # Configuration
-from .thompson_sampling.config import ThompsonSamplingConfig, RandomBaselineConfig
+from .thompson_sampling.config import ThompsonSamplingConfig
 
 # Presets
 from .thompson_sampling.presets import ConfigPresets, get_preset
@@ -74,16 +74,12 @@ from .thompson_sampling.core import (
     MLClassifierEvaluator,
 )
 
-# Baseline functions
-from .thompson_sampling.baseline import run_random_baseline, run_exhaustive_baseline
-
 # Utilities
 from .thompson_sampling.utils import get_logger, read_reagents, create_reagents
 
 __all__ = [
     # Configuration
     "ThompsonSamplingConfig",
-    "RandomBaselineConfig",
 
     # Presets
     "ConfigPresets",
@@ -118,10 +114,6 @@ __all__ = [
     "FPEvaluator",
     "MWEvaluator",
     "MLClassifierEvaluator",
-
-    # Baseline functions
-    "run_random_baseline",
-    "run_exhaustive_baseline",
 
     # Library enumeration
     "LibraryEnumerator",

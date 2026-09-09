@@ -10,7 +10,7 @@ import tempfile
 import os
 from pydantic import ValidationError
 
-from TACTICS.thompson_sampling import ThompsonSamplingConfig, RandomBaselineConfig
+from TACTICS.thompson_sampling import ThompsonSamplingConfig
 from TACTICS.thompson_sampling.strategies.config import (
     GreedyConfig,
     RouletteWheelConfig,
@@ -142,30 +142,6 @@ class TestConfigValidation:
         assert config.log_filename == "test.log"
         assert config.batch_size == 5
         assert config.max_resamples == 100
-
-    def test_random_baseline_config_creation(self):
-        """
-        Test that RandomBaselineConfig can be created with valid data.
-
-        Inputs:
-            - Valid configuration for random baseline
-
-        Outputs:
-            - RandomBaselineConfig instance is created successfully
-        """
-        config = RandomBaselineConfig(
-            synthesis_pipeline=self.pipeline,
-            evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv"),
-            num_trials=100,
-            num_to_save=10,
-            ascending_output=False,
-            outfile_name="baseline_results.csv",
-        )
-
-        assert config.num_trials == 100
-        assert config.num_to_save == 10
-        assert config.ascending_output == False
-        assert config.outfile_name == "baseline_results.csv"
 
     def test_validation_errors_missing_pipeline(self):
         """

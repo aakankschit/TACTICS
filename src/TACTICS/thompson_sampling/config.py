@@ -241,31 +241,3 @@ class ThompsonSamplingConfig(BaseModel):
         return self.synthesis_pipeline.num_steps
 
     model_config = {"arbitrary_types_allowed": True}
-
-
-class RandomBaselineConfig(BaseModel):
-    """
-    Configuration for random baseline sampling.
-
-    Used for comparison against Thompson Sampling.
-    """
-
-    synthesis_pipeline: Any = Field(..., description="SynthesisPipeline instance")
-    evaluator_config: EvaluatorConfigType = Field(
-        ..., description="Evaluator configuration"
-    )
-    num_trials: int = Field(..., gt=0, description="Number of random trials")
-    num_to_save: int = Field(..., gt=0, description="Number of top results to save")
-    ascending_output: bool = Field(default=False, description="Sort output ascending")
-    outfile_name: Optional[str] = Field(default=None, description="Output file")
-    log_filename: Optional[str] = Field(default=None, description="Log file")
-
-    @field_validator("synthesis_pipeline")
-    @classmethod
-    def validate_pipeline(cls, v):
-        """Ensure synthesis_pipeline is valid."""
-        if v is None:
-            raise ValueError("synthesis_pipeline is required")
-        return v
-
-    model_config = {"arbitrary_types_allowed": True}

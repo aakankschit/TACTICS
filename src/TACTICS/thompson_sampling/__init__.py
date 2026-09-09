@@ -5,7 +5,7 @@ This package provides Thompson Sampling implementations for combinatorial librar
 """
 
 # Import configuration
-from .config import ThompsonSamplingConfig, RandomBaselineConfig
+from .config import ThompsonSamplingConfig
 
 # Import core functionality
 from .core import (
@@ -42,8 +42,6 @@ from .warmup import (
 # Import utilities
 from .utils import get_logger, read_reagents, create_reagents
 
-# Import baseline functionality
-from .baseline import run_random_baseline, run_exhaustive_baseline
 
 # Import presets for easy access
 from .presets import ConfigPresets, get_preset
@@ -51,15 +49,11 @@ from .presets import ConfigPresets, get_preset
 __all__ = [
     # Configuration
     'ThompsonSamplingConfig',
-    'RandomBaselineConfig',
 
     # Presets
     'ConfigPresets',
     'get_preset',
 
-    # Baseline functions
-    'run_random_baseline',
-    'run_exhaustive_baseline',
 
     # Core classes
     'ThompsonSampler',
