@@ -6,7 +6,11 @@ Requires the optional ``viz`` extra (``pip install chem-tactics[viz]``).
 from typing import Dict, List, Optional
 
 import polars as pl
-import altair as alt
+
+try:
+    import altair as alt
+except ImportError as exc:  # pragma: no cover
+    raise ImportError("altair is required for TS_Benchmarks: pip install 'chem-tactics[viz]'") from exc
 
 
 class TS_Benchmarks:

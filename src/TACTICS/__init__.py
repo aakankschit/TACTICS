@@ -28,90 +28,73 @@ Selection strategies (baselines):
     - :class:`BayesUCBSelection`: Bayesian UCB
 """
 
-# Configuration
-from .thompson_sampling.config import ThompsonSamplingConfig
+import sys
+from typing import TYPE_CHECKING
 
-# Presets
-from .thompson_sampling.presets import ConfigPresets, get_preset
+from ._lazy import install as _install
 
-# Core
-from .thompson_sampling.core import ThompsonSampler, Reagent
+try:
+    from importlib.metadata import version as _version
+    __version__ = _version("chem-tactics")
+except Exception:  # not installed (e.g. running from a source checkout)
+    __version__ = "0.0.0"
 
-# Selection strategies — recommended
-from .thompson_sampling.strategies import (
-    SelectionStrategy,
-    TopTwoSelection,
-    RouletteWheelSelection,
-)
+if TYPE_CHECKING:
+    from .thompson_sampling.config import ThompsonSamplingConfig
+    from .thompson_sampling.presets import ConfigPresets, get_preset
+    from .thompson_sampling.core import ThompsonSampler, Reagent
+    from .thompson_sampling.strategies import (
+        SelectionStrategy,
+        TopTwoSelection,
+        RouletteWheelSelection,
+        GreedySelection,
+        UCBSelection,
+        EpsilonGreedySelection,
+        BayesUCBSelection,
+    )
+    from .thompson_sampling.warmup import WarmupStrategy, EnhancedWarmup, BalancedWarmup
+    from .thompson_sampling.core import (
+        ROCSEvaluator,
+        LookupEvaluator,
+        DBEvaluator,
+        FredEvaluator,
+        FPEvaluator,
+        MWEvaluator,
+        MLClassifierEvaluator,
+    )
+    from .thompson_sampling.utils import get_logger, read_reagents, create_reagents
 
-# Selection strategies — baselines
-from .thompson_sampling.strategies import (
-    GreedySelection,
-    UCBSelection,
-    EpsilonGreedySelection,
-    BayesUCBSelection,
-)
-
-# Warmup strategies
-from .thompson_sampling.warmup import (
-    WarmupStrategy,
-    EnhancedWarmup,
-    BalancedWarmup,
-)
-
-# Evaluators
-from .thompson_sampling.core import (
-    ROCSEvaluator,
-    LookupEvaluator,
-    DBEvaluator,
-    FredEvaluator,
-    FPEvaluator,
-    MWEvaluator,
-    MLClassifierEvaluator,
-)
-
-# Utilities
-from .thompson_sampling.utils import get_logger, read_reagents, create_reagents
-
-__all__ = [
-    # Configuration
-    "ThompsonSamplingConfig",
-
-    # Presets
-    "ConfigPresets",
-    "get_preset",
-
-    # Core classes
-    "ThompsonSampler",
-    "Reagent",
-
-    # Selection strategies — recommended
-    "SelectionStrategy",
-    "TopTwoSelection",
-    "RouletteWheelSelection",
-
-    # Selection strategies — baselines
-    "GreedySelection",
-    "UCBSelection",
-    "EpsilonGreedySelection",
-    "BayesUCBSelection",
-
+_install(sys.modules[__name__], {
+    # Configuration / presets
+    "ThompsonSamplingConfig": ".thompson_sampling.config",
+    "ConfigPresets": ".thompson_sampling.presets",
+    "get_preset": ".thompson_sampling.presets",
+    # Core
+    "ThompsonSampler": ".thompson_sampling.core.sampler",
+    "Reagent": ".thompson_sampling.core.reagent",
+    # Selection strategies -- recommended
+    "SelectionStrategy": ".thompson_sampling.strategies.base_strategy",
+    "TopTwoSelection": ".thompson_sampling.strategies.top_two_selection",
+    "RouletteWheelSelection": ".thompson_sampling.strategies.roulette_wheel",
+    # Selection strategies -- baselines
+    "GreedySelection": ".thompson_sampling.strategies.greedy_selection",
+    "UCBSelection": ".thompson_sampling.strategies.ucb_selection",
+    "EpsilonGreedySelection": ".thompson_sampling.strategies.epsilon_greedy",
+    "BayesUCBSelection": ".thompson_sampling.strategies.bayes_ucb_selection",
     # Warmup strategies
-    "WarmupStrategy",
-    "EnhancedWarmup",
-    "BalancedWarmup",
-
+    "WarmupStrategy": ".thompson_sampling.warmup.base",
+    "EnhancedWarmup": ".thompson_sampling.warmup.enhanced",
+    "BalancedWarmup": ".thompson_sampling.warmup.balanced",
     # Evaluators
-    "ROCSEvaluator",
-    "LookupEvaluator",
-    "DBEvaluator",
-    "FredEvaluator",
-    "FPEvaluator",
-    "MWEvaluator",
-    "MLClassifierEvaluator",
-
+    "ROCSEvaluator": ".thompson_sampling.core.evaluators",
+    "LookupEvaluator": ".thompson_sampling.core.evaluators",
+    "DBEvaluator": ".thompson_sampling.core.evaluators",
+    "FredEvaluator": ".thompson_sampling.core.evaluators",
+    "FPEvaluator": ".thompson_sampling.core.evaluators",
+    "MWEvaluator": ".thompson_sampling.core.evaluators",
+    "MLClassifierEvaluator": ".thompson_sampling.core.evaluators",
     # Utilities
-    "get_logger",
-    "read_reagents",
-    "create_reagents",
-]
+    "get_logger": ".thompson_sampling.utils.ts_logger",
+    "read_reagents": ".thompson_sampling.utils.ts_utils",
+    "create_reagents": ".thompson_sampling.utils.ts_utils",
+})

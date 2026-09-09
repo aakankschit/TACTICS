@@ -23,8 +23,6 @@ dependencies = [
     "polars",
     "tqdm",
     "sqlitedict",
-    "matplotlib",
-    "altair",
     "joblib",
 ]
 classifiers = [
@@ -70,8 +68,15 @@ openeye = [
     "openeye-toolkits"
 ]
 
+viz = [
+    "matplotlib>=3.7",
+    "altair",
+]
+
 tutorials = [
     "marimo>=0.18.0",
+    "matplotlib>=3.7",
+    "altair",
 ]
 
 [project.urls]

@@ -17,7 +17,6 @@ References:
 import warnings
 from typing import Any, Dict, List, Optional
 import numpy as np
-from scipy import stats
 from .base_strategy import SelectionStrategy
 from ._thermal import ThermalCyclingMixin
 
@@ -561,6 +560,8 @@ class BayesUCBSelection(ThermalCyclingMixin, SelectionStrategy):
                 mask = (explored_n - 1) == df
                 # Clamp df to avoid numerical issues with very small degrees of freedom
                 safe_df = max(df, 1)
+                from scipy import stats  # deferred: ~0.4 s import, only needed here
+
                 t_quantiles[mask] = stats.t.ppf(percentile, safe_df)
 
             # Compute UCB indices with numerical stability

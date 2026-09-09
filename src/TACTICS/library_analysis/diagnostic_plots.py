@@ -5,12 +5,26 @@ All functions accept Polars DataFrames and return ``matplotlib.figure.Figure``
 objects so callers can save, show, or compose them freely.
 """
 
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 import numpy as np
 import polars as pl
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
+
+_VIZ_HINT = "matplotlib is required for plotting: pip install 'chem-tactics[viz]'"
+
+
+def _pyplot():
+    """Import matplotlib.pyplot on first use (optional ``viz`` extra)."""
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError as exc:
+        raise ImportError(_VIZ_HINT) from exc
+    return plt
 
 
 def plot_criticality_trajectory(
@@ -30,7 +44,7 @@ def plot_criticality_trajectory(
     """
     cycle_col = "current_cycle" if "current_cycle" in diagnostics_df.columns else "cycle"
 
-    fig, ax = plt.subplots(figsize=figsize)
+    fig, ax = _pyplot().subplots(figsize=figsize)
     ax.axhspan(0, 0.3, alpha=0.1, color="blue", label="Diffuse zone")
 
     for comp_idx in sorted(diagnostics_df["component_idx"].unique().to_list()):
@@ -70,7 +84,7 @@ def plot_snr_trajectory(
     """
     cycle_col = "current_cycle" if "current_cycle" in diagnostics_df.columns else "cycle"
 
-    fig, ax = plt.subplots(figsize=figsize)
+    fig, ax = _pyplot().subplots(figsize=figsize)
     ax.axhline(1.0, color="red", linestyle="--", alpha=0.6, label="SNR = 1 (noise threshold)")
 
     for comp_idx in sorted(diagnostics_df["component_idx"].unique().to_list()):
@@ -129,7 +143,7 @@ def plot_temperature_decomposition(
         ("final_temperature", "Final Temperature"),
     ]
 
-    fig, axes = plt.subplots(len(fields), 1, figsize=figsize, sharex=True)
+    fig, axes = _pyplot().subplots(len(fields), 1, figsize=figsize, sharex=True)
 
     for ax, (col, title) in zip(axes, fields):
         vals = comp[col].to_numpy()
@@ -148,7 +162,10 @@ def plot_temperature_decomposition(
 
 def _component_palette(n: int) -> list[str]:
     """Return *n* distinguishable colours from the tab10 colourmap."""
-    cmap = plt.cm.get_cmap("tab10")
+    _pyplot()  # ensures matplotlib is importable, with the [viz] hint on failure
+    from matplotlib import colormaps
+
+    cmap = colormaps["tab10"]
     return [cmap(i) for i in range(n)]
 
 
@@ -217,7 +234,7 @@ def plot_rws_diagnostic(
     colors = _component_palette(len(comps))
     cycles = sorted(diagnostics_df[cycle_col].unique().to_list())
 
-    fig, ax_gmic = plt.subplots(figsize=figsize)
+    fig, ax_gmic = _pyplot().subplots(figsize=figsize)
     fig.patch.set_facecolor("white")
     ax_gmic.set_facecolor("white")
     ax_mult = ax_gmic.twinx()
@@ -332,7 +349,7 @@ def plot_ttts_diagnostic(
     n_reps = diagnostics_df["replicate"].n_unique()
     colors = _component_palette(len(comps))
 
-    fig, ax_ema = plt.subplots(figsize=figsize)
+    fig, ax_ema = _pyplot().subplots(figsize=figsize)
     fig.patch.set_facecolor("white")
     ax_ema.set_facecolor("white")
     ax_scale = ax_ema.twinx()
@@ -747,7 +764,7 @@ def plot_reagent_usage_action_panel(
     n_reagents_arr = np.asarray(n_reagents_per_component, dtype=float)
     new_frac_lib = new_count / n_reagents_arr[None, :]
 
-    fig, (ax_heat, ax_line) = plt.subplots(
+    fig, (ax_heat, ax_line) = _pyplot().subplots(
         2, 1, figsize=figsize, sharex=True,
         gridspec_kw={"height_ratios": [0.35, 3], "hspace": 0.08},
     )
@@ -902,7 +919,7 @@ def plot_gmic_directed_exploration(
     ncols = len(methods)
     if figsize is None:
         figsize = (7.5 * ncols, 9.2)
-    fig, axes = plt.subplots(
+    fig, axes = _pyplot().subplots(
         3, ncols, figsize=figsize, squeeze=False,
         gridspec_kw={"height_ratios": [1.1, 0.35, 1.1]},
     )
@@ -1129,7 +1146,7 @@ def plot_adaptive_intensity(
     if figsize is None:
         figsize = (7.5 * ncols, 9.2 if show_decision else 7.0)
     height_ratios = [1.1, 0.35, 1.1] if show_decision else [1.1, 1.1]
-    fig, axes = plt.subplots(
+    fig, axes = _pyplot().subplots(
         nrows, ncols, figsize=figsize, squeeze=False,
         gridspec_kw={"height_ratios": height_ratios},
     )
