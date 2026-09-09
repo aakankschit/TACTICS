@@ -12,7 +12,7 @@ from ..utils.ts_logger import get_logger
 from ..utils.ts_utils import read_reagents
 from .evaluators import DBEvaluator, LookupEvaluator
 from .parallel_evaluator import ParallelEvaluator
-from ..warmup import WarmupStrategy, StandardWarmup
+from ..warmup import WarmupStrategy, EnhancedWarmup
 
 if TYPE_CHECKING:
     from ..config import ThompsonSamplingConfig
@@ -70,7 +70,7 @@ class ThompsonSampler:
     ):
         self.synthesis_pipeline = synthesis_pipeline
         self.selection_strategy = selection_strategy
-        self.warmup_strategy = warmup_strategy or StandardWarmup()
+        self.warmup_strategy = warmup_strategy or EnhancedWarmup()
         self.reagent_lists = []
         self.evaluator = None
         # Picklable recipe for self.evaluator, when known. Workers use this to
@@ -160,11 +160,7 @@ class ThompsonSampler:
 
         # Create components from config
         strategy = create_strategy(config.strategy_config)
-        warmup = (
-            create_warmup(config.warmup_config)
-            if config.warmup_config
-            else StandardWarmup()
-        )
+        warmup = create_warmup(config.warmup_config)
         evaluator = create_evaluator(config.evaluator_config)
 
         # Get pipeline from config (single source of truth)

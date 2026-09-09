@@ -310,7 +310,7 @@ class TestProductLibraryEvaluation:
 class TestProductLibraryBatchMode:
     """Test product library with batch Thompson sampling (batch_size > 1)."""
 
-    @pytest.mark.skip(reason="Warmup has edge case with small test data")
+    @pytest.mark.skip(reason="search() hits an all-NaN slice on this tiny library; needs investigation")
     def test_batch_mode_with_library(
         self, sample_product_library, pipeline, temp_reagent_files
     ):
@@ -348,7 +348,7 @@ class TestProductLibraryBatchMode:
 
         sampler.close()
 
-    @pytest.mark.skip(reason="Warmup has edge case with small test data")
+    @pytest.mark.skip(reason="worker evaluator is None with product_library_file; needs investigation")
     def test_batch_mode_parallel_evaluation_with_library(
         self, sample_product_library, pipeline, temp_reagent_files
     ):
@@ -392,7 +392,6 @@ class TestProductLibraryBatchMode:
 class TestProductLibraryWithWorkflow:
     """Test product library with full warmup and search workflow."""
 
-    @pytest.mark.skip(reason="Warmup has edge case with small test data")
     def test_warmup_with_library(
         self, sample_product_library, pipeline, temp_reagent_files
     ):
@@ -418,7 +417,6 @@ class TestProductLibraryWithWorkflow:
 
         sampler.close()
 
-    @pytest.mark.skip(reason="Warmup has edge case with small test data")
     def test_search_with_library(
         self, sample_product_library, pipeline, temp_reagent_files
     ):

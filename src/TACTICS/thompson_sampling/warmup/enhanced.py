@@ -155,7 +155,7 @@ are repeated to match the largest component size.
 WARNING: Creates imbalanced posteriors!
 - Small components get many more samples than large components
 - Use only if you specifically want to thoroughly explore small component
-- For balanced posteriors, use StandardWarmup or StratifiedWarmup instead
+- For balanced posteriors, use BalancedWarmup instead
 
 Example imbalance for 130 acids × 3844 amines:
 - Acids: ~300 samples per reagent

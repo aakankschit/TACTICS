@@ -14,19 +14,14 @@ Alternatives:
     BalancedWarmup: Exactly K observations per reagent with stratified partners.
     Good for isolating framework gains (e.g., Balanced-Greedy vs Legacy-Greedy),
     but consistently slightly below EnhancedWarmup when paired with GMIC rotation.
-
-Baseline:
-    StandardWarmup: Random partner selection with replacement. For comparison only.
 """
 
 from .base import WarmupStrategy
-from .standard import StandardWarmup
 from .enhanced import EnhancedWarmup
 from .balanced import BalancedWarmup
 
 __all__ = [
     'WarmupStrategy',
     'BalancedWarmup',
-    'StandardWarmup',
     'EnhancedWarmup',
 ]

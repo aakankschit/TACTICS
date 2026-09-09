@@ -14,7 +14,6 @@ from TACTICS.thompson_sampling.strategies.config import (
     TopTwoConfig,
 )
 from TACTICS.thompson_sampling.warmup.config import (
-    StandardWarmupConfig,
     EnhancedWarmupConfig,
     BalancedWarmupConfig,
 )
@@ -91,11 +90,6 @@ class TestStrategyConfigs:
 
 class TestWarmupConfigs:
     """Tests for warmup strategy configuration models."""
-
-    def test_standard_warmup_config(self):
-        """Test StandardWarmupConfig creation."""
-        config = StandardWarmupConfig()
-        assert config.warmup_type == "standard"
 
     def test_balanced_warmup_config(self):
         """Test BalancedWarmupConfig creation."""

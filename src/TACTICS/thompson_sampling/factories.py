@@ -22,12 +22,10 @@ from .strategies import (
 from .strategies.base_strategy import SelectionStrategy
 
 from .warmup.config import (
-    StandardWarmupConfig,
     EnhancedWarmupConfig,
     BalancedWarmupConfig
 )
 from .warmup import (
-    StandardWarmup,
     EnhancedWarmup,
     BalancedWarmup
 )
@@ -67,7 +65,6 @@ StrategyConfig = Union[
 ]
 
 WarmupConfig = Union[
-    StandardWarmupConfig,
     EnhancedWarmupConfig,
     BalancedWarmupConfig
 ]
@@ -170,7 +167,7 @@ def create_warmup(config: WarmupConfig) -> WarmupStrategy:
     Create a warmup strategy from a Pydantic config.
 
     Args:
-        config: Warmup configuration (BalancedWarmupConfig, StandardWarmupConfig, etc.)
+        config: Warmup configuration (EnhancedWarmupConfig or BalancedWarmupConfig)
 
     Returns:
         WarmupStrategy: Instantiated warmup strategy object
@@ -181,10 +178,7 @@ def create_warmup(config: WarmupConfig) -> WarmupStrategy:
         >>> isinstance(warmup, BalancedWarmup)
         True
     """
-    if isinstance(config, StandardWarmupConfig):
-        return StandardWarmup()
-
-    elif isinstance(config, EnhancedWarmupConfig):
+    if isinstance(config, EnhancedWarmupConfig):
         return EnhancedWarmup()
 
     elif isinstance(config, BalancedWarmupConfig):

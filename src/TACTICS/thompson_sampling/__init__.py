@@ -35,7 +35,6 @@ from .strategies import (
 from .warmup import (
     WarmupStrategy,
     BalancedWarmup,
-    StandardWarmup,
     EnhancedWarmup
 )
 
@@ -71,7 +70,6 @@ __all__ = [
     # Warmup strategies
     'WarmupStrategy',
     'BalancedWarmup',
-    'StandardWarmup',
     'EnhancedWarmup',
 
     # Evaluators

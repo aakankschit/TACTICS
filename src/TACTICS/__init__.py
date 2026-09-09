@@ -57,7 +57,6 @@ from .thompson_sampling.warmup import (
     WarmupStrategy,
     EnhancedWarmup,
     BalancedWarmup,
-    StandardWarmup,
 )
 
 # Evaluators
@@ -101,7 +100,6 @@ __all__ = [
     "WarmupStrategy",
     "EnhancedWarmup",
     "BalancedWarmup",
-    "StandardWarmup",
 
     # Evaluators
     "ROCSEvaluator",

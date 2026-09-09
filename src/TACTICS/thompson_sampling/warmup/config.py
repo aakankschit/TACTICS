@@ -10,17 +10,6 @@ class _StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-class StandardWarmupConfig(_StrictModel):
-    """
-    Configuration for Standard warmup strategy.
-
-    Standard warmup uses random partner selection with replacement.
-    Each reagent is tested num_warmup_trials times with randomly selected partners.
-    """
-
-    warmup_type: Literal["standard"] = "standard"
-
-
 class EnhancedWarmupConfig(_StrictModel):
     """
     Configuration for Enhanced warmup strategy (recommended).

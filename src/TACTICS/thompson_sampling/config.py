@@ -16,7 +16,6 @@ from .strategies.config import (
     TopTwoConfig,
 )
 from .warmup.config import (
-    StandardWarmupConfig,
     EnhancedWarmupConfig,
     BalancedWarmupConfig,
 )
@@ -46,7 +45,7 @@ StrategyConfigType = Union[
 ]
 
 WarmupConfigType = Union[
-    BalancedWarmupConfig, StandardWarmupConfig, EnhancedWarmupConfig
+    BalancedWarmupConfig, EnhancedWarmupConfig
 ]
 
 EvaluatorConfigType = Union[
