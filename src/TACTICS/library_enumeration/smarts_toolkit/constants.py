@@ -111,9 +111,6 @@ DEFAULT_SALT_FRAGMENTS: List[Tuple[str, str]] = [
     ("O=C([O-])CC(O)(CC(=O)[O-])C(=O)[O-]", "Citrate"),
 ]
 
-# Quick lookup for salt fragment SMILES (without names)
-SALT_FRAGMENT_SMILES: List[str] = [smiles for smiles, _ in DEFAULT_SALT_FRAGMENTS]
-
 # Protecting group name to info mapping for quick lookup
 PROTECTING_GROUP_MAP: dict[str, ProtectingGroupInfo] = {
     pg.name: pg for pg in DEFAULT_PROTECTING_GROUPS

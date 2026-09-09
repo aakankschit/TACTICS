@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import polars as pl
 from rdkit import Chem
-from rdkit.Chem import AllChem, Draw
+from rdkit.Chem import AllChem
 
 from .config import ProtectingGroupInfo
 from .constants import DEFAULT_PROTECTING_GROUPS, DEFAULT_SALT_FRAGMENTS

@@ -83,7 +83,6 @@ from ._validator import ValidationResult
 from .constants import (
     DEFAULT_PROTECTING_GROUPS,
     DEFAULT_SALT_FRAGMENTS,
-    SALT_FRAGMENT_SMILES,
     PROTECTING_GROUP_MAP,
     get_protecting_group,
     get_all_protecting_group_names,
@@ -102,7 +101,6 @@ __all__ = [
     # Constants
     "DEFAULT_PROTECTING_GROUPS",
     "DEFAULT_SALT_FRAGMENTS",
-    "SALT_FRAGMENT_SMILES",
     "PROTECTING_GROUP_MAP",
     "get_protecting_group",
     "get_all_protecting_group_names",

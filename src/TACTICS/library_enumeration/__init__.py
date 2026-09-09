@@ -69,7 +69,6 @@ from .file_writer import (
 from .generate_products import (
     enumerate_products,
     generate_all_combinations,
-    LibraryEnumerator,  # Legacy, deprecated
 )
 
 # Multiprocessing utilities
@@ -105,8 +104,6 @@ __all__ = [
     "generate_all_combinations",
     # Multiprocessing
     "initializer",
-    # Legacy
-    "LibraryEnumerator",
     # Config (re-exported from smarts_toolkit)
     "ReactionDef",
     "ReactionConfig",

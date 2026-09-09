@@ -29,7 +29,7 @@ Selection strategies (baselines):
 """
 
 # Library enumeration
-from .library_enumeration import LibraryEnumerator, initializer
+from .library_enumeration import initializer
 
 # Configuration
 from .thompson_sampling.config import ThompsonSamplingConfig
@@ -116,7 +116,6 @@ __all__ = [
     "MLClassifierEvaluator",
 
     # Library enumeration
-    "LibraryEnumerator",
     "initializer",
 
     # Utilities
