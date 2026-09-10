@@ -65,18 +65,46 @@ from sqlitedict import SqliteDict
 _MORGAN_GEN = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
 
 class Evaluator(ABC):
+    """Base class for scoring functions.
+
+    An evaluator turns one product into one number. The sampler calls
+    :meth:`evaluate` once per product it decides to test and feeds the score
+    into the reagent posteriors.
+
+    Most evaluators are constructed by :func:`~TACTICS.thompson_sampling.factories.create_evaluator`
+    from their paired Pydantic config (for example
+    :class:`~TACTICS.thompson_sampling.core.evaluator_config.LookupEvaluatorConfig`
+    builds a :class:`LookupEvaluator`), which is also how parallel workers rebuild
+    them. Constructing one directly is fine for single-process use.
+
+    Subclasses implement :meth:`evaluate` and the :attr:`counter` property.
+    A score of ``NaN`` means "could not score"; the sampler skips it.
+    """
+
     @abstractmethod
     def evaluate(self, mol):
-        pass
+        """Score one product.
+
+        Args:
+            mol: An RDKit ``Mol`` for structure-based evaluators, or the product
+                *name* (``str``) for :class:`LookupEvaluator` and
+                :class:`DBEvaluator`, which key on the product code.
+
+        Returns:
+            float: The score. Higher is better in ``mode="maximize"``; lower is
+            better in ``mode="minimize"`` (docking).
+        """
 
     @property
     @abstractmethod
     def counter(self):
-        pass
+        """Number of :meth:`evaluate` calls so far."""
 
 
 class MWEvaluator(Evaluator):
-    """A simple evaluation class that calculates molecular weight, this was just a development tool
+    """Score = molecular weight. A smoke-test evaluator; it takes no arguments.
+
+    Config: :class:`~TACTICS.thompson_sampling.core.evaluator_config.MWEvaluatorConfig`.
     """
 
     def __init__(self):
@@ -92,7 +120,18 @@ class MWEvaluator(Evaluator):
 
 
 class FPEvaluator(Evaluator):
-    """An evaluator class that calculates a fingerprint Tanimoto to a reference molecule
+    """Score = Morgan-fingerprint Tanimoto similarity to a query molecule.
+
+    Fingerprints are radius 2, 2048 bits (ECFP4-equivalent). Fast, needs no
+    3D, no licence.
+
+    Args:
+        input_dict: ``{"query_smiles": str}`` -- the reference molecule.
+
+    Config: :class:`~TACTICS.thompson_sampling.core.evaluator_config.FPEvaluatorConfig`.
+
+    Raises:
+        ValueError: if ``query_smiles`` does not parse.
     """
 
     def __init__(self, input_dict):
@@ -114,7 +153,17 @@ class FPEvaluator(Evaluator):
 
 
 class ROCSEvaluator(Evaluator):
-    """An evaluator class that calculates a ROCS score to a reference molecule
+    """Score = ROCS shape + colour Tanimoto combo to a 3D query (OpenEye).
+
+    Conformers are generated with Omega on the fly (``max_confs``, default 50;
+    change with :meth:`set_max_confs`). Slow: use ``processes > 1``.
+    Requires the ``openeye`` extra and a licence.
+
+    Args:
+        input_dict: ``{"query_molfile": str}`` -- a 3D query file readable by
+            ``oechem.oemolistream`` (SDF, MOL2, OEB).
+
+    Config: :class:`~TACTICS.thompson_sampling.core.evaluator_config.ROCSEvaluatorConfig`.
     """
 
     def __init__(self, input_dict):
@@ -175,8 +224,23 @@ class ROCSEvaluator(Evaluator):
 
 
 class LookupEvaluator(Evaluator):
-    """A simple evaluation class that looks up values from a file.
-    This is primarily used for testing.
+    """Score = a value looked up by product code in a precomputed table.
+
+    Used for benchmarking against exhaustive scores and for any workflow
+    where scores already exist. Keyed on the product *name*
+    (``<reagent1>_<reagent2>_...``), so the sampler skips product synthesis
+    entirely when this evaluator is active.
+
+    Args:
+        input_dict: ``{"ref_filename": str, "compound_col": str = "Product_Code",
+            "score_col": str = "Scores", "default_score": float | None = None}``.
+            ``ref_filename`` may be ``.csv`` or ``.parquet``. ``default_score``
+            is returned for product codes absent from the table; leave it
+            ``None`` (→ ``NaN``, skipped) unless absence has a meaning, e.g.
+            ``0.0`` for DEL read counts where an unlisted product is a
+            non-binder. A JSON string of the same dict is also accepted.
+
+    Config: :class:`~TACTICS.thompson_sampling.core.evaluator_config.LookupEvaluatorConfig`.
     """
 
     def __init__(self, input_dictionary):
@@ -220,8 +284,16 @@ class LookupEvaluator(Evaluator):
         return self.ref_dict.get(product_name, missing)
 
 class DBEvaluator(Evaluator):
-    """A simple evaluator class that looks up values from a database.
-    This is primarily used for benchmarking
+    """Score = a value looked up by product code in a ``sqlitedict`` database.
+
+    Like :class:`LookupEvaluator` but backed by SQLite, for tables too large
+    to hold in memory. Keyed on the product name, so synthesis is skipped.
+
+    Args:
+        input_dict: ``{"db_filename": str, "db_prefix": str}`` -- ``db_prefix``
+            is prepended to the product name to form the key.
+
+    Config: :class:`~TACTICS.thompson_sampling.core.evaluator_config.DBEvaluatorConfig`.
     """
 
     def __init__(self, input_dictionary):
@@ -251,7 +323,19 @@ class DBEvaluator(Evaluator):
     
 
 class FredEvaluator(Evaluator):
-    """An evaluator class that docks a molecule with the OEDocking Toolkit and returns the score
+    """Score = FRED docking score into a prepared receptor (OpenEye).
+
+    Lower is better -- run with ``mode="minimize"``. Conformers via Omega
+    (``max_confs``, default 50; :meth:`set_max_confs`). Slow: use
+    ``processes > 1``. Requires the ``openeye`` extra and a licence.
+
+    Args:
+        input_dict: ``{"design_unit_file": str}`` -- an ``.oedu`` design unit.
+
+    Config: :class:`~TACTICS.thompson_sampling.core.evaluator_config.FredEvaluatorConfig`.
+
+    Raises:
+        FileNotFoundError: if the design unit file does not exist.
     """
 
     def __init__(self, input_dict):
@@ -294,13 +378,24 @@ class FredEvaluator(Evaluator):
         return score
 
 class CustomEvaluator(Evaluator):
-    """An evaluator class that uses a user-provided custom scoring function
+    """Score = whatever your Python function returns.
+
+    The simplest way to plug in your own scoring: pass a callable that takes
+    an RDKit ``Mol`` and returns a ``float``. Results are cached by canonical
+    SMILES; an exception inside the function yields ``NaN`` (the product is
+    skipped, the run continues).
+
+    For ``processes > 1`` the callable must be picklable -- a module-level
+    function, not a lambda or closure -- because each worker rebuilds the
+    evaluator from its config.
+
+    Args:
+        scoring_function: ``Callable[[Mol], float]``.
+
+    Config: :class:`~TACTICS.thompson_sampling.core.evaluator_config.CustomEvaluatorConfig`.
     """
 
     def __init__(self, scoring_function):
-        """
-        :param scoring_function: callable that accepts an RDKit Mol and returns a float
-        """
         self.scoring_function = scoring_function
         self.num_evaluations = 0
         self.score_cache = {}
@@ -375,7 +470,15 @@ def read_design_unit(filename):
 
 
 class MLClassifierEvaluator(Evaluator):
-    """An evaluator class the calculates a score based on a trained ML model
+    """Score = positive-class probability from a pickled scikit-learn classifier.
+
+    The model is loaded with ``joblib`` and fed a 2048-bit Morgan fingerprint
+    (radius 2); the score is ``predict_proba(...)[:, 1]``.
+
+    Args:
+        input_dict: ``{"model_filename": str}`` -- a joblib/pickle file.
+
+    Config: :class:`~TACTICS.thompson_sampling.core.evaluator_config.MLClassifierEvaluatorConfig`.
     """
 
     def __init__(self, input_dict):

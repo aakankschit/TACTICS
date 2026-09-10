@@ -31,7 +31,6 @@ class RouletteWheelSelection(GMICCriticalityMixin, SelectionStrategy):
         cats_range=None,
         divergence_threshold=0.1,
         cats_ema_decay=None,
-        **kwargs,
     ):
         """
         Initialize Roulette Wheel Selection with CATS.
@@ -49,7 +48,6 @@ class RouletteWheelSelection(GMICCriticalityMixin, SelectionStrategy):
                 cats_max = cats_range, cats_min = 1/cats_range. (default: None)
             divergence_threshold: KL divergence threshold for switching from diversity
                 to GMIC criticality mode (default: 0.1)
-            **kwargs: Catches deprecated parameters with warnings
         """
         super().__init__(mode)
 

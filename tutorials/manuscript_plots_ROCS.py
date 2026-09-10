@@ -6,7 +6,7 @@ Loads the canonical 28-library recovery summary, filters to ROCS libraries
 ROCS-related manuscript figures: aggregate Top-N recovery, Zhao Fig 5
 extensions, Tukey HSD pairwise CIs, per-library breakdowns, and the ROCS
 budget-sensitivity panel. The parallel docking figures live in
-`tutorials/manuscript_plots.py`.
+`tutorials/manuscript_plots_docking.py`.
 
 Run as app: marimo run tutorials/manuscript_plots_ROCS.py
 Edit mode:  marimo edit tutorials/manuscript_plots_ROCS.py

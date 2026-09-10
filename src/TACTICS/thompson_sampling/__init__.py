@@ -37,6 +37,29 @@ if TYPE_CHECKING:
     )
     from .warmup import WarmupStrategy, BalancedWarmup, EnhancedWarmup
     from .utils import get_logger, read_reagents, create_reagents
+    from .core.evaluators import Evaluator, CustomEvaluator
+    from .strategies.config import (
+        GreedyConfig,
+        RouletteWheelConfig,
+        UCBConfig,
+        EpsilonGreedyConfig,
+        BayesUCBConfig,
+        TopTwoConfig,
+    )
+    from .warmup.config import (
+        EnhancedWarmupConfig,
+        BalancedWarmupConfig,
+    )
+    from .core.evaluator_config import (
+        LookupEvaluatorConfig,
+        DBEvaluatorConfig,
+        FPEvaluatorConfig,
+        MWEvaluatorConfig,
+        ROCSEvaluatorConfig,
+        FredEvaluatorConfig,
+        MLClassifierEvaluatorConfig,
+        CustomEvaluatorConfig,
+    )
 
 _install(sys.modules[__name__], {
     # Configuration / presets
@@ -66,6 +89,26 @@ _install(sys.modules[__name__], {
     "FPEvaluator": ".core.evaluators",
     "MWEvaluator": ".core.evaluators",
     "MLClassifierEvaluator": ".core.evaluators",
+    # Evaluator classes (ABC + user-function adapter)
+    "Evaluator": ".core.evaluators",
+    "CustomEvaluator": ".core.evaluators",
+    # Pydantic component configs
+    "GreedyConfig": ".strategies.config",
+    "RouletteWheelConfig": ".strategies.config",
+    "UCBConfig": ".strategies.config",
+    "EpsilonGreedyConfig": ".strategies.config",
+    "BayesUCBConfig": ".strategies.config",
+    "TopTwoConfig": ".strategies.config",
+    "EnhancedWarmupConfig": ".warmup.config",
+    "BalancedWarmupConfig": ".warmup.config",
+    "LookupEvaluatorConfig": ".core.evaluator_config",
+    "DBEvaluatorConfig": ".core.evaluator_config",
+    "FPEvaluatorConfig": ".core.evaluator_config",
+    "MWEvaluatorConfig": ".core.evaluator_config",
+    "ROCSEvaluatorConfig": ".core.evaluator_config",
+    "FredEvaluatorConfig": ".core.evaluator_config",
+    "MLClassifierEvaluatorConfig": ".core.evaluator_config",
+    "CustomEvaluatorConfig": ".core.evaluator_config",
     # Utilities
     "get_logger": ".utils.ts_logger",
     "read_reagents": ".utils.ts_utils",

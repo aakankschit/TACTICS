@@ -128,9 +128,6 @@ class ThompsonSamplingConfig(BaseModel):
     )
 
     # Output
-    results_filename: Optional[str] = Field(
-        default="results.csv", description="Results output file"
-    )
     log_filename: Optional[str] = Field(default=None, description="Log file path")
 
     # Performance

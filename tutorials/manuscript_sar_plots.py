@@ -2,7 +2,7 @@
 TACTICS Manuscript — Reagent Score Landscape Plots (Docking only)
 
 Heavy plots that read multi-million-row brute-force ground-truth parquets and
-compute per-reagent posterior statistics. Separated from manuscript_plots.py
+compute per-reagent posterior statistics. Separated from manuscript_plots_docking.py
 to avoid blocking iteration on the recovery/diversity plots in that notebook.
 
 Coverage: 8 docking libraries (4 FRED + 4 HYBRID) for both the single-library

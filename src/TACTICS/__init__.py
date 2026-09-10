@@ -63,6 +63,29 @@ if TYPE_CHECKING:
         MLClassifierEvaluator,
     )
     from .thompson_sampling.utils import get_logger, read_reagents, create_reagents
+    from .thompson_sampling.core.evaluators import Evaluator, CustomEvaluator
+    from .thompson_sampling.strategies.config import (
+        GreedyConfig,
+        RouletteWheelConfig,
+        UCBConfig,
+        EpsilonGreedyConfig,
+        BayesUCBConfig,
+        TopTwoConfig,
+    )
+    from .thompson_sampling.warmup.config import (
+        EnhancedWarmupConfig,
+        BalancedWarmupConfig,
+    )
+    from .thompson_sampling.core.evaluator_config import (
+        LookupEvaluatorConfig,
+        DBEvaluatorConfig,
+        FPEvaluatorConfig,
+        MWEvaluatorConfig,
+        ROCSEvaluatorConfig,
+        FredEvaluatorConfig,
+        MLClassifierEvaluatorConfig,
+        CustomEvaluatorConfig,
+    )
 
 _install(sys.modules[__name__], {
     # Configuration / presets
@@ -93,6 +116,26 @@ _install(sys.modules[__name__], {
     "FPEvaluator": ".thompson_sampling.core.evaluators",
     "MWEvaluator": ".thompson_sampling.core.evaluators",
     "MLClassifierEvaluator": ".thompson_sampling.core.evaluators",
+    # Evaluator classes (ABC + user-function adapter)
+    "Evaluator": ".thompson_sampling.core.evaluators",
+    "CustomEvaluator": ".thompson_sampling.core.evaluators",
+    # Pydantic component configs
+    "GreedyConfig": ".thompson_sampling.strategies.config",
+    "RouletteWheelConfig": ".thompson_sampling.strategies.config",
+    "UCBConfig": ".thompson_sampling.strategies.config",
+    "EpsilonGreedyConfig": ".thompson_sampling.strategies.config",
+    "BayesUCBConfig": ".thompson_sampling.strategies.config",
+    "TopTwoConfig": ".thompson_sampling.strategies.config",
+    "EnhancedWarmupConfig": ".thompson_sampling.warmup.config",
+    "BalancedWarmupConfig": ".thompson_sampling.warmup.config",
+    "LookupEvaluatorConfig": ".thompson_sampling.core.evaluator_config",
+    "DBEvaluatorConfig": ".thompson_sampling.core.evaluator_config",
+    "FPEvaluatorConfig": ".thompson_sampling.core.evaluator_config",
+    "MWEvaluatorConfig": ".thompson_sampling.core.evaluator_config",
+    "ROCSEvaluatorConfig": ".thompson_sampling.core.evaluator_config",
+    "FredEvaluatorConfig": ".thompson_sampling.core.evaluator_config",
+    "MLClassifierEvaluatorConfig": ".thompson_sampling.core.evaluator_config",
+    "CustomEvaluatorConfig": ".thompson_sampling.core.evaluator_config",
     # Utilities
     "get_logger": ".thompson_sampling.utils.ts_logger",
     "read_reagents": ".thompson_sampling.utils.ts_utils",

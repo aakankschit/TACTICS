@@ -43,6 +43,10 @@ the one default that moves is documented under Changed.
   unreferenced helpers.
 - **Dependencies:** `pandas`, `dill`, `useful_rdkit_utils`, `seaborn`.
   `matplotlib` and `altair` move to the new optional `[viz]` extra.
+- **`ThompsonSamplingConfig.results_filename`** and the
+  `ThompsonSampler(cats_manager=...)` parameter — both were stored and never
+  read. `search()` returns a DataFrame; write it with `results.write_parquet()`.
+  Preset `output_dir` now only places the run log.
 
 ### Changed
 
@@ -70,6 +74,14 @@ the one default that moves is documented under Changed.
 - `RouletteWheelSelection.select_batch` and `BayesUCBSelection.select_batch`
   are removed; both fall through to the `SelectionStrategy` default, which the
   sampler never called anyway.
+- `RouletteWheelSelection(...)` and `BayesUCBSelection(...)` raise `TypeError`
+  on unknown keyword arguments instead of silently ignoring them (Bayes-UCB
+  still warns for its five deprecated names). Previously
+  `RouletteWheelSelection(criticality_metric="shannon")` was accepted with no
+  effect.
+- The `TACTICS` and `TACTICS.thompson_sampling` namespaces now also export
+  `Evaluator`, `CustomEvaluator`, and every strategy, warmup and evaluator
+  config model, so one import style covers a whole script.
 
 ### Performance
 

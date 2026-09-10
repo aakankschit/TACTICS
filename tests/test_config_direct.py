@@ -143,7 +143,6 @@ def test_config_optional_fields(pipeline):
         strategy_config=GreedyConfig(mode="maximize"),
         evaluator_config=DBEvaluatorConfig(db_filename="test.db"),
     )
-    assert config.results_filename == "results.csv"  # default value
     assert config.log_filename is None
 
 

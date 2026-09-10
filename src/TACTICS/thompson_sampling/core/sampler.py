@@ -20,37 +20,51 @@ if TYPE_CHECKING:
 
 
 class ThompsonSampler:
-    """
-    Unified Thompson Sampler that accepts any selection strategy.
+    """Run a Thompson Sampling search over a combinatorial library.
 
-    Parameters:
-    -----------
+    The usual way to build one is :meth:`from_config`, which wires the strategy,
+    warmup, evaluator and reagents from a
+    :class:`~TACTICS.thompson_sampling.config.ThompsonSamplingConfig`. Direct
+    construction is for tests and custom pipelines: after ``__init__`` call
+    :meth:`read_reagents` and :meth:`set_evaluator`, then :meth:`warm_up`,
+    :meth:`search`, and :meth:`close`.
+
+    Parameters
+    ----------
     synthesis_pipeline : SynthesisPipeline
-        The synthesis pipeline containing reaction configuration and reagent files.
-        This is the single source of truth for compound generation.
-
+        Reaction definition(s) and reagent files. The single source of truth
+        for how a product is made from a reagent tuple.
     selection_strategy : SelectionStrategy
-        The selection strategy to use (GreedySelection, RouletteWheelSelection, etc.)
-
-    batch_size : int, default=1
-        Number of compounds to SAMPLE per cycle from the strategy.
-        - batch_size=1: Sample one compound per cycle (standard Thompson Sampling)
-        - batch_size>1: Sample multiple compounds per cycle (batch Thompson Sampling)
-        Note: This is independent of parallel evaluation settings.
-
-    processes : int, default=1
-        Number of CPU cores to use for parallel evaluation.
-        - processes=1: Sequential evaluation (no multiprocessing overhead)
-        - processes>1: Parallel evaluation using multiprocessing.Pool
-        Recommendation: Use processes=1 for fast evaluators (LookupEvaluator, DBEvaluator)
-        and processes>1 for slow evaluators (ROCSEvaluator, FredEvaluator, ML models).
-
-    min_cpds_per_core : int, default=10
-        Minimum compounds to accumulate per CPU core before triggering parallel evaluation.
-        Evaluation threshold = processes * min_cpds_per_core.
-        - Higher values: Less frequent evaluation, lower overhead, but more memory
-        - Lower values: More frequent evaluation, higher overhead, but less memory
-        Example: processes=4, min_cpds_per_core=10 → evaluate every 40 compounds
+        How reagents are chosen each cycle (e.g. ``TopTwoSelection``,
+        ``RouletteWheelSelection``).
+    warmup_strategy : WarmupStrategy, optional
+        How initial observations are collected before the posteriors exist.
+        Default ``EnhancedWarmup()``.
+    log_filename : str, optional
+        Write the run log to this file as well as the console.
+    batch_size : int, default 1
+        Compounds sampled per cycle (independent of parallel evaluation).
+    processes : int, default 1
+        Worker processes for evaluation. Worth it only for slow evaluators
+        (docking, ROCS, ML); for lookup evaluators the overhead exceeds the
+        lookup. With ``processes > 1`` the evaluator must be set with its
+        config (see :meth:`set_evaluator`) so each worker can rebuild it.
+    min_cpds_per_core : int, default 10
+        Evaluation is triggered once ``processes * min_cpds_per_core``
+        compounds have accumulated (or at the last cycle).
+    product_library_file : str, optional
+        CSV with ``Product_Code`` and ``SMILES`` columns of pre-enumerated
+        products. Looked up before synthesis; misses fall back to synthesis.
+    use_boltzmann_weighting : bool, default False
+        Boltzmann-weighted posterior update (the update rule the recommended
+        presets use) instead of the uniform Bayesian update.
+    seed : int, optional
+        Seeds the sampler's random generator, which drives reagent selection
+        and component rotation. (Warmup pairing uses the ``seed`` on the
+        warmup strategy, where one exists.)
+    track_diagnostics : bool, default False
+        Record per-cycle component state so :meth:`get_diagnostics` returns a
+        trajectory. Small cost per cycle.
     """
 
     def __init__(
@@ -63,7 +77,6 @@ class ThompsonSampler:
         processes: int = 1,
         min_cpds_per_core: int = 10,
         product_library_file: Optional[str] = None,
-        cats_manager=None,
         use_boltzmann_weighting: bool = False,
         seed: Optional[int] = None,
         track_diagnostics: bool = False,
@@ -86,7 +99,6 @@ class ThompsonSampler:
         self.min_cpds_per_core = min_cpds_per_core
         self.parallel_evaluator = ParallelEvaluator(processes=processes)
         self.product_smiles_dict = None
-        self.cats_manager = cats_manager  # Optional CATS integration
         self.use_boltzmann_weighting = use_boltzmann_weighting
 
         # Master RNG for reproducibility
@@ -847,7 +859,7 @@ class ThompsonSampler:
 
         - **TopTwoSelection**: 12-column TT-TS schema with disagreement EMA,
           adaptive heated_scale, and GMIC per component.
-        - **RouletteWheelSelection**: 17-column GMIC schema with full
+        - **RouletteWheelSelection**: 18-column GMIC schema with full
           temperature pipeline (base_temp, cats_multiplier, final_temperature).
         - **BayesUCBSelection**: 18-column IPR schema with participation ratio,
           SNR dampening, and observation-gated weights.

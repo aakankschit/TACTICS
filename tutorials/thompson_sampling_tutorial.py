@@ -13,8 +13,8 @@ Features:
 
 Dataset: Thrombin (amide coupling)
 
-Run as app: marimo run notebooks/thompson_sampling_tutorial.py
-Edit mode:  marimo edit notebooks/thompson_sampling_tutorial.py
+Run as app: marimo run tutorials/thompson_sampling_tutorial.py
+Edit mode:  marimo edit tutorials/thompson_sampling_tutorial.py
 """
 
 import marimo

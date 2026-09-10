@@ -61,12 +61,13 @@ class BayesUCBSelection(ThermalCyclingMixin, SelectionStrategy):
             min_observations: Minimum observations per reagent before trusting criticality (default: 5)
             cats_exploration_fraction: Fraction of total cycles during which CATS explores
                 at full strength. After this point, CATS influence decays linearly if
-                criticality remains low. Set to None to disable decay (default: 0.5).
+                criticality remains low. Set to None to disable decay (default: 0.3).
             criticality_metric: "ipr" (Inverse Participation Ratio) or "shannon"
                 (legacy Shannon entropy). (default: "ipr")
             n_adaptive_sharpening: If True and criticality_metric="ipr", apply
                 sqrt(log(N)) sharpening to z-scores. (default: True)
-            **kwargs: Catches deprecated parameters with warnings
+            **kwargs: Only the deprecated names listed below are accepted
+                (with a warning); anything else raises ``TypeError``.
         """
         super().__init__(mode)
 
@@ -116,6 +117,12 @@ class BayesUCBSelection(ThermalCyclingMixin, SelectionStrategy):
                 f"Remove these parameters from your configuration.",
                 DeprecationWarning,
                 stacklevel=2
+            )
+        unknown = set(kwargs) - deprecated
+        if unknown:
+            raise TypeError(
+                f"BayesUCBSelection.__init__() got unexpected keyword argument(s): "
+                f"{sorted(unknown)}"
             )
 
     def _calculate_criticality(self, reagent_list):

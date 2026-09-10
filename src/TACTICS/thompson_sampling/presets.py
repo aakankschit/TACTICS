@@ -38,16 +38,13 @@ if TYPE_CHECKING:
     from ..library_enumeration import SynthesisPipeline
 
 
-def _output_paths(output_dir: Optional[str], prefix: str):
-    """Helper to build results/log filenames from an output directory."""
+def _log_path(output_dir: Optional[str], prefix: str) -> Optional[str]:
+    """Log-file path inside ``output_dir`` (created if needed), or None."""
     if output_dir is None:
-        return None, None
+        return None
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
-    return (
-        str(output_path / f"{prefix}_results.csv"),
-        str(output_path / f"{prefix}.log"),
-    )
+    return str(output_path / f"{prefix}.log")
 
 
 class ConfigPresets:
@@ -91,9 +88,10 @@ class ConfigPresets:
             num_iterations: Number of Thompson sampling iterations
             batch_size: Number of compounds to sample per cycle (default: 100)
             mode: "maximize" for highest scores, "minimize" for lowest (e.g., docking)
-            output_dir: Directory to save output files (optional)
+            output_dir: Directory for the run log (created if needed). Results are
+                returned as a DataFrame; write them yourself, e.g. ``results.write_parquet(...)``.
         """
-        results_filename, log_filename = _output_paths(output_dir, "recommended")
+        log_filename = _log_path(output_dir, "recommended")
         return ThompsonSamplingConfig(
             synthesis_pipeline=synthesis_pipeline,
             num_ts_iterations=num_iterations,
@@ -103,7 +101,6 @@ class ConfigPresets:
             evaluator_config=evaluator_config,
             batch_size=batch_size,
             use_boltzmann_weighting=True,
-            results_filename=results_filename,
             log_filename=log_filename,
         )
 
@@ -131,9 +128,10 @@ class ConfigPresets:
             num_iterations: Number of Thompson sampling iterations
             batch_size: Number of compounds to sample per cycle (default: 100)
             mode: "maximize" for highest scores, "minimize" for lowest (e.g., docking)
-            output_dir: Directory to save output files (optional)
+            output_dir: Directory for the run log (created if needed). Results are
+                returned as a DataFrame; write them yourself, e.g. ``results.write_parquet(...)``.
         """
-        results_filename, log_filename = _output_paths(output_dir, "recommended_rws")
+        log_filename = _log_path(output_dir, "recommended_rws")
         return ThompsonSamplingConfig(
             synthesis_pipeline=synthesis_pipeline,
             num_ts_iterations=num_iterations,
@@ -143,7 +141,6 @@ class ConfigPresets:
             evaluator_config=evaluator_config,
             batch_size=batch_size,
             use_boltzmann_weighting=True,
-            results_filename=results_filename,
             log_filename=log_filename,
         )
 
@@ -171,9 +168,10 @@ class ConfigPresets:
             evaluator_config: Evaluator configuration
             num_iterations: Number of Thompson sampling iterations
             mode: "maximize" for highest scores, "minimize" for lowest (e.g., docking)
-            output_dir: Directory to save output files (optional)
+            output_dir: Directory for the run log (created if needed). Results are
+                returned as a DataFrame; write them yourself, e.g. ``results.write_parquet(...)``.
         """
-        results_filename, log_filename = _output_paths(output_dir, "baseline")
+        log_filename = _log_path(output_dir, "baseline")
         return ThompsonSamplingConfig(
             synthesis_pipeline=synthesis_pipeline,
             num_ts_iterations=num_iterations,
@@ -182,7 +180,6 @@ class ConfigPresets:
             warmup_config=BalancedWarmupConfig(observations_per_reagent=5),
             evaluator_config=evaluator_config,
             batch_size=1,
-            results_filename=results_filename,
             log_filename=log_filename,
         )
 
@@ -209,7 +206,7 @@ def get_preset(
             - mode: "maximize" or "minimize"
             - num_iterations: Number of iterations
             - batch_size: Compounds per cycle (recommended/recommended_rws, default 100)
-            - output_dir: Directory to save results and logs
+            - output_dir: Directory for the run log (optional)
 
     Returns:
         ThompsonSamplingConfig: Configured preset

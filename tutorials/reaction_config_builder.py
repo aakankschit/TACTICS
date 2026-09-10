@@ -12,8 +12,8 @@ Reaction Configuration Builder
 An interactive notebook for building ReactionConfig objects through a UI interface.
 Supports single-step, multi-step, and alternative SMARTS configurations.
 
-Run as app: marimo run notebooks/reaction_config_builder.py
-Edit mode:  marimo edit notebooks/reaction_config_builder.py
+Run as app: marimo run tutorials/reaction_config_builder.py
+Edit mode:  marimo edit tutorials/reaction_config_builder.py
 """
 
 import marimo

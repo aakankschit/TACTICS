@@ -132,12 +132,10 @@ class TestConfigValidation:
             num_warmup_trials=3,
             strategy_config=GreedyConfig(mode="maximize"),
             evaluator_config=DBEvaluatorConfig(db_filename="test.db"),
-            results_filename="results.csv",
             log_filename="test.log",
             batch_size=5,
         )
 
-        assert config.results_filename == "results.csv"
         assert config.log_filename == "test.log"
         assert config.batch_size == 5
 
