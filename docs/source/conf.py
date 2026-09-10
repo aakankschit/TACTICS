@@ -1,24 +1,31 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""Sphinx configuration for the TACTICS documentation.
+
+The build imports the installed package (``pip install -e ".[docs]"``) so the
+API reference is generated from the code. Nothing is mocked: the package's
+optional dependencies are either lazy (OpenEye) or included in the ``docs``
+extra (matplotlib, altair).
+"""
+
+from __future__ import annotations
+
+from importlib import metadata
+
+try:
+    import TACTICS  # noqa: F401  -- verifies the package is importable for autodoc
+except ImportError as exc:  # pragma: no cover
+    raise RuntimeError(
+        "TACTICS must be installed to build the docs: pip install -e '.[docs]'"
+    ) from exc
 
 # -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath("../.."))
 
 project = "TACTICS"
-copyright = "2024, Aakankschit Nandkeolyar"
+copyright = "2024-2026, Aakankschit Nandkeolyar"
 author = "Aakankschit Nandkeolyar"
-version = "0.0"
-release = "0.0"
+release = metadata.version("chem-tactics")
+version = ".".join(release.split(".")[:2])
 
 # -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -30,34 +37,22 @@ extensions = [
     "sphinx_design",
     "sphinx_copybutton",
     "sphinx_togglebutton",
-    "myst_nb",
+    "myst_nb",  # loads myst_parser itself; do not list both
 ]
 
-# Graphviz configuration
+exclude_patterns = ["_build", "snippets/README*"]
+
 graphviz_output_format = "svg"
 
-# MyST-NB configuration
-nb_execution_mode = "off"  # Don't execute notebooks during build
-myst_enable_extensions = [
-    "colon_fence",
-    "deflist",
-]
+# MyST (theory pages are Markdown with $...$ / $$...$$ math)
+nb_execution_mode = "off"
+myst_enable_extensions = ["colon_fence", "deflist", "dollarmath", "amsmath"]
+myst_heading_anchors = 4
 
-# Mock imports for packages that may not be available during doc build
-autodoc_mock_imports = [
-    "polars",
-    "altair",
-    "rdkit",
-    "numpy",
-    "matplotlib",
-    "openeye",
-    "tqdm",
-    "scipy",
-    "sklearn",
-]
-
-# Autodoc configuration - cleaner output
+# Autodoc
+autodoc_mock_imports: list[str] = []  # the real package is installed; mocks would shadow it
 autodoc_typehints = "description"
+autodoc_typehints_description_target = "documented_params"
 autodoc_typehints_format = "short"
 autodoc_class_signature = "separated"
 autodoc_member_order = "bysource"
@@ -66,28 +61,37 @@ autodoc_default_options = {
     "show-inheritance": True,
 }
 
-# Napoleon settings for Google/NumPy docstrings
+# Napoleon (Google + NumPy docstrings)
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
 napoleon_include_init_with_doc = True
 napoleon_include_private_with_doc = False
 napoleon_use_param = True
 napoleon_use_rtype = True
-napoleon_type_aliases = None
 
-# Copybutton configuration
+# Copy button: strip prompts
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
 copybutton_prompt_is_regexp = True
 
-templates_path = ["_templates"]
-exclude_patterns = []
+# Intersphinx
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "polars": ("https://docs.pola.rs/api/python/stable/", None),
+}
+intersphinx_timeout = 30
 
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
+# Linkcheck (run as a separate, non-blocking CI job)
+linkcheck_anchors_ignore_for_url = [r"https://github\.com/.*"]
+linkcheck_timeout = 15
+linkcheck_retries = 2
+
+# -- HTML output -------------------------------------------------------------
 
 html_theme = "pydata_sphinx_theme"
 html_static_path = ["_static"]
 html_css_files = ["css/custom.css"]
+html_title = f"TACTICS {release}"
 
 html_theme_options = {
     "show_toc_level": 2,
@@ -98,6 +102,7 @@ html_theme_options = {
     "navbar_center": ["navbar-nav"],
     "navbar_end": ["theme-switcher", "navbar-icon-links"],
     "secondary_sidebar_items": ["page-toc", "edit-this-page"],
+    "use_edit_page_button": True,
     "footer_start": ["copyright"],
     "footer_end": ["sphinx-version"],
     "pygments_light_style": "default",
@@ -108,15 +113,90 @@ html_theme_options = {
         "text": "TACTICS",
         "alt_text": "TACTICS - Home",
     },
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/aakankschit/TACTICS",
+            "icon": "fa-brands fa-github",
+        },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/chem-tactics/",
+            "icon": "fa-brands fa-python",
+        },
+    ],
 }
 
 html_context = {
     "default_mode": "auto",
+    "github_user": "aakankschit",
+    "github_repo": "TACTICS",
+    "github_version": "main",
+    "doc_path": "docs/source",
 }
 
-# Intersphinx mapping
-intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
-    "numpy": ("https://numpy.org/doc/stable/", None),
-    "polars": ("https://pola-rs.github.io/polars/py-polars/html/", None),
-}
+# -- Pydantic models under autodoc --------------------------------------------
+#
+# Plain autodoc shows a Pydantic model's class docstring and signature but
+# never reads Field(description=...). These two hooks render a "Fields" block
+# from ``model_fields`` (so descriptions and defaults come from the code) and
+# hide Pydantic's own machinery (``model_*``, validators, the generated
+# ``__init__``) from the member list.
+
+_DISCRIMINATORS = {"strategy_type", "warmup_type", "evaluator_type"}
+
+
+def _is_pydantic_model(obj) -> bool:
+    try:
+        from pydantic import BaseModel
+    except ImportError:  # pragma: no cover
+        return False
+    return isinstance(obj, type) and issubclass(obj, BaseModel) and obj is not BaseModel
+
+
+def _describe_default(field) -> str:
+    from pydantic_core import PydanticUndefined
+
+    if field.is_required():
+        return "required"
+    if field.default_factory is not None:
+        return "computed"
+    if field.default is PydanticUndefined:
+        return "required"
+    return f"``{field.default!r}``"
+
+
+def _pydantic_fields(app, what, name, obj, options, lines):
+    if what != "class" or not _is_pydantic_model(obj):
+        return
+    from sphinx.util.typing import stringify_annotation
+
+    lines += ["", ".. rubric:: Fields", ""]
+    for fname, field in obj.model_fields.items():
+        if fname in _DISCRIMINATORS:
+            continue
+        desc = (field.description or "").strip()
+        if desc and not desc.endswith("."):
+            desc += "."
+        lines.append(f":param {fname}: {desc} Default: {_describe_default(field)}.")
+        lines.append(f":type {fname}: {stringify_annotation(field.annotation, 'smart')}")
+    if obj.model_config.get("extra") == "forbid":
+        lines += ["", "Unknown keyword arguments raise :class:`pydantic.ValidationError`.", ""]
+
+
+def _skip_pydantic_internals(app, what, name, obj, skip, options):
+    if name.startswith("model_"):
+        return True
+    # Field/model validators are classmethods; their bound __self__ is the
+    # model, whose __pydantic_decorators__ lists them by name.
+    owner = getattr(obj, "__self__", None)
+    if _is_pydantic_model(owner):
+        decorators = owner.__pydantic_decorators__
+        if name in decorators.field_validators or name in decorators.model_validators:
+            return True
+    return None
+
+
+def setup(app):
+    app.connect("autodoc-process-docstring", _pydantic_fields)
+    app.connect("autodoc-skip-member", _skip_pydantic_internals)
