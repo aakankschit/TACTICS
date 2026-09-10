@@ -156,6 +156,7 @@ Optional dependencies:
    guides/05_inspect
    guides/06_visualise
    extending
+   tutorials
 
 .. toctree::
    :maxdepth: 2
@@ -168,6 +169,12 @@ Optional dependencies:
    :caption: Theory
 
    theory/index
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Project
+
+   changelog
 
 
 Indices and tables
