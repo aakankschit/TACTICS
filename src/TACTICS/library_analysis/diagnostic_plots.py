@@ -210,14 +210,14 @@ def plot_rws_diagnostic(
     interval bands.  Vertical background shading indicates batches
     where the divergence gate blocks GMIC modulation (diversity mode).
 
-    Left y-axis: GMIC per component (solid lines with CI bands).
-    Right y-axis: CATS multiplier per component (dashed lines).
-        Shows the GMIC-driven temperature modulation directly, without
-        the noisy heated/cooled oscillation that final_temperature has.
-        Values >1.0 = amplified exploration, <1.0 = amplified
-        exploitation, =1.0 = base temperature (no modulation).
-    Background: light pink shading with red boundary lines when any
-        component is in diversity mode in >30% of replicates.
+    - Left y-axis: GMIC per component (solid lines with CI bands).
+    - Right y-axis: CATS multiplier per component (dashed lines). Shows the
+      GMIC-driven temperature modulation directly, without the noisy
+      heated/cooled oscillation that ``final_temperature`` has. Values > 1
+      amplify exploration, < 1 amplify exploitation, = 1 is the base
+      temperature.
+    - Background: light pink shading with red boundary lines when any
+      component is in diversity mode in > 30 % of replicates.
 
     Args:
         diagnostics_df: RWS diagnostics for a single query, all

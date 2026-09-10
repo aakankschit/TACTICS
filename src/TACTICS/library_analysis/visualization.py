@@ -404,14 +404,16 @@ class TS_Benchmarks:
         To use this plot, you must have the reference compounds that serve as the ground truth.
         This shows what fraction of the top N reference compounds each method finds.
 
-        Parameters:
-        -----------
-        top_n: int
-            Number of top products to consider for each method. Ensure that the top_n is the same for all methods.
-        Returns:
-        --------
-        bar_plot_df: polars DataFrame
-            Dataframe with the number of hits found by each method in each cycle compared to the reference method
+        Parameters
+        ----------
+        top_n : int
+            Number of top reference products to count as hits. Use the same
+            ``top_n`` for every method.
+
+        Returns
+        -------
+        polars.DataFrame
+            Hits found by each method in each cycle against the reference set.
         """
         if self.reference_data is None:
             raise ValueError("Please ensure that reference_data is provided")

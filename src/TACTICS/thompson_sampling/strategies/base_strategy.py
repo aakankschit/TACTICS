@@ -13,21 +13,20 @@ class SelectionStrategy(ABC):
                       reagent_list: List,
                       disallow_mask: set = None,
                       **kwargs) -> int:
-        """
-        Select a reagent index from the list
+        """Select one reagent index from a component's reagent list.
 
-        Parameters:
-        -----------
-        reagent_list : List
-            List of reagent objects with posterior distributions
-        disallow_mask : set
-            Indices to exclude from selection
-        **kwargs : dict
-            Strategy-specific parameters
+        The sampler calls this once per component per cycle with the keyword
+        context ``rng``, ``component_idx``, ``iteration``, ``current_cycle``
+        and ``total_cycles``; strategies read what they need from ``kwargs``.
+
+        Args:
+            reagent_list: Reagent objects with posterior ``mean``/``std``/``n_samples``.
+            disallow_mask: Indices that must not be selected (already sampled
+                in combination with the other components' current picks).
+            **kwargs: Per-cycle context from the sampler (see above).
 
         Returns:
-        --------
-        int : Selected reagent index
+            The selected index into ``reagent_list``.
         """
         pass
 
@@ -36,26 +35,20 @@ class SelectionStrategy(ABC):
                     batch_size: int,
                     disallow_mask: set = None,
                     **kwargs) -> np.ndarray:
-        """
-        Select multiple reagent indices from the list (batch selection)
+        """Select ``batch_size`` reagent indices (with replacement).
 
-        Default implementation: call select_reagent multiple times.
-        Strategies can override this for more efficient batch selection.
+        Default implementation calls :meth:`select_reagent` ``batch_size``
+        times. Not used by :class:`~TACTICS.thompson_sampling.core.sampler.ThompsonSampler`,
+        which builds batches itself; kept for strategies used standalone.
 
-        Parameters:
-        -----------
-        reagent_list : List
-            List of reagent objects with posterior distributions
-        batch_size : int
-            Number of reagents to select
-        disallow_mask : set
-            Indices to exclude from selection
-        **kwargs : dict
-            Strategy-specific parameters
+        Args:
+            reagent_list: Reagent objects with posterior distributions.
+            batch_size: Number of indices to return.
+            disallow_mask: Indices to exclude from selection.
+            **kwargs: Passed through to :meth:`select_reagent`.
 
         Returns:
-        --------
-        np.ndarray : Array of selected reagent indices
+            Array of selected indices, length ``batch_size``.
         """
         return np.array([
             self.select_reagent(reagent_list, disallow_mask, **kwargs)
