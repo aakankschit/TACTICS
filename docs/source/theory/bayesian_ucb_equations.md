@@ -1,29 +1,10 @@
 # Bayesian Upper Confidence Bound Selection in TACTICS
 
-## A Scientific Treatment with Mathematical Derivations
-
----
+*A Scientific Treatment with Mathematical Derivations*
 
 ## Abstract
 
 This document provides rigorous mathematical foundations for the Bayesian Upper Confidence Bound (Bayes-UCB) selection strategy as implemented in TACTICS. Bayes-UCB offers a principled alternative to Roulette Wheel Selection by using Student-t quantiles for proper Bayesian treatment of uncertainty. We derive the theoretical underpinnings, demonstrate the integration with Component-Aware Thompson Sampling (CATS), and compare Bayes-UCB systematically with classical UCB and RWS approaches. The key advantages of Bayes-UCB include deterministic selection given posteriors, explicit control over exploration via percentiles, and proper handling of small-sample uncertainty through heavy-tailed distributions.
-
----
-
-## Table of Contents
-
-1. [Theoretical Background](#1-theoretical-background)
-2. [Derivation of Bayes-UCB](#2-derivation-of-bayes-ucb)
-3. [Student-t Distribution in Bayesian Inference](#3-student-t-distribution-in-bayesian-inference)
-4. [Integration with CATS](#4-integration-with-cats)
-5. [Percentile-Based Thermal Cycling](#5-percentile-based-thermal-cycling)
-6. [Complete Algorithm Specification](#6-complete-algorithm-specification)
-7. [Regret Analysis](#7-regret-analysis)
-8. [Comparison with Alternative Strategies](#8-comparison-with-alternative-strategies)
-9. [Practical Considerations](#9-practical-considerations)
-10. [References](#10-references)
-
----
 
 ## 1. Theoretical Background
 
@@ -75,8 +56,6 @@ where $\Delta_i = \mu^* - \mu_i$ is the suboptimality gap.
 $$\text{UCB}_i = \text{Quantile}_{1-\alpha}(\theta_i | \mathcal{D})$$
 
 where $\theta_i$ is the unknown mean of arm $i$ and $\mathcal{D}$ is the observed data.
-
----
 
 ## 2. Derivation of Bayes-UCB
 
@@ -166,8 +145,6 @@ $$\text{UCB}_i = \mu_i + 3 \cdot \max(\sigma_i, 10^{-6})$$
 
 **Justification**: The factor of 3 corresponds approximately to the 99.9th percentile of a standard normal, encouraging exploration of under-sampled reagents while maintaining numerical stability.
 
----
-
 ## 3. Student-t Distribution in Bayesian Inference
 
 ### 3.1 Definition and Properties
@@ -212,8 +189,6 @@ with equality only as $\nu \to \infty$.
 $$t_\nu(p) \approx z_p + \frac{z_p^3 + z_p}{4\nu} + O(\nu^{-2})$$
 
 The second term is always positive for $z_p > 0$, confirming the heavier tails.
-
----
 
 ## 4. Integration with CATS
 
@@ -281,8 +256,6 @@ $$p_c^{\text{eff}} = \min\left(p_c^{\text{base}} \cdot m_c^{\text{eff}}, 1\right
 
 The clipping to 1 ensures valid percentile values.
 
----
-
 ## 5. Percentile-Based Thermal Cycling
 
 ### 5.1 Base Percentile Assignment
@@ -344,8 +317,6 @@ where:
 **Result**:
 - Acids: $p = 0.825$ (reduced from 0.90 due to criticality)
 - Amines: $p = 0.70$ (increased from 0.60 due to flexibility)
-
----
 
 ## 6. Complete Algorithm Specification
 
@@ -500,8 +471,6 @@ def compute_ucb_indices(reagent_list, percentile, mode="maximize"):
     return ucb
 ```
 
----
-
 ## 7. Regret Analysis
 
 ### 7.1 Bayes-UCB Regret Bounds
@@ -528,8 +497,6 @@ where $\text{KL}(\mu_i, \mu^*)$ is the Kullback-Leibler divergence between the r
 $$\mathbb{E}[R_T] \leq O\left(\sqrt{KT \ln T}\right)$$
 
 This matches the minimax lower bound up to logarithmic factors.
-
----
 
 ## 8. Comparison with Alternative Strategies
 
@@ -580,8 +547,6 @@ $$P_{\text{UCB}}(i) = \mathbb{1}\left[i = \arg\max_j \text{UCB}_j\right]$$
 | **Theoretical guarantees** | Both asymptotically optimal | Both asymptotically optimal |
 
 **Theorem 8.1 (Equivalence in Limit)**: As the percentile $p \to 1$ and sample size $n \to \infty$, Bayes-UCB and Thompson Sampling become equivalent in their selection probabilities.
-
----
 
 ## 9. Practical Considerations
 
@@ -660,8 +625,6 @@ return np.argsort(ucb_indices)[-B:]  # Top B for maximize - BUT may have duplica
 | Ranking top reagents | Bayes-UCB without DisallowTracker | Determinism is actually desirable |
 | Parallel evaluation | RWS with batch sampling | Natural diversity from stochasticity |
 
----
-
 ## 10. Tunable Parameters Reference
 
 This section provides a complete reference for all tunable parameters specific to the Bayes-UCB selection strategy.
@@ -675,8 +638,7 @@ This section provides a complete reference for all tunable parameters specific t
 | `mode` | str | "maximize" | "maximize", "minimize" | Optimization direction |
 | `initial_p_high` | float | 0.90 | [0.5, 0.999] | Base percentile for **heated** component (wider bounds) |
 | `initial_p_low` | float | 0.60 | [0.5, 0.999] | Base percentile for **cooled** components (tighter bounds) |
-| `exploration_phase_end` | float | 0.20 | (0, 1] | Fraction of iterations before CATS starts ($\gamma_1$) |
-| `transition_phase_end` | float | 0.60 | (0, 1] | Fraction of iterations when CATS is fully active ($\gamma_2$) |
+| `cats_exploration_fraction` | float | 0.3 | [0, 1] or None | Fraction of cycles during which CATS acts at full strength; afterwards its influence decays linearly while criticality stays low. `None` disables the decay |
 | `min_observations` | int | 5 | > 0 | Minimum observations per reagent before trusting criticality |
 | `criticality_metric` | str | "ipr" | "ipr", "shannon" | Criticality metric: IPR (default, recommended) or Shannon entropy (legacy) |
 | `n_adaptive_sharpening` | bool | True | True/False | Apply $\sqrt{\ln N}$ sharpening to z-scores before softmax (IPR mode only) |
@@ -702,22 +664,20 @@ In Bayes-UCB, **percentile** plays the role that **temperature** plays in RWS:
 | `initial_p_high` | Wider confidence bounds when heated → more exploration | Tighter bounds → less exploration |
 | `initial_p_low` | More exploration even when cooled | Stronger exploitation when cooled |
 | `p_high/p_low` ratio | Larger CATS adjustment range | Smaller CATS adjustment range |
-| `exploration_phase_end` | Longer pure exploration (no CATS) | Earlier CATS activation |
-| `transition_phase_end` | Slower transition to full CATS | Faster full CATS effect |
+| `cats_exploration_fraction` | CATS acts at full strength for longer | CATS influence starts decaying earlier |
 | `min_observations` | More conservative criticality estimates | Earlier (potentially noisier) criticality |
 
 ### 10.4 Recommended Configurations
 
 **Default (Balanced)**:
 ```python
-from TACTICS.thompson_sampling.strategies.config import BayesUCBConfig
+from TACTICS.thompson_sampling import BayesUCBConfig
 
 config = BayesUCBConfig(
     mode="minimize",               # For docking scores
     initial_p_high=0.90,           # 90th percentile when heated
     initial_p_low=0.60,            # 60th percentile when cooled
-    exploration_phase_end=0.20,    # CATS starts at 20%
-    transition_phase_end=0.60,     # Full CATS at 60%
+    cats_exploration_fraction=0.3, # full-strength CATS for the first 30% of cycles
     min_observations=5,
 )
 ```
@@ -728,8 +688,7 @@ config = BayesUCBConfig(
     mode="minimize",
     initial_p_high=0.95,           # Very wide bounds when heated
     initial_p_low=0.55,            # Still some exploration when cooled
-    exploration_phase_end=0.30,    # Longer exploration phase
-    transition_phase_end=0.70,
+    cats_exploration_fraction=0.5, # full-strength CATS for longer
     min_observations=3,
 )
 ```
@@ -740,8 +699,7 @@ config = BayesUCBConfig(
     mode="minimize",
     initial_p_high=0.85,           # Moderate exploration
     initial_p_low=0.55,            # Exploitation-focused
-    exploration_phase_end=0.10,    # Quick CATS start
-    transition_phase_end=0.40,     # Fast transition
+    cats_exploration_fraction=0.15, # let CATS influence decay early
     min_observations=5,
 )
 ```
@@ -783,8 +741,6 @@ If you're familiar with RWS and want equivalent Bayes-UCB settings:
 | Theoretical guarantees needed | Bayes-UCB | Has regret bounds |
 | Large batches without DisallowTracker | RWS | Bayes-UCB would pick same reagent repeatedly |
 
----
-
 ## 11. References
 
 1. Kaufmann, E., Cappé, O., & Garivier, A. (2012). On Bayesian Upper Confidence Bounds for Bandit Problems. *AISTATS 2012*.
@@ -800,8 +756,6 @@ If you're familiar with RWS and want equivalent Bayes-UCB settings:
 6. Zhao, H., Nittinger, E., & Tyrchan, C. (2024). Enhanced Thompson Sampling by Roulette Wheel Selection for Screening Ultra-Large Combinatorial Libraries. *bioRxiv* 2024.05.16.594622.
 
 7. Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., & Rubin, D. B. (2013). *Bayesian Data Analysis* (3rd ed.). CRC Press.
-
----
 
 *Document Version: 3.0*
 *Last Updated: March 2026*

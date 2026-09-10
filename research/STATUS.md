@@ -233,7 +233,7 @@ _Entries before 2026-05-03 archived to `docs/handoffs/session-archive-{2026-03,2
 
 - Zhao et al. 2025, *J Cheminform* — Enhanced Thompson Sampling (CATS/RWS foundation)
 - Heptabase: TACTICS whiteboard → "CATS vs RWS Derivation" card
-- `docs/thompson_sampling_equations.md` — TS equations reference
+- `docs/source/theory/thompson_sampling_equations.md` — TS equations reference
 - Russo (2020), *Operations Research* — Top-Two Thompson Sampling (TT-TS) theory
 - `outputs/ttts_additive_benchmark_array/` — TT-TS vs RWS vs Additive benchmark results (65,430 trials)
 - `outputs/manuscript_benchmark_array/` — Full 4-method manuscript benchmark results (87,240 trials)

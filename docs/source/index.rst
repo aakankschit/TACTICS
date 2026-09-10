@@ -170,6 +170,12 @@ Optional dependencies:
    reference/index
 
 .. toctree::
+   :maxdepth: 1
+   :caption: Theory
+
+   theory/index
+
+.. toctree::
    :maxdepth: 2
    :caption: Reference (1.x pages, being replaced)
 

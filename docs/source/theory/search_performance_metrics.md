@@ -1,29 +1,10 @@
 # Search Performance Metrics for TACTICS
 
-## Tracking, Visualization, and Improvement of Chemical Space Exploration
-
----
+*Tracking, Visualization, and Improvement of Chemical Space Exploration*
 
 ## Abstract
 
 This document defines a comprehensive set of metrics for tracking and evaluating the performance of TACTICS selection strategies during chemical space exploration. We categorize metrics into five dimensions: (1) exploration vs exploitation balance, (2) search efficiency, (3) component-level dynamics, (4) posterior quality, and (5) diversity measures. Each metric is formally defined with mathematical specifications, implementation guidance, and visualization recommendations. These metrics provide actionable insights for developers to improve search strategies in future releases and enable users to understand algorithm behavior during screening campaigns.
-
----
-
-## Table of Contents
-
-1. [Motivation and Design Goals](#1-motivation-and-design-goals)
-2. [Exploration vs Exploitation Metrics](#2-exploration-vs-exploitation-metrics)
-3. [Search Efficiency Metrics](#3-search-efficiency-metrics)
-4. [Component-Level Dynamics](#4-component-level-dynamics)
-5. [Posterior Quality Metrics](#5-posterior-quality-metrics)
-6. [Diversity and Coverage Metrics](#6-diversity-and-coverage-metrics)
-7. [Comparative Metrics (TACTICS vs Legacy)](#7-comparative-metrics-tactics-vs-legacy)
-8. [Visualization Recommendations](#8-visualization-recommendations)
-9. [Implementation Guide](#9-implementation-guide)
-10. [Diagnostic Dashboards](#10-diagnostic-dashboards)
-
----
 
 ## 1. Motivation and Design Goals
 
@@ -71,8 +52,6 @@ An important distinction for practical use:
 
 **Metrics with partial requirements**:
 - Uncertainty calibration: Can check internal consistency without truth, but full calibration needs true values
-
----
 
 ## 2. Exploration vs Exploitation Metrics
 
@@ -133,8 +112,6 @@ where $S_t$ is the set of selected reagents at iteration $t$.
 **For RWS**, approximate via temperature effect:
 $$B_{\text{explore}}^{\text{RWS}}(t) = \frac{1}{C} \sum_{c=1}^{C} T_c^{\text{eff}}(t)$$
 
----
-
 ## 3. Search Efficiency Metrics
 
 ### 3.1 Top-K Hit Rate
@@ -184,8 +161,6 @@ $$\text{UniqueRate}(t) = \frac{|\mathcal{E}_t|}{t}$$
 
 For legacy (without DisallowTracker):
 $$\text{DuplicateRate}(t) = 1 - \text{UniqueRate}(t)$$
-
----
 
 ## 4. Component-Level Dynamics
 
@@ -252,8 +227,6 @@ where $D_{c,i}(t)$ is the disallow set for reagent $i$ at component $c$, and $E_
 
 **Visualization**: Progress bars or time series showing approach to full coverage.
 
----
-
 ## 5. Posterior Quality Metrics
 
 ### 5.1 Posterior Mean Correlation
@@ -289,8 +262,6 @@ $$D_{KL}(t) = \sum_{c,i} D_{KL}(\text{Prior} \| \text{Posterior}_{c,i}(t))$$
 For Gaussians:
 $$D_{KL} = \frac{1}{2}\left[\frac{\sigma_0^2}{\sigma_i^2} + \frac{(\mu_i - \mu_0)^2}{\sigma_i^2} - 1 + \ln\frac{\sigma_i^2}{\sigma_0^2}\right]$$
 
----
-
 ## 6. Diversity and Coverage Metrics
 
 ### 6.1 Chemical Space Coverage
@@ -321,8 +292,6 @@ $$\text{ScaffoldDiversity}(t) = |\{\text{MurckoScaffold}(\mathbf{r}) : \mathbf{r
 $$H_{\text{reagent}}(t) = -\sum_{c,i} \frac{N_{c,i}(t)}{\sum_{c',j} N_{c',j}(t)} \ln \frac{N_{c,i}(t)}{\sum_{c',j} N_{c',j}(t)}$$
 
 **Maximum**: $H_{\max} = \ln(\sum_c n_c)$ when all reagents sampled equally.
-
----
 
 ## 7. Comparative Metrics (TACTICS vs Legacy)
 
@@ -360,8 +329,6 @@ $$T_{\text{converge}}^\theta = \min\left\{t : \frac{d f^{\text{best}}}{dt} < \th
 **Definition 7.5**: Relative regret reduction:
 $$\text{RegretReduction}(t) = \frac{R_t^{\text{Legacy}} - R_t^{\text{TACTICS}}}{R_t^{\text{Legacy}}}$$
 
----
-
 ## 8. Visualization Recommendations
 
 ### 8.1 Real-Time Dashboard Components
@@ -395,8 +362,6 @@ $$\text{RegretReduction}(t) = \frac{R_t^{\text{Legacy}} - R_t^{\text{TACTICS}}}{
 | Over-Exploration | $\rho_{\text{exploit}}^{(25)} < 0.3$ in late phase | Decrease $\alpha/\beta$ ratio |
 | Unbalanced Criticality | $\kappa_c$ variance > 0.2 | Check warmup balance |
 | Rapid Exhaustion | ExhaustionProgress > 0.5 | Consider larger library |
-
----
 
 ## 9. Implementation Guide
 
@@ -520,8 +485,6 @@ def export_run_metrics(
         json.dump(run_config, f, indent=2)
 ```
 
----
-
 ## 10. Diagnostic Dashboards
 
 ### 10.1 Live Monitoring Dashboard (Marimo/Panel)
@@ -581,8 +544,6 @@ def compare_runs(
     return pd.DataFrame(all_data)
 ```
 
----
-
 ## Appendix A: Quick Reference for Developers
 
 ### A.1 Metrics to Add to New Strategies
@@ -600,7 +561,7 @@ When implementing a new selection strategy, track:
 | High coverage, low hit rate | Too explorative | Decrease temperature/percentile |
 | Uneven criticality | Warmup imbalance | Use balanced warmup |
 | Rapid exhaustion | Small library | Increase library size |
-| Oscillating criticality | Unstable posteriors | Increase min_observations |
+| Oscillating criticality | Unstable posteriors | Increase `min_observations` (Bayes-UCB) or `divergence_threshold` (RWS) |
 
 ### A.3 Metric Computation Frequency
 
@@ -610,8 +571,6 @@ When implementing a new selection strategy, track:
 | Windowed | Every 10-100 iterations | Noise reduction |
 | Expensive (fingerprints) | Every 100-1000 iterations | Computational cost |
 | Post-run only | End of run | Requires full data |
-
----
 
 *Document Version: 2.0*
 *Last Updated: March 2026*

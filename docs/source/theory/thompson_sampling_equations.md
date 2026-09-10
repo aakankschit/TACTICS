@@ -1,29 +1,10 @@
 # Mathematical Foundations of Thompson Sampling in TACTICS
 
-## A Scientific Treatment of Component-Aware Thompson Sampling (CATS) with Derivations
-
----
+*A Scientific Treatment of Component-Aware Thompson Sampling (CATS) with Derivations*
 
 ## Abstract
 
 This document provides rigorous mathematical derivations for the Thompson Sampling algorithms implemented in TACTICS (Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection). We derive the theoretical foundations of Component-Aware Thompson Sampling (CATS) and compare it systematically with legacy Roulette Wheel Selection (RWS) and standard Thompson Sampling (TS) frameworks. The key innovations of CATS include IPR-based component criticality detection with SNR dampening and N-adaptive sharpening, adaptive temperature modulation with relative neutral-point multipliers, criticality-weighted component rotation, and progressive exploration-to-exploitation transition. We demonstrate how CATS provides principled, automatic tuning of exploration/exploitation trade-offs that legacy approaches require manual intervention to achieve.
-
----
-
-## Table of Contents
-
-1. [Notation and Preliminaries](#1-notation-and-preliminaries)
-2. [Problem Formulation](#2-problem-formulation)
-3. [Bayesian Posterior Framework](#3-bayesian-posterior-framework)
-4. [Legacy Approaches: Standard TS and RWS](#4-legacy-approaches-standard-ts-and-rws)
-5. [Component-Aware Thompson Sampling (CATS)](#5-component-aware-thompson-sampling-cats)
-6. [Warmup Strategies: Theoretical Analysis](#6-warmup-strategies-theoretical-analysis)
-7. [Duplicate Prevention: DisallowTracker](#7-duplicate-prevention-disallowtracker)
-8. [Comparative Analysis: CATS vs Legacy](#8-comparative-analysis-cats-vs-legacy)
-9. [Convergence Properties](#9-convergence-properties)
-10. [References](#10-references)
-
----
 
 ## 1. Notation and Preliminaries
 
@@ -60,8 +41,6 @@ $$\mathbf{r}^* = \arg\max_{\mathbf{r} \in \mathcal{R}_1 \times \cdots \times \ma
 **Minimization Mode**: Seek compounds with lowest scores (e.g., docking scores, free energy)
 $$\mathbf{r}^* = \arg\min_{\mathbf{r} \in \mathcal{R}_1 \times \cdots \times \mathcal{R}_C} f(\mathbf{r})$$
 
----
-
 ## 2. Problem Formulation
 
 ### 2.1 Combinatorial Library Screening as Multi-Armed Bandits
@@ -88,8 +67,6 @@ A key assumption in Thompson Sampling for combinatorial libraries is that compou
 $$\mathbb{E}[f(\mathbf{r})] \approx \sum_{c=1}^{C} \theta_{c,i_c}$$
 
 where $\theta_{c,i_c}$ is the inherent quality of reagent $r_{c,i_c}$. This enables independent posterior updates per reagent.
-
----
 
 ## 3. Bayesian Posterior Framework
 
@@ -147,8 +124,6 @@ $$\sigma_N^2 = \frac{\sigma_0^2}{N + 1} \xrightarrow{N \to \infty} 0$$
 $$\mu_N \xrightarrow{N \to \infty} \bar{x} \xrightarrow{\text{LLN}} \theta^*$$
 
 The posterior concentrates around the true mean as observations accumulate.
-
----
 
 ## 4. Legacy Approaches: Standard TS and RWS
 
@@ -299,8 +274,6 @@ This is **reactive**: adjustment occurs only after performance degradation is de
 1. **Fixed temperature ratio**: $\alpha/\beta$ is static
 2. **Reactive adaptation**: Temperature adjusts only when stuck
 3. **No component awareness**: Same temperature policy for all components
-
----
 
 ## 5. Component-Aware Thompson Sampling (CATS)
 
@@ -589,8 +562,6 @@ $$T_{\text{acid}}^{\text{eff}} = T_{\text{acid}}^{\text{base}} \times m_{\text{a
 
 **Interpretation**: Even though acids are heated ($T^{\text{base}} = 0.1$), CATS *reduces* the effective temperature to 0.09 because the component is critical and doesn't need as much exploration.
 
----
-
 **For amines component** with $\kappa_{\text{amine}} = 0.2$ (flexible - many potentially good options):
 
 Step 1: Compute CATS multiplier:
@@ -603,8 +574,6 @@ Step 3: Compute effective temperature (assuming amines are currently cooled):
 $$T_{\text{amine}}^{\text{eff}} = T_{\text{amine}}^{\text{base}} \times m_{\text{amine}}^{\text{eff}} = \beta \times 1.35 = 0.05 \times 1.35 = 0.0675$$
 
 **Interpretation**: Even though amines are cooled ($T^{\text{base}} = 0.05$), CATS *increases* the effective temperature to 0.0675 because the component is flexible and needs more exploration.
-
----
 
 **Summary of This Iteration**:
 | Component | $T^{\text{base}}$ | $\kappa$ | $m^{\text{eff}}$ | $T^{\text{eff}}$ | Net Effect |
@@ -684,8 +653,6 @@ This demonstrates how CATS **rebalances** the exploration budget based on compon
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
----
-
 ## 6. Warmup Strategies: Theoretical Analysis
 
 ### 6.1 Role of Warmup
@@ -696,6 +663,8 @@ The warmup phase initializes posterior distributions before the main search. Cho
 3. **Chemical space coverage**: Whether partners are sampled diversely
 
 ### 6.2 Standard Warmup
+
+*Baseline for the analysis below; not shipped as of 2.0 (see §6.6).*
 
 **Algorithm**: Random partner selection with replacement
 
@@ -767,9 +736,7 @@ $$w = \frac{N_{c,i}}{N_{c,i} + \lambda}$$
 | Diversity | $\times$ Random | $\checkmark$ Shuffled | $\checkmark$ Stratified |
 | Coverage | Variable | Excellent for small | Uniform across strata |
 | Per-reagent variance | $\times$ | $\times$ | $\checkmark$ With shrinkage |
-| Recommended | Legacy | Small component focus | **General use** |
-
----
+| In 2.0 | Removed (baseline only) | **Default; general use** | Isolation experiments |
 
 ## 7. Duplicate Prevention: DisallowTracker
 
@@ -820,8 +787,6 @@ $$E_c = \prod_{c' \neq c} n_{c'}$$
 
 When a reagent has been paired with all possible partners ($|D_c(r)| = E_c$), it is marked exhausted and automatically excluded.
 
----
-
 ## 8. Comparative Analysis: CATS vs Legacy
 
 ### 8.1 Key Differences Summary
@@ -862,8 +827,6 @@ $$T_c^{\text{CATS}} = T_c^{\text{base}} \cdot \left[1 + w(\gamma)(m_c - 1)\right
 | Multi-component reactions | Per-component optimization |
 | Unknown score landscape | Entropy-based adaptation is data-driven |
 
----
-
 ## 9. Convergence Properties
 
 ### 9.1 Posterior Concentration
@@ -882,8 +845,6 @@ where $\|\tilde{s}\|_\infty = \max_j |\tilde{s}_{c,j}|$.
 
 **Theorem 9.3**: As the posterior means converge to true values, criticality $\kappa_c$ converges to the true entropy-based measure of the score distribution for component $c$.
 
----
-
 ## 10. Tunable Parameters Reference
 
 This section provides a complete reference for all tunable parameters in the TACTICS Thompson Sampling implementation, organized by configuration class.
@@ -897,8 +858,11 @@ This section provides a complete reference for all tunable parameters in the TAC
 | `num_ts_iterations` | int | *required* | > 0 | Total number of Thompson Sampling iterations in the search phase |
 | `num_warmup_trials` | int | 3 | > 0 | Number of warmup observations per reagent |
 | `batch_size` | int | 1 | > 0 | Compounds to sample per iteration (for parallel evaluation) |
-| `max_resamples` | int | None | > 0 or None | Maximum resampling attempts for duplicates (None = unlimited) |
-| `use_boltzmann_weighting` | bool | False | True/False | Use legacy Boltzmann-weighted Bayesian updates (not recommended with CATS) |
+| `use_boltzmann_weighting` | bool | False | True/False | Boltzmann-weighted posterior update (the `recommended` presets set this to True) |
+| `seed` | int | None | Any int or None | Seeds reagent selection and component rotation |
+| `processes` | int | 1 | ≥ 1 | Worker processes for evaluation; only worth it for slow evaluators |
+| `min_cpds_per_core` | int | 10 | ≥ 1 | Evaluate once `processes × min_cpds_per_core` compounds have accumulated |
+| `product_library_file` | str | None | path or None | CSV of pre-enumerated products (`Product_Code`, `SMILES`) consulted before synthesis |
 | `track_diagnostics` | bool | False | True/False | Collect per-cycle diagnostics (criticality, SNR, multipliers) for post-hoc analysis |
 | `hide_progress` | bool | False | True/False | Hide progress bars during execution |
 
@@ -916,20 +880,50 @@ config = ThompsonSamplingConfig(
 )
 ```
 
-### 10.2 Roulette Wheel Selection (RWS/CATS) Parameters
+### 10.2 Top-Two Thompson Sampling (TT-TS) Parameters
 
-**Class**: `RouletteWheelConfig`
+**Class**: `TopTwoConfig` — the strategy behind the `recommended` preset. See §5 for the thermal-cycling mechanism it shares with RWS; TT-TS scales posterior *standard deviations* instead of a softmax temperature.
+
+| Parameter | Type | Default | Range | Description |
+|-----------|------|---------|-------|-------------|
+| `mode` | str | "maximize" | "maximize", "minimize" | Optimization direction |
+| `beta` | float | 0.5 | (0, 1) | Probability of taking the challenger when the two posterior draws disagree |
+| `heated_scale` | float | 1.5 | > 0 | Std multiplier for the heated component (> 1 inflates uncertainty → more challengers) |
+| `cooled_scale` | float | 0.75 | > 0 | Std multiplier for cooled components (< 1 deflates → exploitation) |
+| `adaptive_disagreement` | bool | True | True/False | Adapt `heated_scale` per component from the disagreement EMA |
+| `disagreement_high_threshold` | float | 0.8 | (0, 1) | Above this EMA, cool the component |
+| `disagreement_low_threshold` | float | 0.3 | (0, 1) | Below this EMA, heat the component (must be < high) |
+| `ema_alpha` | float | 0.02 | (0, 1) | Disagreement EMA smoothing |
+| `disagreement_decay_rate` | float | 0.95 | (0, 1) | Multiplicative cooling step |
+| `heated_scale_min` / `heated_scale_max` | float | 1.0 / 5.0 | > 0 | Bounds on the adapted heated scale |
+| `gmic_convergence_gate` | float | None | > 0 or None | Stop heating a component once its GMIC exceeds this |
+| `max_growth_per_step` | float | None | > 0 or None | Cap on per-cycle growth of the heated scale |
+| `disagreement_window` | int | 200 | > 1 | Window for the global disagreement rate (diagnostics) |
+| `adaptive_temperature`, `scale_increment`, `cooled_scale_increment`, `efficiency_threshold` | — | False, 0.01, 0.001, 0.10 | — | Efficiency-based fallback adaptation (off by default) |
+
+**Example**:
+```python
+from TACTICS.thompson_sampling import TopTwoConfig
+
+strategy_config = TopTwoConfig(mode="minimize", beta=0.5, heated_scale=2.0)
+```
+
+### 10.3 Roulette Wheel Selection (RWS/CATS) Parameters
+
+**Class**: `RouletteWheelConfig` — the strategy behind the `recommended_rws` preset.
 
 | Parameter | Type | Default | Range | Description |
 |-----------|------|---------|-------|-------------|
 | `mode` | str | "maximize" | "maximize", "minimize", "maximize_boltzmann", "minimize_boltzmann" | Optimization direction |
-| `alpha` | float | 0.1 | > 0 | Base temperature for **heated** component (higher = more exploration) |
+| `alpha` | float | 0.1 | > 0 | Base temperature for the **heated** component (higher = more exploration) |
 | `beta` | float | 0.05 | > 0 | Base temperature for **cooled** components (lower = more exploitation) |
-| `exploration_phase_end` | float | 0.20 | (0, 1] | Fraction of iterations before CATS starts ($\gamma_1$) |
-| `transition_phase_end` | float | 0.60 | (0, 1] | Fraction of iterations when CATS is fully active ($\gamma_2$) |
-| `min_observations` | int | 5 | > 0 | Minimum observations per reagent before trusting criticality ($N_{\min}$) |
-| `criticality_metric` | str | "ipr" | "ipr", "shannon" | Criticality metric: IPR (default, recommended) or Shannon entropy (legacy) |
-| `n_adaptive_sharpening` | bool | True | True/False | Apply $\sqrt{\ln N}$ sharpening to z-scores before softmax (IPR mode only) |
+| `cats_range` | float | None | > 0 or None | Override the CATS multiplier range derived from `alpha/beta` |
+| `cats_ema_decay` | float | None | (0, 1) or None | EMA smoothing of the relative-GMIC multiplier |
+| `divergence_threshold` | float | 0.1 | > 0 | KL-divergence gate below which posteriors are considered stable and GMIC modulation applies |
+| `adaptive_temperature` | bool | False | True/False | Raise `alpha`/`beta` when sampling efficiency drops |
+| `alpha_increment` / `beta_increment` | float | 0.01 / 0.001 | ≥ 0 | Adaptive steps |
+| `efficiency_threshold` | float | 0.10 | [0, 1] | Efficiency below which `alpha` is incremented |
+| `alpha_max` | float | 2.0 | > 0 | Cap on adapted `alpha` |
 
 **Parameter Effects**:
 
@@ -937,37 +931,33 @@ config = ThompsonSamplingConfig(
 |-----------|----------------|-----------------|
 | `alpha` | More exploration when heated | Less exploration when heated |
 | `beta` | More exploration when cooled | Less exploration when cooled |
-| `alpha/beta` ratio | Larger CATS multiplier range | Smaller CATS multiplier range |
-| `exploration_phase_end` | Longer pure exploration phase | Shorter pure exploration phase |
-| `transition_phase_end` | Longer transition to full CATS | Faster transition to full CATS |
-| `min_observations` | More conservative criticality | Earlier criticality activation |
+| `alpha/beta` ratio (or `cats_range`) | Larger CATS multiplier range | Smaller CATS multiplier range |
+| `divergence_threshold` | GMIC modulation engages sooner (looser stability test) | Longer diversity-mode phase before GMIC takes over |
+| `cats_ema_decay` (toward 1) | Smoother, slower-reacting multiplier | Faster, noisier multiplier |
 
 **Example**:
 ```python
-from TACTICS.thompson_sampling.strategies.config import RouletteWheelConfig
+from TACTICS.thompson_sampling import RouletteWheelConfig
 
 strategy_config = RouletteWheelConfig(
-    mode="minimize",              # For docking scores
-    alpha=0.15,                   # More aggressive exploration when heated
-    beta=0.03,                    # Stronger exploitation when cooled
-    exploration_phase_end=0.15,   # Start CATS earlier
-    transition_phase_end=0.50,    # Reach full CATS sooner
-    min_observations=3,           # Trust criticality with fewer samples
+    mode="minimize",           # docking scores
+    alpha=0.15,                # more exploration when heated
+    beta=0.03,                 # stronger exploitation when cooled
+    divergence_threshold=0.05, # require more stable posteriors before GMIC modulates
 )
 ```
 
-**Recommended Presets**:
+Tuned starting points are the presets: `get_preset("recommended_rws", ...)`.
 
-| Scenario | alpha | beta | exploration_phase_end | transition_phase_end |
-|----------|-------|------|----------------------|---------------------|
-| Default (balanced) | 0.10 | 0.05 | 0.20 | 0.60 |
-| Aggressive exploration | 0.20 | 0.05 | 0.30 | 0.70 |
-| Fast convergence | 0.08 | 0.02 | 0.10 | 0.40 |
-| Large libraries | 0.15 | 0.05 | 0.25 | 0.65 |
+### 10.4 Warmup Strategy Parameters
 
-### 10.3 Warmup Strategy Parameters
+#### 10.4.1 Enhanced Warmup (Recommended, default)
 
-#### 10.3.1 Balanced Warmup (Recommended)
+**Class**: `EnhancedWarmupConfig`
+
+No additional parameters. Stochastic parallel pairing: every trial shuffles each component and pairs reagents exhaustively, so the smallest component is over-sampled. On imbalanced libraries that pre-solves the small component's ranking, which GMIC-weighted rotation then exploits — the reason it is the default and the warmup of both `recommended` presets.
+
+#### 10.4.2 Balanced Warmup
 
 **Class**: `BalancedWarmupConfig`
 
@@ -998,21 +988,9 @@ warmup_config = BalancedWarmupConfig(
 )
 ```
 
-#### 10.3.2 Standard Warmup (Legacy)
+### 10.5 Baseline Selection Strategies
 
-**Class**: `StandardWarmupConfig`
-
-No additional parameters. Uses `num_warmup_trials` from main config.
-
-#### 10.3.3 Enhanced Warmup (Legacy)
-
-**Class**: `EnhancedWarmupConfig`
-
-No additional parameters. **Warning**: Creates imbalanced posteriors due to over-sampling of small components.
-
-### 10.4 Alternative Selection Strategies
-
-#### 10.4.1 Greedy Selection
+#### 10.5.1 Greedy Selection
 
 **Class**: `GreedyConfig`
 
@@ -1022,7 +1000,7 @@ No additional parameters. **Warning**: Creates imbalanced posteriors due to over
 
 Pure exploitation - always selects highest/lowest posterior mean.
 
-#### 10.4.2 UCB Selection
+#### 10.5.2 UCB Selection
 
 **Class**: `UCBConfig`
 
@@ -1033,7 +1011,7 @@ Pure exploitation - always selects highest/lowest posterior mean.
 
 Uses classical UCB formula: $\text{UCB}_i = \mu_i + c\sqrt{\frac{\ln(t)}{n_i}}$
 
-#### 10.4.3 Epsilon-Greedy Selection
+#### 10.5.3 Epsilon-Greedy Selection
 
 **Class**: `EpsilonGreedyConfig`
 
@@ -1045,15 +1023,15 @@ Uses classical UCB formula: $\text{UCB}_i = \mu_i + c\sqrt{\frac{\ln(t)}{n_i}}$
 
 After $t$ iterations: $\epsilon_t = \epsilon_0 \times \text{decay}^t$
 
-### 10.5 Parameter Tuning Guidelines
+### 10.6 Parameter Tuning Guidelines
 
 #### When to Adjust Parameters
 
 | Symptom | Likely Cause | Parameter Adjustment |
 |---------|--------------|---------------------|
-| Missing top compounds | Under-exploration | Increase `alpha`, decrease `beta`, or increase `exploration_phase_end` |
-| Slow convergence | Over-exploration | Decrease `alpha/beta` ratio, decrease `transition_phase_end` |
-| Unstable criticality | Insufficient warmup | Increase `num_warmup_trials` or `min_observations` |
+| Missing top compounds | Under-exploration | Increase `alpha` (RWS) or `heated_scale` (TT-TS), decrease `beta`/`cooled_scale` |
+| Slow convergence | Over-exploration | Decrease the `alpha/beta` ratio (RWS) or `heated_scale` (TT-TS) |
+| Unstable criticality | Insufficient warmup | Increase `num_warmup_trials`; raise `divergence_threshold` |
 | Poor early performance | Inadequate warmup | Increase `observations_per_reagent` |
 | All components critical too early | Low variance in scores | Increase `alpha`, or check if score range is appropriate |
 | All components flexible too late | High variance in scores | Decrease `alpha`, or normalize scores |
@@ -1066,8 +1044,6 @@ After $t$ iterations: $\epsilon_t = \epsilon_0 \times \text{decay}^t$
 | 100K - 1M compounds | 5,000 - 20,000 | 5 | 0.10 - 0.12 |
 | 1M - 10M compounds | 20,000 - 50,000 | 5-7 | 0.12 - 0.15 |
 | > 10M compounds | 50,000+ | 7-10 | 0.15 - 0.20 |
-
----
 
 ## 11. References
 
@@ -1082,8 +1058,6 @@ After $t$ iterations: $\epsilon_t = \epsilon_0 \times \text{decay}^t$
 5. James, W., & Stein, C. (1961). Estimation with Quadratic Loss. *Proceedings of the Fourth Berkeley Symposium on Mathematical Statistics and Probability*, 1, 361-379.
 
 6. Cover, T. M., & Thomas, J. A. (2006). *Elements of Information Theory* (2nd ed.). Wiley-Interscience.
-
----
 
 *Document Version: 3.0*
 *Last Updated: March 2026*
