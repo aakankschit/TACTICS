@@ -17,6 +17,18 @@ exactly the slow evaluators that need parallelism most.
 The fix is to never send an evaluator across the pipe. Each worker builds its
 *own* evaluator instead, once, from the evaluator's picklable Pydantic config
 (a receptor file path plus options). See :func:`_init_worker`.
+
+Why the pool uses the ``spawn`` start method
+--------------------------------------------
+On Linux ``multiprocessing.Pool`` defaults to ``fork``. A forked worker
+inherits the parent's copy of Polars' Rayon thread pool, whose threads do not
+exist in the child, so the first Polars call in the worker -- reading the
+reference table when :func:`_init_worker` rebuilds a ``LookupEvaluator`` --
+deadlocks forever. macOS and Windows default to ``spawn`` and never see this,
+which is how it reached CI unnoticed. ``spawn`` starts each worker from a fresh
+interpreter, so every worker builds its own Polars, RDKit and OpenEye state.
+The cost is one interpreter start-up per worker, which is negligible against
+the slow evaluators that ``processes > 1`` exists for.
 """
 import multiprocessing
 from typing import Any, Callable, List, Optional, Tuple
@@ -116,10 +128,15 @@ class ParallelEvaluator:
         )
 
     def _ensure_pool(self):
-        """Create the process pool if it doesn't exist."""
+        """Create the process pool if it doesn't exist.
+
+        Always uses the ``spawn`` start method (see the module docstring for
+        why ``fork`` deadlocks on Polars).
+        """
         if self.processes > 1 and self._pool is None:
+            ctx = multiprocessing.get_context("spawn")
             if self._worker_context is not None:
-                self._pool = multiprocessing.Pool(
+                self._pool = ctx.Pool(
                     self.processes,
                     initializer=_init_worker,
                     initargs=self._worker_context,
@@ -127,7 +144,7 @@ class ParallelEvaluator:
             else:
                 # No config to rebuild from; workers get whatever the parent
                 # sends them. Fine for picklable evaluators, fatal for SWIG.
-                self._pool = multiprocessing.Pool(self.processes)
+                self._pool = ctx.Pool(self.processes)
 
     def close(self):
         """Close the process pool if it exists."""

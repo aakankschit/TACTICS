@@ -103,6 +103,10 @@ the one default that moves is documented under Changed.
   never existed and could not be opened.
 - Three tests skipped as "warmup edge case with small test data" pass with the
   Enhanced default and are un-skipped.
+- `ParallelEvaluator` now starts its worker pool with the `spawn` method.
+  Under Linux's default `fork`, a worker rebuilding a `LookupEvaluator`
+  deadlocked in Polars (the child inherits a Rayon thread pool with no
+  threads), which hung `processes > 1` runs and the CI test job.
 
 ## [1.2.0] - 2026-07-18
 
