@@ -54,12 +54,15 @@ autodoc_mock_imports: list[str] = []  # the real package is installed; mocks wou
 autodoc_typehints = "description"
 autodoc_typehints_description_target = "documented_params"
 autodoc_typehints_format = "short"
-autodoc_class_signature = "separated"
+# "mixed": signature on the class line; __init__ docstrings are merged into
+# the class doc by napoleon_include_init_with_doc. "separated" would add
+# __init__/__new__ entries that bypass autodoc-skip-member.
+autodoc_class_signature = "mixed"
 autodoc_member_order = "bysource"
-autodoc_default_options = {
-    "members": True,
-    "show-inheritance": True,
-}
+# No default `members`: a bool default silently overwrites explicit
+# `:members: a, b` lists in directives (sphinx.ext.autodoc.directive.
+# process_documenter_options). Every directive names its members.
+autodoc_default_options: dict = {}
 
 # Napoleon (Google + NumPy docstrings)
 napoleon_google_docstring = True
@@ -68,6 +71,9 @@ napoleon_include_init_with_doc = True
 napoleon_include_private_with_doc = False
 napoleon_use_param = True
 napoleon_use_rtype = True
+# Render 'Attributes:' sections as :ivar: fields, not `.. attribute::` object
+# descriptions -- the latter collide with real @property members.
+napoleon_use_ivar = True
 
 # Copy button: strip prompts
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
@@ -170,6 +176,15 @@ def _pydantic_fields(app, what, name, obj, options, lines):
     if what != "class" or not _is_pydantic_model(obj):
         return
     from sphinx.util.typing import stringify_annotation
+
+    # Napoleon has already turned any "Attributes:" section into :ivar:/:vartype:
+    # fields; the generated Fields block below supersedes them. It has also
+    # appended Pydantic's boilerplate __init__ docstring -- drop from there on.
+    for i, ln in enumerate(lines):
+        if ln.lstrip().startswith("Create a new model by parsing"):
+            del lines[i:]
+            break
+    lines[:] = [ln for ln in lines if not ln.lstrip().startswith((":ivar ", ":vartype "))]
 
     lines += ["", ".. rubric:: Fields", ""]
     for fname, field in obj.model_fields.items():

@@ -152,8 +152,26 @@ Optional dependencies:
    strategies
 
 .. toctree::
+   :maxdepth: 1
+   :caption: Guides
+
+   guides/01_library
+   guides/02_scoring
+   guides/03_search
+   guides/04_scale
+   guides/05_inspect
+   guides/06_visualise
+   extending
+
+.. toctree::
    :maxdepth: 2
    :caption: Reference
+
+   reference/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference (1.x pages, being replaced)
 
    thompson_sampling
    configuration
