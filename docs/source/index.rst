@@ -169,11 +169,6 @@ Optional dependencies:
 
    theory/index
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Reference (1.x pages, being replaced)
-
-   library_analysis
 
 Indices and tables
 ==================
