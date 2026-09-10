@@ -63,7 +63,7 @@ class BayesUCBSelection(ThermalCyclingMixin, SelectionStrategy):
                 at full strength. After this point, CATS influence decays linearly if
                 criticality remains low. Set to None to disable decay (default: 0.3).
             criticality_metric: "ipr" (Inverse Participation Ratio) or "shannon"
-                (legacy Shannon entropy). (default: "ipr")
+                (the earlier Shannon-entropy metric). (default: "ipr")
             n_adaptive_sharpening: If True and criticality_metric="ipr", apply
                 sqrt(log(N)) sharpening to z-scores. (default: True)
             **kwargs: Only the deprecated names listed below are accepted
@@ -188,7 +188,7 @@ class BayesUCBSelection(ThermalCyclingMixin, SelectionStrategy):
             ipr = np.sum(probabilities ** 2)
             effective_N = 1.0 / ipr
             criticality = 1.0 - (effective_N / N)
-        else:  # shannon (legacy)
+        else:  # shannon (earlier metric)
             entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
             max_entropy = np.log(N)
             if max_entropy < 1e-10:

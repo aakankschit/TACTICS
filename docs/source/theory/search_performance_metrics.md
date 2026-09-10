@@ -14,7 +14,7 @@ Effective chemical space exploration requires understanding:
 1. **Is the algorithm exploring enough?** (avoiding local optima)
 2. **Is the algorithm exploiting enough?** (not wasting budget on poor reagents)
 3. **Is criticality detection working?** (CATS adaptation effectiveness)
-4. **How does TACTICS compare to legacy approaches?** (improvement quantification)
+4. **How does TACTICS compare to the baselines?** (improvement quantification)
 5. **Where are the bottlenecks?** (reagent exhaustion, duplicate pressure)
 
 ### 1.2 Design Principles
@@ -159,7 +159,7 @@ $$\text{Efficiency}_K = \frac{K}{T_{\text{HitRate}_K = 1}}$$
 **Definition 3.5**: Under DisallowTracker, this should be 100%. Track as sanity check:
 $$\text{UniqueRate}(t) = \frac{|\mathcal{E}_t|}{t}$$
 
-For legacy (without DisallowTracker):
+Without a DisallowTracker (published RWS):
 $$\text{DuplicateRate}(t) = 1 - \text{UniqueRate}(t)$$
 
 ## 4. Component-Level Dynamics
@@ -293,7 +293,7 @@ $$H_{\text{reagent}}(t) = -\sum_{c,i} \frac{N_{c,i}(t)}{\sum_{c',j} N_{c',j}(t)}
 
 **Maximum**: $H_{\max} = \ln(\sum_c n_c)$ when all reagents sampled equally.
 
-## 7. Comparative Metrics (TACTICS vs Legacy)
+## 7. Comparative Metrics (TACTICS vs Baseline)
 
 ### 7.1 CATS Improvement Ratio
 
@@ -307,13 +307,13 @@ $$\text{ImprovementRatio} = \frac{\text{HitRate}_K^{\text{CATS}}(t)}{\text{HitRa
 **Definition 7.2**: Measure how much CATS adapts compared to fixed temperature:
 $$\text{AdaptationRange}(t) = \max_c T_c^{\text{eff}}(t) - \min_c T_c^{\text{eff}}(t)$$
 
-For legacy RWS: $\text{AdaptationRange} = \alpha - \beta$ (constant).
+For published RWS: $\text{AdaptationRange} = \alpha - \beta$ (constant).
 For CATS: $\text{AdaptationRange}$ varies based on criticality.
 
 ### 7.3 Duplicate Avoidance Efficiency
 
 **Definition 7.3**: Compare duplicate rates:
-$$\text{DuplicateReduction} = \frac{\text{DuplicateRate}^{\text{Legacy}}(t) - \text{DuplicateRate}^{\text{TACTICS}}(t)}{\text{DuplicateRate}^{\text{Legacy}}(t)}$$
+$$\text{DuplicateReduction} = \frac{\text{DuplicateRate}^{\text{Baseline}}(t) - \text{DuplicateRate}^{\text{TACTICS}}(t)}{\text{DuplicateRate}^{\text{Baseline}}(t)}$$
 
 With DisallowTracker: $\text{DuplicateRate}^{\text{TACTICS}} = 0$, so reduction = 100%.
 
@@ -322,12 +322,12 @@ With DisallowTracker: $\text{DuplicateRate}^{\text{TACTICS}} = 0$, so reduction 
 **Definition 7.4**: Time to reach convergence threshold:
 $$T_{\text{converge}}^\theta = \min\left\{t : \frac{d f^{\text{best}}}{dt} < \theta\right\}$$
 
-**Speedup**: $\text{Speedup} = T_{\text{converge}}^{\text{Legacy}} / T_{\text{converge}}^{\text{TACTICS}}$
+**Speedup**: $\text{Speedup} = T_{\text{converge}}^{\text{Baseline}} / T_{\text{converge}}^{\text{TACTICS}}$
 
 ### 7.5 Regret Comparison
 
 **Definition 7.5**: Relative regret reduction:
-$$\text{RegretReduction}(t) = \frac{R_t^{\text{Legacy}} - R_t^{\text{TACTICS}}}{R_t^{\text{Legacy}}}$$
+$$\text{RegretReduction}(t) = \frac{R_t^{\text{Baseline}} - R_t^{\text{TACTICS}}}{R_t^{\text{Baseline}}}$$
 
 ## 8. Visualization Recommendations
 
@@ -515,7 +515,7 @@ def export_run_metrics(
 3. **Exploitation**: Hit rates, regret, best trajectory
 4. **Components**: Per-component criticality, selection frequency
 5. **Posteriors**: Calibration, mean trajectories, uncertainty
-6. **Comparison**: Side-by-side with legacy or other runs
+6. **Comparison**: Side-by-side with baseline or other runs
 
 ### 10.3 Comparative Analysis Tools
 

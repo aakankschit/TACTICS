@@ -10,7 +10,7 @@ def create_reagents(filename: str, num_to_select: Optional[int] = None, use_bolt
     Parameters:
         filename: Path to a SMILES file containing reagents
         num_to_select: Optional limit on number of reagents to read
-        use_boltzmann_weighting: If True, reagents will use Boltzmann-weighted Bayesian updates (legacy RWS).
+        use_boltzmann_weighting: If True, reagents will use Boltzmann-weighted Bayesian updates.
                                 If False, reagents will use standard uniform-weighted Bayesian updates (default).
         mode: "maximize" or "minimize" - affects Boltzmann weighting direction
 
@@ -42,7 +42,7 @@ def read_reagents(
     Parameters:
         reagent_file_list: List of file paths containing reagents for each reaction component
         num_to_select: Optional limit on number of reagents to read per file
-        use_boltzmann_weighting: If True, reagents will use Boltzmann-weighted Bayesian updates (legacy RWS).
+        use_boltzmann_weighting: If True, reagents will use Boltzmann-weighted Bayesian updates.
                                 If False, reagents will use standard uniform-weighted Bayesian updates (default).
         mode: "maximize" or "minimize" - affects Boltzmann weighting direction
 

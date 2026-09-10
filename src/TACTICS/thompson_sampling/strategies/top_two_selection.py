@@ -75,7 +75,7 @@ class TopTwoSelection(GMICCriticalityMixin, SelectionStrategy):
         self.heated_scale = heated_scale
         self.cooled_scale = cooled_scale
 
-        # Adaptive thermal cycling parameters (legacy efficiency-based)
+        # Adaptive thermal cycling parameters (efficiency-based)
         self.adaptive_temperature = adaptive_temperature
         self.scale_increment = scale_increment
         self.cooled_scale_increment = cooled_scale_increment

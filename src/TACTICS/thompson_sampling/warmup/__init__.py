@@ -12,7 +12,7 @@ Recommended:
 
 Alternatives:
     BalancedWarmup: Exactly K observations per reagent with stratified partners.
-    Good for isolating framework gains (e.g., Balanced-Greedy vs Legacy-Greedy),
+    Good for isolating framework gains (Balanced + Greedy vs random warmup + Greedy),
     but consistently slightly below EnhancedWarmup when paired with GMIC rotation.
 """
 

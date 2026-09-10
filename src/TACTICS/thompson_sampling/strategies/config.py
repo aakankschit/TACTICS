@@ -79,7 +79,7 @@ class RouletteWheelConfig(_StrictModel):
         description="KL divergence threshold for switching from diversity to GMIC criticality mode"
     )
 
-    # Adaptive temperature parameters (legacy RWS-inspired)
+    # Adaptive temperature parameters (efficiency-based, after Zhao et al. 2025)
     adaptive_temperature: bool = Field(
         default=False,
         description="Enable adaptive temperature control (increase alpha/beta when sampling efficiency drops)"
@@ -269,7 +269,7 @@ class TopTwoConfig(_StrictModel):
             "easier SAR (higher min_GMIC), not mechanism malfunction."
         ),
     )
-    # Legacy fields kept for backward compatibility of disagreement_window
+    # Global disagreement window (diagnostics only)
     disagreement_window: int = Field(
         default=200,
         gt=1,
@@ -349,7 +349,7 @@ class BayesUCBConfig(_StrictModel):
         description=(
             "Metric for computing component criticality. "
             "'ipr' uses Inverse Participation Ratio (sensitive to probability concentration). "
-            "'shannon' uses Shannon entropy (legacy, insensitive at large N)."
+            "'shannon' uses Shannon entropy (the earlier metric; insensitive at large N)."
         ),
     )
     n_adaptive_sharpening: bool = Field(

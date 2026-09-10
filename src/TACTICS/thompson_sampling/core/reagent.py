@@ -54,7 +54,7 @@ class Reagent:
         Parameters:
             reagent_name: Unique identifier for this reagent
             smiles: SMILES string representation of the molecule
-            use_boltzmann_weighting: If True, use Boltzmann-weighted Bayesian updates (legacy RWS algorithm).
+            use_boltzmann_weighting: If True, use Boltzmann-weighted Bayesian updates (as in Zhao et al. 2025; the recommended presets use this).
                                     If False, use standard uniform-weighted Bayesian updates (default).
             mode: "maximize" or "minimize" - affects Boltzmann weighting direction
         """
@@ -135,7 +135,7 @@ class Reagent:
         # n_samples already reflects warmup observations; don't double-count
         warmup_n = self.n_samples
         if self.use_boltzmann_weighting:
-            # Batch Boltzmann update (legacy RWS algorithm)
+            # Batch Boltzmann update
             self._batch_boltzmann_update(self.initial_scores)
             self.initial_scores = []
         else:
@@ -255,7 +255,7 @@ class Reagent:
             float: Updated posterior mean
         """
         if self.use_boltzmann_weighting:
-            # Legacy RWS: Boltzmann-weighted moving average
+            # Boltzmann-weighted moving average
             # Better scores get exponentially higher weight
             # For minimize mode, negate score so lower (better) values get higher weights
             boltzmann_value = -observed_value if self.mode == "minimize" else observed_value
@@ -284,7 +284,7 @@ class Reagent:
 
     def _batch_boltzmann_update(self, scores: list) -> None:
         """
-        Batch update with Boltzmann-weighted average (legacy RWS algorithm).
+        Batch update with Boltzmann-weighted average.
 
         This method implements the Boltzmann-weighted moving average used in the
         original RWS implementation. Better scores get exponentially higher weight,

@@ -4,7 +4,7 @@
 
 ## Abstract
 
-This document provides rigorous mathematical derivations for the Thompson Sampling algorithms implemented in TACTICS (Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection). We derive the theoretical foundations of Component-Aware Thompson Sampling (CATS) and compare it systematically with legacy Roulette Wheel Selection (RWS) and standard Thompson Sampling (TS) frameworks. The key innovations of CATS include IPR-based component criticality detection with SNR dampening and N-adaptive sharpening, adaptive temperature modulation with relative neutral-point multipliers, criticality-weighted component rotation, and progressive exploration-to-exploitation transition. We demonstrate how CATS provides principled, automatic tuning of exploration/exploitation trade-offs that legacy approaches require manual intervention to achieve.
+This document provides rigorous mathematical derivations for the Thompson Sampling algorithms implemented in TACTICS (Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection). We derive the theoretical foundations of Component-Aware Thompson Sampling (CATS) and compare it systematically with the published Roulette Wheel Selection (RWS; Zhao et al., 2025) and standard Thompson Sampling (TS). The key innovations of CATS include IPR-based component criticality detection with SNR dampening and N-adaptive sharpening, adaptive temperature modulation with relative neutral-point multipliers, criticality-weighted component rotation, and progressive exploration-to-exploitation transition. We demonstrate how CATS provides principled, automatic tuning of exploration/exploitation trade-offs that the baselines require manual intervention to achieve.
 
 ## 1. Notation and Preliminaries
 
@@ -125,7 +125,9 @@ $$\mu_N \xrightarrow{N \to \infty} \bar{x} \xrightarrow{\text{LLN}} \theta^*$$
 
 The posterior concentrates around the true mean as observations accumulate.
 
-## 4. Legacy Approaches: Standard TS and RWS
+## 4. Baselines: Standard TS and Published RWS
+
+> These two methods are what CATS and TT-TS are measured against, so their derivations stay here. The 1.x implementations (`TACTICS.thompson_sampling.legacy`) were removed in 2.0: standard TS is `GreedyConfig`; the published RWS with round-robin rotation is reproducible with chem-tactics 1.2.0.
 
 ### 4.0 Understanding Thermal Cycling: Motivation and Mechanism
 
@@ -168,9 +170,9 @@ where typically $\alpha > \beta$ (e.g., $\alpha = 0.1$, $\beta = 0.05$).
 
 **Important**: In the Boltzmann distribution used here, **higher temperature means more randomness** (flatter probability distribution), while **lower temperature means more deterministic** selection (peaked at the best option). This is consistent with statistical mechanics conventions.
 
-### 4.1 Standard Thompson Sampling (Legacy TS)
+### 4.1 Standard Thompson Sampling
 
-**Algorithm (Legacy TS)**:
+**Algorithm (standard TS)**:
 ```
 For each iteration t:
     For each component c:
@@ -184,7 +186,7 @@ For each iteration t:
 2. **No thermal cycling**: All components treated identically
 3. **No component awareness**: Cannot detect "critical" vs "flexible" components
 
-### 4.2 Enhanced Thompson Sampling with Roulette Wheel Selection (Legacy RWS)
+### 4.2 Roulette Wheel Selection as published (Zhao et al., 2025)
 
 The RWS approach (Zhao et al., 2024) introduces Boltzmann-weighted selection and thermal cycling.
 
@@ -231,17 +233,15 @@ $$P(r_{c,i}) \to \begin{cases} 1 & \text{if } i = \arg\max_j \tilde{s}_{c,j} \\ 
 As $T_c \to \infty$ (high temperature):
 $$P(r_{c,i}) \to \frac{1}{n_c}$$ (uniform distribution)
 
-#### 4.2.5 Boltzmann-Weighted Posterior Updates (Legacy Only)
+#### 4.2.5 Boltzmann-Weighted Posterior Updates
 
-> **Important**: This section describes a feature of **Legacy RWS only**. Modern CATS uses **uniform Bayesian updates** (Section 3.2) instead. This section is retained for historical context and to explain why CATS made a different choice.
-
-Legacy RWS uses Boltzmann-weighted moving averages for posterior updates:
+Published RWS updates each reagent's posterior with a Boltzmann-weighted moving average rather than the uniform update of Section 3.2:
 
 $$w_i = \exp\left(\frac{x_i}{\sigma_{\text{known}}}\right)$$
 
 $$\mu' = \mu + \frac{w_i}{\sum_j w_j} (x_i - \mu)$$
 
-**How it works**: This weighted average gives higher influence to better-scoring observations, creating "rich get richer" dynamics that accelerate convergence to high-quality reagents.
+**How it works**: better-scoring observations get more influence, a "rich get richer" dynamic that concentrates the posterior on high-scoring reagents faster.
 
 **Theorem 4.1 (Boltzmann Weighting Effect)**: Under Boltzmann weighting with temperature $T$, the effective sample size $N_{\text{eff}}$ satisfies:
 $$N_{\text{eff}} \leq N$$
@@ -252,32 +252,16 @@ $$N_{\text{eff}} = \frac{(\sum_i w_i)^2}{\sum_i w_i^2}$$
 
 By Cauchy-Schwarz: $(\sum w_i)^2 \leq N \sum w_i^2$, giving $N_{\text{eff}} \leq N$. $\square$
 
-**Why CATS Uses Uniform Updates Instead**:
+**In TACTICS 2.0 this is a switch, not a relic.** `ThompsonSamplingConfig(use_boltzmann_weighting=True)` selects this update; `False` selects the uniform update of Section 3.2. The `recommended` and `recommended_rws` presets run with it **on** — the 86.1 % / 85.5 % top-100 recovery figures were measured with Boltzmann weighting combined with GMIC rotation. The `baseline` preset and direct sampler construction default to the uniform update. The trade-off Theorem 4.1 captures is real: Boltzmann weighting concentrates faster at the cost of a smaller effective sample size behind each posterior, so prefer the uniform update when calibrated posterior widths matter downstream (e.g. the SAR analysis of Section 6 of the metrics document).
 
-| Aspect | Boltzmann-Weighted (Legacy) | Uniform Bayesian (CATS) |
-|--------|----------------------------|-------------------------|
-| Convergence speed | Faster (amplifies good scores) | Slower but steadier |
-| Posterior calibration | Poor (overconfident) | Good (well-calibrated) |
-| Criticality calculation | Unreliable (biased posteriors) | Reliable (true uncertainty) |
-| Recovery from bad early samples | Difficult | Natural |
-
-CATS relies on accurate posterior uncertainty for criticality calculation. Boltzmann-weighted updates distort the posterior variance, making criticality estimates unreliable. Therefore, **CATS returns to uniform Bayesian updates** as described in Section 3.2.
-
-#### 4.2.6 Reactive Temperature Adjustment
-
-When sampling efficiency drops below threshold $\eta$:
-$$\alpha \leftarrow \alpha + \Delta\alpha$$
-
-This is **reactive**: adjustment occurs only after performance degradation is detected.
-
-**Limitations of Legacy RWS**:
+**Limitations of published RWS**:
 1. **Fixed temperature ratio**: $\alpha/\beta$ is static
 2. **Reactive adaptation**: Temperature adjusts only when stuck
 3. **No component awareness**: Same temperature policy for all components
 
 ## 5. Component-Aware Thompson Sampling (CATS)
 
-CATS addresses the limitations of legacy approaches through five innovations:
+CATS addresses the limitations of the baselines through five innovations:
 
 1. **Component Criticality Detection** via z-score softmax with SNR dampening and IPR metric
 2. **Adaptive Temperature Modulation** with relative neutral-point multipliers
@@ -325,7 +309,7 @@ Consider a two-component system with $\alpha = 0.1$ (hot), $\beta = 0.05$ (cold)
 
 #### 5.0.3 Why Both Mechanisms Are Needed
 
-**Thermal cycling alone** (Legacy RWS) treats all components identically when heated/cooled. This wastes exploration budget on components that have already converged.
+**Thermal cycling alone** (published RWS) treats all components identically when heated/cooled. This wastes exploration budget on components that have already converged.
 
 **CATS alone** (without thermal cycling) might never give exploration opportunities to components that start with misleadingly good early results.
 
@@ -389,7 +373,7 @@ $$\kappa_c^{\text{IPR}} = 1 - \frac{N_{\text{eff}}}{n_c^{\text{active}}}$$
 
 IPR measures probability concentration directly. $N_{\text{eff}}$ is the effective number of reagents with significant probability mass. When one reagent dominates, $N_{\text{eff}} \to 1$ and $\kappa \to 1 - 1/n_c \approx 1$. When all reagents are equal, $N_{\text{eff}} = n_c$ and $\kappa = 0$.
 
-**Shannon Entropy** — legacy metric (`criticality_metric="shannon"`):
+**Shannon Entropy** — the earlier metric (`criticality_metric="shannon"`):
 
 $$\kappa_c^{\text{Shannon}} = 1 - \frac{H_c}{\ln(n_c^{\text{active}})}, \qquad H_c = -\sum_i p_{c,i} \ln(p_{c,i})$$
 
@@ -488,7 +472,7 @@ This blends between neutral ($m=1$) and CATS-adjusted multipliers.
 
 #### 5.4.1 Motivation
 
-Legacy RWS uses **round-robin** component rotation, cycling the heated component index sequentially: $c_{\text{hot}} \leftarrow (c_{\text{hot}} + 1) \mod C$. This gives every component equal heating time regardless of need.
+Published RWS uses **round-robin** component rotation, cycling the heated component index sequentially: $c_{\text{hot}} \leftarrow (c_{\text{hot}} + 1) \mod C$. This gives every component equal heating time regardless of need.
 
 **Problem**: Components with low criticality (flexible, many viable options) benefit more from exploration than components with high criticality (already converged). Equal heating wastes budget on converged components.
 
@@ -744,7 +728,7 @@ $$w = \frac{N_{c,i}}{N_{c,i} + \lambda}$$
 
 **Problem**: As posteriors sharpen, selection converges to the same "best" reagents, generating duplicate compounds that waste evaluation budget.
 
-**Legacy Approach (Reactive)**:
+**Reactive approach (published RWS)**:
 ```
 Generate 100 combinations → Filter duplicates → Evaluate unique only
 ```
@@ -787,11 +771,11 @@ $$E_c = \prod_{c' \neq c} n_{c'}$$
 
 When a reagent has been paired with all possible partners ($|D_c(r)| = E_c$), it is marked exhausted and automatically excluded.
 
-## 8. Comparative Analysis: CATS vs Legacy
+## 8. Comparative Analysis: CATS vs the Baselines
 
 ### 8.1 Key Differences Summary
 
-| Aspect | Standard TS | Legacy RWS | CATS |
+| Aspect | Standard TS | Published RWS | CATS |
 |--------|-------------|------------|------|
 | **Selection** | Argmax on samples | Roulette wheel | Roulette wheel |
 | **Temperature** | N/A | Fixed $\alpha$, $\beta$ | Adaptive via $m_c$ |
@@ -803,7 +787,7 @@ When a reagent has been paired with all possible partners ($|D_c(r)| = E_c$), it
 
 ### 8.2 Mathematical Comparison
 
-**Legacy RWS Temperature**:
+**Published RWS temperature**:
 $$T_c^{\text{RWS}} = \begin{cases} \alpha & c = c_{\text{hot}} \\ \beta & \text{otherwise} \end{cases}$$
 
 **CATS Effective Temperature**:
@@ -818,7 +802,7 @@ $$T_c^{\text{CATS}} = T_c^{\text{base}} \cdot \left[1 + w(\gamma)(m_c - 1)\right
 3. **Progressive Introduction**: Avoids early-iteration instability
 4. **Principled Foundation**: Information-theoretic basis (IPR criticality with SNR dampening)
 
-### 8.4 When CATS Outperforms Legacy
+### 8.4 When CATS Outperforms the Baselines
 
 | Scenario | CATS Advantage |
 |----------|----------------|

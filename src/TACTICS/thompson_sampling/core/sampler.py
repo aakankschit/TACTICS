@@ -124,7 +124,7 @@ class ThompsonSampler:
         # Log Boltzmann weighting status
         if self.use_boltzmann_weighting:
             self.logger.info(
-                "Using Boltzmann-weighted Bayesian updates (legacy RWS algorithm)"
+                "Using Boltzmann-weighted Bayesian updates"
             )
 
         # Log pipeline info

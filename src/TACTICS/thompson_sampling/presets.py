@@ -160,7 +160,7 @@ class ConfigPresets:
         between this baseline and ``recommended`` measures the value added
         by TT-TS and GMIC-weighted rotation.
 
-        Performance: Balanced-Greedy provides +1.5 pts over Legacy-Greedy
+        Performance: Balanced warmup + Greedy gives +1.5 pts over random warmup + Greedy (the 1.x baseline)
         on 2-component libraries via warmup alone (significant on 10/11).
 
         Args:

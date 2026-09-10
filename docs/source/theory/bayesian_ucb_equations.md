@@ -398,7 +398,7 @@ def calculate_criticality(reagent_list, mode, min_observations=5,
                           criticality_metric="ipr", n_adaptive_sharpening=True):
     """
     Calculate component criticality using z-score softmax with
-    SNR dampening and IPR (or Shannon entropy for legacy).
+    SNR dampening and IPR (or the earlier Shannon-entropy metric).
 
     Returns criticality κ ∈ [0, 1]:
         κ ≈ 0: Flexible (uniform posterior) → Explore
@@ -640,7 +640,7 @@ This section provides a complete reference for all tunable parameters specific t
 | `initial_p_low` | float | 0.60 | [0.5, 0.999] | Base percentile for **cooled** components (tighter bounds) |
 | `cats_exploration_fraction` | float | 0.3 | [0, 1] or None | Fraction of cycles during which CATS acts at full strength; afterwards its influence decays linearly while criticality stays low. `None` disables the decay |
 | `min_observations` | int | 5 | > 0 | Minimum observations per reagent before trusting criticality |
-| `criticality_metric` | str | "ipr" | "ipr", "shannon" | Criticality metric: IPR (default, recommended) or Shannon entropy (legacy) |
+| `criticality_metric` | str | "ipr" | "ipr", "shannon" | Criticality metric: IPR (default, recommended) or the earlier Shannon entropy |
 | `n_adaptive_sharpening` | bool | True | True/False | Apply $\sqrt{\ln N}$ sharpening to z-scores before softmax (IPR mode only) |
 
 ### 10.2 Percentile vs Temperature Analogy

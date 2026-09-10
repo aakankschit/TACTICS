@@ -171,7 +171,7 @@ class ThompsonSamplingConfig(BaseModel):
     # Bayesian update method
     use_boltzmann_weighting: bool = Field(
         default=False,
-        description="Use Boltzmann-weighted Bayesian updates (legacy RWS)",
+        description="Boltzmann-weighted posterior update (better observations weigh more), the update rule of the recommended presets. False selects the uniform Bayesian update.",
     )
 
     # Reproducibility

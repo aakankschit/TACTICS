@@ -36,7 +36,7 @@ def plot_criticality_trajectory(
     A horizontal band at criticality <= 0.3 is shaded as the "diffuse" zone.
 
     Args:
-        diagnostics_df: Enhanced or legacy diagnostics DataFrame.
+        diagnostics_df: DataFrame from ``sampler.get_diagnostics()``.
         figsize: Figure size.
 
     Returns:

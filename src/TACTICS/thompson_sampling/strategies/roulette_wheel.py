@@ -39,7 +39,7 @@ class RouletteWheelSelection(GMICCriticalityMixin, SelectionStrategy):
             mode: "maximize" or "minimize" optimization mode
             alpha: Base temperature for heated component (default: 0.1)
             beta: Base temperature for cooled component (default: 0.1)
-            adaptive_temperature: Enable legacy-inspired adaptive temperature control (default: False)
+            adaptive_temperature: Enable efficiency-based adaptive temperature control (after Zhao et al. 2025) (default: False)
             alpha_increment: Amount to increase alpha when efficiency drops (default: 0.01)
             beta_increment: Amount to increase beta when zero unique found (default: 0.001)
             efficiency_threshold: Efficiency below which alpha is incremented (default: 0.10)
@@ -379,7 +379,7 @@ class RouletteWheelSelection(GMICCriticalityMixin, SelectionStrategy):
 
     def adapt_temperatures(self, n_unique, n_attempted):
         """
-        Adapt temperatures based on sampling efficiency (legacy RWS-inspired).
+        Adapt temperatures based on sampling efficiency (after Zhao et al. 2025).
 
         When posteriors tighten, selection concentrates on a few reagents, leading
         to more duplicate combinations. Increasing temperatures counteracts this

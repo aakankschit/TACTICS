@@ -161,7 +161,7 @@ def write_products_to_files(
     """
     Write DataFrame of products to SMILES files.
 
-    Legacy function for compatibility. Writes products in chunks.
+    Kept for compatibility. Writes products in chunks.
 
     Args:
         df: DataFrame with 'Product_SMILES' and 'Product_Name' columns
