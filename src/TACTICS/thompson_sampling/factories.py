@@ -22,12 +22,10 @@ from .strategies import (
 from .strategies.base_strategy import SelectionStrategy
 
 from .warmup.config import (
-    StandardWarmupConfig,
     EnhancedWarmupConfig,
     BalancedWarmupConfig
 )
 from .warmup import (
-    StandardWarmup,
     EnhancedWarmup,
     BalancedWarmup
 )
@@ -67,7 +65,6 @@ StrategyConfig = Union[
 ]
 
 WarmupConfig = Union[
-    StandardWarmupConfig,
     EnhancedWarmupConfig,
     BalancedWarmupConfig
 ]
@@ -108,15 +105,11 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             mode=config.mode,
             alpha=config.alpha,
             beta=config.beta,
-            exploration_phase_end=config.exploration_phase_end,
-            transition_phase_end=config.transition_phase_end,
-            min_observations=config.min_observations,
             adaptive_temperature=config.adaptive_temperature,
             alpha_increment=config.alpha_increment,
             beta_increment=config.beta_increment,
             efficiency_threshold=config.efficiency_threshold,
             alpha_max=config.alpha_max,
-            cats_exploration_fraction=config.cats_exploration_fraction,
             cats_range=config.cats_range,
             divergence_threshold=config.divergence_threshold,
             cats_ema_decay=config.cats_ema_decay,
@@ -137,8 +130,6 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             mode=config.mode,
             initial_p_high=config.initial_p_high,
             initial_p_low=config.initial_p_low,
-            exploration_phase_end=config.exploration_phase_end,
-            transition_phase_end=config.transition_phase_end,
             min_observations=config.min_observations,
             cats_exploration_fraction=config.cats_exploration_fraction,
             criticality_metric=config.criticality_metric,
@@ -151,7 +142,6 @@ def create_strategy(config: StrategyConfig) -> SelectionStrategy:
             beta=config.beta,
             heated_scale=config.heated_scale,
             cooled_scale=config.cooled_scale,
-            min_observations=config.min_observations,
             adaptive_temperature=config.adaptive_temperature,
             scale_increment=config.scale_increment,
             cooled_scale_increment=config.cooled_scale_increment,
@@ -177,7 +167,7 @@ def create_warmup(config: WarmupConfig) -> WarmupStrategy:
     Create a warmup strategy from a Pydantic config.
 
     Args:
-        config: Warmup configuration (BalancedWarmupConfig, StandardWarmupConfig, etc.)
+        config: Warmup configuration (EnhancedWarmupConfig or BalancedWarmupConfig)
 
     Returns:
         WarmupStrategy: Instantiated warmup strategy object
@@ -188,10 +178,7 @@ def create_warmup(config: WarmupConfig) -> WarmupStrategy:
         >>> isinstance(warmup, BalancedWarmup)
         True
     """
-    if isinstance(config, StandardWarmupConfig):
-        return StandardWarmup()
-
-    elif isinstance(config, EnhancedWarmupConfig):
+    if isinstance(config, EnhancedWarmupConfig):
         return EnhancedWarmup()
 
     elif isinstance(config, BalancedWarmupConfig):

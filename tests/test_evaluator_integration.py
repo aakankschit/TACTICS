@@ -115,7 +115,6 @@ class TestEvaluatorIntegration:
 
         sampler.close()
 
-    @pytest.mark.skip(reason="Warmup has edge case with small test data")
     def test_evaluator_with_warmup(self):
         """Test that evaluators work correctly during warmup phase"""
         strategy = GreedySelection(mode="maximize")
@@ -143,7 +142,7 @@ class TestEvaluatorIntegration:
 
         sampler.close()
 
-    @pytest.mark.skip(reason="Warmup has edge case with small test data")
+    @pytest.mark.skip(reason="search() hits an all-NaN slice on this tiny library; needs investigation")
     def test_evaluator_with_full_workflow(self):
         """Test evaluator through complete warmup + search workflow"""
         strategy = GreedySelection(mode="maximize")

@@ -4,7 +4,6 @@ reagent combinations are not sampled more than once from a combinatorial library
 """
 
 import itertools
-import random
 from collections import defaultdict
 from typing import DefaultDict, Set, Tuple
 
@@ -121,24 +120,6 @@ class DisallowTracker:
                 raise ValueError(f"Disallowed given index {sel} for site {site_id} which has {max_size} reagents")
 
         self._update(selected)
-
-    def sample(self) -> list[int]:
-        """Randomly samples one valid product from the reaction without replacement."""
-        if self._n_sampled == self._total_product_size:
-            raise ValueError(
-                f"Sampled {self._n_sampled} of {self._total_product_size} products in reaction - no more left to sample"
-            )
-        selection_mask: list[int | None] = [self.Empty] * self.n_cycles
-        selection_order: list[int] = list(range(self.n_cycles))
-        random.shuffle(selection_order)
-        for cycle_id in selection_order:
-            selection_mask[cycle_id] = DisallowTracker.To_Fill
-            selection_candidate_scores = np.random.uniform(size=self._initial_reagent_counts[cycle_id])
-            selection_candidate_scores[list(self._disallow_mask[tuple(selection_mask)])] = np.NaN
-            selection_mask[cycle_id] = np.nanargmax(selection_candidate_scores).item(0)
-        self.update(selection_mask)
-        self._n_sampled += 1
-        return selection_mask
 
     def _get_reagent_exhaust_counts(self) -> dict[tuple[int,], int]:
         """

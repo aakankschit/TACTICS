@@ -14,7 +14,6 @@ from TACTICS.thompson_sampling.strategies.config import (
     TopTwoConfig,
 )
 from TACTICS.thompson_sampling.warmup.config import (
-    StandardWarmupConfig,
     EnhancedWarmupConfig,
     BalancedWarmupConfig,
 )
@@ -91,11 +90,6 @@ class TestStrategyConfigs:
 
 class TestWarmupConfigs:
     """Tests for warmup strategy configuration models."""
-
-    def test_standard_warmup_config(self):
-        """Test StandardWarmupConfig creation."""
-        config = StandardWarmupConfig()
-        assert config.warmup_type == "standard"
 
     def test_balanced_warmup_config(self):
         """Test BalancedWarmupConfig creation."""
@@ -255,21 +249,6 @@ class TestThompsonSamplingConfig:
                 strategy_config=GreedyConfig(),
                 evaluator_config=MWEvaluatorConfig(),
             )
-
-    def test_max_resamples_validation(self):
-        """Test max_resamples can be set."""
-        config = ThompsonSamplingConfig(
-            synthesis_pipeline=self.pipeline,
-            num_ts_iterations=100,
-            max_resamples=500,
-            strategy_config=GreedyConfig(),
-            evaluator_config=MWEvaluatorConfig(),
-        )
-        assert config.max_resamples == 500
-
-
-class TestPresets:
-    """Tests for configuration presets."""
 
     def setup_method(self):
         """Set up test fixtures."""

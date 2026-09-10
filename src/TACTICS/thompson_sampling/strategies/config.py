@@ -1,10 +1,16 @@
 """Pydantic configuration models for selection strategies."""
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from typing import Literal, Optional, Tuple, Union, Annotated
 
 
-class GreedyConfig(BaseModel):
+class _StrictModel(BaseModel):
+    """Base for component configs: unknown fields are an error, not silently ignored."""
+
+    model_config = ConfigDict(extra="forbid")
+
+
+class GreedyConfig(_StrictModel):
     """Configuration for Greedy selection strategy.
 
     Pure argmax Thompson Sampling: sample posteriors, pick the best.
@@ -14,7 +20,7 @@ class GreedyConfig(BaseModel):
     mode: Literal["maximize", "minimize"] = "maximize"
 
 
-class RouletteWheelConfig(BaseModel):
+class RouletteWheelConfig(_StrictModel):
     """
     Configuration for Roulette Wheel selection with Component-Aware Thompson Sampling (CATS).
 
@@ -34,37 +40,6 @@ class RouletteWheelConfig(BaseModel):
     # Thermal cycling parameters
     alpha: float = Field(default=0.1, gt=0, description="Base temperature for heated component")
     beta: float = Field(default=0.05, gt=0, description="Base temperature for cooled components")
-
-    # CATS parameters
-    exploration_phase_end: float = Field(
-        default=0.20,
-        gt=0,
-        le=1,
-        description="Fraction of iterations before CATS starts (default: 0.20 = 20%)"
-    )
-    transition_phase_end: float = Field(
-        default=0.60,
-        gt=0,
-        le=1,
-        description="Fraction of iterations when CATS is fully applied (default: 0.60 = 60%)"
-    )
-    min_observations: int = Field(
-        default=5,
-        gt=0,
-        description="Minimum observations per reagent before trusting criticality"
-    )
-
-    # CATS exploration decay
-    cats_exploration_fraction: Optional[float] = Field(
-        default=0.3,
-        ge=0,
-        le=1,
-        description=(
-            "Fraction of total cycles during which CATS explores at full strength. "
-            "After this point, CATS influence decays linearly if criticality remains low. "
-            "Set to None to disable decay. (default: 0.3 = first 30% of cycles)"
-        ),
-    )
 
     # CATS multiplier range override
     cats_range: Optional[float] = Field(
@@ -104,7 +79,7 @@ class RouletteWheelConfig(BaseModel):
         description="KL divergence threshold for switching from diversity to GMIC criticality mode"
     )
 
-    # Adaptive temperature parameters (legacy RWS-inspired)
+    # Adaptive temperature parameters (efficiency-based, after Zhao et al. 2025)
     adaptive_temperature: bool = Field(
         default=False,
         description="Enable adaptive temperature control (increase alpha/beta when sampling efficiency drops)"
@@ -126,19 +101,9 @@ class RouletteWheelConfig(BaseModel):
         description="Maximum alpha value"
     )
 
-    @field_validator('transition_phase_end')
-    @classmethod
-    def validate_phase_progression(cls, v, info):
-        """Ensure transition_phase_end > exploration_phase_end."""
-        if 'exploration_phase_end' in info.data and v <= info.data['exploration_phase_end']:
-            raise ValueError(
-                f"transition_phase_end ({v}) must be > exploration_phase_end "
-                f"({info.data['exploration_phase_end']})"
-            )
-        return v
 
 
-class UCBConfig(BaseModel):
+class UCBConfig(_StrictModel):
     """Configuration for Upper Confidence Bound selection."""
 
     strategy_type: Literal["ucb"] = "ucb"
@@ -146,7 +111,7 @@ class UCBConfig(BaseModel):
     c: float = Field(default=2.0, gt=0, description="Exploration parameter (higher = more exploration)")
 
 
-class EpsilonGreedyConfig(BaseModel):
+class EpsilonGreedyConfig(_StrictModel):
     """Configuration for Epsilon-Greedy selection with decaying epsilon."""
 
     strategy_type: Literal["epsilon_greedy"] = "epsilon_greedy"
@@ -155,7 +120,7 @@ class EpsilonGreedyConfig(BaseModel):
     decay: float = Field(default=0.995, gt=0, le=1, description="Decay rate for epsilon per iteration")
 
 
-class TopTwoConfig(BaseModel):
+class TopTwoConfig(_StrictModel):
     """Configuration for Top-Two Thompson Sampling (TT-TS).
 
     TT-TS targets best-arm identification rather than regret minimization.
@@ -201,20 +166,6 @@ class TopTwoConfig(BaseModel):
             "Multiplier on posterior std for cooled components. "
             "<1 deflates uncertainty → more TT-TS agreement → exploitation. "
             "Set to 1.0 to disable thermal cycling."
-        ),
-    )
-
-    # GMIC criticality (for weighted rotation only — does NOT affect temperature)
-    min_observations: int = Field(
-        default=5,
-        gt=0,
-        description=(
-            "DEPRECATED and inert. Formerly gated GMIC to 0.0 until every "
-            "active reagent had this many observations. The gate was removed "
-            "for consistency with RouletteWheelSelection, which never gated: "
-            "on large components a single under-observed reagent pinned the "
-            "whole component's GMIC to zero. Accepted only for backward "
-            "compatibility with existing configs."
         ),
     )
 
@@ -318,7 +269,7 @@ class TopTwoConfig(BaseModel):
             "easier SAR (higher min_GMIC), not mechanism malfunction."
         ),
     )
-    # Legacy fields kept for backward compatibility of disagreement_window
+    # Global disagreement window (diagnostics only)
     disagreement_window: int = Field(
         default=200,
         gt=1,
@@ -337,7 +288,7 @@ class TopTwoConfig(BaseModel):
         return v
 
 
-class BayesUCBConfig(BaseModel):
+class BayesUCBConfig(_StrictModel):
     """
     Configuration for Bayes-UCB selection with Component-Aware Thompson Sampling (CATS).
 
@@ -374,18 +325,6 @@ class BayesUCBConfig(BaseModel):
     )
 
     # CATS parameters
-    exploration_phase_end: float = Field(
-        default=0.20,
-        gt=0,
-        le=1,
-        description="Fraction of iterations before CATS starts (default: 0.20 = 20%)"
-    )
-    transition_phase_end: float = Field(
-        default=0.60,
-        gt=0,
-        le=1,
-        description="Fraction of iterations when CATS is fully applied (default: 0.60 = 60%)"
-    )
     min_observations: int = Field(
         default=5,
         gt=0,
@@ -410,7 +349,7 @@ class BayesUCBConfig(BaseModel):
         description=(
             "Metric for computing component criticality. "
             "'ipr' uses Inverse Participation Ratio (sensitive to probability concentration). "
-            "'shannon' uses Shannon entropy (legacy, insensitive at large N)."
+            "'shannon' uses Shannon entropy (the earlier metric; insensitive at large N)."
         ),
     )
     n_adaptive_sharpening: bool = Field(
@@ -421,14 +360,3 @@ class BayesUCBConfig(BaseModel):
             "Only applies when criticality_metric='ipr'."
         ),
     )
-
-    @field_validator('transition_phase_end')
-    @classmethod
-    def validate_phase_progression(cls, v, info):
-        """Ensure transition_phase_end > exploration_phase_end."""
-        if 'exploration_phase_end' in info.data and v <= info.data['exploration_phase_end']:
-            raise ValueError(
-                f"transition_phase_end ({v}) must be > exploration_phase_end "
-                f"({info.data['exploration_phase_end']})"
-            )
-        return v

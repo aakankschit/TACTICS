@@ -145,29 +145,6 @@ div.admonition p.admonition-title {
     min-width: min(100%, 400px);
 }
 
-/* For wide diagrams, allow horizontal scroll instead of compression */
-.graphviz-wide {
-    overflow-x: auto;
-    text-align: left;
-}
-
-.graphviz-wide svg {
-    max-width: none;
-    min-width: 600px;
-}
-
-/* ===== Sphinx Design Components ===== */
-/* Tab styling */
-
-.sd-tab-set > label {
-    font-weight: 500;
-}
-
-/* Card styling */
-.sd-card {
-    border-radius: 8px;
-}
-
 /* ===== List Tables ===== */
 /* Specific styling for parameter list-tables */
 
@@ -186,17 +163,6 @@ table.docutils.field-list th.field-name {
     font-weight: 500;
     width: auto;
     white-space: nowrap;
-}
-
-/* ===== Return Type Tables ===== */
-/* Styling for return value documentation */
-
-.returns-table {
-    margin-top: 0.5em;
-}
-
-.returns-table th:first-child {
-    width: 25%;
 }
 
 /* ===== Method Signatures ===== */
@@ -230,66 +196,6 @@ dl.py.method > dt .sig-name {
     table.docutils td {
         padding: 0.5em;
     }
-    
-    /* Make tables horizontally scrollable on mobile */
-    .table-wrapper {
-        overflow-x: auto;
-    }
-}
-
-/* ===== Utility Classes ===== */
-
-.text-center {
-    text-align: center;
-}
-
-.text-muted {
-    color: var(--pst-color-text-muted);
-}
-
-.badge {
-    display: inline-block;
-    padding: 0.2em 0.5em;
-    font-size: 0.75em;
-    font-weight: 600;
-    border-radius: 4px;
-    text-transform: uppercase;
-}
-
-.badge-required {
-    background-color: var(--pst-color-danger);
-    color: white;
-}
-
-.badge-optional {
-    background-color: var(--pst-color-secondary);
-    color: white;
-}
-
-/* ===== Version Badge ===== */
-
-.version-badge {
-    display: inline-block;
-    background-color: var(--pst-color-primary);
-    color: white;
-    padding: 0.2em 0.6em;
-    border-radius: 4px;
-    font-size: 0.85em;
-    font-weight: 500;
-    margin-left: 0.5em;
-}
-
-/* ===== Migration Tables ===== */
-/* For v0.3.0 -> v0.4.0 migration */
-
-table.migration-table td:first-child {
-    text-decoration: line-through;
-    color: var(--pst-color-text-muted);
-}
-
-table.migration-table td:nth-child(2) {
-    font-weight: 500;
-    color: var(--pst-color-success);
 }
 
 /* ===== Class Type Differentiation ===== */
@@ -362,42 +268,6 @@ div.admonition.dependencies > .admonition-title::before {
 /* Dark mode adjustments for dependency boxes */
 html[data-theme="dark"] div.admonition.dependencies {
     background-color: rgba(111, 66, 193, 0.15);
-}
-
-/* Inline dependency statement */
-p.depends-on {
-    font-size: 0.9em;
-    color: var(--pst-color-text-muted);
-    margin-bottom: 1em;
-    padding: 0.5em 0.75em;
-    background-color: var(--pst-color-surface);
-    border-radius: 4px;
-    border-left: 3px solid #6f42c1;
-}
-
-p.depends-on strong {
-    color: #6f42c1;
-}
-
-/* ===== Method Category Headers ===== */
-/* Sub-sections within class documentation */
-
-h4.method-category {
-    font-size: 1.05em;
-    color: var(--pst-color-text-muted);
-    border-bottom: 1px dashed var(--pst-color-border);
-    padding-bottom: 0.3em;
-    margin-top: 1.5em;
-    margin-bottom: 1em;
-}
-
-/* ===== Class Methods Section ===== */
-/* Nested sections for methods under classes */
-
-.class-methods {
-    margin-left: 1em;
-    padding-left: 1em;
-    border-left: 2px solid var(--pst-color-border);
 }
 
 /* ===== Cross-Reference Styling ===== */

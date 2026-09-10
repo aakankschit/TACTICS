@@ -50,6 +50,7 @@ from .synthesis_pipeline import SynthesisPipeline
 
 # Result dataclasses and analysis utilities
 from .enumeration_utils import (
+    read_reagent_file,
     EnumerationResult,
     EnumerationError,
     AutoDetectionResult,
@@ -69,11 +70,7 @@ from .file_writer import (
 from .generate_products import (
     enumerate_products,
     generate_all_combinations,
-    LibraryEnumerator,  # Legacy, deprecated
 )
-
-# Multiprocessing utilities
-from .multiprocessing_utils import initializer
 
 # Re-export smarts_toolkit classes for convenience
 from .smarts_toolkit import (
@@ -87,6 +84,7 @@ from .smarts_toolkit import (
 )
 
 __all__ = [
+    "read_reagent_file",
     # Main class
     "SynthesisPipeline",
     # Results
@@ -103,10 +101,6 @@ __all__ = [
     # Product generation
     "enumerate_products",
     "generate_all_combinations",
-    # Multiprocessing
-    "initializer",
-    # Legacy
-    "LibraryEnumerator",
     # Config (re-exported from smarts_toolkit)
     "ReactionDef",
     "ReactionConfig",

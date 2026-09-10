@@ -17,11 +17,11 @@ References:
 import warnings
 from typing import Any, Dict, List, Optional
 import numpy as np
-from scipy import stats
 from .base_strategy import SelectionStrategy
+from ._thermal import ThermalCyclingMixin
 
 
-class BayesUCBSelection(SelectionStrategy):
+class BayesUCBSelection(ThermalCyclingMixin, SelectionStrategy):
     """
     Bayesian Upper Confidence Bound selection with Component-Aware Thompson Sampling (CATS).
 
@@ -45,8 +45,6 @@ class BayesUCBSelection(SelectionStrategy):
         mode="maximize",
         initial_p_high=0.90,
         initial_p_low=0.60,
-        exploration_phase_end=0.20,
-        transition_phase_end=0.60,
         min_observations=5,
         cats_exploration_fraction=0.3,
         criticality_metric="ipr",
@@ -60,17 +58,16 @@ class BayesUCBSelection(SelectionStrategy):
             mode: "maximize" or "minimize" optimization mode
             initial_p_high: Base percentile for heated component (default: 0.90)
             initial_p_low: Base percentile for cooled component (default: 0.60)
-            exploration_phase_end: Fraction of iterations before CATS starts (default: 0.20)
-            transition_phase_end: Fraction of iterations when CATS is fully applied (default: 0.60)
             min_observations: Minimum observations per reagent before trusting criticality (default: 5)
             cats_exploration_fraction: Fraction of total cycles during which CATS explores
                 at full strength. After this point, CATS influence decays linearly if
-                criticality remains low. Set to None to disable decay (default: 0.5).
+                criticality remains low. Set to None to disable decay (default: 0.3).
             criticality_metric: "ipr" (Inverse Participation Ratio) or "shannon"
-                (legacy Shannon entropy). (default: "ipr")
+                (the earlier Shannon-entropy metric). (default: "ipr")
             n_adaptive_sharpening: If True and criticality_metric="ipr", apply
                 sqrt(log(N)) sharpening to z-scores. (default: True)
-            **kwargs: Catches deprecated parameters with warnings
+            **kwargs: Only the deprecated names listed below are accepted
+                (with a warning); anything else raises ``TypeError``.
         """
         super().__init__(mode)
 
@@ -81,15 +78,13 @@ class BayesUCBSelection(SelectionStrategy):
         self.p_low = initial_p_low
 
         # CATS parameters
-        self.exploration_phase_end = exploration_phase_end
-        self.transition_phase_end = transition_phase_end
         self.min_observations = min_observations
         self.cats_exploration_fraction = cats_exploration_fraction
         self.criticality_metric = criticality_metric
         self.n_adaptive_sharpening = n_adaptive_sharpening
 
         # Thermal cycling state
-        self.current_component_idx = 0
+        self._init_thermal_cycling()
         # Mean criticality across components (updated by rotate_component_weighted)
         self._mean_criticality: float = 0.5
 
@@ -122,6 +117,12 @@ class BayesUCBSelection(SelectionStrategy):
                 f"Remove these parameters from your configuration.",
                 DeprecationWarning,
                 stacklevel=2
+            )
+        unknown = set(kwargs) - deprecated
+        if unknown:
+            raise TypeError(
+                f"BayesUCBSelection.__init__() got unexpected keyword argument(s): "
+                f"{sorted(unknown)}"
             )
 
     def _calculate_criticality(self, reagent_list):
@@ -187,7 +188,7 @@ class BayesUCBSelection(SelectionStrategy):
             ipr = np.sum(probabilities ** 2)
             effective_N = 1.0 / ipr
             criticality = 1.0 - (effective_N / N)
-        else:  # shannon (legacy)
+        else:  # shannon (earlier metric)
             entropy = -np.sum(probabilities * np.log(probabilities + 1e-10))
             max_entropy = np.log(N)
             if max_entropy < 1e-10:
@@ -506,31 +507,6 @@ class BayesUCBSelection(SelectionStrategy):
         else:
             return np.argmin(ucb_indices)
 
-    def select_batch(self, reagent_list, batch_size, disallow_mask=None, **kwargs):
-        """
-        Select multiple reagents using Bayes-UCB indices with CATS (batch mode).
-
-        Note: This implementation samples with replacement by calling select_reagent
-        multiple times. The CATS-adjusted percentile and thermal state remain constant
-        within a batch.
-
-        Args:
-            reagent_list: List of Reagent objects with posterior distributions
-            batch_size: Number of reagents to select
-            disallow_mask: Optional set of indices to exclude from selection
-            **kwargs: Additional context passed to select_reagent:
-                - component_idx: Which reaction component
-                - current_cycle: Current search cycle (for CATS)
-                - total_cycles: Total number of cycles (for CATS)
-
-        Returns:
-            Array of selected reagent indices
-        """
-        return np.array([
-            self.select_reagent(reagent_list, disallow_mask, **kwargs)
-            for _ in range(batch_size)
-        ])
-
     def _compute_ucb_indices(self, reagent_list, percentile):
         """
         Compute Bayes-UCB indices for all reagents.
@@ -591,6 +567,8 @@ class BayesUCBSelection(SelectionStrategy):
                 mask = (explored_n - 1) == df
                 # Clamp df to avoid numerical issues with very small degrees of freedom
                 safe_df = max(df, 1)
+                from scipy import stats  # deferred: ~0.4 s import, only needed here
+
                 t_quantiles[mask] = stats.t.ppf(percentile, safe_df)
 
             # Compute UCB indices with numerical stability
@@ -602,48 +580,18 @@ class BayesUCBSelection(SelectionStrategy):
 
         return ucb_indices
 
-    def rotate_component(self, n_components):
+    def _rotation_flexibility(self, reagent_lists) -> np.ndarray:
+        """Criticality-weighted heating: flexible (low-criticality) components heat more.
+
+        Also refreshes ``_mean_criticality`` so ``_get_cats_multiplier`` can use
+        a relative neutral point instead of a fixed 0.5.
         """
-        Rotate to the next component for thermal cycling.
-
-        This cycles through components, heating one component at a time
-        while keeping others cooled.
-
-        Parameters
-        ----------
-        n_components : int
-            Total number of reagent components
-        """
-        self.current_component_idx = (self.current_component_idx + 1) % n_components
-
-    def rotate_component_weighted(self, n_components, reagent_lists, rng=None):
-        """
-        Rotate to next component using criticality-weighted probabilities.
-
-        Flexible components (low criticality) get heated more often.
-        Also caches the mean criticality so that ``_get_cats_multiplier`` can
-        use a relative neutral point instead of a fixed 0.5.
-
-        Parameters
-        ----------
-        n_components : int
-            Total number of reagent components
-        reagent_lists : list of list
-            List of reagent lists, one per component
-        rng : numpy.random.Generator, optional
-            Random number generator for reproducibility
-        """
-        if rng is None:
-            rng = np.random.default_rng()
-        criticalities = [
-            self.get_component_criticality(rl) or 0.5
-            for rl in reagent_lists
-        ]
-        crits = np.array(criticalities, dtype=float)
+        crits = np.array(
+            [self.get_component_criticality(rl) or 0.5 for rl in reagent_lists],
+            dtype=float,
+        )
         self._mean_criticality = float(crits.mean())
-        flexibility = np.maximum(1.0 - crits, 0.1)
-        heat_probs = flexibility / flexibility.sum()
-        self.current_component_idx = int(rng.choice(n_components, p=heat_probs))
+        return np.maximum(1.0 - crits, 0.1)
 
     def reset_percentiles(self):
         """

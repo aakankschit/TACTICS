@@ -12,7 +12,7 @@ from ..utils.ts_logger import get_logger
 from ..utils.ts_utils import read_reagents
 from .evaluators import DBEvaluator, LookupEvaluator
 from .parallel_evaluator import ParallelEvaluator
-from ..warmup import WarmupStrategy, StandardWarmup
+from ..warmup import WarmupStrategy, EnhancedWarmup
 
 if TYPE_CHECKING:
     from ..config import ThompsonSamplingConfig
@@ -20,37 +20,51 @@ if TYPE_CHECKING:
 
 
 class ThompsonSampler:
-    """
-    Unified Thompson Sampler that accepts any selection strategy.
+    """Run a Thompson Sampling search over a combinatorial library.
 
-    Parameters:
-    -----------
+    The usual way to build one is :meth:`from_config`, which wires the strategy,
+    warmup, evaluator and reagents from a
+    :class:`~TACTICS.thompson_sampling.config.ThompsonSamplingConfig`. Direct
+    construction is for tests and custom pipelines: after ``__init__`` call
+    :meth:`read_reagents` and :meth:`set_evaluator`, then :meth:`warm_up`,
+    :meth:`search`, and :meth:`close`.
+
+    Parameters
+    ----------
     synthesis_pipeline : SynthesisPipeline
-        The synthesis pipeline containing reaction configuration and reagent files.
-        This is the single source of truth for compound generation.
-
+        Reaction definition(s) and reagent files. The single source of truth
+        for how a product is made from a reagent tuple.
     selection_strategy : SelectionStrategy
-        The selection strategy to use (GreedySelection, RouletteWheelSelection, etc.)
-
-    batch_size : int, default=1
-        Number of compounds to SAMPLE per cycle from the strategy.
-        - batch_size=1: Sample one compound per cycle (standard Thompson Sampling)
-        - batch_size>1: Sample multiple compounds per cycle (batch Thompson Sampling)
-        Note: This is independent of parallel evaluation settings.
-
-    processes : int, default=1
-        Number of CPU cores to use for parallel evaluation.
-        - processes=1: Sequential evaluation (no multiprocessing overhead)
-        - processes>1: Parallel evaluation using multiprocessing.Pool
-        Recommendation: Use processes=1 for fast evaluators (LookupEvaluator, DBEvaluator)
-        and processes>1 for slow evaluators (ROCSEvaluator, FredEvaluator, ML models).
-
-    min_cpds_per_core : int, default=10
-        Minimum compounds to accumulate per CPU core before triggering parallel evaluation.
-        Evaluation threshold = processes * min_cpds_per_core.
-        - Higher values: Less frequent evaluation, lower overhead, but more memory
-        - Lower values: More frequent evaluation, higher overhead, but less memory
-        Example: processes=4, min_cpds_per_core=10 → evaluate every 40 compounds
+        How reagents are chosen each cycle (e.g. ``TopTwoSelection``,
+        ``RouletteWheelSelection``).
+    warmup_strategy : WarmupStrategy, optional
+        How initial observations are collected before the posteriors exist.
+        Default ``EnhancedWarmup()``.
+    log_filename : str, optional
+        Write the run log to this file as well as the console.
+    batch_size : int, default 1
+        Compounds sampled per cycle (independent of parallel evaluation).
+    processes : int, default 1
+        Worker processes for evaluation. Worth it only for slow evaluators
+        (docking, ROCS, ML); for lookup evaluators the overhead exceeds the
+        lookup. With ``processes > 1`` the evaluator must be set with its
+        config (see :meth:`set_evaluator`) so each worker can rebuild it.
+    min_cpds_per_core : int, default 10
+        Evaluation is triggered once ``processes * min_cpds_per_core``
+        compounds have accumulated (or at the last cycle).
+    product_library_file : str, optional
+        CSV with ``Product_Code`` and ``SMILES`` columns of pre-enumerated
+        products. Looked up before synthesis; misses fall back to synthesis.
+    use_boltzmann_weighting : bool, default False
+        Boltzmann-weighted posterior update (the update rule the recommended
+        presets use) instead of the uniform Bayesian update.
+    seed : int, optional
+        Seeds the sampler's random generator, which drives reagent selection
+        and component rotation. (Warmup pairing uses the ``seed`` on the
+        warmup strategy, where one exists.)
+    track_diagnostics : bool, default False
+        Record per-cycle component state so :meth:`get_diagnostics` returns a
+        trajectory. Small cost per cycle.
     """
 
     def __init__(
@@ -60,18 +74,16 @@ class ThompsonSampler:
         warmup_strategy: WarmupStrategy = None,
         log_filename: str = None,
         batch_size: int = 1,
-        max_resamples: int = None,
         processes: int = 1,
         min_cpds_per_core: int = 10,
         product_library_file: Optional[str] = None,
-        cats_manager=None,
         use_boltzmann_weighting: bool = False,
         seed: Optional[int] = None,
         track_diagnostics: bool = False,
     ):
         self.synthesis_pipeline = synthesis_pipeline
         self.selection_strategy = selection_strategy
-        self.warmup_strategy = warmup_strategy or StandardWarmup()
+        self.warmup_strategy = warmup_strategy or EnhancedWarmup()
         self.reagent_lists = []
         self.evaluator = None
         # Picklable recipe for self.evaluator, when known. Workers use this to
@@ -81,14 +93,12 @@ class ThompsonSampler:
         self.logger = get_logger(__name__, filename=log_filename)
         self._disallow_tracker = None
         self.batch_size = batch_size
-        self.max_resamples = max_resamples
         self.hide_progress = False
         self.num_prods = 0
         self.processes = processes
         self.min_cpds_per_core = min_cpds_per_core
         self.parallel_evaluator = ParallelEvaluator(processes=processes)
         self.product_smiles_dict = None
-        self.cats_manager = cats_manager  # Optional CATS integration
         self.use_boltzmann_weighting = use_boltzmann_weighting
 
         # Master RNG for reproducibility
@@ -114,7 +124,7 @@ class ThompsonSampler:
         # Log Boltzmann weighting status
         if self.use_boltzmann_weighting:
             self.logger.info(
-                "Using Boltzmann-weighted Bayesian updates (legacy RWS algorithm)"
+                "Using Boltzmann-weighted Bayesian updates"
             )
 
         # Log pipeline info
@@ -162,11 +172,7 @@ class ThompsonSampler:
 
         # Create components from config
         strategy = create_strategy(config.strategy_config)
-        warmup = (
-            create_warmup(config.warmup_config)
-            if config.warmup_config
-            else StandardWarmup()
-        )
+        warmup = create_warmup(config.warmup_config)
         evaluator = create_evaluator(config.evaluator_config)
 
         # Get pipeline from config (single source of truth)
@@ -184,7 +190,6 @@ class ThompsonSampler:
             warmup_strategy=warmup,
             log_filename=config.log_filename,
             batch_size=config.batch_size,
-            max_resamples=config.max_resamples,
             processes=config.processes,
             min_cpds_per_core=config.min_cpds_per_core,
             product_library_file=config.product_library_file,
@@ -620,7 +625,6 @@ class ThompsonSampler:
 
         out_list = []
         rng = self._rng
-        n_resamples = 0
         n_components = len(self.reagent_lists)
 
         # Accumulator for compounds to evaluate in parallel
@@ -681,12 +685,6 @@ class ThompsonSampler:
                 combinations.append(selected_reagents)
                 compounds_to_evaluate.append(selected_reagents)
                 n_unique += 1
-                n_resamples = 0
-
-            # Check stopping criteria
-            if self.max_resamples and n_resamples >= self.max_resamples:
-                self.logger.info(f"Stopping: {n_resamples} consecutive resamples")
-                break
 
             # Trigger evaluation when we have enough compounds OR at end of cycles
             should_evaluate = (
@@ -728,17 +726,6 @@ class ThompsonSampler:
                         )
                         if state is not None:
                             self._diagnostics_records.append(state)
-                        else:
-                            # Fallback to legacy 3-column schema
-                            crit = self.selection_strategy.get_component_criticality(
-                                reagent_list
-                            )
-                            if crit is not None:
-                                self._diagnostics_records.append({
-                                    "cycle": cycle,
-                                    "component_idx": comp_idx,
-                                    "criticality": crit,
-                                })
 
                 # Clear accumulator
                 compounds_to_evaluate = []
@@ -855,8 +842,10 @@ class ThompsonSampler:
         "final_temperature": pl.Float64,
     }
 
-    _LEGACY_DIAGNOSTICS_SCHEMA = {
-        "cycle": pl.Int64,
+    # Minimal schema for the empty frame: the three columns every
+    # strategy-specific schema above shares.
+    _EMPTY_DIAGNOSTICS_SCHEMA = {
+        "current_cycle": pl.Int64,
         "component_idx": pl.Int64,
         "criticality": pl.Float64,
     }
@@ -870,22 +859,21 @@ class ThompsonSampler:
 
         - **TopTwoSelection**: 12-column TT-TS schema with disagreement EMA,
           adaptive heated_scale, and GMIC per component.
-        - **RouletteWheelSelection**: 17-column GMIC schema with full
+        - **RouletteWheelSelection**: 18-column GMIC schema with full
           temperature pipeline (base_temp, cats_multiplier, final_temperature).
         - **BayesUCBSelection**: 18-column IPR schema with participation ratio,
           SNR dampening, and observation-gated weights.
-        - **Other strategies**: 3-column legacy schema (cycle, component_idx,
-          criticality).
 
-        All enhanced schemas share ``current_cycle`` (not ``cycle``) and
+        All schemas share ``current_cycle``, ``component_idx`` and
         ``criticality`` columns, so downstream analysis functions work
-        across strategies.
+        across strategies. Strategies without component state (Greedy, UCB,
+        EpsilonGreedy) record nothing.
 
-        Returns an empty DataFrame (with the legacy schema) if diagnostics
-        were not tracked or the strategy doesn't support criticality.
+        Returns an empty DataFrame with just those three shared columns if
+        diagnostics were not tracked or the strategy records no state.
         """
         if not self._diagnostics_records:
-            return pl.DataFrame(schema=self._LEGACY_DIAGNOSTICS_SCHEMA)
+            return pl.DataFrame(schema=self._EMPTY_DIAGNOSTICS_SCHEMA)
 
         # Detect schema from first record.
         # Order matters: TT-TS check before GMIC (both have "gmic").
@@ -902,17 +890,11 @@ class ThompsonSampler:
                 self._diagnostics_records,
                 schema=self._GMIC_DIAGNOSTICS_SCHEMA,
             )
-        elif "current_cycle" in first:
+        else:
             # IPR schema (BayesUCB)
             return pl.DataFrame(
                 self._diagnostics_records,
                 schema=self._IPR_DIAGNOSTICS_SCHEMA,
-            )
-        else:
-            # Legacy 3-column schema
-            return pl.DataFrame(
-                self._diagnostics_records,
-                schema=self._LEGACY_DIAGNOSTICS_SCHEMA,
             )
 
     def get_posterior_landscape(self) -> pl.DataFrame:

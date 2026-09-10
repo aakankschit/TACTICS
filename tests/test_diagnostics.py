@@ -53,7 +53,7 @@ def thrombin_paths():
     return {
         "acids": str(data / "acids.smi"),
         "amines": str(data / "coupled_aa_sub.smi"),
-        "scores": str(data / "product_scores.csv"),
+        "scores": str(data / "product_scores.parquet"),
     }
 
 
@@ -145,7 +145,7 @@ class TestDiagnosticsOff:
 
         assert isinstance(diag, pl.DataFrame)
         assert len(diag) == 0
-        assert set(diag.columns) == {"cycle", "component_idx", "criticality"}
+        assert set(diag.columns) == {"current_cycle", "component_idx", "criticality"}
 
         sampler.close()
 
@@ -237,7 +237,7 @@ class TestDiagnosticsGreedy:
 
         assert isinstance(diag, pl.DataFrame)
         assert len(diag) == 0
-        assert set(diag.columns) == {"cycle", "component_idx", "criticality"}
+        assert set(diag.columns) == {"current_cycle", "component_idx", "criticality"}
 
         sampler.close()
 

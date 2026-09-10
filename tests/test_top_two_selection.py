@@ -462,7 +462,6 @@ class TestFactoryRoundtrip:
             beta=0.7,
             heated_scale=2.0,
             cooled_scale=0.5,
-            min_observations=10,
             adaptive_temperature=True,
             scale_increment=0.02,
             cooled_scale_increment=0.002,
@@ -481,7 +480,6 @@ class TestFactoryRoundtrip:
         assert strategy.beta == 0.7
         assert strategy.heated_scale == 2.0
         assert strategy.cooled_scale == 0.5
-        assert strategy.min_observations == 10
         assert strategy.adaptive_temperature is True
         assert strategy.scale_increment == 0.02
         assert strategy.cooled_scale_increment == 0.002
@@ -531,7 +529,7 @@ class TestOrthogonality:
         assert frac_1 > 0.7
 
     def test_gmic_criticality(self):
-        strategy = TopTwoSelection(adaptive_disagreement=True, min_observations=3)
+        strategy = TopTwoSelection(adaptive_disagreement=True)
         # Reagents with diverse means → high GMIC
         reagents = _make_reagents(
             means=[1.0, 10.0, 5.0],

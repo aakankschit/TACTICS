@@ -5,6 +5,109 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-09-08
+
+A streamlining release. The package is the same algorithm with the dead
+weight removed: `import TACTICS` drops from 7.1 s to 0.04 s, six runtime
+dependencies are gone (about 200 MB off a fresh install), the wheel shrinks
+from 13.5 MB to under 5 MB, and roughly 3,700 lines of unreachable or
+duplicated code leave `src/`. Search behaviour of every preset is unchanged;
+the one default that moves is documented under Changed.
+
+### Removed
+
+- **`thompson_sampling.legacy`** — the pre-1.0 Thompson Sampling and RWS
+  implementations (17 modules). Nothing in the package or tests imported them.
+  To reproduce Zhao et al. (2025) with that code, install `chem-tactics==1.2.0`.
+- **`legacy_rws` preset.** Same reason. The Boltzmann-weighted posterior update
+  it used is unchanged and remains the update rule of `recommended` and
+  `recommended_rws`.
+- **`StandardWarmup` / `StandardWarmupConfig`** — random-partner warmup, the
+  weakest of the three and kept only as a comparison arm.
+- **`baseline.py`** (`run_random_baseline`, `run_exhaustive_baseline`,
+  `RandomBaselineConfig`) — unreachable: it read config fields that did not
+  exist and passed a keyword `create_reagents` never accepted.
+- **Inert config fields** that were stored but never read:
+  `RouletteWheelConfig.{exploration_phase_end, transition_phase_end,
+  min_observations, cats_exploration_fraction}`,
+  `BayesUCBConfig.{exploration_phase_end, transition_phase_end}`,
+  `TopTwoConfig.min_observations`, and
+  `ThompsonSamplingConfig.max_resamples` (its early-stop branch compared
+  against a counter that was never incremented).
+- **`library_analysis.LibraryAnalysis`, `LibraryVisualization`,
+  `compile_product_scores`, `compile_product_smiles`** and eight
+  `diagnostic_plots` functions with no callers. `TS_Benchmarks` and the eight
+  plot functions used by the tutorials are unchanged.
+- **`library_enumeration.conformer_gen`** (never imported; unguarded OpenEye
+  import), **`LibraryEnumerator`**, **`initializer`**, and a handful of
+  unreferenced helpers.
+- **Dependencies:** `pandas`, `dill`, `useful_rdkit_utils`, `seaborn`.
+  `matplotlib` and `altair` move to the new optional `[viz]` extra.
+- **`ThompsonSamplingConfig.results_filename`** and the
+  `ThompsonSampler(cats_manager=...)` parameter — both were stored and never
+  read. `search()` returns a DataFrame; write it with `results.write_parquet()`.
+  Preset `output_dir` now only places the run log.
+
+### Changed
+
+- **Direct `ThompsonSampler(...)` construction with no `warmup_strategy` now
+  defaults to `EnhancedWarmup()`** instead of `StandardWarmup()`. This matches
+  what `from_config()` and every preset already did, so preset users see no
+  change.
+- **Polars only.** `LookupEvaluator` reads its table with Polars; the SMARTS
+  validator reads CSV reagent files with Polars. No public API accepted or
+  returned pandas objects, so signatures are unchanged.
+- **Bundled thrombin scores ship as Parquet** (`product_scores.parquet`,
+  4.7 MB) instead of a 12 MB CSV.
+- **Strategy and warmup config models reject unknown fields** (`extra="forbid"`),
+  so scripts still passing a removed knob fail with a `ValidationError`
+  instead of silently ignoring it.
+- **`get_diagnostics()` on a strategy that records no component state returns
+  an empty frame with columns `current_cycle`, `component_idx`,
+  `criticality`** — the three columns every strategy-specific schema shares.
+  The old 3-column `cycle`-named fallback schema was reachable by no strategy.
+- `RouletteWheelSelection`, `TopTwoSelection` and `BayesUCBSelection` share
+  their thermal-cycling and GMIC code through mixins in
+  `strategies/_thermal.py`. Verified RNG-identical on seeded runs; the only
+  visible change is that `TopTwoSelection._component_gmic` is now
+  `_cached_gmics`, the name RWS already used.
+- `RouletteWheelSelection.select_batch` and `BayesUCBSelection.select_batch`
+  are removed; both fall through to the `SelectionStrategy` default, which the
+  sampler never called anyway.
+- `RouletteWheelSelection(...)` and `BayesUCBSelection(...)` raise `TypeError`
+  on unknown keyword arguments instead of silently ignoring them (Bayes-UCB
+  still warns for its five deprecated names). Previously
+  `RouletteWheelSelection(criticality_metric="shannon")` was accepted with no
+  effect.
+- The `TACTICS` and `TACTICS.thompson_sampling` namespaces now also export
+  `Evaluator`, `CustomEvaluator`, and every strategy, warmup and evaluator
+  config model, so one import style covers a whole script.
+
+### Performance
+
+- **Lazy package re-exports.** `TACTICS`, `TACTICS.thompson_sampling`,
+  `TACTICS.thompson_sampling.core` and `TACTICS.library_analysis` resolve
+  their names on first access (PEP 562). Every existing import path keeps
+  working; a config-only import no longer loads RDKit, scipy or sqlitedict.
+- `scipy.stats` (BayesUCB) and `matplotlib.pyplot` (diagnostic plots) are
+  imported inside the function that needs them.
+- `useful_rdkit_utils` — 3.85 s of the old import and ~149 MB via
+  umap/pynndescent/numba/llvmlite — is replaced by direct RDKit calls that
+  are bit-identical.
+- `tests/test_import_time.py` pins these guarantees in fresh subprocesses.
+
+### Fixed
+
+- `diagnostic_plots` used `plt.cm.get_cmap`, removed in matplotlib 3.9.
+- `tutorials/thompson_sampling_tutorial.py` imported a `BoltzmannConfig` that
+  never existed and could not be opened.
+- Three tests skipped as "warmup edge case with small test data" pass with the
+  Enhanced default and are un-skipped.
+- `ParallelEvaluator` now starts its worker pool with the `spawn` method.
+  Under Linux's default `fork`, a worker rebuilding a `LookupEvaluator`
+  deadlocked in Polars (the child inherits a Rayon thread pool with no
+  threads), which hung `processes > 1` runs and the CI test job.
+
 ## [1.2.0] - 2026-07-18
 
 Parallel evaluation with slow evaluators (Fred docking, ROCS, ML models) was

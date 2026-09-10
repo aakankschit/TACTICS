@@ -8,7 +8,6 @@ This module provides:
 - Utility functions for reagent processing
 """
 
-import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Literal, Optional, Set, Tuple
 
@@ -197,40 +196,6 @@ def read_reagent_file(file_path: str) -> List[Tuple[str, str]]:
     return reagents
 
 
-def read_all_reagent_files(
-    file_list: List[str],
-) -> List[List[Tuple[str, str]]]:
-    """
-    Read all reagent files.
-
-    Args:
-        file_list: List of reagent file paths
-
-    Returns:
-        List of lists of (smiles, name) tuples, one per file
-    """
-    return [read_reagent_file(f) for f in file_list]
-
-
-def smiles_to_mol(smiles: str) -> Optional[Chem.Mol]:
-    """
-    Convert SMILES to RDKit Mol with error handling.
-
-    Args:
-        smiles: SMILES string
-
-    Returns:
-        RDKit Mol or None if invalid
-    """
-    try:
-        mol = Chem.MolFromSmiles(smiles)
-        if mol is not None:
-            Chem.SanitizeMol(mol)
-        return mol
-    except Exception:
-        return None
-
-
 def results_to_dataframe(
     results: List[EnumerationResult],
     include_failures: bool = False,
@@ -260,70 +225,6 @@ def results_to_dataframe(
         return pl.DataFrame({"product_name": [], "product_smiles": [], "success": []})
 
     return pl.DataFrame(data)
-
-
-def find_reactants_from_product_code(
-    product_df: pl.DataFrame,
-    reactant_df: pl.DataFrame,
-    product_smiles_dict: Dict[str, str],
-) -> pl.DataFrame:
-    """
-    Find all reactants from a given Polars DataFrame based on the product code.
-
-    Generates a new DataFrame with columns for product SMILES, score, and
-    subsequent columns for each reactant used in the product.
-
-    Args:
-        product_df: DataFrame containing 'Product_Code' and 'Score' columns.
-        reactant_df: DataFrame containing reactant data.
-        product_smiles_dict: Dictionary mapping product codes to SMILES.
-
-    Returns:
-        DataFrame with columns for product SMILES, score, and reactant columns.
-    """
-    from multiprocessing import cpu_count, get_context
-
-    reactant_columns = [
-        f"Reactant_{i + 1}"
-        for i in range(len(product_df[0, "Product_Code"].split("_")))
-    ]
-
-    def process_product_code(row):
-        product_code = row["Product_Code"]
-        product_smiles = product_smiles_dict.get(product_code, None)
-        score = row["Score"]
-        reactant_codes = product_code.split("_")
-        reactant_data = {col: [] for col in reactant_columns}
-        reactant_data["Product_SMILES"] = [product_smiles]
-        reactant_data["Score"] = [score]
-
-        for code in reactant_codes:
-            reactant_smiles = reactant_df.filter(pl.col("Name") == code)[
-                "SMILES"
-            ].to_list()
-            if reactant_smiles:
-                reactant_data[f"Reactant_{reactant_codes.index(code) + 1}"].append(
-                    reactant_smiles[0]
-                )
-            else:
-                reactant_data[f"Reactant_{reactant_codes.index(code) + 1}"].append(None)
-
-        return reactant_data
-
-    # Use multiprocessing to process product codes in parallel
-    num_cores = cpu_count()
-    with get_context("spawn").Pool(num_cores) as pool:
-        results = pool.map(process_product_code, product_df.rows())
-
-    # Combine results into a single dictionary
-    combined_data = {col: [] for col in reactant_columns}
-    combined_data["Product_SMILES"] = []
-    combined_data["Score"] = []
-    for result in results:
-        for key, value in result.items():
-            combined_data[key].extend(value)
-
-    return pl.DataFrame(combined_data)
 
 
 def failures_to_dataframe(

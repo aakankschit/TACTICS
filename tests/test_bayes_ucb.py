@@ -329,8 +329,6 @@ class TestBayesUCBConfig:
         assert config.initial_p_high == 0.90
         assert config.initial_p_low == 0.60
         # CATS parameters (replaced old percentile adaptation parameters)
-        assert config.exploration_phase_end == 0.20
-        assert config.transition_phase_end == 0.60
         assert config.min_observations == 5
 
     def test_config_validation(self):

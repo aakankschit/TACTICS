@@ -12,7 +12,7 @@ scoring only a small fraction of the products while still recovering most of the
 top hits. A typical run evaluates **1–2% of the library** and recovers **~85–95%
 of the true top-100**.
 
-📖 [Documentation](https://aakankschit.github.io/TACTICS/) · 🧪 [Tutorials](#learn-more) · 📋 [Changelog](CHANGELOG.md)
+📖 [Documentation](https://aakankschit.github.io/TACTICS/) · 🧱 [Guides: Library → Scoring → Search → Scale → Inspect → Visualise](https://aakankschit.github.io/TACTICS/guides/01_library.html) · 🧪 [Tutorials](https://aakankschit.github.io/TACTICS/tutorials.html) · 📋 [Changelog](CHANGELOG.md)
 
 ---
 
@@ -39,7 +39,8 @@ Requires Python 3.11+.
 <summary>Optional extras and development install</summary>
 
 ```bash
-pip install chem-tactics[tutorials]   # interactive marimo notebooks
+pip install chem-tactics[viz]         # matplotlib/altair plotting (TS_Benchmarks, diagnostic_plots)
+pip install chem-tactics[tutorials]   # interactive marimo notebooks (includes viz)
 pip install chem-tactics[test]        # test dependencies
 
 # development install
@@ -51,34 +52,43 @@ pip install -e ".[test]"
 
 ## Quickstart
 
-Screen a two-component amide library against a table of precomputed scores:
+Screen the bundled thrombin library (130 acids × 3,844 amines) against its
+precomputed docking scores — this runs as-is after `pip install chem-tactics`:
 
 ```python
+from TACTICS import ThompsonSampler, get_preset
 from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
-from TACTICS.thompson_sampling import ThompsonSampler, get_preset
-from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+from TACTICS.thompson_sampling import LookupEvaluatorConfig
 
-# 1. Describe the library: one reaction + one reagent file per component
+data = files("TACTICS.data.thrombin")  # bundled example: 130 acids x 3844 amines
+
+# 1. Describe the library: one reaction, one reagent file per component
 pipeline = SynthesisPipeline(ReactionConfig(
     reactions=[ReactionDef(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+        reaction_smarts="[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]):3]"
+                        ">>[#6:1](=[O:2])[#7:3]",
         step_index=0,
     )],
-    reagent_file_list=["acids.smi", "amines.smi"],
+    reagent_file_list=[str(data / "acids.smi"), str(data / "coupled_aa_sub.smi")],
 ))
 
-# 2. Describe how to score a product
-evaluator = LookupEvaluatorConfig(ref_filename="scores.csv")
+# 2. Describe how a product is scored (here: a precomputed docking table)
+evaluator = LookupEvaluatorConfig(ref_filename=str(data / "product_scores.parquet"))
 
-# 3. Take a tuned preset and run
-config = get_preset(synthesis_pipeline=pipeline, evaluator_config=evaluator)
+# 3. Take the tuned preset, run, and read the results
+config = get_preset(
+    synthesis_pipeline=pipeline,
+    evaluator_config=evaluator,
+    mode="minimize",        # docking scores: lower is better
+    num_iterations=20,      # cycles; 1000+ for a real screen
+    batch_size=50,          # compounds per cycle
+)
 sampler = ThompsonSampler.from_config(config)
-
 sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
 results = sampler.search(num_cycles=config.num_ts_iterations)
 sampler.close()
 
-print(results.sort("score", descending=True).head(10))
+print(results.sort("score").head(5))
 ```
 
 `results` is a Polars DataFrame of every product that was evaluated, with
@@ -125,6 +135,7 @@ sampler = ThompsonSampler.from_config(config)
 | Evaluator | Use it for | Speed |
 |---|---|---|
 | `LookupEvaluatorConfig` | A CSV/Parquet table of precomputed scores | instant |
+| `CustomEvaluatorConfig` | Any Python function `Mol -> float` | yours |
 | `DBEvaluatorConfig` | Scores in a SQLite database | instant |
 | `FPEvaluatorConfig` | Fingerprint similarity to a reference ligand | fast |
 | `ROCSEvaluatorConfig` | 3D shape/colour overlay (OpenEye) | slow |
@@ -138,7 +149,6 @@ sampler = ThompsonSampler.from_config(config)
 | `recommended` *(default)* | Top-Two Thompson Sampling — best overall |
 | `recommended_rws` | Roulette wheel with criticality-aware thermal cycling |
 | `baseline` | Balanced warmup + greedy, for measuring what the search adds |
-| `legacy_rws` | Reproduces Zhao et al. 2025 |
 
 Start with `recommended`. If you are benchmarking, run `recommended` and
 `recommended_rws` and take the better result — they favour different library
@@ -175,7 +185,7 @@ construction rather than failing mid-run. Other selection strategies —
 `GreedyConfig`, `RouletteWheelConfig`, `UCBConfig`, `EpsilonGreedyConfig`,
 `BayesUCBConfig` — are available for baselines and comparisons.
 
-See the [configuration docs](https://aakankschit.github.io/TACTICS/) for the
+See the [Search guide](https://aakankschit.github.io/TACTICS/guides/03_search.html) and the [reference](https://aakankschit.github.io/TACTICS/reference/search.html) for the
 full reference.
 </details>
 
@@ -191,12 +201,19 @@ marimo edit tutorials/library_enumeration_tutorial.py # build a library
 
 | Tutorial | What it covers |
 |---|---|
-| `thompson_sampling_tutorial.py` | Comparing selection strategies |
-| `library_enumeration_tutorial.py` | `SynthesisPipeline` and enumeration |
-| `reaction_config_builder.py` | Building and validating reaction SMARTS |
-| `custom_evaluator_tester.py` | Writing your own evaluator |
+| `thompson_sampling_tutorial.py` | Compare strategies and warmups; recovery charts |
+| `library_enumeration_tutorial.py` | `SynthesisPipeline`: single-step, multi-step, alternative SMARTS |
+| `reaction_config_builder.py` | Build and validate a `ReactionConfig` interactively |
+| `custom_evaluator_tester.py` | Paste a scoring function and run it |
+| `diagnostic_benchmark_plots.py` | Mechanism plots over the diagnostic benchmark output |
+| `interactive_sar_explorer.py` | Hover-to-structure SAR explorer (needs `data/scores`) |
+| `manuscript_plots_ROCS.py` | Manuscript figures, ROCS libraries |
+| `manuscript_plots_docking.py` | Manuscript figures, docking libraries |
+| `manuscript_sar_plots.py` | Manuscript figures, reagent score landscapes |
 
-- **API reference and guides**: [TACTICS Documentation](https://aakankschit.github.io/TACTICS/)
+- **Guides** (one per building block): [https://aakankschit.github.io/TACTICS/guides/01_library.html](https://aakankschit.github.io/TACTICS/guides/01_library.html)
+- **API reference**: [https://aakankschit.github.io/TACTICS/reference/](https://aakankschit.github.io/TACTICS/reference/index.html)
+- **Theory**: [https://aakankschit.github.io/TACTICS/theory/](https://aakankschit.github.io/TACTICS/theory/index.html)
 - **Runnable scripts**: see `examples/`
 - **Build docs locally**: `cd docs && make html`
 

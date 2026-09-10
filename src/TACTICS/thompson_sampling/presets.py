@@ -14,9 +14,9 @@ Preset hierarchy:
     ``"baseline"``
         Balanced warmup + Greedy selection. Isolates the framework's warmup
         contribution (+1.5 pts on 2-component libraries via warmup alone).
-    ``"legacy_rws"``
-        Reproduces the original RWS algorithm from Zhao et al. (2025).
-        Pass ``mode="minimize"`` for docking.
+
+The original Zhao et al. (2025) RWS reproduction (``legacy_rws``) was removed
+in 2.0; use chem-tactics 1.2.0 to reproduce those numbers.
 """
 
 from typing import Literal, Optional, TYPE_CHECKING
@@ -38,16 +38,13 @@ if TYPE_CHECKING:
     from ..library_enumeration import SynthesisPipeline
 
 
-def _output_paths(output_dir: Optional[str], prefix: str):
-    """Helper to build results/log filenames from an output directory."""
+def _log_path(output_dir: Optional[str], prefix: str) -> Optional[str]:
+    """Log-file path inside ``output_dir`` (created if needed), or None."""
     if output_dir is None:
-        return None, None
+        return None
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
-    return (
-        str(output_path / f"{prefix}_results.csv"),
-        str(output_path / f"{prefix}.log"),
-    )
+    return str(output_path / f"{prefix}.log")
 
 
 class ConfigPresets:
@@ -64,9 +61,6 @@ class ConfigPresets:
 
     Baseline:
         - ``baseline``: Balanced + Greedy (isolates warmup contribution)
-
-    Legacy (for reproducing published results):
-        - ``legacy_rws``: Original RWS algorithm (pass ``mode`` for direction)
     """
 
     @staticmethod
@@ -94,9 +88,10 @@ class ConfigPresets:
             num_iterations: Number of Thompson sampling iterations
             batch_size: Number of compounds to sample per cycle (default: 100)
             mode: "maximize" for highest scores, "minimize" for lowest (e.g., docking)
-            output_dir: Directory to save output files (optional)
+            output_dir: Directory for the run log (created if needed). Results are
+                returned as a DataFrame; write them yourself, e.g. ``results.write_parquet(...)``.
         """
-        results_filename, log_filename = _output_paths(output_dir, "recommended")
+        log_filename = _log_path(output_dir, "recommended")
         return ThompsonSamplingConfig(
             synthesis_pipeline=synthesis_pipeline,
             num_ts_iterations=num_iterations,
@@ -105,9 +100,7 @@ class ConfigPresets:
             warmup_config=EnhancedWarmupConfig(),
             evaluator_config=evaluator_config,
             batch_size=batch_size,
-            max_resamples=1000,
             use_boltzmann_weighting=True,
-            results_filename=results_filename,
             log_filename=log_filename,
         )
 
@@ -135,9 +128,10 @@ class ConfigPresets:
             num_iterations: Number of Thompson sampling iterations
             batch_size: Number of compounds to sample per cycle (default: 100)
             mode: "maximize" for highest scores, "minimize" for lowest (e.g., docking)
-            output_dir: Directory to save output files (optional)
+            output_dir: Directory for the run log (created if needed). Results are
+                returned as a DataFrame; write them yourself, e.g. ``results.write_parquet(...)``.
         """
-        results_filename, log_filename = _output_paths(output_dir, "recommended_rws")
+        log_filename = _log_path(output_dir, "recommended_rws")
         return ThompsonSamplingConfig(
             synthesis_pipeline=synthesis_pipeline,
             num_ts_iterations=num_iterations,
@@ -146,9 +140,7 @@ class ConfigPresets:
             warmup_config=EnhancedWarmupConfig(),
             evaluator_config=evaluator_config,
             batch_size=batch_size,
-            max_resamples=1000,
             use_boltzmann_weighting=True,
-            results_filename=results_filename,
             log_filename=log_filename,
         )
 
@@ -168,7 +160,7 @@ class ConfigPresets:
         between this baseline and ``recommended`` measures the value added
         by TT-TS and GMIC-weighted rotation.
 
-        Performance: Balanced-Greedy provides +1.5 pts over Legacy-Greedy
+        Performance: Balanced warmup + Greedy gives +1.5 pts over random warmup + Greedy (the 1.x baseline)
         on 2-component libraries via warmup alone (significant on 10/11).
 
         Args:
@@ -176,9 +168,10 @@ class ConfigPresets:
             evaluator_config: Evaluator configuration
             num_iterations: Number of Thompson sampling iterations
             mode: "maximize" for highest scores, "minimize" for lowest (e.g., docking)
-            output_dir: Directory to save output files (optional)
+            output_dir: Directory for the run log (created if needed). Results are
+                returned as a DataFrame; write them yourself, e.g. ``results.write_parquet(...)``.
         """
-        results_filename, log_filename = _output_paths(output_dir, "baseline")
+        log_filename = _log_path(output_dir, "baseline")
         return ThompsonSamplingConfig(
             synthesis_pipeline=synthesis_pipeline,
             num_ts_iterations=num_iterations,
@@ -187,57 +180,6 @@ class ConfigPresets:
             warmup_config=BalancedWarmupConfig(observations_per_reagent=5),
             evaluator_config=evaluator_config,
             batch_size=1,
-            results_filename=results_filename,
-            log_filename=log_filename,
-        )
-
-    @staticmethod
-    def legacy_rws(
-        synthesis_pipeline: "SynthesisPipeline",
-        evaluator_config,
-        num_iterations: int = 18500,
-        max_resamples: int = 6000,
-        mode: Literal["maximize", "minimize"] = "maximize",
-        output_dir: Optional[str] = None,
-    ) -> ThompsonSamplingConfig:
-        """
-        Legacy RWS (reproduces Zhao et al. 2025).
-
-        Replicates the original Enhanced Thompson Sampling algorithm:
-        - Enhanced warmup (stochastic parallel pairing)
-        - Roulette Wheel Selection with Boltzmann thermal cycling
-        - Unweighted round-robin component rotation (no GMIC)
-
-        Use this only for reproducing published results. For new work,
-        use ``"recommended"`` or ``"recommended_rws"`` instead.
-
-        The ``mode`` parameter controls optimization direction:
-        - ``"maximize"``: higher scores are better (e.g., ROCS similarity)
-        - ``"minimize"``: lower scores are better (e.g., docking scores)
-
-        Internally, minimize mode negates scores before Boltzmann weighting
-        so that lower raw scores receive higher Boltzmann weights.
-
-        Args:
-            synthesis_pipeline: SynthesisPipeline with reaction config and reagent files
-            evaluator_config: Evaluator configuration
-            num_iterations: Number of iterations (default: 18500, matching paper)
-            max_resamples: Early stopping after consecutive duplicates (default: 6000)
-            mode: "maximize" or "minimize" (default: "maximize")
-            output_dir: Directory to save output files (optional)
-        """
-        results_filename, log_filename = _output_paths(output_dir, "legacy_rws")
-        return ThompsonSamplingConfig(
-            synthesis_pipeline=synthesis_pipeline,
-            num_ts_iterations=num_iterations,
-            num_warmup_trials=5,
-            strategy_config=RouletteWheelConfig(mode=mode, alpha=0.1, beta=0.1),
-            warmup_config=EnhancedWarmupConfig(),
-            evaluator_config=evaluator_config,
-            batch_size=1,
-            max_resamples=max_resamples,
-            use_boltzmann_weighting=True,
-            results_filename=results_filename,
             log_filename=log_filename,
         )
 
@@ -257,7 +199,6 @@ def get_preset(
             - ``"recommended"``: Enhanced + TT-TS + Boltzmann (best overall, 86.1%)
             - ``"recommended_rws"``: Enhanced + RWS/CATS + Boltzmann (85.5%)
             - ``"baseline"``: Balanced + Greedy (isolates warmup contribution)
-            - ``"legacy_rws"``: Original RWS algorithm (reproduces Zhao et al. 2025)
 
         synthesis_pipeline: SynthesisPipeline with reaction config and reagent files
         evaluator_config: Evaluator configuration
@@ -265,7 +206,7 @@ def get_preset(
             - mode: "maximize" or "minimize"
             - num_iterations: Number of iterations
             - batch_size: Compounds per cycle (recommended/recommended_rws, default 100)
-            - output_dir: Directory to save results and logs
+            - output_dir: Directory for the run log (optional)
 
     Returns:
         ThompsonSamplingConfig: Configured preset
@@ -289,7 +230,6 @@ def get_preset(
         "recommended": ConfigPresets.recommended,
         "recommended_rws": ConfigPresets.recommended_rws,
         "baseline": ConfigPresets.baseline,
-        "legacy_rws": ConfigPresets.legacy_rws,
     }
 
     if preset_name not in presets:

@@ -14,8 +14,8 @@ class EnhancedWarmup(WarmupStrategy):
     """
     Enhanced warmup strategy using stochastic parallel pairing.
 
-    This is the legacy warmup approach from EnhancedThompsonSampler. It shuffles
-    all reagents and pairs them exhaustively in each trial, repeating for
+    The default warmup and the one both recommended presets use. Each trial
+    shuffles every component and pairs reagents exhaustively, repeating for
     num_warmup_trials times.
 
     Key Characteristic: IMBALANCED sampling
@@ -155,7 +155,7 @@ are repeated to match the largest component size.
 WARNING: Creates imbalanced posteriors!
 - Small components get many more samples than large components
 - Use only if you specifically want to thoroughly explore small component
-- For balanced posteriors, use StandardWarmup or StratifiedWarmup instead
+- For balanced posteriors, use BalancedWarmup instead
 
 Example imbalance for 130 acids × 3844 amines:
 - Acids: ~300 samples per reagent

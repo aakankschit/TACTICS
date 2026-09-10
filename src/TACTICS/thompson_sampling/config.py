@@ -4,9 +4,8 @@ Thompson Sampling configuration.
 Provides Pydantic configuration classes for Thompson Sampling optimization.
 """
 
-from pydantic import BaseModel, Field, field_validator, model_validator
-from typing import Literal, Optional, Union, List, TYPE_CHECKING, Any
-import logging
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional, Union, List, TYPE_CHECKING, Any
 
 from .strategies.config import (
     GreedyConfig,
@@ -17,7 +16,6 @@ from .strategies.config import (
     TopTwoConfig,
 )
 from .warmup.config import (
-    StandardWarmupConfig,
     EnhancedWarmupConfig,
     BalancedWarmupConfig,
 )
@@ -47,7 +45,7 @@ StrategyConfigType = Union[
 ]
 
 WarmupConfigType = Union[
-    BalancedWarmupConfig, StandardWarmupConfig, EnhancedWarmupConfig
+    BalancedWarmupConfig, EnhancedWarmupConfig
 ]
 
 EvaluatorConfigType = Union[
@@ -128,14 +126,8 @@ class ThompsonSamplingConfig(BaseModel):
     batch_size: int = Field(
         default=1, gt=0, description="Compounds to sample per iteration"
     )
-    max_resamples: Optional[int] = Field(
-        default=None, gt=0, description="Max resampling attempts for duplicates"
-    )
 
     # Output
-    results_filename: Optional[str] = Field(
-        default="results.csv", description="Results output file"
-    )
     log_filename: Optional[str] = Field(default=None, description="Log file path")
 
     # Performance
@@ -179,7 +171,7 @@ class ThompsonSamplingConfig(BaseModel):
     # Bayesian update method
     use_boltzmann_weighting: bool = Field(
         default=False,
-        description="Use Boltzmann-weighted Bayesian updates (legacy RWS)",
+        description="Boltzmann-weighted posterior update (better observations weigh more), the update rule of the recommended presets. False selects the uniform Bayesian update.",
     )
 
     # Reproducibility
@@ -239,33 +231,5 @@ class ThompsonSamplingConfig(BaseModel):
     def num_steps(self) -> int:
         """Get number of reaction steps."""
         return self.synthesis_pipeline.num_steps
-
-    model_config = {"arbitrary_types_allowed": True}
-
-
-class RandomBaselineConfig(BaseModel):
-    """
-    Configuration for random baseline sampling.
-
-    Used for comparison against Thompson Sampling.
-    """
-
-    synthesis_pipeline: Any = Field(..., description="SynthesisPipeline instance")
-    evaluator_config: EvaluatorConfigType = Field(
-        ..., description="Evaluator configuration"
-    )
-    num_trials: int = Field(..., gt=0, description="Number of random trials")
-    num_to_save: int = Field(..., gt=0, description="Number of top results to save")
-    ascending_output: bool = Field(default=False, description="Sort output ascending")
-    outfile_name: Optional[str] = Field(default=None, description="Output file")
-    log_filename: Optional[str] = Field(default=None, description="Log file")
-
-    @field_validator("synthesis_pipeline")
-    @classmethod
-    def validate_pipeline(cls, v):
-        """Ensure synthesis_pipeline is valid."""
-        if v is None:
-            raise ValueError("synthesis_pipeline is required")
-        return v
 
     model_config = {"arbitrary_types_allowed": True}

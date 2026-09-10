@@ -134,8 +134,7 @@ def compute_convergence_point(
         DataFrame with ``component_idx``, ``cycle_first_above``,
         ``cycle_stable``.
     """
-    # Support both enhanced (current_cycle) and legacy (cycle) column names
-    cycle_col = "current_cycle" if "current_cycle" in diagnostics_df.columns else "cycle"
+    cycle_col = "current_cycle"
 
     records = []
     for comp_idx in diagnostics_df["component_idx"].unique().sort().to_list():

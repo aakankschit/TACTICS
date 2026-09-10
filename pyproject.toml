@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chem-tactics"
-version = "1.2.0"
+version = "2.0.0"
 description = "Thompson Sampling-Assisted Chemical Targeting and Iterative Compound Selection for Drug Discovery"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = {text = "MIT"}
@@ -20,16 +20,10 @@ dependencies = [
     "rdkit",
     "numpy",
     "scipy",
-    "pandas",
     "polars",
     "tqdm",
     "sqlitedict",
-    "seaborn",
-    "matplotlib",
-    "altair",
     "joblib",
-    "dill",
-    "useful_rdkit_utils"
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -62,20 +56,29 @@ notebook = [
 ]
 
 docs = [
-    "sphinx>=7.0",
-    "pydata-sphinx-theme>=0.15",
-    "sphinx-design",
-    "sphinx-copybutton",
-    "sphinx-togglebutton",
-    "myst-nb>=1.0",
+    "sphinx>=8,<9",
+    "pydata-sphinx-theme>=0.16",
+    "sphinx-design>=0.6.1",
+    "sphinx-copybutton>=0.5",
+    "sphinx-togglebutton>=0.3.2",
+    "myst-nb>=1.1",
+    "matplotlib>=3.7",
+    "altair",
 ]
 
 openeye = [
     "openeye-toolkits"
 ]
 
+viz = [
+    "matplotlib>=3.7",
+    "altair",
+]
+
 tutorials = [
     "marimo>=0.18.0",
+    "matplotlib>=3.7",
+    "altair",
 ]
 
 [project.urls]
@@ -89,7 +92,7 @@ where = ["src"]
 include = ["TACTICS*"]
 
 [tool.setuptools.package-data]
-"TACTICS.data" = ["**/*.smi", "**/*.csv", "**/*.md"]
+"TACTICS.data" = ["**/*.smi", "**/*.parquet"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

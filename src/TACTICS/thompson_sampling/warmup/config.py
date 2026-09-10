@@ -1,21 +1,16 @@
 """Pydantic configuration models for warmup strategies."""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Literal, Optional
 
 
-class StandardWarmupConfig(BaseModel):
-    """
-    Configuration for Standard warmup strategy.
+class _StrictModel(BaseModel):
+    """Base for component configs: unknown fields are an error, not silently ignored."""
 
-    Standard warmup uses random partner selection with replacement.
-    Each reagent is tested num_warmup_trials times with randomly selected partners.
-    """
-
-    warmup_type: Literal["standard"] = "standard"
+    model_config = ConfigDict(extra="forbid")
 
 
-class EnhancedWarmupConfig(BaseModel):
+class EnhancedWarmupConfig(_StrictModel):
     """
     Configuration for Enhanced warmup strategy (recommended).
 
@@ -29,7 +24,7 @@ class EnhancedWarmupConfig(BaseModel):
     warmup_type: Literal["enhanced"] = "enhanced"
 
 
-class BalancedWarmupConfig(BaseModel):
+class BalancedWarmupConfig(_StrictModel):
     """
     Configuration for Balanced warmup strategy.
 
