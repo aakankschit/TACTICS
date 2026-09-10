@@ -52,34 +52,43 @@ pip install -e ".[test]"
 
 ## Quickstart
 
-Screen a two-component amide library against a table of precomputed scores:
+Screen the bundled thrombin library (130 acids × 3,844 amines) against its
+precomputed docking scores — this runs as-is after `pip install chem-tactics`:
 
 ```python
+from TACTICS import ThompsonSampler, get_preset
 from TACTICS.library_enumeration import SynthesisPipeline, ReactionConfig, ReactionDef
-from TACTICS.thompson_sampling import ThompsonSampler, get_preset
-from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig
+from TACTICS.thompson_sampling import LookupEvaluatorConfig
 
-# 1. Describe the library: one reaction + one reagent file per component
+data = files("TACTICS.data.thrombin")  # bundled example: 130 acids x 3844 amines
+
+# 1. Describe the library: one reaction, one reagent file per component
 pipeline = SynthesisPipeline(ReactionConfig(
     reactions=[ReactionDef(
-        reaction_smarts="[C:1](=O)[OH].[NH2:2]>>[C:1](=O)[NH:2]",
+        reaction_smarts="[#6:1](=[O:2])[OH].[#7X3;H1,H2;!$(N[!#6]);!$(N[#6]=[O]):3]"
+                        ">>[#6:1](=[O:2])[#7:3]",
         step_index=0,
     )],
-    reagent_file_list=["acids.smi", "amines.smi"],
+    reagent_file_list=[str(data / "acids.smi"), str(data / "coupled_aa_sub.smi")],
 ))
 
-# 2. Describe how to score a product
-evaluator = LookupEvaluatorConfig(ref_filename="scores.csv")
+# 2. Describe how a product is scored (here: a precomputed docking table)
+evaluator = LookupEvaluatorConfig(ref_filename=str(data / "product_scores.parquet"))
 
-# 3. Take a tuned preset and run
-config = get_preset(synthesis_pipeline=pipeline, evaluator_config=evaluator)
+# 3. Take the tuned preset, run, and read the results
+config = get_preset(
+    synthesis_pipeline=pipeline,
+    evaluator_config=evaluator,
+    mode="minimize",        # docking scores: lower is better
+    num_iterations=20,      # cycles; 1000+ for a real screen
+    batch_size=50,          # compounds per cycle
+)
 sampler = ThompsonSampler.from_config(config)
-
 sampler.warm_up(num_warmup_trials=config.num_warmup_trials)
 results = sampler.search(num_cycles=config.num_ts_iterations)
 sampler.close()
 
-print(results.sort("score", descending=True).head(10))
+print(results.sort("score").head(5))
 ```
 
 `results` is a Polars DataFrame of every product that was evaluated, with
