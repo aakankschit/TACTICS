@@ -63,7 +63,7 @@ Install TACTICS and run your first optimization in 10 lines:
     sampler.close()
 
 That's it. The default ``"recommended"`` preset uses the best-performing method
-from large-scale benchmarking. See the :doc:`strategies` guide to understand
+from large-scale benchmarking. See the :doc:`guides/03_search` guide to understand
 what's happening under the hood and when to customize.
 
 Architecture Overview
@@ -146,12 +146,6 @@ Optional dependencies:
 * scikit-learn for ML classifier evaluator
 
 .. toctree::
-   :maxdepth: 2
-   :caption: User Guide
-
-   strategies
-
-.. toctree::
    :maxdepth: 1
    :caption: Guides
 
@@ -179,8 +173,6 @@ Optional dependencies:
    :maxdepth: 2
    :caption: Reference (1.x pages, being replaced)
 
-   thompson_sampling
-   configuration
    library_analysis
 
 Indices and tables
