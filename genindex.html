@@ -1,0 +1,1384 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="_static/documentation_options.js?v=51b770b3"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=b8b12719"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ 
+</div>
+<h2 id="_">_</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.__init__">__init__() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies._thermal.GMICCriticalityMixin._calculate_gmic">_calculate_gmic() (TACTICS.thompson_sampling.strategies._thermal.GMICCriticalityMixin method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies._thermal.GMICCriticalityMixin._calculate_gmic_details">_calculate_gmic_details() (TACTICS.thompson_sampling.strategies._thermal.GMICCriticalityMixin method)</a>
+</li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies._thermal.ThermalCyclingMixin._rotation_flexibility">_rotation_flexibility() (TACTICS.thompson_sampling.strategies._thermal.ThermalCyclingMixin method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.top_two_selection.TopTwoSelection.adapt_heated_scale">adapt_heated_scale() (TACTICS.thompson_sampling.strategies.top_two_selection.TopTwoSelection method)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.roulette_wheel.RouletteWheelSelection.adapt_temperatures">adapt_temperatures() (TACTICS.thompson_sampling.strategies.roulette_wheel.RouletteWheelSelection method)</a>
+
+      <ul>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.top_two_selection.TopTwoSelection.adapt_temperatures">(TACTICS.thompson_sampling.strategies.top_two_selection.TopTwoSelection method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.reagent.Reagent.add_score">add_score() (TACTICS.thompson_sampling.core.reagent.Reagent method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.auto_detect_compatibility">auto_detect_compatibility() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.enumeration_utils.AutoDetectionResult">AutoDetectionResult (class in TACTICS.library_enumeration.enumeration_utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup">BalancedWarmup (class in TACTICS.thompson_sampling.warmup.balanced)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.warmup.config.BalancedWarmupConfig">BalancedWarmupConfig (class in TACTICS.thompson_sampling.warmup.config)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.presets.ConfigPresets.baseline">baseline() (TACTICS.thompson_sampling.presets.ConfigPresets static method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.config.BayesUCBConfig">BayesUCBConfig (class in TACTICS.thompson_sampling.strategies.config)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection">BayesUCBSelection (class in TACTICS.thompson_sampling.strategies.bayes_ucb_selection)</a>
+</li>
+      <li><a href="reference/scale.html#TACTICS.thompson_sampling.core.parallel_evaluator.ParallelEvaluator.bind_worker_context">bind_worker_context() (TACTICS.thompson_sampling.core.parallel_evaluator.ParallelEvaluator method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/scale.html#TACTICS.thompson_sampling.core.parallel_evaluator.ParallelEvaluator.close">close() (TACTICS.thompson_sampling.core.parallel_evaluator.ParallelEvaluator method)</a>
+
+      <ul>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.close">(TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/inspect.html#TACTICS.thompson_sampling.diagnostics.compare_trajectory_vs_snapshot">compare_trajectory_vs_snapshot() (in module TACTICS.thompson_sampling.diagnostics)</a>
+</li>
+      <li><a href="reference/inspect.html#TACTICS.thompson_sampling.diagnostics.compute_convergence_point">compute_convergence_point() (in module TACTICS.thompson_sampling.diagnostics)</a>
+</li>
+      <li><a href="reference/inspect.html#TACTICS.thompson_sampling.diagnostics.compute_disagreement_convergence">compute_disagreement_convergence() (in module TACTICS.thompson_sampling.diagnostics)</a>
+</li>
+      <li><a href="reference/inspect.html#TACTICS.thompson_sampling.diagnostics.compute_posterior_entropy">compute_posterior_entropy() (in module TACTICS.thompson_sampling.diagnostics)</a>
+</li>
+      <li><a href="reference/inspect.html#TACTICS.thompson_sampling.diagnostics.compute_scale_adaptation">compute_scale_adaptation() (in module TACTICS.thompson_sampling.diagnostics)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.presets.ConfigPresets">ConfigPresets (class in TACTICS.thompson_sampling.presets)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.CustomEvaluator.counter">counter (TACTICS.thompson_sampling.core.evaluators.CustomEvaluator property)</a>
+
+      <ul>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.DBEvaluator.counter">(TACTICS.thompson_sampling.core.evaluators.DBEvaluator property)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.Evaluator.counter">(TACTICS.thompson_sampling.core.evaluators.Evaluator property)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.FPEvaluator.counter">(TACTICS.thompson_sampling.core.evaluators.FPEvaluator property)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.FredEvaluator.counter">(TACTICS.thompson_sampling.core.evaluators.FredEvaluator property)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.LookupEvaluator.counter">(TACTICS.thompson_sampling.core.evaluators.LookupEvaluator property)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.MLClassifierEvaluator.counter">(TACTICS.thompson_sampling.core.evaluators.MLClassifierEvaluator property)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.MWEvaluator.counter">(TACTICS.thompson_sampling.core.evaluators.MWEvaluator property)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.ROCSEvaluator.counter">(TACTICS.thompson_sampling.core.evaluators.ROCSEvaluator property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.coverage_stats">coverage_stats (TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef property)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.factories.create_evaluator">create_evaluator() (in module TACTICS.thompson_sampling.factories)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.factories.create_strategy">create_strategy() (in module TACTICS.thompson_sampling.factories)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.factories.create_warmup">create_warmup() (in module TACTICS.thompson_sampling.factories)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.CustomEvaluator">CustomEvaluator (class in TACTICS.thompson_sampling.core.evaluators)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.CustomEvaluatorConfig">CustomEvaluatorConfig (class in TACTICS.thompson_sampling.core.evaluator_config)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.DBEvaluator">DBEvaluator (class in TACTICS.thompson_sampling.core.evaluators)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.DBEvaluatorConfig">DBEvaluatorConfig (class in TACTICS.thompson_sampling.core.evaluator_config)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.DeprotectionSpec">DeprotectionSpec (class in TACTICS.library_enumeration.smarts_toolkit.config)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.enumeration_utils.EnumerationError.detailed_message">detailed_message() (TACTICS.library_enumeration.enumeration_utils.EnumerationError method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.warmup.enhanced.EnhancedWarmup">EnhancedWarmup (class in TACTICS.thompson_sampling.warmup.enhanced)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.warmup.config.EnhancedWarmupConfig">EnhancedWarmupConfig (class in TACTICS.thompson_sampling.warmup.config)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.enumerate">enumerate() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.enumerate_batch">enumerate_batch() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.enumerate_from_smiles">enumerate_from_smiles() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.enumerate_library">enumerate_library() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.generate_products.enumerate_products">enumerate_products() (in module TACTICS.library_enumeration.generate_products)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.enumerate_single">enumerate_single() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.enumerate_single_from_smiles">enumerate_single_from_smiles() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.enumeration_utils.EnumerationError">EnumerationError (class in TACTICS.library_enumeration.enumeration_utils)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.enumeration_utils.EnumerationResult">EnumerationResult (class in TACTICS.library_enumeration.enumeration_utils)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.config.EpsilonGreedyConfig">EpsilonGreedyConfig (class in TACTICS.thompson_sampling.strategies.config)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.epsilon_greedy.EpsilonGreedySelection">EpsilonGreedySelection (class in TACTICS.thompson_sampling.strategies.epsilon_greedy)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.CustomEvaluator.evaluate">evaluate() (TACTICS.thompson_sampling.core.evaluators.CustomEvaluator method)</a>
+
+      <ul>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.DBEvaluator.evaluate">(TACTICS.thompson_sampling.core.evaluators.DBEvaluator method)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.Evaluator.evaluate">(TACTICS.thompson_sampling.core.evaluators.Evaluator method)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.FPEvaluator.evaluate">(TACTICS.thompson_sampling.core.evaluators.FPEvaluator method)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.FredEvaluator.evaluate">(TACTICS.thompson_sampling.core.evaluators.FredEvaluator method)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.LookupEvaluator.evaluate">(TACTICS.thompson_sampling.core.evaluators.LookupEvaluator method)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.MLClassifierEvaluator.evaluate">(TACTICS.thompson_sampling.core.evaluators.MLClassifierEvaluator method)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.MWEvaluator.evaluate">(TACTICS.thompson_sampling.core.evaluators.MWEvaluator method)</a>
+</li>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.ROCSEvaluator.evaluate">(TACTICS.thompson_sampling.core.evaluators.ROCSEvaluator method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.evaluate">(TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/scale.html#TACTICS.thompson_sampling.core.parallel_evaluator.ParallelEvaluator.evaluate_batch">evaluate_batch() (TACTICS.thompson_sampling.core.parallel_evaluator.ParallelEvaluator method)</a>
+
+      <ul>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.evaluate_batch">(TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.Evaluator">Evaluator (class in TACTICS.thompson_sampling.core.evaluators)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.enumeration_utils.failures_to_dataframe">failures_to_dataframe() (in module TACTICS.library_enumeration.enumeration_utils)</a>
+</li>
+      <li><a href="reference/inspect.html#TACTICS.thompson_sampling.diagnostics.format_sar_report">format_sar_report() (in module TACTICS.thompson_sampling.diagnostics)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.FPEvaluator">FPEvaluator (class in TACTICS.thompson_sampling.core.evaluators)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.FPEvaluatorConfig">FPEvaluatorConfig (class in TACTICS.thompson_sampling.core.evaluator_config)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.FredEvaluator">FredEvaluator (class in TACTICS.thompson_sampling.core.evaluators)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.FredEvaluatorConfig">FredEvaluatorConfig (class in TACTICS.thompson_sampling.core.evaluator_config)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.from_config">from_config() (TACTICS.thompson_sampling.core.sampler.ThompsonSampler class method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.from_worker_data">from_worker_data() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline class method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.gen_line_plot_performance_data">gen_line_plot_performance_data() (TACTICS.library_analysis.visualization.TS_Benchmarks method)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.gen_TS_runs_data">gen_TS_runs_data() (TACTICS.library_analysis.visualization.TS_Benchmarks method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.generate_products.generate_all_combinations">generate_all_combinations() (in module TACTICS.library_enumeration.generate_products)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup.generate_warmup_combinations">generate_warmup_combinations() (TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup method)</a>
+
+      <ul>
+        <li><a href="reference/extending.html#TACTICS.thompson_sampling.warmup.base.WarmupStrategy.generate_warmup_combinations">(TACTICS.thompson_sampling.warmup.base.WarmupStrategy method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.warmup.enhanced.EnhancedWarmup.generate_warmup_combinations">(TACTICS.thompson_sampling.warmup.enhanced.EnhancedWarmup method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.constants.get_all_protecting_group_names">get_all_protecting_group_names() (in module TACTICS.library_enumeration.smarts_toolkit.constants)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.get_barplot_TS_results_data">get_barplot_TS_results_data() (TACTICS.library_analysis.visualization.TS_Benchmarks method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.get_compatibility_map">get_compatibility_map() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.get_compatible_patterns">get_compatible_patterns() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.get_compatible_reagents">get_compatible_reagents() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef method)</a>
+</li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies._thermal.GMICCriticalityMixin.get_component_criticality">get_component_criticality() (TACTICS.thompson_sampling.strategies._thermal.GMICCriticalityMixin method)</a>
+
+      <ul>
+        <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy.get_component_criticality">(TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection.get_component_criticality">(TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy.get_component_state">get_component_state() (TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy method)</a>
+
+      <ul>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection.get_component_state">(TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.roulette_wheel.RouletteWheelSelection.get_component_state">(TACTICS.thompson_sampling.strategies.roulette_wheel.RouletteWheelSelection method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.top_two_selection.TopTwoSelection.get_component_state">(TACTICS.thompson_sampling.strategies.top_two_selection.TopTwoSelection method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.warmup.base.WarmupStrategy.get_description">get_description() (TACTICS.thompson_sampling.warmup.base.WarmupStrategy method)</a>
+</li>
+      <li><a href="reference/inspect.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_diagnostics">get_diagnostics() (TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup.get_expected_evaluations">get_expected_evaluations() (TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup method)</a>
+
+      <ul>
+        <li><a href="reference/extending.html#TACTICS.thompson_sampling.warmup.base.WarmupStrategy.get_expected_evaluations">(TACTICS.thompson_sampling.warmup.base.WarmupStrategy method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.warmup.enhanced.EnhancedWarmup.get_expected_evaluations">(TACTICS.thompson_sampling.warmup.enhanced.EnhancedWarmup method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.get_incompatible_reagents">get_incompatible_reagents() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.get_inputs_for_step">get_inputs_for_step() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig method)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup.get_name">get_name() (TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup method)</a>
+
+      <ul>
+        <li><a href="reference/extending.html#TACTICS.thompson_sampling.warmup.base.WarmupStrategy.get_name">(TACTICS.thompson_sampling.warmup.base.WarmupStrategy method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.warmup.enhanced.EnhancedWarmup.get_name">(TACTICS.thompson_sampling.warmup.enhanced.EnhancedWarmup method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_num_prods">get_num_prods() (TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+      <li><a href="reference/inspect.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_posterior_landscape">get_posterior_landscape() (TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.presets.get_preset">get_preset() (in module TACTICS.thompson_sampling.presets)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.get_primary_reaction">get_primary_reaction() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.constants.get_protecting_group">get_protecting_group() (in module TACTICS.library_enumeration.smarts_toolkit.constants)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.get_reactant_template">get_reactant_template() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.get_reactions_for_step">get_reactions_for_step() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig method)</a>
+</li>
+      <li><a href="reference/inspect.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_sar_summary">get_sar_summary() (TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.get_validator">get_validator() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies._thermal.GMICCriticalityMixin">GMICCriticalityMixin (class in TACTICS.thompson_sampling.strategies._thermal)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.config.GreedyConfig">GreedyConfig (class in TACTICS.thompson_sampling.strategies.config)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.greedy_selection.GreedySelection">GreedySelection (class in TACTICS.thompson_sampling.strategies.greedy_selection)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.has_alternatives">has_alternatives (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.has_alternatives_at_step">has_alternatives_at_step() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.reagent.Reagent.init_prior">init_prior() (TACTICS.thompson_sampling.core.reagent.Reagent method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.InputSource">InputSource (class in TACTICS.library_enumeration.smarts_toolkit.config)</a>
+</li>
+      <li><a href="reference/extending.html#TACTICS._lazy.install">install() (in module TACTICS._lazy)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.is_multi_step">is_multi_step (TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig property)</a>
+
+      <ul>
+        <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.is_multi_step">(TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.DeprotectionSpec.is_product_deprotection">is_product_deprotection (TACTICS.library_enumeration.smarts_toolkit.config.DeprotectionSpec property)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit._validator.ValidationResult.is_valid">is_valid() (TACTICS.library_enumeration.smarts_toolkit._validator.ValidationResult method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.is_validated">is_validated (TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.load_product_library">load_product_library() (TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.LookupEvaluator">LookupEvaluator (class in TACTICS.thompson_sampling.core.evaluators)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.LookupEvaluatorConfig">LookupEvaluatorConfig (class in TACTICS.thompson_sampling.core.evaluator_config)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.MLClassifierEvaluator">MLClassifierEvaluator (class in TACTICS.thompson_sampling.core.evaluators)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.MLClassifierEvaluatorConfig">MLClassifierEvaluatorConfig (class in TACTICS.thompson_sampling.core.evaluator_config)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="reference/extending.html#module-TACTICS._lazy">TACTICS._lazy</a>
+</li>
+        <li><a href="reference/visualise.html#module-TACTICS.library_analysis.diagnostic_plots">TACTICS.library_analysis.diagnostic_plots</a>
+</li>
+        <li><a href="reference/library.html#module-TACTICS.library_enumeration.enumeration_utils">TACTICS.library_enumeration.enumeration_utils</a>
+</li>
+        <li><a href="reference/library.html#module-TACTICS.library_enumeration.file_writer">TACTICS.library_enumeration.file_writer</a>
+</li>
+        <li><a href="reference/library.html#module-TACTICS.library_enumeration.generate_products">TACTICS.library_enumeration.generate_products</a>
+</li>
+        <li><a href="reference/library.html#module-TACTICS.library_enumeration.smarts_toolkit.config">TACTICS.library_enumeration.smarts_toolkit.config</a>
+</li>
+        <li><a href="reference/library.html#module-TACTICS.library_enumeration.smarts_toolkit.constants">TACTICS.library_enumeration.smarts_toolkit.constants</a>
+</li>
+        <li><a href="reference/scoring.html#module-TACTICS.thompson_sampling.core.evaluator_config">TACTICS.thompson_sampling.core.evaluator_config</a>
+</li>
+        <li><a href="reference/scoring.html#module-TACTICS.thompson_sampling.core.evaluators">TACTICS.thompson_sampling.core.evaluators</a>
+</li>
+        <li><a href="reference/inspect.html#module-TACTICS.thompson_sampling.diagnostics">TACTICS.thompson_sampling.diagnostics</a>
+</li>
+        <li><a href="reference/search.html#module-TACTICS.thompson_sampling.factories">TACTICS.thompson_sampling.factories</a>
+</li>
+        <li><a href="reference/search.html#module-TACTICS.thompson_sampling.strategies.config">TACTICS.thompson_sampling.strategies.config</a>
+</li>
+        <li><a href="reference/search.html#module-TACTICS.thompson_sampling.warmup.config">TACTICS.thompson_sampling.warmup.config</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.MWEvaluator">MWEvaluator (class in TACTICS.thompson_sampling.core.evaluators)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.MWEvaluatorConfig">MWEvaluatorConfig (class in TACTICS.thompson_sampling.core.evaluator_config)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.num_components">num_components (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline property)</a>
+
+      <ul>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.config.ThompsonSamplingConfig.num_components">(TACTICS.thompson_sampling.config.ThompsonSamplingConfig property)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.num_reactants">num_reactants (TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.num_steps">num_steps (TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig property)</a>
+
+      <ul>
+        <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.num_steps">(TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline property)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.config.ThompsonSamplingConfig.num_steps">(TACTICS.thompson_sampling.config.ThompsonSamplingConfig property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.ROCSEvaluator.overlay">overlay() (TACTICS.thompson_sampling.core.evaluators.ROCSEvaluator method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/scale.html#TACTICS.thompson_sampling.core.parallel_evaluator.ParallelEvaluator">ParallelEvaluator (class in TACTICS.thompson_sampling.core.parallel_evaluator)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.pattern_ids">pattern_ids (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline property)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.diagnostic_plots.plot_adaptive_intensity">plot_adaptive_intensity() (in module TACTICS.library_analysis.diagnostic_plots)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.plot_barplot_TS_results">plot_barplot_TS_results() (TACTICS.library_analysis.visualization.TS_Benchmarks method)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.diagnostic_plots.plot_criticality_trajectory">plot_criticality_trajectory() (in module TACTICS.library_analysis.diagnostic_plots)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.diagnostic_plots.plot_gmic_directed_exploration">plot_gmic_directed_exploration() (in module TACTICS.library_analysis.diagnostic_plots)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.plot_line_performance_with_error_bars">plot_line_performance_with_error_bars() (TACTICS.library_analysis.visualization.TS_Benchmarks method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.diagnostic_plots.plot_reagent_usage_action_panel">plot_reagent_usage_action_panel() (in module TACTICS.library_analysis.diagnostic_plots)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.diagnostic_plots.plot_rws_diagnostic">plot_rws_diagnostic() (in module TACTICS.library_analysis.diagnostic_plots)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.diagnostic_plots.plot_snr_trajectory">plot_snr_trajectory() (in module TACTICS.library_analysis.diagnostic_plots)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.diagnostic_plots.plot_temperature_decomposition">plot_temperature_decomposition() (in module TACTICS.library_analysis.diagnostic_plots)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.diagnostic_plots.plot_ttts_diagnostic">plot_ttts_diagnostic() (in module TACTICS.library_analysis.diagnostic_plots)</a>
+</li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy.prepare_scores">prepare_scores() (TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.prepare_worker_data">prepare_worker_data() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ProtectingGroupInfo">ProtectingGroupInfo (class in TACTICS.library_enumeration.smarts_toolkit.config)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.DeprotectionSpec.reactant_index">reactant_index (TACTICS.library_enumeration.smarts_toolkit.config.DeprotectionSpec property)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig">ReactionConfig (class in TACTICS.library_enumeration.smarts_toolkit.config)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef">ReactionDef (class in TACTICS.library_enumeration.smarts_toolkit.config)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.reactions">reactions (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline property)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.enumeration_utils.read_reagent_file">read_reagent_file() (in module TACTICS.library_enumeration.enumeration_utils)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.read_reagents">read_reagents() (TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.reagent.Reagent">Reagent (class in TACTICS.thompson_sampling.core.reagent)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.reagent_file_list">reagent_file_list (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline property)</a>
+
+      <ul>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.config.ThompsonSamplingConfig.reagent_file_list">(TACTICS.thompson_sampling.config.ThompsonSamplingConfig property)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.presets.ConfigPresets.recommended">recommended() (TACTICS.thompson_sampling.presets.ConfigPresets static method)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.presets.ConfigPresets.recommended_rws">recommended_rws() (TACTICS.thompson_sampling.presets.ConfigPresets static method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.register_compatibility">register_compatibility() (TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection.reset_percentiles">reset_percentiles() (TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection method)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.roulette_wheel.RouletteWheelSelection.reset_temperature">reset_temperature() (TACTICS.thompson_sampling.strategies.roulette_wheel.RouletteWheelSelection method)</a>
+
+      <ul>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.top_two_selection.TopTwoSelection.reset_temperature">(TACTICS.thompson_sampling.strategies.top_two_selection.TopTwoSelection method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.enumeration_utils.results_to_dataframe">results_to_dataframe() (in module TACTICS.library_enumeration.enumeration_utils)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.ROCSEvaluator">ROCSEvaluator (class in TACTICS.thompson_sampling.core.evaluators)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.ROCSEvaluatorConfig">ROCSEvaluatorConfig (class in TACTICS.thompson_sampling.core.evaluator_config)</a>
+</li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies._thermal.ThermalCyclingMixin.rotate_component">rotate_component() (TACTICS.thompson_sampling.strategies._thermal.ThermalCyclingMixin method)</a>
+</li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies._thermal.ThermalCyclingMixin.rotate_component_weighted">rotate_component_weighted() (TACTICS.thompson_sampling.strategies._thermal.ThermalCyclingMixin method)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.config.RouletteWheelConfig">RouletteWheelConfig (class in TACTICS.thompson_sampling.strategies.config)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.roulette_wheel.RouletteWheelSelection">RouletteWheelSelection (class in TACTICS.thompson_sampling.strategies.roulette_wheel)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.reagent.Reagent.sample">sample() (TACTICS.thompson_sampling.core.reagent.Reagent method)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.search">search() (TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy.select_batch">select_batch() (TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy method)</a>
+</li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy.select_reagent">select_reagent() (TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy method)</a>
+
+      <ul>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection.select_reagent">(TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.epsilon_greedy.EpsilonGreedySelection.select_reagent">(TACTICS.thompson_sampling.strategies.epsilon_greedy.EpsilonGreedySelection method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.greedy_selection.GreedySelection.select_reagent">(TACTICS.thompson_sampling.strategies.greedy_selection.GreedySelection method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.roulette_wheel.RouletteWheelSelection.select_reagent">(TACTICS.thompson_sampling.strategies.roulette_wheel.RouletteWheelSelection method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.top_two_selection.TopTwoSelection.select_reagent">(TACTICS.thompson_sampling.strategies.top_two_selection.TopTwoSelection method)</a>
+</li>
+        <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.ucb_selection.UCBSelection.select_reagent">(TACTICS.thompson_sampling.strategies.ucb_selection.UCBSelection method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy">SelectionStrategy (class in TACTICS.thompson_sampling.strategies.base_strategy)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.set_evaluator">set_evaluator() (TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.set_hide_progress">set_hide_progress() (TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+      <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.FredEvaluator.set_max_confs">set_max_confs() (TACTICS.thompson_sampling.core.evaluators.FredEvaluator method)</a>
+
+      <ul>
+        <li><a href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.ROCSEvaluator.set_max_confs">(TACTICS.thompson_sampling.core.evaluators.ROCSEvaluator method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.step_indices">step_indices (TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig property)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.StepInput">StepInput (class in TACTICS.library_enumeration.smarts_toolkit.config)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.steps_with_alternatives">steps_with_alternatives (TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig property)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.stripplot_TS_results">stripplot_TS_results() (TACTICS.library_analysis.visualization.TS_Benchmarks method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.enumeration_utils.EnumerationResult.success">success (TACTICS.library_enumeration.enumeration_utils.EnumerationResult property)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.enumeration_utils.summarize_failures">summarize_failures() (in module TACTICS.library_enumeration.enumeration_utils)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.summary">summary() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline">SynthesisPipeline (class in TACTICS.library_enumeration.synthesis_pipeline)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    TACTICS._lazy
+
+      <ul>
+        <li><a href="reference/extending.html#module-TACTICS._lazy">module</a>
+</li>
+      </ul></li>
+      <li>
+    TACTICS.library_analysis.diagnostic_plots
+
+      <ul>
+        <li><a href="reference/visualise.html#module-TACTICS.library_analysis.diagnostic_plots">module</a>
+</li>
+      </ul></li>
+      <li>
+    TACTICS.library_enumeration.enumeration_utils
+
+      <ul>
+        <li><a href="reference/library.html#module-TACTICS.library_enumeration.enumeration_utils">module</a>
+</li>
+      </ul></li>
+      <li>
+    TACTICS.library_enumeration.file_writer
+
+      <ul>
+        <li><a href="reference/library.html#module-TACTICS.library_enumeration.file_writer">module</a>
+</li>
+      </ul></li>
+      <li>
+    TACTICS.library_enumeration.generate_products
+
+      <ul>
+        <li><a href="reference/library.html#module-TACTICS.library_enumeration.generate_products">module</a>
+</li>
+      </ul></li>
+      <li>
+    TACTICS.library_enumeration.smarts_toolkit.config
+
+      <ul>
+        <li><a href="reference/library.html#module-TACTICS.library_enumeration.smarts_toolkit.config">module</a>
+</li>
+      </ul></li>
+      <li>
+    TACTICS.library_enumeration.smarts_toolkit.constants
+
+      <ul>
+        <li><a href="reference/library.html#module-TACTICS.library_enumeration.smarts_toolkit.constants">module</a>
+</li>
+      </ul></li>
+      <li>
+    TACTICS.thompson_sampling.core.evaluator_config
+
+      <ul>
+        <li><a href="reference/scoring.html#module-TACTICS.thompson_sampling.core.evaluator_config">module</a>
+</li>
+      </ul></li>
+      <li>
+    TACTICS.thompson_sampling.core.evaluators
+
+      <ul>
+        <li><a href="reference/scoring.html#module-TACTICS.thompson_sampling.core.evaluators">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    TACTICS.thompson_sampling.diagnostics
+
+      <ul>
+        <li><a href="reference/inspect.html#module-TACTICS.thompson_sampling.diagnostics">module</a>
+</li>
+      </ul></li>
+      <li>
+    TACTICS.thompson_sampling.factories
+
+      <ul>
+        <li><a href="reference/search.html#module-TACTICS.thompson_sampling.factories">module</a>
+</li>
+      </ul></li>
+      <li>
+    TACTICS.thompson_sampling.strategies.config
+
+      <ul>
+        <li><a href="reference/search.html#module-TACTICS.thompson_sampling.strategies.config">module</a>
+</li>
+      </ul></li>
+      <li>
+    TACTICS.thompson_sampling.warmup.config
+
+      <ul>
+        <li><a href="reference/search.html#module-TACTICS.thompson_sampling.warmup.config">module</a>
+</li>
+      </ul></li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.strategies._thermal.ThermalCyclingMixin">ThermalCyclingMixin (class in TACTICS.thompson_sampling.strategies._thermal)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler">ThompsonSampler (class in TACTICS.thompson_sampling.core.sampler)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.config.ThompsonSamplingConfig">ThompsonSamplingConfig (class in TACTICS.thompson_sampling.config)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.enumeration_utils.EnumerationError.to_dict">to_dict() (TACTICS.library_enumeration.enumeration_utils.EnumerationError method)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.config.TopTwoConfig">TopTwoConfig (class in TACTICS.thompson_sampling.strategies.config)</a>
+</li>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.top_two_selection.TopTwoSelection">TopTwoSelection (class in TACTICS.thompson_sampling.strategies.top_two_selection)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit._validator.ValidationResult.total_compatible">total_compatible (TACTICS.library_enumeration.smarts_toolkit._validator.ValidationResult property)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit._validator.ValidationResult.total_incompatible">total_incompatible (TACTICS.library_enumeration.smarts_toolkit._validator.ValidationResult property)</a>
+</li>
+      <li><a href="reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks">TS_Benchmarks (class in TACTICS.library_analysis.visualization)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.config.UCBConfig">UCBConfig (class in TACTICS.thompson_sampling.strategies.config)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.strategies.ucb_selection.UCBSelection">UCBSelection (class in TACTICS.thompson_sampling.strategies.ucb_selection)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.validate_all">validate_all() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig method)</a>
+
+      <ul>
+        <li><a href="reference/library.html#TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline.validate_all">(TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.validate_config">validate_config() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.validate_reaction">validate_reaction() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.StepInput.validate_source_fields">validate_source_fields() (TACTICS.library_enumeration.smarts_toolkit.config.StepInput method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.validation_result">validation_result (TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef property)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit._validator.ValidationResult">ValidationResult (class in TACTICS.library_enumeration.smarts_toolkit._validator)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.visualize_reaction">visualize_reaction() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef method)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.visualize_template_match">visualize_template_match() (TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.warm_up">warm_up() (TACTICS.thompson_sampling.core.sampler.ThompsonSampler method)</a>
+</li>
+      <li><a href="reference/extending.html#TACTICS.thompson_sampling.warmup.base.WarmupStrategy">WarmupStrategy (class in TACTICS.thompson_sampling.warmup.base)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.file_writer.write_enumerated_library">write_enumerated_library() (in module TACTICS.library_enumeration.file_writer)</a>
+</li>
+      <li><a href="reference/library.html#TACTICS.library_enumeration.file_writer.write_products_chunked">write_products_chunked() (in module TACTICS.library_enumeration.file_writer)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1246 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Visualise &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/visualise';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Extending" href="extending.html" />
+    <link rel="prev" title="Inspect" href="inspect.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="library.html">Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scoring.html">Scoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scale.html">Scale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inspect.html">Inspect</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Visualise</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">API Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Visualise</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="visualise">
+<h1>Visualise<a class="headerlink" href="#visualise" title="Link to this heading">#</a></h1>
+<p>Block 6 — charts. See the <a class="reference internal" href="../guides/06_visualise.html"><span class="doc">guide</span></a>. Requires
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">chem-tactics[viz]</span></code>.</p>
+<section id="benchmark-comparison-altair">
+<h2>Benchmark comparison (Altair)<a class="headerlink" href="#benchmark-comparison-altair" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.visualization.TS_Benchmarks">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TACTICS.library_analysis.visualization.</span></span><span class="sig-name descname"><span class="pre">TS_Benchmarks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">no_of_cycles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TS_runs_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'minimize'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_ns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/visualization.html#TS_Benchmarks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.visualization.TS_Benchmarks" title="Link to this definition">#</a></dt>
+<dd><p>A class to generate visualizations of TS results. The goal here is to compare different cycles of TS runs with the same search strategy.
+This is mainly used to compare different search strategies to ground truth values.
+Each search strategy is used a no of times equal to the number of cycles.
+It is recommended that random baseline data and brute-force (exhaustive search) data be included for comparison.
+Reference data is optional, but is required for generating the barplots. A strip plot can be generated without reference data for comparison of methods.</p>
+<p>All required data (TS runs data, bar plot data, line plot data, and grouped statistics) is automatically generated during initialization.
+After creating an instance, you can directly call the plotting methods without additional data generation steps.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.visualization.TS_Benchmarks.gen_TS_runs_data">
+<span class="sig-name descname"><span class="pre">gen_TS_runs_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'minimize'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/visualization.html#TS_Benchmarks.gen_TS_runs_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.gen_TS_runs_data" title="Link to this definition">#</a></dt>
+<dd><p>Generates a single dataframe with all the TS runs data. This is a concatenated polars dataframe for each method</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>top_n: int</dt><dd><p>Number of top products to consider for each method</p>
+</dd>
+<dt>sort_type: str</dt><dd><p>Type of sorting to perform on the data
+“minimize” - sorts the data in ascending order
+“maximize” - sorts the data in descending order</p>
+</dd>
+</dl>
+</section>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.visualization.TS_Benchmarks.stripplot_TS_results">
+<span class="sig-name descname"><span class="pre">stripplot_TS_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'right'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/visualization.html#TS_Benchmarks.stripplot_TS_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.stripplot_TS_results" title="Link to this definition">#</a></dt>
+<dd><p>Generate a stripplot for TS results using altair.
+This visualizes the distribution of scores across cycles and methods.
+Data is automatically generated during class initialization.</p>
+<section id="id1">
+<h3>Parameters:<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>width: Optional[int]</dt><dd><p>Width of the plot</p>
+</dd>
+<dt>height: Optional[int]</dt><dd><p>Height of the plot</p>
+</dd>
+<dt>save_path: Optional[str]</dt><dd><p>Path to save the plot</p>
+</dd>
+<dt>show_plot: bool</dt><dd><p>If True, shows the plot in Jupyter</p>
+</dd>
+<dt>legend_position: str</dt><dd><p>Position of the legend. “right” (default) or “bottom” for horizontal legend below plot.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>altair.Chart or None</dt><dd><p>The altair chart if show_plot is True, None otherwise</p>
+</dd>
+</dl>
+</section>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.visualization.TS_Benchmarks.get_barplot_TS_results_data">
+<span class="sig-name descname"><span class="pre">get_barplot_TS_results_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/visualization.html#TS_Benchmarks.get_barplot_TS_results_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.get_barplot_TS_results_data" title="Link to this definition">#</a></dt>
+<dd><p>Generate data for bar plot, for checking the number of hits recovered by each search strategy.
+To use this plot, you must have the reference compounds that serve as the ground truth.
+This shows what fraction of the top N reference compounds each method finds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>top_n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of top reference products to count as hits. Use the same
+<code class="docutils literal notranslate"><span class="pre">top_n</span></code> for every method.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hits found by each method in each cycle against the reference set.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>polars.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.visualization.TS_Benchmarks.plot_barplot_TS_results">
+<span class="sig-name descname"><span class="pre">plot_barplot_TS_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'right'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/visualization.html#TS_Benchmarks.plot_barplot_TS_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.plot_barplot_TS_results" title="Link to this definition">#</a></dt>
+<dd><p>Generate a barplot for TS results using altair.
+This visualizes the number of reference hits recovered by each search strategy.
+Data is automatically generated during class initialization.</p>
+<section id="id2">
+<h3>Parameters:<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>width<span class="classifier">Optional[int]</span></dt><dd><p>Width of the plot in pixels</p>
+</dd>
+<dt>height<span class="classifier">Optional[int]</span></dt><dd><p>Height of the plot in pixels</p>
+</dd>
+<dt>save_path<span class="classifier">Optional[str]</span></dt><dd><p>Path to save the plot</p>
+</dd>
+<dt>show_plot<span class="classifier">bool</span></dt><dd><p>If True, shows the plot in Jupyter</p>
+</dd>
+<dt>legend_position<span class="classifier">str</span></dt><dd><p>Position of the legend. “right” (default) or “bottom” for horizontal legend below plot.</p>
+</dd>
+<dt>dark_mode<span class="classifier">bool</span></dt><dd><p>If True, uses white text for bar labels (for dark backgrounds). Default is False (black text).</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Returns:<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>altair.Chart or None</dt><dd><p>The altair chart if show_plot is True, None otherwise</p>
+</dd>
+</dl>
+</section>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.visualization.TS_Benchmarks.gen_line_plot_performance_data">
+<span class="sig-name descname"><span class="pre">gen_line_plot_performance_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_ns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/visualization.html#TS_Benchmarks.gen_line_plot_performance_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.gen_line_plot_performance_data" title="Link to this definition">#</a></dt>
+<dd><p>Generate data for line plot, for checking the performance of each method.
+The plot looks at how the performance of the methods changes with comparison to the top N compounds found by the reference method.
+Efficiently calculates fraction of hits found for each top_n cutoff.</p>
+<section id="id4">
+<h3>Parameters:<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>top_ns<span class="classifier">List[int], optional</span></dt><dd><p>List of top N values to test (e.g., [50, 100, 200, 300, 400, 500])
+If None, defaults to [50, 100, 200, 300, 400, 500]</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h3>Returns:<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>line_plot_df<span class="classifier">polars DataFrame</span></dt><dd><p>DataFrame with columns: [‘cycle’, ‘top_n’, ‘method’, ‘frac_top_n’]</p>
+</dd>
+</dl>
+</section>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.visualization.TS_Benchmarks.plot_line_performance_with_error_bars">
+<span class="sig-name descname"><span class="pre">plot_line_performance_with_error_bars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'right'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/visualization.html#TS_Benchmarks.plot_line_performance_with_error_bars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.plot_line_performance_with_error_bars" title="Link to this definition">#</a></dt>
+<dd><p>Generate a line plot with error bars for method performance using altair.
+Shows mean fraction of reference compounds found across cycles with standard deviation error bars.
+Data and grouped statistics are automatically generated during class initialization.</p>
+<section id="id6">
+<h3>Parameters:<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>width<span class="classifier">Optional[int]</span></dt><dd><p>Width of the plot in pixels</p>
+</dd>
+<dt>height<span class="classifier">Optional[int]</span></dt><dd><p>Height of the plot in pixels</p>
+</dd>
+<dt>save_path<span class="classifier">Optional[str]</span></dt><dd><p>Path to save the plot</p>
+</dd>
+<dt>show_plot<span class="classifier">bool</span></dt><dd><p>If True, shows the plot in Jupyter</p>
+</dd>
+<dt>legend_position<span class="classifier">str</span></dt><dd><p>Position of the legend. “right” (default) or “bottom” for horizontal legend below plot.</p>
+</dd>
+</dl>
+</section>
+<section id="id7">
+<h3>Returns:<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>altair.Chart or None</dt><dd><p>The altair chart if show_plot is True, None otherwise</p>
+</dd>
+</dl>
+</section>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-TACTICS.library_analysis.diagnostic_plots">
+<span id="diagnostic-plots-matplotlib"></span><h2>Diagnostic plots (matplotlib)<a class="headerlink" href="#module-TACTICS.library_analysis.diagnostic_plots" title="Link to this heading">#</a></h2>
+<p>Matplotlib plotting functions for CATS diagnostics.</p>
+<p>All functions accept Polars DataFrames and return <code class="docutils literal notranslate"><span class="pre">matplotlib.figure.Figure</span></code>
+objects so callers can save, show, or compose them freely.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.diagnostic_plots.plot_criticality_trajectory">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.library_analysis.diagnostic_plots.</span></span><span class="sig-name descname"><span class="pre">plot_criticality_trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagnostics_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">4)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/diagnostic_plots.html#plot_criticality_trajectory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.diagnostic_plots.plot_criticality_trajectory" title="Link to this definition">#</a></dt>
+<dd><p>Plot per-component criticality over cycles.</p>
+<p>A horizontal band at criticality &lt;= 0.3 is shaded as the “diffuse” zone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diagnostics_df</strong> (<em>pl.DataFrame</em>) – DataFrame from <code class="docutils literal notranslate"><span class="pre">sampler.get_diagnostics()</span></code>.</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – Figure size.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matplotlib Figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.diagnostic_plots.plot_snr_trajectory">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.library_analysis.diagnostic_plots.</span></span><span class="sig-name descname"><span class="pre">plot_snr_trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagnostics_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">4)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/diagnostic_plots.html#plot_snr_trajectory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.diagnostic_plots.plot_snr_trajectory" title="Link to this definition">#</a></dt>
+<dd><p>Plot SNR evolution with a threshold line at SNR = 1.</p>
+<p>Requires enhanced diagnostics (<code class="docutils literal notranslate"><span class="pre">snr</span></code> column).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diagnostics_df</strong> (<em>pl.DataFrame</em>) – Enhanced diagnostics DataFrame.</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – Figure size.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matplotlib Figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.diagnostic_plots.plot_temperature_decomposition">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.library_analysis.diagnostic_plots.</span></span><span class="sig-name descname"><span class="pre">plot_temperature_decomposition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagnostics_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">6)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/diagnostic_plots.html#plot_temperature_decomposition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.diagnostic_plots.plot_temperature_decomposition" title="Link to this definition">#</a></dt>
+<dd><p>Plot full temperature pipeline decomposition for one component.</p>
+<p>Shows base_temp, cats_multiplier, criticality_weight, effective_multiplier,
+and final_temperature on separate subplots.</p>
+<p>Requires enhanced diagnostics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diagnostics_df</strong> (<em>pl.DataFrame</em>) – Enhanced diagnostics DataFrame.</p></li>
+<li><p><strong>component_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Which component to plot.</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – Figure size.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matplotlib Figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.diagnostic_plots.plot_rws_diagnostic">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.library_analysis.diagnostic_plots.</span></span><span class="sig-name descname"><span class="pre">plot_rws_diagnostic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagnostics_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(12,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/diagnostic_plots.html#plot_rws_diagnostic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.diagnostic_plots.plot_rws_diagnostic" title="Link to this definition">#</a></dt>
+<dd><p>RWS diagnostic: GMIC + CATS multiplier + divergence gate.</p>
+<p>Dual y-axis plot averaged across replicates with 95 % confidence
+interval bands.  Vertical background shading indicates batches
+where the divergence gate blocks GMIC modulation (diversity mode).</p>
+<ul class="simple">
+<li><p>Left y-axis: GMIC per component (solid lines with CI bands).</p></li>
+<li><p>Right y-axis: CATS multiplier per component (dashed lines). Shows the
+GMIC-driven temperature modulation directly, without the noisy
+heated/cooled oscillation that <code class="docutils literal notranslate"><span class="pre">final_temperature</span></code> has. Values &gt; 1
+amplify exploration, &lt; 1 amplify exploitation, = 1 is the base
+temperature.</p></li>
+<li><p>Background: light pink shading with red boundary lines when any
+component is in diversity mode in &gt; 30 % of replicates.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diagnostics_df</strong> (<em>pl.DataFrame</em>) – RWS diagnostics for a single query, all
+replicates.  Works with any number of components.</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Plot title (e.g. “rxn206 — query_008”).</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – Figure size.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matplotlib Figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.diagnostic_plots.plot_ttts_diagnostic">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.library_analysis.diagnostic_plots.</span></span><span class="sig-name descname"><span class="pre">plot_ttts_diagnostic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagnostics_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(12,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/diagnostic_plots.html#plot_ttts_diagnostic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.diagnostic_plots.plot_ttts_diagnostic" title="Link to this definition">#</a></dt>
+<dd><p>TT-TS diagnostic: disagreement EMA + heated_scale.</p>
+<p>Dual y-axis plot averaged across replicates with 95 % confidence
+interval bands.</p>
+<p>Left y-axis: disagreement EMA per component (solid lines).
+Right y-axis: heated_scale per component (dashed lines).
+Horizontal bands mark the adaptive thresholds (0.3 and 0.8).</p>
+<p>Works with any number of components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diagnostics_df</strong> (<em>pl.DataFrame</em>) – TT-TS diagnostics for a single query, all
+replicates.</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Plot title.</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – Figure size.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matplotlib Figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.diagnostic_plots.plot_reagent_usage_action_panel">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.library_analysis.diagnostic_plots.</span></span><span class="sig-name descname"><span class="pre">plot_reagent_usage_action_panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diag_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reagent_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replicate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregate_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'library'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_trim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_batches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(14,</span> <span class="pre">5.5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heated_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Heated'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/diagnostic_plots.html#plot_reagent_usage_action_panel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.diagnostic_plots.plot_reagent_usage_action_panel" title="Link to this definition">#</a></dt>
+<dd><p>Two-panel reagent usage diagnostic: heating timeline + new-reagent lines.</p>
+<p><strong>Top panel (action strip).</strong>  A thin categorical timeline showing
+which component was marked <code class="docutils literal notranslate"><span class="pre">is_heated</span></code> at each batch — one
+coloured block per batch, coloured by the component’s palette
+entry.  Reads left-to-right like a sequence diagram.  Batches with
+no heated record appear white.  The strip’s y-label is set by
+<code class="docutils literal notranslate"><span class="pre">heated_label</span></code> so the figure can use method-appropriate
+terminology (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;Heated&quot;</span></code> for RWS, <code class="docutils literal notranslate"><span class="pre">&quot;Explore&quot;</span></code> for TT-TS).</p>
+<p><strong>Bottom panel (lines).</strong>  Per-component lines showing the
+fraction of that component’s reagents first-seen in this batch
+(<code class="docutils literal notranslate"><span class="pre">new_count</span> <span class="pre">/</span> <span class="pre">n_reagents_per_component</span></code>) — always
+library-normalized so the scree-plot decay reads the same across
+components.  Uses the same component palette as the heating strip,
+so the reader can match each line to the heated-block colours in
+the strip above.  Interpretation: the decay rate summarizes when
+the algorithm has exhausted the informative reagents per
+component.</p>
+<p>Note: the <code class="docutils literal notranslate"><span class="pre">normalize</span></code> parameter is retained for API
+compatibility but no longer affects the plot (the bar panel it
+controlled has been replaced by the heating strip).  The value is
+still validated so stale callers passing unknown strings still
+raise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_df</strong> (<em>pl.DataFrame</em>) – Search-phase rows for a single trial (library, query,
+method, replicate), in evaluation order.  Must have <code class="docutils literal notranslate"><span class="pre">Name</span></code>
+(underscore-joined reagent IDs) and <code class="docutils literal notranslate"><span class="pre">phase</span></code> columns.  If
+<code class="docutils literal notranslate"><span class="pre">replicate</span></code> is None the DataFrame must already be filtered
+to a single replicate.</p></li>
+<li><p><strong>diag_df</strong> (<em>pl.DataFrame</em>) – Per-cycle diagnostics for the same trial.  Must have
+<code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">current_cycle</span></code>, <code class="docutils literal notranslate"><span class="pre">is_heated</span></code>.</p></li>
+<li><p><strong>reagent_files</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><em>Path</em><em>]</em>) – Ordered list of <code class="docutils literal notranslate"><span class="pre">.smi</span></code> file paths, one per
+component.  Used to count total reagents (for <code class="docutils literal notranslate"><span class="pre">library</span></code>
+normalization) and to correctly parse product names where
+reagent IDs themselves may contain underscores
+(e.g. adenine’s <code class="docutils literal notranslate"><span class="pre">isocyanide_db_511</span></code>).</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Evaluations per batch (default 100).</p></li>
+<li><p><strong>replicate</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>]</em>) – If provided, filter both DataFrames to this replicate.</p></li>
+<li><p><strong>aggregate_window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – If &gt;1, bin every <code class="docutils literal notranslate"><span class="pre">aggregate_window</span></code> batches
+into a single bar.  Useful for long searches (e.g., 1000+
+batches on docking libraries).  Diversity is averaged
+across batches in the bin; <em>new</em> is recomputed against all
+prior bins; heated component is the majority within the bin.</p></li>
+<li><p><strong>auto_trim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True (default), automatically crop to the active
+region of the search — batches where the mechanism is still
+switching heated components or discovering new reagents.
+Trailing exploitation-only batches (same component heated
+for many batches with no new reagents) are dropped and a
+note is annotated on the figure.</p></li>
+<li><p><strong>max_batches</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>]</em>) – Hard upper limit on the number of batches shown.
+Takes precedence over <code class="docutils literal notranslate"><span class="pre">auto_trim</span></code> if smaller.</p></li>
+<li><p><strong>component_names</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em><em>]</em>) – Optional list of display names (one per
+component) to use in the legend instead of “Component N”.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, names are inferred from the common prefix of
+each component’s reagent IDs (e.g., adenine automatically
+becomes [“Amidine”, “Isocyanide”, “Aldehyde”]).  Components
+with purely numeric reagent IDs fall back to “Component N”.</p></li>
+<li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <code class="docutils literal notranslate"><span class="pre">&quot;library&quot;</span></code> (default) normalizes by total reagents
+in each component — interpretation: fraction of the library
+sampled this batch.  <code class="docutils literal notranslate"><span class="pre">&quot;batch&quot;</span></code> normalizes by
+<code class="docutils literal notranslate"><span class="pre">min(batch_size,</span> <span class="pre">n_reagents)</span></code> — interpretation: fraction
+of the maximum achievable diversity.  <code class="docutils literal notranslate"><span class="pre">&quot;share&quot;</span></code> normalizes
+each batch’s per-component count by the batch’s <em>total</em>
+unique-reagent count across components, producing a
+stacked-to-1 view.  Use <code class="docutils literal notranslate"><span class="pre">&quot;share&quot;</span></code> on imbalanced libraries
+where components differ in size by many-fold, so small
+components don’t disappear visually when heated.</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Plot title.</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – Figure size.</p></li>
+<li><p><strong>heated_label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Y-axis label for the action strip.  Use
+<code class="docutils literal notranslate"><span class="pre">&quot;Heated&quot;</span></code> for RWS-family methods (default) and
+<code class="docutils literal notranslate"><span class="pre">&quot;Explore&quot;</span></code> for TT-TS, where the strip marks the
+exploring component each batch (cooled / exploit
+components are the unfilled cells).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matplotlib Figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.diagnostic_plots.plot_gmic_directed_exploration">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.library_analysis.diagnostic_plots.</span></span><span class="sig-name descname"><span class="pre">plot_gmic_directed_exploration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diag_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reagent_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replicate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gmic_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/diagnostic_plots.html#plot_gmic_directed_exploration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.diagnostic_plots.plot_gmic_directed_exploration" title="Link to this definition">#</a></dt>
+<dd><p>Layer 1: how GMIC directs WHICH component to explore (signal -&gt; decision -&gt; result).</p>
+<p>One column per method; three stacked rows sharing the search-cycle x-axis:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>SIGNAL    – per-component GMIC (criticality).  High = the component’s reagent</dt><dd><p>means are well separated relative to noise (resolved -&gt; exploit);
+low = unresolved (explore).</p>
+</dd>
+<dt>DECISION  – the per-component “explored” strip (<code class="docutils literal notranslate"><span class="pre">is_heated</span></code>): which component</dt><dd><p>the GMIC-weighted rotation sends exploration to each cycle.</p>
+</dd>
+<dt>RESULT    – cumulative per-component reagent coverage (fraction of <em>that</em></dt><dd><p>component’s reagents discovered), each normalised to its own size.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>On an imbalanced library (thrombin: 130 acids x 3844 dipeptides) the small
+component resolves immediately (high GMIC -&gt; exploited -&gt; coverage saturates to
+100%) while the large one stays unresolved (low GMIC -&gt; explored -&gt; coverage
+climbs), making the GMIC-directed explore/exploit reallocation visible end to end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_df</strong> (<em>DataFrame</em>) – Per-evaluation search log (<code class="docutils literal notranslate"><span class="pre">Name</span></code>, <code class="docutils literal notranslate"><span class="pre">method</span></code>, <code class="docutils literal notranslate"><span class="pre">replicate</span></code>,
+<code class="docutils literal notranslate"><span class="pre">phase</span></code>); only <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">==</span> <span class="pre">&quot;search&quot;</span></code> rows are used.</p></li>
+<li><p><strong>diag_df</strong> (<em>DataFrame</em>) – Per-cycle diagnostics (<code class="docutils literal notranslate"><span class="pre">method</span></code>, <code class="docutils literal notranslate"><span class="pre">replicate</span></code>, <code class="docutils literal notranslate"><span class="pre">current_cycle</span></code>,
+<code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">gmic</span></code>, <code class="docutils literal notranslate"><span class="pre">is_heated</span></code>).</p></li>
+<li><p><strong>reagent_files</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>Path</em></a><em>]</em>) – One <code class="docutils literal notranslate"><span class="pre">.smi</span></code> per component (defines each component’s reagent IDs).</p></li>
+<li><p><strong>methods</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – Method names to show as columns (e.g. the RWS and TT-TS labels).</p></li>
+<li><p><strong>method_labels</strong> – Optional <code class="docutils literal notranslate"><span class="pre">{method:</span> <span class="pre">display</span> <span class="pre">label}</span></code> for the column titles.</p></li>
+<li><p><strong>replicate</strong> – Replicate to plot; defaults to the smallest in <code class="docutils literal notranslate"><span class="pre">diag_df</span></code>.</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Evaluations per cycle/batch (default 100).</p></li>
+<li><p><strong>component_names</strong> – Display names per component; inferred from reagent-ID
+prefixes when <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>component_colors</strong> – Line colours per component.</p></li>
+<li><p><strong>gmic_ref</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Reference line on the GMIC row (default 1.0 = critical/flexible boundary).</p></li>
+<li><p><strong>title</strong> – Figure suptitle.</p></li>
+<li><p><strong>figsize</strong> – Defaults to <code class="docutils literal notranslate"><span class="pre">(7.5</span> <span class="pre">*</span> <span class="pre">n_methods,</span> <span class="pre">9.2)</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matplotlib Figure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.library_analysis.diagnostic_plots.plot_adaptive_intensity">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.library_analysis.diagnostic_plots.</span></span><span class="sig-name descname"><span class="pre">plot_adaptive_intensity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diag_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reagent_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replicate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smooth_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_decision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'new'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/library_analysis/diagnostic_plots.html#plot_adaptive_intensity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.library_analysis.diagnostic_plots.plot_adaptive_intensity" title="Link to this definition">#</a></dt>
+<dd><p>Layer 2: how each method tunes exploration <em>within</em> a component.</p>
+<p>Where <a class="reference internal" href="#TACTICS.library_analysis.diagnostic_plots.plot_gmic_directed_exploration" title="TACTICS.library_analysis.diagnostic_plots.plot_gmic_directed_exploration"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_gmic_directed_exploration()</span></code></a> (layer 1) shows WHICH component
+GMIC sends exploration to, this shows HOW HARD each method explores the
+chosen component, and what that yields in reagent discovery.  One column per
+method; rows share the search-cycle x-axis:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>INTENSITY – the per-component within-component knob, smoothed.  Both knobs</dt><dd><p>are reported as <strong>dimensionless multipliers centred on 1.0</strong>
+(1.0 = no adjustment; &gt;1 = amplify exploration), so the two
+methods read on a common interpretation: RWS modulates the
+<strong>CATS temperature multiplier</strong> (<code class="docutils literal notranslate"><span class="pre">cats_multiplier</span></code>, ×base
+temperature – the GMIC-driven factor); TT-TS modulates the
+<strong>σ-inflation multiplier</strong> (<code class="docutils literal notranslate"><span class="pre">heated_scale</span></code>, ×posterior σ –
+the disagreement-driven factor).  Note the asymmetry the knobs
+reveal: RWS’s multiplier is GMIC-driven, so it <em>amplifies above
+1.0</em> on the unresolved (low-GMIC) component; TT-TS’s heated_scale
+is disagreement-driven, and because two-sample disagreement
+saturates (&gt;0.8) on both components of a large library it
+<em>decays toward 1.0</em> – most on the highest-disagreement
+(unresolved) component – i.e. the TT-TS adaptation is largely
+one-directional and cannot manufacture exploration beyond what
+the raw posteriors already provide.</p>
+</dd>
+<dt>DECISION  – per-component <strong>heating probability</strong> (rolling fraction of</dt><dd><p>cycles in which the component was the explored/heated one).
+Omitted when <code class="docutils literal notranslate"><span class="pre">show_decision=False</span></code> (leaving INTENSITY +
+RESULT, i.e. “just the temperature”).</p>
+</dd>
+<dt>RESULT    – per-component within-component discovery.  <code class="docutils literal notranslate"><span class="pre">result=&quot;new&quot;</span></code></dt><dd><p>(default) plots <strong>new reagents discovered per batch</strong> (the
+per-batch <em>rate</em> – the discrete increment of coverage);
+<code class="docutils literal notranslate"><span class="pre">result=&quot;coverage&quot;</span></code> plots <strong>cumulative coverage</strong> (% of the
+component’s reagents seen at least once – the running total,
+identical to the layer-1 RESULT row).  New-per-batch is the
+derivative of coverage: it falls toward zero as the reagent
+pool is exhausted even while coverage is still rising.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>On thrombin (130 acids × 3844 dipeptides) both methods keep discovering new
+dipeptides long after the small acid component is exhausted – the same
+reallocation, reached through two different within-component mechanisms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_df</strong> (<em>DataFrame</em>) – Per-evaluation search log (<code class="docutils literal notranslate"><span class="pre">Name</span></code>, <code class="docutils literal notranslate"><span class="pre">method</span></code>,
+<code class="docutils literal notranslate"><span class="pre">replicate</span></code>, <code class="docutils literal notranslate"><span class="pre">phase</span></code>); only <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">==</span> <span class="pre">&quot;search&quot;</span></code> rows are used.</p></li>
+<li><p><strong>diag_df</strong> (<em>DataFrame</em>) – Per-cycle diagnostics (<code class="docutils literal notranslate"><span class="pre">method</span></code>, <code class="docutils literal notranslate"><span class="pre">replicate</span></code>,
+<code class="docutils literal notranslate"><span class="pre">current_cycle</span></code>, <code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">is_heated</span></code> plus the
+method-specific intensity column <code class="docutils literal notranslate"><span class="pre">cats_multiplier</span></code> for RWS or
+<code class="docutils literal notranslate"><span class="pre">heated_scale</span></code> for TT-TS).</p></li>
+<li><p><strong>reagent_files</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>Path</em></a><em>]</em>) – One <code class="docutils literal notranslate"><span class="pre">.smi</span></code> per component (defines each component’s
+reagent IDs).</p></li>
+<li><p><strong>methods</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – Method names to show as columns.</p></li>
+<li><p><strong>method_labels</strong> – Optional <code class="docutils literal notranslate"><span class="pre">{method:</span> <span class="pre">display</span> <span class="pre">label}</span></code> for column titles.</p></li>
+<li><p><strong>replicate</strong> – Replicate to plot; defaults to the smallest in <code class="docutils literal notranslate"><span class="pre">diag_df</span></code>.</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Evaluations per cycle/batch (default 100).</p></li>
+<li><p><strong>component_names</strong> – Display names per component; inferred from reagent-ID
+prefixes when <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>component_colors</strong> – Line colours per component.</p></li>
+<li><p><strong>smooth_window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Centred (edge-shrinking) rolling-mean window (cycles)
+applied to every row so the per-cycle heated/cooled square-wave reads
+as an effective average (default 9).</p></li>
+<li><p><strong>show_decision</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Include the heating-probability row (default True).</p></li>
+<li><p><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <code class="docutils literal notranslate"><span class="pre">&quot;new&quot;</span></code> (new reagents per batch, default) or <code class="docutils literal notranslate"><span class="pre">&quot;coverage&quot;</span></code>
+(cumulative % coverage, as in layer 1).</p></li>
+<li><p><strong>title</strong> – Figure suptitle.</p></li>
+<li><p><strong>figsize</strong> – Defaults to <code class="docutils literal notranslate"><span class="pre">(7.5</span> <span class="pre">*</span> <span class="pre">n_methods,</span> <span class="pre">9.2</span> <span class="pre">or</span> <span class="pre">7.0)</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matplotlib Figure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="inspect.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Inspect</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="extending.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Extending</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmark-comparison-altair">Benchmark comparison (Altair)</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.visualization.TS_Benchmarks"><code class="docutils literal notranslate"><span class="pre">TS_Benchmarks</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.gen_TS_runs_data"><code class="docutils literal notranslate"><span class="pre">TS_Benchmarks.gen_TS_runs_data()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.stripplot_TS_results"><code class="docutils literal notranslate"><span class="pre">TS_Benchmarks.stripplot_TS_results()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.get_barplot_TS_results_data"><code class="docutils literal notranslate"><span class="pre">TS_Benchmarks.get_barplot_TS_results_data()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.plot_barplot_TS_results"><code class="docutils literal notranslate"><span class="pre">TS_Benchmarks.plot_barplot_TS_results()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.gen_line_plot_performance_data"><code class="docutils literal notranslate"><span class="pre">TS_Benchmarks.gen_line_plot_performance_data()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.visualization.TS_Benchmarks.plot_line_performance_with_error_bars"><code class="docutils literal notranslate"><span class="pre">TS_Benchmarks.plot_line_performance_with_error_bars()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-TACTICS.library_analysis.diagnostic_plots">Diagnostic plots (matplotlib)</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.diagnostic_plots.plot_criticality_trajectory"><code class="docutils literal notranslate"><span class="pre">plot_criticality_trajectory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.diagnostic_plots.plot_snr_trajectory"><code class="docutils literal notranslate"><span class="pre">plot_snr_trajectory()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.diagnostic_plots.plot_temperature_decomposition"><code class="docutils literal notranslate"><span class="pre">plot_temperature_decomposition()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.diagnostic_plots.plot_rws_diagnostic"><code class="docutils literal notranslate"><span class="pre">plot_rws_diagnostic()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.diagnostic_plots.plot_ttts_diagnostic"><code class="docutils literal notranslate"><span class="pre">plot_ttts_diagnostic()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.diagnostic_plots.plot_reagent_usage_action_panel"><code class="docutils literal notranslate"><span class="pre">plot_reagent_usage_action_panel()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.diagnostic_plots.plot_gmic_directed_exploration"><code class="docutils literal notranslate"><span class="pre">plot_gmic_directed_exploration()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.library_analysis.diagnostic_plots.plot_adaptive_intensity"><code class="docutils literal notranslate"><span class="pre">plot_adaptive_intensity()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/aakankschit/TACTICS/edit/main/docs/source/reference/visualise.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

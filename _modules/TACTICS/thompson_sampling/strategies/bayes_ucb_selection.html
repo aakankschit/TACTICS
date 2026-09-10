@@ -1,0 +1,1229 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TACTICS.thompson_sampling.strategies.bayes_ucb_selection &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/TACTICS/thompson_sampling/strategies/bayes_ucb_selection';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../../../../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">TACTICS.thompson_sampling.strategies.bayes_ucb_selection</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for TACTICS.thompson_sampling.strategies.bayes_ucb_selection</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">Bayesian Upper Confidence Bound Selection with Component-Aware Thompson Sampling (CATS).</span>
+
+<span class="sd">This module implements Bayes-UCB with CATS for combinatorial library screening.</span>
+<span class="sd">Uses Student-t quantiles for proper Bayesian treatment with percentile-based</span>
+<span class="sd">thermal cycling and component criticality analysis.</span>
+
+<span class="sd">References:</span>
+<span class="sd">    Kaufmann, E., Cappé, O., &amp; Garivier, A. (2012). On Bayesian upper confidence</span>
+<span class="sd">    bounds for bandit problems. In AISTATS.</span>
+
+<span class="sd">    Zhao, H., Nittinger, E. &amp; Tyrchan, C. Enhanced Thompson Sampling by Roulette</span>
+<span class="sd">    Wheel Selection for Screening Ultra-Large Combinatorial Libraries.</span>
+<span class="sd">    bioRxiv 2024.05.16.594622 (2024)</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">SelectionStrategy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._thermal</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThermalCyclingMixin</span>
+
+
+<div class="viewcode-block" id="BayesUCBSelection">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BayesUCBSelection</span><span class="p">(</span><span class="n">ThermalCyclingMixin</span><span class="p">,</span> <span class="n">SelectionStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Bayesian Upper Confidence Bound selection with Component-Aware Thompson Sampling (CATS).</span>
+
+<span class="sd">    Combines percentile-based thermal cycling with component criticality analysis</span>
+<span class="sd">    for efficient exploration of ultra-large combinatorial libraries.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Baseline strategy. Benchmarking (114,450+ trials, 21 libraries) shows</span>
+<span class="sd">        :class:`TopTwoSelection` and :class:`RouletteWheelSelection` consistently</span>
+<span class="sd">        outperform BayesUCB. Use :func:`~TACTICS.thompson_sampling.presets.get_preset`</span>
+<span class="sd">        for recommended defaults.</span>
+
+<span class="sd">    Uses Student-t quantiles for proper Bayesian treatment of uncertainty.</span>
+<span class="sd">    Percentile levels serve as analog to temperature in RWS:</span>
+<span class="sd">    - Higher percentile → wider confidence bounds → more exploration</span>
+<span class="sd">    - Lower percentile → tighter bounds → more exploitation</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">"maximize"</span><span class="p">,</span>
+        <span class="n">initial_p_high</span><span class="o">=</span><span class="mf">0.90</span><span class="p">,</span>
+        <span class="n">initial_p_low</span><span class="o">=</span><span class="mf">0.60</span><span class="p">,</span>
+        <span class="n">min_observations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">cats_exploration_fraction</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">criticality_metric</span><span class="o">=</span><span class="s2">"ipr"</span><span class="p">,</span>
+        <span class="n">n_adaptive_sharpening</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize Bayes-UCB Selection with CATS.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mode: "maximize" or "minimize" optimization mode</span>
+<span class="sd">            initial_p_high: Base percentile for heated component (default: 0.90)</span>
+<span class="sd">            initial_p_low: Base percentile for cooled component (default: 0.60)</span>
+<span class="sd">            min_observations: Minimum observations per reagent before trusting criticality (default: 5)</span>
+<span class="sd">            cats_exploration_fraction: Fraction of total cycles during which CATS explores</span>
+<span class="sd">                at full strength. After this point, CATS influence decays linearly if</span>
+<span class="sd">                criticality remains low. Set to None to disable decay (default: 0.3).</span>
+<span class="sd">            criticality_metric: "ipr" (Inverse Participation Ratio) or "shannon"</span>
+<span class="sd">                (the earlier Shannon-entropy metric). (default: "ipr")</span>
+<span class="sd">            n_adaptive_sharpening: If True and criticality_metric="ipr", apply</span>
+<span class="sd">                sqrt(log(N)) sharpening to z-scores. (default: True)</span>
+<span class="sd">            **kwargs: Only the deprecated names listed below are accepted</span>
+<span class="sd">                (with a warning); anything else raises ``TypeError``.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+
+        <span class="c1"># Core parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_p_high</span> <span class="o">=</span> <span class="n">initial_p_high</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_p_low</span> <span class="o">=</span> <span class="n">initial_p_low</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_high</span> <span class="o">=</span> <span class="n">initial_p_high</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_low</span> <span class="o">=</span> <span class="n">initial_p_low</span>
+
+        <span class="c1"># CATS parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_observations</span> <span class="o">=</span> <span class="n">min_observations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cats_exploration_fraction</span> <span class="o">=</span> <span class="n">cats_exploration_fraction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">criticality_metric</span> <span class="o">=</span> <span class="n">criticality_metric</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_adaptive_sharpening</span> <span class="o">=</span> <span class="n">n_adaptive_sharpening</span>
+
+        <span class="c1"># Thermal cycling state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_thermal_cycling</span><span class="p">()</span>
+        <span class="c1"># Mean criticality across components (updated by rotate_component_weighted)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_criticality</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+        <span class="c1"># Derive CATS range from p_high/p_low ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_high</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_low</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_low</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cats_max_mult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cats_min_mult</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
+
+        <span class="c1"># Cache for last component state (avoids double computation)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_component_states</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Validation warnings</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_high</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_low</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"initial_p_high (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_high</span><span class="si">}</span><span class="s2">) equals initial_p_low (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_low</span><span class="si">}</span><span class="s2">). "</span>
+                <span class="s2">"Thermal cycling will have no effect. "</span>
+                <span class="s2">"For thermal cycling to work, set initial_p_low &lt; initial_p_high "</span>
+                <span class="s2">"(e.g., initial_p_low=0.60, initial_p_high=0.90)."</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Deprecated parameter warnings</span>
+        <span class="n">deprecated</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'efficiency_threshold'</span><span class="p">,</span> <span class="s1">'p_high_bounds'</span><span class="p">,</span> <span class="s1">'p_low_bounds'</span><span class="p">,</span> <span class="s1">'delta_high'</span><span class="p">,</span> <span class="s1">'delta_low'</span><span class="p">}</span>
+        <span class="n">found_deprecated</span> <span class="o">=</span> <span class="n">deprecated</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">found_deprecated</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Parameters </span><span class="si">{</span><span class="n">found_deprecated</span><span class="si">}</span><span class="s2"> are deprecated and will be ignored. "</span>
+                <span class="sa">f</span><span class="s2">"CATS now derives all parameters from initial_p_high/initial_p_low ratio. "</span>
+                <span class="sa">f</span><span class="s2">"Remove these parameters from your configuration."</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
+            <span class="p">)</span>
+        <span class="n">unknown</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-</span> <span class="n">deprecated</span>
+        <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"BayesUCBSelection.__init__() got unexpected keyword argument(s): "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">unknown</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_criticality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Calculate component criticality using z-score softmax with SNR dampening.</span>
+
+<span class="sd">        Aligned with RouletteWheelSelection: uses z-scores (scale-invariant),</span>
+<span class="sd">        signal-to-noise dampening, N-adaptive sharpening, and supports both</span>
+<span class="sd">        IPR and Shannon entropy metrics.</span>
+
+<span class="sd">        Criticality in [0, 1]:</span>
+<span class="sd">        - criticality ~ 0: Flexible component -&gt; should EXPLORE</span>
+<span class="sd">        - criticality ~ 1: Critical component -&gt; should EXPLOIT</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            reagent_list: List of Reagent objects with posterior distributions</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Criticality score in [0, 1]. Returns 0.5 (neutral) if insufficient data.</span>
+<span class="sd">        """</span>
+        <span class="c1"># Filter out retired reagents</span>
+        <span class="n">active_reagents</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reagent_list</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_reagents</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.5</span>
+
+        <span class="n">observations</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active_reagents</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">observations</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_observations</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.5</span>
+
+        <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active_reagents</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">"minimize"</span><span class="p">:</span>
+            <span class="n">means</span> <span class="o">=</span> <span class="o">-</span><span class="n">means</span>
+
+        <span class="n">mean_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mean_std</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Signal-to-noise dampening (aligned with RWS)</span>
+        <span class="n">se_squared</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">std</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active_reagents</span>
+        <span class="p">])</span>
+        <span class="n">noise_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">se_squared</span><span class="p">))</span>
+        <span class="n">snr</span> <span class="o">=</span> <span class="n">mean_std</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">noise_std</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">)</span>
+        <span class="n">imbalance_strength</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="nb">max</span><span class="p">(</span><span class="n">snr</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+
+        <span class="n">z_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">means</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">means</span><span class="p">))</span> <span class="o">/</span> <span class="n">mean_std</span>
+        <span class="n">z_scores</span> <span class="o">*=</span> <span class="n">imbalance_strength</span>
+
+        <span class="c1"># N-adaptive sharpening</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_reagents</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">criticality_metric</span> <span class="o">==</span> <span class="s2">"ipr"</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_adaptive_sharpening</span> <span class="ow">and</span> <span class="n">N</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">sharpening</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span>
+            <span class="n">z_scores</span> <span class="o">*=</span> <span class="n">sharpening</span>
+
+        <span class="n">exp_means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z_scores</span> <span class="o">-</span> <span class="n">z_scores</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>  <span class="c1"># numerical stability</span>
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="n">exp_means</span> <span class="o">/</span> <span class="n">exp_means</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">criticality_metric</span> <span class="o">==</span> <span class="s2">"ipr"</span><span class="p">:</span>
+            <span class="n">ipr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">effective_N</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">ipr</span>
+            <span class="n">criticality</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">effective_N</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># shannon (earlier metric)</span>
+            <span class="n">entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">))</span>
+            <span class="n">max_entropy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">max_entropy</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mf">0.5</span>
+            <span class="n">criticality</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">entropy</span> <span class="o">/</span> <span class="n">max_entropy</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">criticality</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_criticality_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculate criticality and return all intermediate values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (criticality, details_dict) matching RouletteWheelSelection schema.</span>
+<span class="sd">        """</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"snr"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+            <span class="s2">"imbalance_strength"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+            <span class="s2">"normalized_entropy"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+            <span class="s2">"n_active_reagents"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"participation_ratio"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+            <span class="s2">"effective_n"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+            <span class="s2">"sharpening_factor"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="n">active_reagents</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reagent_list</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">details</span><span class="p">[</span><span class="s2">"n_active_reagents"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_reagents</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_reagents</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">details</span>
+
+        <span class="n">observations</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active_reagents</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">observations</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_observations</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">details</span>
+
+        <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active_reagents</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"snr"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"imbalance_strength"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"normalized_entropy"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"participation_ratio"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_reagents</span><span class="p">)</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"effective_n"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">active_reagents</span><span class="p">))</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"sharpening_factor"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">details</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">"minimize"</span><span class="p">:</span>
+            <span class="n">means</span> <span class="o">=</span> <span class="o">-</span><span class="n">means</span>
+
+        <span class="n">mean_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mean_std</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"snr"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"imbalance_strength"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"normalized_entropy"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"participation_ratio"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_reagents</span><span class="p">)</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"effective_n"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">active_reagents</span><span class="p">))</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"sharpening_factor"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">details</span>
+
+        <span class="n">se_squared</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">std</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active_reagents</span>
+        <span class="p">])</span>
+        <span class="n">noise_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">se_squared</span><span class="p">))</span>
+        <span class="n">snr</span> <span class="o">=</span> <span class="n">mean_std</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">noise_std</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">)</span>
+        <span class="n">imbalance_strength</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="nb">max</span><span class="p">(</span><span class="n">snr</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+
+        <span class="n">details</span><span class="p">[</span><span class="s2">"snr"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">snr</span><span class="p">)</span>
+        <span class="n">details</span><span class="p">[</span><span class="s2">"imbalance_strength"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">imbalance_strength</span><span class="p">)</span>
+
+        <span class="n">z_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">means</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">means</span><span class="p">))</span> <span class="o">/</span> <span class="n">mean_std</span>
+        <span class="n">z_scores</span> <span class="o">*=</span> <span class="n">imbalance_strength</span>
+
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_reagents</span><span class="p">)</span>
+        <span class="n">sharpening</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">criticality_metric</span> <span class="o">==</span> <span class="s2">"ipr"</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_adaptive_sharpening</span> <span class="ow">and</span> <span class="n">N</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">sharpening</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span>
+            <span class="n">z_scores</span> <span class="o">*=</span> <span class="n">sharpening</span>
+        <span class="n">details</span><span class="p">[</span><span class="s2">"sharpening_factor"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sharpening</span><span class="p">)</span>
+
+        <span class="n">exp_means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z_scores</span> <span class="o">-</span> <span class="n">z_scores</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="n">exp_means</span> <span class="o">/</span> <span class="n">exp_means</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="n">ipr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">effective_n</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">ipr</span>
+        <span class="n">details</span><span class="p">[</span><span class="s2">"participation_ratio"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ipr</span>
+        <span class="n">details</span><span class="p">[</span><span class="s2">"effective_n"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">effective_n</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">criticality_metric</span> <span class="o">==</span> <span class="s2">"ipr"</span><span class="p">:</span>
+            <span class="n">criticality</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">effective_n</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span>
+            <span class="n">entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">))</span>
+            <span class="n">max_entropy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"normalized_entropy"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entropy</span> <span class="o">/</span> <span class="n">max_entropy</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_entropy</span> <span class="o">&gt;</span> <span class="mf">1e-10</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">))</span>
+            <span class="n">max_entropy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">max_entropy</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+                <span class="n">details</span><span class="p">[</span><span class="s2">"normalized_entropy"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">)</span>
+                <span class="k">return</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">details</span>
+            <span class="n">normalized_entropy</span> <span class="o">=</span> <span class="n">entropy</span> <span class="o">/</span> <span class="n">max_entropy</span>
+            <span class="n">details</span><span class="p">[</span><span class="s2">"normalized_entropy"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">normalized_entropy</span><span class="p">)</span>
+            <span class="n">criticality</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">normalized_entropy</span>
+
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">criticality</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)),</span> <span class="n">details</span>
+
+<div class="viewcode-block" id="BayesUCBSelection.get_component_criticality">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection.get_component_criticality">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_component_criticality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return CATS criticality score for a component."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_criticality</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BayesUCBSelection.get_component_state">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection.get_component_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_component_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">reagent_list</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
+        <span class="n">component_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">current_cycle</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">total_cycles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Return full intermediate state for a component.</span>
+
+<span class="sd">        Same schema as RouletteWheelSelection for DataFrame consistency.</span>
+<span class="sd">        Now includes SNR dampening (aligned with RWS) and IPR details.</span>
+<span class="sd">        ``final_temperature`` maps to the CATS-adjusted percentile value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict with all intermediate values.</span>
+<span class="sd">        """</span>
+        <span class="c1"># Step 1: Criticality with details (aligned with RWS)</span>
+        <span class="n">criticality</span><span class="p">,</span> <span class="n">crit_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_criticality_details</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">)</span>
+
+        <span class="c1"># Step 2: Base percentile from thermal cycling</span>
+        <span class="n">is_heated</span> <span class="o">=</span> <span class="n">component_idx</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_component_idx</span>
+        <span class="n">base_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_high</span> <span class="k">if</span> <span class="n">is_heated</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_low</span>
+
+        <span class="c1"># Step 3: Observation-gated weight</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_criticality_weight</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">)</span>
+
+        <span class="c1"># Step 4: Exploration decay</span>
+        <span class="n">decay</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cats_exploration_fraction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">total_cycles</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="n">current_cycle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="n">exploration_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cats_exploration_fraction</span> <span class="o">*</span> <span class="n">total_cycles</span>
+            <span class="k">if</span> <span class="n">current_cycle</span> <span class="o">&gt;</span> <span class="n">exploration_end</span><span class="p">:</span>
+                <span class="n">remaining</span> <span class="o">=</span> <span class="n">total_cycles</span> <span class="o">-</span> <span class="n">exploration_end</span>
+                <span class="n">progress</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_cycle</span> <span class="o">-</span> <span class="n">exploration_end</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">remaining</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">decay</span> <span class="o">=</span> <span class="n">criticality</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">criticality</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">progress</span><span class="p">)</span>
+                <span class="n">weight</span> <span class="o">*=</span> <span class="n">decay</span>
+
+        <span class="c1"># Step 5: CATS multiplier</span>
+        <span class="n">cats_mult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cats_multiplier</span><span class="p">(</span><span class="n">criticality</span><span class="p">)</span>
+
+        <span class="c1"># Step 6: Blend</span>
+        <span class="n">effective_mult</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">weight</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">cats_mult</span>
+
+        <span class="c1"># Step 7: Final percentile (mapped to final_temperature for schema)</span>
+        <span class="n">final_percentile</span> <span class="o">=</span> <span class="n">base_temp</span> <span class="o">*</span> <span class="n">effective_mult</span>
+        <span class="n">final_percentile</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">final_percentile</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">))</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="c1"># Metadata</span>
+            <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">component_idx</span><span class="p">,</span>
+            <span class="s2">"current_cycle"</span><span class="p">:</span> <span class="n">current_cycle</span><span class="p">,</span>
+            <span class="s2">"total_cycles"</span><span class="p">:</span> <span class="n">total_cycles</span><span class="p">,</span>
+            <span class="c1"># Criticality details</span>
+            <span class="s2">"criticality"</span><span class="p">:</span> <span class="n">criticality</span><span class="p">,</span>
+            <span class="s2">"snr"</span><span class="p">:</span> <span class="n">crit_details</span><span class="p">[</span><span class="s2">"snr"</span><span class="p">],</span>
+            <span class="s2">"imbalance_strength"</span><span class="p">:</span> <span class="n">crit_details</span><span class="p">[</span><span class="s2">"imbalance_strength"</span><span class="p">],</span>
+            <span class="s2">"normalized_entropy"</span><span class="p">:</span> <span class="n">crit_details</span><span class="p">[</span><span class="s2">"normalized_entropy"</span><span class="p">],</span>
+            <span class="s2">"n_active_reagents"</span><span class="p">:</span> <span class="n">crit_details</span><span class="p">[</span><span class="s2">"n_active_reagents"</span><span class="p">],</span>
+            <span class="c1"># IPR details</span>
+            <span class="s2">"participation_ratio"</span><span class="p">:</span> <span class="n">crit_details</span><span class="p">[</span><span class="s2">"participation_ratio"</span><span class="p">],</span>
+            <span class="s2">"effective_n"</span><span class="p">:</span> <span class="n">crit_details</span><span class="p">[</span><span class="s2">"effective_n"</span><span class="p">],</span>
+            <span class="s2">"sharpening_factor"</span><span class="p">:</span> <span class="n">crit_details</span><span class="p">[</span><span class="s2">"sharpening_factor"</span><span class="p">],</span>
+            <span class="c1"># Temperature/percentile pipeline</span>
+            <span class="s2">"base_temp"</span><span class="p">:</span> <span class="n">base_temp</span><span class="p">,</span>
+            <span class="s2">"is_heated"</span><span class="p">:</span> <span class="n">is_heated</span><span class="p">,</span>
+            <span class="s2">"criticality_weight"</span><span class="p">:</span> <span class="n">weight</span><span class="p">,</span>
+            <span class="s2">"decay"</span><span class="p">:</span> <span class="n">decay</span><span class="p">,</span>
+            <span class="s2">"cats_multiplier"</span><span class="p">:</span> <span class="n">cats_mult</span><span class="p">,</span>
+            <span class="s2">"effective_multiplier"</span><span class="p">:</span> <span class="n">effective_mult</span><span class="p">,</span>
+            <span class="s2">"final_temperature"</span><span class="p">:</span> <span class="n">final_percentile</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_component_states</span><span class="p">[</span><span class="n">component_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="k">return</span> <span class="n">state</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_criticality_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">,</span> <span class="n">current_cycle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">total_cycles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Calculate observation-gated criticality weight.</span>
+
+<span class="sd">        Instead of a fixed three-phase schedule, weight is determined by how</span>
+<span class="sd">        many observations we have — i.e. how much we can trust the criticality</span>
+<span class="sd">        estimate. This is data-driven rather than schedule-driven.</span>
+
+<span class="sd">        Uses the 25th percentile of observation counts rather than the minimum.</span>
+<span class="sd">        With large components (e.g., 3844 dipeptides), the least-sampled reagent</span>
+<span class="sd">        may never be re-sampled after warmup, permanently pinning min_obs at the</span>
+<span class="sd">        warmup count. The 25th percentile reflects the bulk of the distribution,</span>
+<span class="sd">        allowing CATS to ramp up as the majority of reagents accumulate data.</span>
+
+<span class="sd">        Weight ramps from 0 to 1 as p25 observations go from 0 to</span>
+<span class="sd">        2 * min_observations, then stays at 1.0.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            reagent_list: List of Reagent objects (used to check observation counts)</span>
+<span class="sd">            current_cycle: Unused, kept for API compatibility</span>
+<span class="sd">            total_cycles: Unused, kept for API compatibility</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Criticality weight in [0, 1]</span>
+<span class="sd">        """</span>
+        <span class="c1"># Filter out retired reagents (aligned with RWS)</span>
+        <span class="n">active_obs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reagent_list</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">active_obs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="n">p25_obs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">active_obs</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">p25_obs</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_observations</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_observations</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_cats_multiplier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">criticality</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Map component criticality to a bidirectional percentile multiplier</span>
+<span class="sd">        using a relative neutral point.</span>
+
+<span class="sd">        The neutral point (multiplier = 1.0) is at the mean criticality across</span>
+<span class="sd">        all components, updated each cycle by ``rotate_component_weighted``.</span>
+<span class="sd">        Components below the mean get an exploration boost (multiplier &gt; 1);</span>
+<span class="sd">        components above the mean get an exploitation reduction (multiplier &lt; 1).</span>
+
+<span class="sd">        Mapping (with mean_crit as the neutral point):</span>
+<span class="sd">            criticality = 0.0        →  mult = cats_max_mult  (max exploration)</span>
+<span class="sd">            criticality = mean_crit  →  mult = 1.0            (neutral)</span>
+<span class="sd">            criticality = 1.0        →  mult = cats_min_mult  (max exploitation)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            criticality: Component criticality in [0, 1]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            CATS multiplier in [cats_min_mult, cats_max_mult]</span>
+<span class="sd">        """</span>
+        <span class="n">neutral</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean_criticality</span>
+
+        <span class="k">if</span> <span class="n">criticality</span> <span class="o">&lt;=</span> <span class="n">neutral</span><span class="p">:</span>
+            <span class="c1"># Below mean → explore: interpolate [cats_max_mult, 1.0]</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">criticality</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">neutral</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">)</span>
+            <span class="n">multiplier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cats_max_mult</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cats_max_mult</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Above mean → exploit: interpolate [1.0, cats_min_mult]</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">criticality</span> <span class="o">-</span> <span class="n">neutral</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">neutral</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">)</span>
+            <span class="n">multiplier</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cats_min_mult</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">multiplier</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_component_percentile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component_idx</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">,</span> <span class="n">current_cycle</span><span class="p">,</span> <span class="n">total_cycles</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get CATS-adjusted percentile for a component.</span>
+
+<span class="sd">        Delegates to ``get_component_state()`` which computes and caches all</span>
+<span class="sd">        intermediate values, then returns just the final percentile.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            component_idx: Which reaction component</span>
+<span class="sd">            reagent_list: List of Reagent objects for this component</span>
+<span class="sd">            current_cycle: Current search cycle</span>
+<span class="sd">            total_cycles: Total number of cycles</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Final percentile value</span>
+<span class="sd">        """</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_component_state</span><span class="p">(</span>
+            <span class="n">reagent_list</span><span class="p">,</span> <span class="n">component_idx</span><span class="p">,</span> <span class="n">current_cycle</span><span class="p">,</span> <span class="n">total_cycles</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">state</span><span class="p">[</span><span class="s2">"final_temperature"</span><span class="p">]</span>
+
+<div class="viewcode-block" id="BayesUCBSelection.select_reagent">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection.select_reagent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">select_reagent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">,</span> <span class="n">disallow_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Select a single reagent using Bayes-UCB indices with CATS.</span>
+
+<span class="sd">        Computes UCB index for each reagent based on posterior distribution</span>
+<span class="sd">        (mean, std, n_samples) and CATS-adjusted percentile, then selects via argmax.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            reagent_list: List of Reagent objects with posterior distributions</span>
+<span class="sd">            disallow_mask: Optional set of indices to exclude from selection</span>
+<span class="sd">            **kwargs: Additional context:</span>
+<span class="sd">                - component_idx: Which reaction component</span>
+<span class="sd">                - current_cycle: Current search cycle (for CATS)</span>
+<span class="sd">                - total_cycles: Total number of cycles (for CATS)</span>
+<span class="sd">                - rng: Random number generator (not used but kept for API compatibility)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Index of selected reagent</span>
+<span class="sd">        """</span>
+        <span class="n">component_idx</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'component_idx'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">current_cycle</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'current_cycle'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">total_cycles</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'total_cycles'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Get CATS-adjusted percentile</span>
+        <span class="n">percentile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_component_percentile</span><span class="p">(</span>
+            <span class="n">component_idx</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">,</span> <span class="n">current_cycle</span><span class="p">,</span> <span class="n">total_cycles</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Compute UCB indices for all reagents</span>
+        <span class="n">ucb_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_ucb_indices</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">,</span> <span class="n">percentile</span><span class="p">)</span>
+
+        <span class="c1"># Apply disallow mask</span>
+        <span class="k">if</span> <span class="n">disallow_mask</span><span class="p">:</span>
+            <span class="n">ucb_indices</span> <span class="o">=</span> <span class="n">ucb_indices</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">"maximize"</span><span class="p">:</span>
+                <span class="n">ucb_indices</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">disallow_mask</span><span class="p">))]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ucb_indices</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">disallow_mask</span><span class="p">))]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="c1"># Select reagent with best UCB index</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">"maximize"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">ucb_indices</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">ucb_indices</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_ucb_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">,</span> <span class="n">percentile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compute Bayes-UCB indices for all reagents.</span>
+
+<span class="sd">        Uses Student-t quantiles for proper Bayesian treatment:</span>
+<span class="sd">        UCB_i = μ_i + σ_i * t_{df}(percentile) / sqrt(n_i)</span>
+
+<span class="sd">        where:</span>
+<span class="sd">        - μ_i: posterior mean</span>
+<span class="sd">        - σ_i: posterior standard deviation</span>
+<span class="sd">        - df = n_i - 1: degrees of freedom</span>
+<span class="sd">        - t_{df}(percentile): Student-t quantile at given percentile</span>
+<span class="sd">        - n_i: number of observations</span>
+
+<span class="sd">        For reagents with n &lt; 2, uses a conservative large bonus.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        reagent_list : List[Reagent]</span>
+<span class="sd">            List of reagent objects</span>
+<span class="sd">        percentile : float</span>
+<span class="sd">            Confidence level (e.g., 0.95 for 95th percentile)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            UCB indices for all reagents</span>
+<span class="sd">        """</span>
+        <span class="c1"># Vectorized computation for speed</span>
+        <span class="n">n_reagents</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">)</span>
+        <span class="n">ucb_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_reagents</span><span class="p">)</span>
+
+        <span class="c1"># Extract arrays</span>
+        <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reagent_list</span><span class="p">])</span>
+        <span class="n">stds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">std</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reagent_list</span><span class="p">])</span>
+        <span class="n">n_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reagent_list</span><span class="p">])</span>
+
+        <span class="c1"># Handle under-explored reagents (n &lt; 2)</span>
+        <span class="n">unexplored_mask</span> <span class="o">=</span> <span class="n">n_samples</span> <span class="o">&lt;</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">"maximize"</span><span class="p">:</span>
+            <span class="n">ucb_indices</span><span class="p">[</span><span class="n">unexplored_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">means</span><span class="p">[</span><span class="n">unexplored_mask</span><span class="p">]</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">stds</span><span class="p">[</span><span class="n">unexplored_mask</span><span class="p">],</span> <span class="mf">1e-6</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ucb_indices</span><span class="p">[</span><span class="n">unexplored_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">means</span><span class="p">[</span><span class="n">unexplored_mask</span><span class="p">]</span> <span class="o">-</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">stds</span><span class="p">[</span><span class="n">unexplored_mask</span><span class="p">],</span> <span class="mf">1e-6</span><span class="p">)</span>
+
+        <span class="c1"># Handle explored reagents (n &gt;= 2)</span>
+        <span class="n">explored_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">unexplored_mask</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">explored_mask</span><span class="p">):</span>
+            <span class="n">explored_n</span> <span class="o">=</span> <span class="n">n_samples</span><span class="p">[</span><span class="n">explored_mask</span><span class="p">]</span>
+            <span class="n">explored_means</span> <span class="o">=</span> <span class="n">means</span><span class="p">[</span><span class="n">explored_mask</span><span class="p">]</span>
+            <span class="n">explored_stds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">stds</span><span class="p">[</span><span class="n">explored_mask</span><span class="p">],</span> <span class="mf">1e-6</span><span class="p">)</span>  <span class="c1"># Avoid zero std</span>
+
+            <span class="c1"># Compute t-quantiles (still in loop but only for unique df values)</span>
+            <span class="c1"># Group by degrees of freedom to minimize ppf calls</span>
+            <span class="n">unique_dfs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">explored_n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">t_quantiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">explored_n</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">unique_dfs</span><span class="p">:</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">explored_n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">df</span>
+                <span class="c1"># Clamp df to avoid numerical issues with very small degrees of freedom</span>
+                <span class="n">safe_df</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>  <span class="c1"># deferred: ~0.4 s import, only needed here</span>
+
+                <span class="n">t_quantiles</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">percentile</span><span class="p">,</span> <span class="n">safe_df</span><span class="p">)</span>
+
+            <span class="c1"># Compute UCB indices with numerical stability</span>
+            <span class="n">sqrt_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">explored_n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">"maximize"</span><span class="p">:</span>
+                <span class="n">ucb_indices</span><span class="p">[</span><span class="n">explored_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">explored_means</span> <span class="o">+</span> <span class="n">explored_stds</span> <span class="o">*</span> <span class="n">t_quantiles</span> <span class="o">/</span> <span class="n">sqrt_n</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ucb_indices</span><span class="p">[</span><span class="n">explored_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">explored_means</span> <span class="o">-</span> <span class="n">explored_stds</span> <span class="o">*</span> <span class="n">t_quantiles</span> <span class="o">/</span> <span class="n">sqrt_n</span>
+
+        <span class="k">return</span> <span class="n">ucb_indices</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rotation_flexibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_lists</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Criticality-weighted heating: flexible (low-criticality) components heat more.</span>
+
+<span class="sd">        Also refreshes ``_mean_criticality`` so ``_get_cats_multiplier`` can use</span>
+<span class="sd">        a relative neutral point instead of a fixed 0.5.</span>
+<span class="sd">        """</span>
+        <span class="n">crits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_component_criticality</span><span class="p">(</span><span class="n">rl</span><span class="p">)</span> <span class="ow">or</span> <span class="mf">0.5</span> <span class="k">for</span> <span class="n">rl</span> <span class="ow">in</span> <span class="n">reagent_lists</span><span class="p">],</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mean_criticality</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">crits</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">crits</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BayesUCBSelection.reset_percentiles">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.strategies.bayes_ucb_selection.BayesUCBSelection.reset_percentiles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_percentiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Reset percentile parameters to initial values.</span>
+
+<span class="sd">        Useful for multi-run experiments or when restarting search.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_high</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_p_high</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_low</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_p_low</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

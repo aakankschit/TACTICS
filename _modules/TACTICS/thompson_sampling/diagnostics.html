@@ -1,0 +1,1055 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TACTICS.thompson_sampling.diagnostics &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/TACTICS/thompson_sampling/diagnostics';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../../../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">TACTICS.thompson_sampling.diagnostics</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for TACTICS.thompson_sampling.diagnostics</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">Pure analysis functions for CATS diagnostics.</span>
+
+<span class="sd">All functions operate on Polars DataFrames and have no dependency on the</span>
+<span class="sd">ThompsonSampler or strategy objects.  This makes them usable in notebooks,</span>
+<span class="sd">scripts, and post-hoc analysis pipelines.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+
+
+<div class="viewcode-block" id="compute_posterior_entropy">
+<a class="viewcode-back" href="../../../reference/inspect.html#TACTICS.thompson_sampling.diagnostics.compute_posterior_entropy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_posterior_entropy</span><span class="p">(</span>
+    <span class="n">landscape_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"maximize"</span><span class="p">,</span>
+    <span class="n">criticality_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"ipr"</span><span class="p">,</span>
+    <span class="n">n_adaptive_sharpening</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Compute per-component entropy metrics from a posterior landscape.</span>
+
+<span class="sd">    Uses z-score softmax (same as CATS ``_calculate_criticality()``) to</span>
+<span class="sd">    convert posterior means into a probability distribution, then measures</span>
+<span class="sd">    concentration via IPR (default) or Shannon entropy.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        landscape_df: DataFrame from ``sampler.get_posterior_landscape()``</span>
+<span class="sd">            with columns ``component_idx``, ``reagent_name``, ``mean``,</span>
+<span class="sd">            ``std``, ``n_samples``.</span>
+<span class="sd">        mode: "maximize" or "minimize" — determines sign convention.</span>
+<span class="sd">        criticality_metric: "ipr" or "shannon" — metric for concentration.</span>
+<span class="sd">        n_adaptive_sharpening: Apply sqrt(log(N)) sharpening when using IPR.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DataFrame with one row per component:</span>
+<span class="sd">        ``component_idx``, ``n_active``, ``entropy``,</span>
+<span class="sd">        ``normalized_entropy``, ``concentration``, ``snr``.</span>
+<span class="sd">    """</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">comp_idx</span> <span class="ow">in</span> <span class="n">landscape_df</span><span class="p">[</span><span class="s2">"component_idx"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">landscape_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"component_idx"</span><span class="p">)</span> <span class="o">==</span> <span class="n">comp_idx</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"n_samples"</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">n_active</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n_active</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+                <span class="s2">"n_active"</span><span class="p">:</span> <span class="n">n_active</span><span class="p">,</span>
+                <span class="s2">"entropy"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"normalized_entropy"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"concentration"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"snr"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+            <span class="p">})</span>
+            <span class="k">continue</span>
+
+        <span class="n">means</span> <span class="o">=</span> <span class="n">comp</span><span class="p">[</span><span class="s2">"mean"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">stds</span> <span class="o">=</span> <span class="n">comp</span><span class="p">[</span><span class="s2">"std"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">n_samples</span> <span class="o">=</span> <span class="n">comp</span><span class="p">[</span><span class="s2">"n_samples"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"minimize"</span><span class="p">:</span>
+            <span class="n">means</span> <span class="o">=</span> <span class="o">-</span><span class="n">means</span>
+
+        <span class="n">mean_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mean_std</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+                <span class="s2">"n_active"</span><span class="p">:</span> <span class="n">n_active</span><span class="p">,</span>
+                <span class="s2">"entropy"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_active</span><span class="p">),</span>
+                <span class="s2">"normalized_entropy"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                <span class="s2">"concentration"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s2">"snr"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="p">})</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># SNR</span>
+        <span class="n">se_sq</span> <span class="o">=</span> <span class="n">stds</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">noise_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">se_sq</span><span class="p">))</span>
+        <span class="n">snr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mean_std</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">noise_std</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">))</span>
+
+        <span class="n">imbalance</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="nb">max</span><span class="p">(</span><span class="n">snr</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">means</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">means</span><span class="p">))</span> <span class="o">/</span> <span class="n">mean_std</span> <span class="o">*</span> <span class="n">imbalance</span>
+
+        <span class="c1"># N-adaptive sharpening</span>
+        <span class="k">if</span> <span class="n">criticality_metric</span> <span class="o">==</span> <span class="s2">"ipr"</span> <span class="ow">and</span> <span class="n">n_adaptive_sharpening</span> <span class="ow">and</span> <span class="n">n_active</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">sharpening</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_active</span><span class="p">)))</span>
+            <span class="n">z</span> <span class="o">*=</span> <span class="n">sharpening</span>
+
+        <span class="n">exp_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">z</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>  <span class="c1"># numerical stability</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">exp_z</span> <span class="o">/</span> <span class="n">exp_z</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="n">entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">probs</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">))</span>
+        <span class="n">max_entropy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_active</span><span class="p">)</span>
+        <span class="n">norm_ent</span> <span class="o">=</span> <span class="n">entropy</span> <span class="o">/</span> <span class="n">max_entropy</span> <span class="k">if</span> <span class="n">max_entropy</span> <span class="o">&gt;</span> <span class="mf">1e-10</span> <span class="k">else</span> <span class="mf">1.0</span>
+
+        <span class="k">if</span> <span class="n">criticality_metric</span> <span class="o">==</span> <span class="s2">"ipr"</span><span class="p">:</span>
+            <span class="n">ipr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="n">effective_n</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">ipr</span>
+            <span class="n">concentration</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">effective_n</span> <span class="o">/</span> <span class="n">n_active</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">concentration</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">norm_ent</span>
+
+        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+            <span class="s2">"n_active"</span><span class="p">:</span> <span class="n">n_active</span><span class="p">,</span>
+            <span class="s2">"entropy"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">entropy</span><span class="p">),</span>
+            <span class="s2">"normalized_entropy"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">norm_ent</span><span class="p">),</span>
+            <span class="s2">"concentration"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">concentration</span><span class="p">),</span>
+            <span class="s2">"snr"</span><span class="p">:</span> <span class="n">snr</span><span class="p">,</span>
+        <span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_convergence_point">
+<a class="viewcode-back" href="../../../reference/inspect.html#TACTICS.thompson_sampling.diagnostics.compute_convergence_point">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_convergence_point</span><span class="p">(</span>
+    <span class="n">diagnostics_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">stability_window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Find the cycle at which each component first reaches stable convergence.</span>
+
+<span class="sd">    A component is considered converged at cycle *c* if criticality &gt; threshold</span>
+<span class="sd">    for all cycles from *c* through *c + stability_window - 1*.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        diagnostics_df: Enhanced diagnostics DataFrame (must have</span>
+<span class="sd">            ``current_cycle``, ``component_idx``, ``criticality`` columns).</span>
+<span class="sd">        threshold: Criticality threshold for "structured" (default 0.3).</span>
+<span class="sd">        stability_window: Number of consecutive cycles above threshold</span>
+<span class="sd">            required for stability (default 5).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DataFrame with ``component_idx``, ``cycle_first_above``,</span>
+<span class="sd">        ``cycle_stable``.</span>
+<span class="sd">    """</span>
+    <span class="n">cycle_col</span> <span class="o">=</span> <span class="s2">"current_cycle"</span>
+
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">comp_idx</span> <span class="ow">in</span> <span class="n">diagnostics_df</span><span class="p">[</span><span class="s2">"component_idx"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">diagnostics_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"component_idx"</span><span class="p">)</span> <span class="o">==</span> <span class="n">comp_idx</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">cycle_col</span><span class="p">)</span>
+
+        <span class="n">crits</span> <span class="o">=</span> <span class="n">comp</span><span class="p">[</span><span class="s2">"criticality"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">cycles</span> <span class="o">=</span> <span class="n">comp</span><span class="p">[</span><span class="n">cycle_col</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+        <span class="n">above</span> <span class="o">=</span> <span class="n">crits</span> <span class="o">&gt;</span> <span class="n">threshold</span>
+        <span class="n">first_above</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cycles</span><span class="p">[</span><span class="n">above</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">above</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="n">stable</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">above</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">crits</span><span class="p">)):</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">stability_window</span>
+                <span class="k">if</span> <span class="n">end</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">crits</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">crits</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">):</span>
+                    <span class="n">stable</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cycles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="k">break</span>
+
+        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+            <span class="s2">"cycle_first_above"</span><span class="p">:</span> <span class="n">first_above</span><span class="p">,</span>
+            <span class="s2">"cycle_stable"</span><span class="p">:</span> <span class="n">stable</span><span class="p">,</span>
+        <span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compare_trajectory_vs_snapshot">
+<a class="viewcode-back" href="../../../reference/inspect.html#TACTICS.thompson_sampling.diagnostics.compare_trajectory_vs_snapshot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_trajectory_vs_snapshot</span><span class="p">(</span>
+    <span class="n">diagnostics_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">landscape_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"maximize"</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Compare CATS trajectory information with a post-hoc snapshot.</span>
+
+<span class="sd">    Shows what the trajectory reveals that the static snapshot doesn't:</span>
+<span class="sd">    convergence timing, stability, and whether the final state was reached</span>
+<span class="sd">    early or late.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        diagnostics_df: Enhanced diagnostics DataFrame from</span>
+<span class="sd">            ``sampler.get_diagnostics()``.</span>
+<span class="sd">        landscape_df: Posterior landscape from</span>
+<span class="sd">            ``sampler.get_posterior_landscape()``.</span>
+<span class="sd">        mode: "maximize" or "minimize".</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DataFrame with per-component comparison: ``component_idx``,</span>
+<span class="sd">        ``snapshot_concentration``, ``trajectory_final_criticality``,</span>
+<span class="sd">        ``cycle_first_above``, ``cycle_stable``,</span>
+<span class="sd">        ``trajectory_adds_info`` (bool).</span>
+<span class="sd">    """</span>
+    <span class="n">snapshot</span> <span class="o">=</span> <span class="n">compute_posterior_entropy</span><span class="p">(</span><span class="n">landscape_df</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+    <span class="n">convergence</span> <span class="o">=</span> <span class="n">compute_convergence_point</span><span class="p">(</span><span class="n">diagnostics_df</span><span class="p">)</span>
+
+    <span class="c1"># Get final criticality from trajectory</span>
+    <span class="n">cycle_col</span> <span class="o">=</span> <span class="s2">"current_cycle"</span> <span class="k">if</span> <span class="s2">"current_cycle"</span> <span class="ow">in</span> <span class="n">diagnostics_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">else</span> <span class="s2">"cycle"</span>
+    <span class="n">final_crits</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">comp_idx</span> <span class="ow">in</span> <span class="n">diagnostics_df</span><span class="p">[</span><span class="s2">"component_idx"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">diagnostics_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"component_idx"</span><span class="p">)</span> <span class="o">==</span> <span class="n">comp_idx</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">cycle_col</span><span class="p">)</span>
+        <span class="n">final_crits</span><span class="p">[</span><span class="n">comp_idx</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">comp</span><span class="p">[</span><span class="s2">"criticality"</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">comp_idx</span> <span class="ow">in</span> <span class="n">snapshot</span><span class="p">[</span><span class="s2">"component_idx"</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
+        <span class="n">snap_conc</span> <span class="o">=</span> <span class="n">snapshot</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"component_idx"</span><span class="p">)</span> <span class="o">==</span> <span class="n">comp_idx</span>
+        <span class="p">)[</span><span class="s2">"concentration"</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">traj_crit</span> <span class="o">=</span> <span class="n">final_crits</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">comp_idx</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">))</span>
+
+        <span class="n">conv_row</span> <span class="o">=</span> <span class="n">convergence</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"component_idx"</span><span class="p">)</span> <span class="o">==</span> <span class="n">comp_idx</span><span class="p">)</span>
+        <span class="n">first_above</span> <span class="o">=</span> <span class="n">conv_row</span><span class="p">[</span><span class="s2">"cycle_first_above"</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">stable</span> <span class="o">=</span> <span class="n">conv_row</span><span class="p">[</span><span class="s2">"cycle_stable"</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Trajectory adds information if convergence timing is available</span>
+        <span class="n">adds_info</span> <span class="o">=</span> <span class="n">first_above</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+            <span class="s2">"snapshot_concentration"</span><span class="p">:</span> <span class="n">snap_conc</span><span class="p">,</span>
+            <span class="s2">"trajectory_final_criticality"</span><span class="p">:</span> <span class="n">traj_crit</span><span class="p">,</span>
+            <span class="s2">"cycle_first_above"</span><span class="p">:</span> <span class="n">first_above</span><span class="p">,</span>
+            <span class="s2">"cycle_stable"</span><span class="p">:</span> <span class="n">stable</span><span class="p">,</span>
+            <span class="s2">"trajectory_adds_info"</span><span class="p">:</span> <span class="n">adds_info</span><span class="p">,</span>
+        <span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_disagreement_convergence">
+<a class="viewcode-back" href="../../../reference/inspect.html#TACTICS.thompson_sampling.diagnostics.compute_disagreement_convergence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_disagreement_convergence</span><span class="p">(</span>
+    <span class="n">diagnostics_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">stability_window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">low_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">high_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Analyze per-component disagreement EMA convergence from TT-TS diagnostics.</span>
+
+<span class="sd">    Identifies when each component's disagreement rate stabilizes, indicating</span>
+<span class="sd">    that TT-TS has resolved uncertainty about reagent rankings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        diagnostics_df: TT-TS diagnostics DataFrame (must have</span>
+<span class="sd">            ``current_cycle``, ``component_idx``, ``disagreement_ema``).</span>
+<span class="sd">        stability_window: Consecutive cycles within threshold band for</span>
+<span class="sd">            stability (default 10).</span>
+<span class="sd">        low_threshold: Disagreement below this means component is</span>
+<span class="sd">            well-resolved (default 0.3).</span>
+<span class="sd">        high_threshold: Disagreement above this means component is</span>
+<span class="sd">            saturated / exploration is random (default 0.8).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DataFrame with ``component_idx``, ``final_disagreement``,</span>
+<span class="sd">        ``cycle_below_low``, ``cycle_stable_low``, ``mean_disagreement``,</span>
+<span class="sd">        ``regime`` ("resolved" / "saturated" / "exploring").</span>
+<span class="sd">    """</span>
+    <span class="n">cycle_col</span> <span class="o">=</span> <span class="s2">"current_cycle"</span> <span class="k">if</span> <span class="s2">"current_cycle"</span> <span class="ow">in</span> <span class="n">diagnostics_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">else</span> <span class="s2">"cycle"</span>
+
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">comp_idx</span> <span class="ow">in</span> <span class="n">diagnostics_df</span><span class="p">[</span><span class="s2">"component_idx"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">diagnostics_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"component_idx"</span><span class="p">)</span> <span class="o">==</span> <span class="n">comp_idx</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">cycle_col</span><span class="p">)</span>
+
+        <span class="n">ema_vals</span> <span class="o">=</span> <span class="n">comp</span><span class="p">[</span><span class="s2">"disagreement_ema"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">cycles</span> <span class="o">=</span> <span class="n">comp</span><span class="p">[</span><span class="n">cycle_col</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ema_vals</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">valid</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+                <span class="s2">"final_disagreement"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"cycle_below_low"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"cycle_stable_low"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"mean_disagreement"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"regime"</span><span class="p">:</span> <span class="s2">"insufficient_data"</span><span class="p">,</span>
+            <span class="p">})</span>
+            <span class="k">continue</span>
+
+        <span class="n">final_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ema_vals</span><span class="p">[</span><span class="n">valid</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">mean_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ema_vals</span><span class="p">[</span><span class="n">valid</span><span class="p">]))</span>
+
+        <span class="c1"># First cycle below low threshold</span>
+        <span class="n">below_low</span> <span class="o">=</span> <span class="n">ema_vals</span> <span class="o">&lt;</span> <span class="n">low_threshold</span>
+        <span class="n">cycle_below</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cycles</span><span class="p">[</span><span class="n">below_low</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">below_low</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="c1"># Stable below low: stays below for stability_window</span>
+        <span class="n">cycle_stable</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">below_low</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ema_vals</span><span class="p">)):</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">stability_window</span>
+                <span class="k">if</span> <span class="n">end</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ema_vals</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">ema_vals</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">low_threshold</span><span class="p">):</span>
+                    <span class="n">cycle_stable</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cycles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="k">break</span>
+
+        <span class="c1"># Classify regime</span>
+        <span class="k">if</span> <span class="n">final_val</span> <span class="o">&lt;</span> <span class="n">low_threshold</span><span class="p">:</span>
+            <span class="n">regime</span> <span class="o">=</span> <span class="s2">"resolved"</span>
+        <span class="k">elif</span> <span class="n">final_val</span> <span class="o">&gt;</span> <span class="n">high_threshold</span><span class="p">:</span>
+            <span class="n">regime</span> <span class="o">=</span> <span class="s2">"saturated"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">regime</span> <span class="o">=</span> <span class="s2">"exploring"</span>
+
+        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+            <span class="s2">"final_disagreement"</span><span class="p">:</span> <span class="n">final_val</span><span class="p">,</span>
+            <span class="s2">"cycle_below_low"</span><span class="p">:</span> <span class="n">cycle_below</span><span class="p">,</span>
+            <span class="s2">"cycle_stable_low"</span><span class="p">:</span> <span class="n">cycle_stable</span><span class="p">,</span>
+            <span class="s2">"mean_disagreement"</span><span class="p">:</span> <span class="n">mean_val</span><span class="p">,</span>
+            <span class="s2">"regime"</span><span class="p">:</span> <span class="n">regime</span><span class="p">,</span>
+        <span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_scale_adaptation">
+<a class="viewcode-back" href="../../../reference/inspect.html#TACTICS.thompson_sampling.diagnostics.compute_scale_adaptation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_scale_adaptation</span><span class="p">(</span>
+    <span class="n">diagnostics_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Summarize per-component adaptive heated_scale evolution from TT-TS diagnostics.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        diagnostics_df: TT-TS diagnostics DataFrame (must have</span>
+<span class="sd">            ``current_cycle``, ``component_idx``, ``heated_scale``).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DataFrame with ``component_idx``, ``initial_scale``, ``final_scale``,</span>
+<span class="sd">        ``min_scale``, ``max_scale``, ``scale_range``, ``adaptation_direction``</span>
+<span class="sd">        ("decayed" / "grew" / "stable").</span>
+<span class="sd">    """</span>
+    <span class="n">cycle_col</span> <span class="o">=</span> <span class="s2">"current_cycle"</span> <span class="k">if</span> <span class="s2">"current_cycle"</span> <span class="ow">in</span> <span class="n">diagnostics_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">else</span> <span class="s2">"cycle"</span>
+
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">comp_idx</span> <span class="ow">in</span> <span class="n">diagnostics_df</span><span class="p">[</span><span class="s2">"component_idx"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">diagnostics_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"component_idx"</span><span class="p">)</span> <span class="o">==</span> <span class="n">comp_idx</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">cycle_col</span><span class="p">)</span>
+
+        <span class="n">scales</span> <span class="o">=</span> <span class="n">comp</span><span class="p">[</span><span class="s2">"heated_scale"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">scales</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">valid</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+                <span class="s2">"initial_scale"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"final_scale"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"min_scale"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"max_scale"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"scale_range"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"adaptation_direction"</span><span class="p">:</span> <span class="s2">"insufficient_data"</span><span class="p">,</span>
+            <span class="p">})</span>
+            <span class="k">continue</span>
+
+        <span class="n">valid_scales</span> <span class="o">=</span> <span class="n">scales</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+        <span class="n">initial</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">valid_scales</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">final</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">valid_scales</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">final</span> <span class="o">-</span> <span class="n">initial</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">:</span>
+            <span class="n">direction</span> <span class="o">=</span> <span class="s2">"stable"</span>
+        <span class="k">elif</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">direction</span> <span class="o">=</span> <span class="s2">"decayed"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">direction</span> <span class="o">=</span> <span class="s2">"grew"</span>
+
+        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+            <span class="s2">"initial_scale"</span><span class="p">:</span> <span class="n">initial</span><span class="p">,</span>
+            <span class="s2">"final_scale"</span><span class="p">:</span> <span class="n">final</span><span class="p">,</span>
+            <span class="s2">"min_scale"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">valid_scales</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span>
+            <span class="s2">"max_scale"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">valid_scales</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+            <span class="s2">"scale_range"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">valid_scales</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">valid_scales</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span>
+            <span class="s2">"adaptation_direction"</span><span class="p">:</span> <span class="n">direction</span><span class="p">,</span>
+        <span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="format_sar_report">
+<a class="viewcode-back" href="../../../reference/inspect.html#TACTICS.thompson_sampling.diagnostics.format_sar_report">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_sar_report</span><span class="p">(</span><span class="n">summary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Format a ``get_sar_summary()`` dict into a publication-ready text block.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        summary: Dict returned by ``ThompsonSampler.get_sar_summary()``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Multi-line string suitable for inclusion in a manuscript or notebook.</span>
+<span class="sd">    """</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"SAR Landscape Assessment"</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Overall: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">'landscape_type'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s2">"summary_text"</span><span class="p">])</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Per-Component Details"</span><span class="p">)</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"components"</span><span class="p">]:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">comp</span><span class="p">[</span><span class="s2">"component_idx"</span><span class="p">]</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Component </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">:"</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Assessment:    </span><span class="si">{</span><span class="n">comp</span><span class="p">[</span><span class="s1">'convergence_assessment'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"concentration"</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">))):</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Concentration: </span><span class="si">{</span><span class="n">comp</span><span class="p">[</span><span class="s1">'concentration'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  SNR:           </span><span class="si">{</span><span class="n">comp</span><span class="p">[</span><span class="s1">'snr'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Gini:          </span><span class="si">{</span><span class="n">comp</span><span class="p">[</span><span class="s1">'gini_coefficient'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Top-1 share:   </span><span class="si">{</span><span class="n">comp</span><span class="p">[</span><span class="s1">'top1_share'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Top-5 share:   </span><span class="si">{</span><span class="n">comp</span><span class="p">[</span><span class="s1">'top5_share'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Dominant:      </span><span class="si">{</span><span class="n">comp</span><span class="p">[</span><span class="s1">'dominant_reagent'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">"convergence_dynamics"</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Convergence Dynamics (CATS trajectory)"</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dyn</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="s2">"convergence_dynamics"</span><span class="p">]:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">dyn</span><span class="p">[</span><span class="s2">"component_idx"</span><span class="p">]</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="n">dyn</span><span class="p">[</span><span class="s2">"cycle_first_structured"</span><span class="p">]</span>
+            <span class="n">stable</span> <span class="o">=</span> <span class="n">dyn</span><span class="p">[</span><span class="s2">"cycle_stable"</span><span class="p">]</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="n">dyn</span><span class="p">[</span><span class="s2">"signal_trajectory_slope"</span><span class="p">]</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Component </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">:"</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  First structured:  cycle </span><span class="si">{</span><span class="n">first</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Stable from:       cycle </span><span class="si">{</span><span class="n">stable</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">slope</span><span class="p">):</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Signal trend:      </span><span class="si">{</span><span class="n">slope</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2">/cycle"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

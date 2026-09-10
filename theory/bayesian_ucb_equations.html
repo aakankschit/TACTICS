@@ -1,0 +1,1844 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Bayesian Upper Confidence Bound Selection in TACTICS &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theory/bayesian_ucb_equations';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Search Performance Metrics for TACTICS" href="search_performance_metrics.html" />
+    <link rel="prev" title="Mathematical Foundations of Thompson Sampling in TACTICS" href="thompson_sampling_equations.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="thompson_sampling_equations.html">Mathematical Foundations of Thompson Sampling in TACTICS</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Bayesian Upper Confidence Bound Selection in TACTICS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="search_performance_metrics.html">Search Performance Metrics for TACTICS</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Theory</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Bayesian Upper Confidence Bound Selection in TACTICS</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="bayesian-upper-confidence-bound-selection-in-tactics">
+<h1>Bayesian Upper Confidence Bound Selection in TACTICS<a class="headerlink" href="#bayesian-upper-confidence-bound-selection-in-tactics" title="Link to this heading">#</a></h1>
+<p><em>A Scientific Treatment with Mathematical Derivations</em></p>
+<section id="abstract">
+<h2>Abstract<a class="headerlink" href="#abstract" title="Link to this heading">#</a></h2>
+<p>This document provides rigorous mathematical foundations for the Bayesian Upper Confidence Bound (Bayes-UCB) selection strategy as implemented in TACTICS. Bayes-UCB offers a principled alternative to Roulette Wheel Selection by using Student-t quantiles for proper Bayesian treatment of uncertainty. We derive the theoretical underpinnings, demonstrate the integration with Component-Aware Thompson Sampling (CATS), and compare Bayes-UCB systematically with classical UCB and RWS approaches. The key advantages of Bayes-UCB include deterministic selection given posteriors, explicit control over exploration via percentiles, and proper handling of small-sample uncertainty through heavy-tailed distributions.</p>
+</section>
+<section id="theoretical-background">
+<h2>1. Theoretical Background<a class="headerlink" href="#theoretical-background" title="Link to this heading">#</a></h2>
+<section id="the-multi-armed-bandit-framework">
+<h3>1.1 The Multi-Armed Bandit Framework<a class="headerlink" href="#the-multi-armed-bandit-framework" title="Link to this heading">#</a></h3>
+<p>In combinatorial library screening, each reagent selection problem can be formulated as a multi-armed bandit:</p>
+<p><strong>Definition 1.1 (Stochastic Multi-Armed Bandit)</strong>: A stochastic MAB consists of:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(K\)</span> arms (reagents), indexed <span class="math notranslate nohighlight">\(i \in \{1, \ldots, K\}\)</span></p></li>
+<li><p>Unknown reward distributions <span class="math notranslate nohighlight">\(\nu_i\)</span> with means <span class="math notranslate nohighlight">\(\mu_i^*\)</span></p></li>
+<li><p>At each round <span class="math notranslate nohighlight">\(t\)</span>, the agent selects arm <span class="math notranslate nohighlight">\(I_t\)</span> and receives reward <span class="math notranslate nohighlight">\(X_t \sim \nu_{I_t}\)</span></p></li>
+</ul>
+<p><strong>Objective</strong>: Minimize cumulative regret:
+$<span class="math notranslate nohighlight">\(R_T = T \cdot \mu^* - \sum_{t=1}^{T} \mu_{I_t}^*\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(\mu^* = \max_i \mu_i^*\)</span>.</p>
+</section>
+<section id="from-frequentist-to-bayesian-ucb">
+<h3>1.2 From Frequentist to Bayesian UCB<a class="headerlink" href="#from-frequentist-to-bayesian-ucb" title="Link to this heading">#</a></h3>
+<section id="classical-ucb1-auer-et-al-2002">
+<h4>Classical UCB1 (Auer et al., 2002)<a class="headerlink" href="#classical-ucb1-auer-et-al-2002" title="Link to this heading">#</a></h4>
+<p><strong>Definition 1.2 (UCB1 Index)</strong>: The UCB1 index for arm <span class="math notranslate nohighlight">\(i\)</span> at time <span class="math notranslate nohighlight">\(t\)</span> is:
+$<span class="math notranslate nohighlight">\(\text{UCB}_i(t) = \bar{X}_i(t) + c\sqrt{\frac{\ln(t)}{N_i(t)}}\)</span>$</p>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\bar{X}_i(t) = \frac{1}{N_i(t)}\sum_{s \leq t: I_s = i} X_s\)</span> is the sample mean</p></li>
+<li><p><span class="math notranslate nohighlight">\(N_i(t)\)</span> is the number of times arm <span class="math notranslate nohighlight">\(i\)</span> was pulled</p></li>
+<li><p><span class="math notranslate nohighlight">\(c\)</span> is an exploration constant (typically <span class="math notranslate nohighlight">\(c = \sqrt{2}\)</span> for <span class="math notranslate nohighlight">\([0,1]\)</span> rewards)</p></li>
+</ul>
+<p><strong>Derivation of Exploration Term</strong>: The <span class="math notranslate nohighlight">\(\sqrt{\ln(t)/N_i}\)</span> term comes from Hoeffding’s inequality and the union bound over time.</p>
+<p><strong>Theorem 1.1 (UCB1 Regret Bound)</strong>: For rewards in <span class="math notranslate nohighlight">\([0, 1]\)</span>, UCB1 achieves:
+$<span class="math notranslate nohighlight">\(R_T \leq 8 \sum_{i: \mu_i &lt; \mu^*} \frac{\ln T}{\Delta_i} + (1 + \frac{\pi^2}{3}) \sum_{i=1}^{K} \Delta_i\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(\Delta_i = \mu^* - \mu_i\)</span> is the suboptimality gap.</p>
+</section>
+<section id="limitations-of-classical-ucb">
+<h4>Limitations of Classical UCB<a class="headerlink" href="#limitations-of-classical-ucb" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p><strong>Ignores prior information</strong>: Treats all arms as initially equivalent</p></li>
+<li><p><strong>Bounded reward assumption</strong>: Requires <span class="math notranslate nohighlight">\([0, 1]\)</span> rewards for standard analysis</p></li>
+<li><p><strong>No posterior uncertainty</strong>: Uses point estimates rather than distributions</p></li>
+<li><p><strong>Fixed exploration formula</strong>: Cannot incorporate domain knowledge</p></li>
+</ol>
+</section>
+</section>
+<section id="bayesian-perspective">
+<h3>1.3 Bayesian Perspective<a class="headerlink" href="#bayesian-perspective" title="Link to this heading">#</a></h3>
+<p><strong>Bayesian Motivation</strong>: Instead of concentration inequalities, use the posterior distribution directly.</p>
+<p><strong>Key Insight</strong>: The upper confidence bound can be interpreted as a quantile of the posterior:
+$<span class="math notranslate nohighlight">\(\text{UCB}_i = \text{Quantile}_{1-\alpha}(\theta_i | \mathcal{D})\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(\theta_i\)</span> is the unknown mean of arm <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> is the observed data.</p>
+</section>
+</section>
+<section id="derivation-of-bayes-ucb">
+<h2>2. Derivation of Bayes-UCB<a class="headerlink" href="#derivation-of-bayes-ucb" title="Link to this heading">#</a></h2>
+<section id="normal-normal-model-with-unknown-variance">
+<h3>2.1 Normal-Normal Model with Unknown Variance<a class="headerlink" href="#normal-normal-model-with-unknown-variance" title="Link to this heading">#</a></h3>
+<p>Consider the model:</p>
+<ul class="simple">
+<li><p><strong>Prior on mean</strong>: <span class="math notranslate nohighlight">\(\theta \sim \mathcal{N}(\mu_0, \sigma_0^2)\)</span></p></li>
+<li><p><strong>Likelihood</strong>: <span class="math notranslate nohighlight">\(X | \theta, \sigma^2 \sim \mathcal{N}(\theta, \sigma^2)\)</span></p></li>
+<li><p><strong>Prior on variance</strong>: <span class="math notranslate nohighlight">\(\sigma^2\)</span> unknown, estimated from data</p></li>
+</ul>
+<p>After observing <span class="math notranslate nohighlight">\(n\)</span> samples <span class="math notranslate nohighlight">\(\{X_1, \ldots, X_n\}\)</span> with sample mean <span class="math notranslate nohighlight">\(\bar{X}\)</span> and sample variance <span class="math notranslate nohighlight">\(s^2\)</span>:</p>
+</section>
+<section id="posterior-distribution">
+<h3>2.2 Posterior Distribution<a class="headerlink" href="#posterior-distribution" title="Link to this heading">#</a></h3>
+<p><strong>Theorem 2.1 (Posterior for Unknown Variance)</strong>: Under the normal-normal model with unknown variance, the posterior predictive distribution for a new observation is Student-t:
+$<span class="math notranslate nohighlight">\(\frac{\bar{X} - \theta}{s/\sqrt{n}} \sim t_{n-1}\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(t_{n-1}\)</span> denotes the Student-t distribution with <span class="math notranslate nohighlight">\(n-1\)</span> degrees of freedom.</p>
+<p><strong>Proof</strong>:</p>
+<p>Let <span class="math notranslate nohighlight">\(\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i\)</span> and <span class="math notranslate nohighlight">\(s^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar{X})^2\)</span>.</p>
+<p>Under the normal model:</p>
+<ol class="arabic simple">
+<li><p><span class="math notranslate nohighlight">\(\bar{X} \sim \mathcal{N}(\theta, \sigma^2/n)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\((n-1)s^2/\sigma^2 \sim \chi^2_{n-1}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\bar{X}\)</span> and <span class="math notranslate nohighlight">\(s^2\)</span> are independent</p></li>
+</ol>
+<p>Therefore:
+$<span class="math notranslate nohighlight">\(T = \frac{\bar{X} - \theta}{s/\sqrt{n}} = \frac{(\bar{X} - \theta)/(\sigma/\sqrt{n})}{s/\sigma}\)</span>$</p>
+<p>The numerator is <span class="math notranslate nohighlight">\(\mathcal{N}(0, 1)\)</span> and the denominator involves <span class="math notranslate nohighlight">\(\sqrt{\chi^2_{n-1}/(n-1)}\)</span>, giving <span class="math notranslate nohighlight">\(T \sim t_{n-1}\)</span>. <span class="math notranslate nohighlight">\(\square\)</span></p>
+</section>
+<section id="bayes-ucb-index-definition">
+<h3>2.3 Bayes-UCB Index Definition<a class="headerlink" href="#bayes-ucb-index-definition" title="Link to this heading">#</a></h3>
+<p><strong>Definition 2.1 (Bayes-UCB Index)</strong>: For reagent <span class="math notranslate nohighlight">\(i\)</span> with <span class="math notranslate nohighlight">\(n_i\)</span> observations, posterior mean <span class="math notranslate nohighlight">\(\mu_i\)</span>, and posterior standard deviation <span class="math notranslate nohighlight">\(\sigma_i\)</span>, the Bayes-UCB index at percentile <span class="math notranslate nohighlight">\(p\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[\text{UCB}_i(p) = \mu_i + \frac{\sigma_i \cdot t_{\nu_i}(p)}{\sqrt{n_i}}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\nu_i = n_i - 1\)</span> is the degrees of freedom</p></li>
+<li><p><span class="math notranslate nohighlight">\(t_{\nu}(p)\)</span> is the <span class="math notranslate nohighlight">\(p\)</span>-th quantile of the Student-t distribution with <span class="math notranslate nohighlight">\(\nu\)</span> degrees of freedom</p></li>
+</ul>
+<p><strong>For minimization mode (Lower Confidence Bound)</strong>:
+$<span class="math notranslate nohighlight">\(\text{LCB}_i(p) = \mu_i - \frac{\sigma_i \cdot t_{\nu_i}(p)}{\sqrt{n_i}}\)</span>$</p>
+<section id="note-on-the-sqrt-n-i-scaling-factor">
+<h4>2.3.1 Note on the <span class="math notranslate nohighlight">\(\sqrt{n_i}\)</span> Scaling Factor<a class="headerlink" href="#note-on-the-sqrt-n-i-scaling-factor" title="Link to this heading">#</a></h4>
+<p>A subtle but important detail: the formula includes division by <span class="math notranslate nohighlight">\(\sqrt{n_i}\)</span> even though <span class="math notranslate nohighlight">\(\sigma_i\)</span> is already the posterior standard deviation (which shrinks as observations accumulate).</p>
+<p><strong>Why this additional scaling?</strong></p>
+<p>In the standard Bayesian posterior, <span class="math notranslate nohighlight">\(\sigma_i\)</span> already incorporates the effect of sample size:
+$<span class="math notranslate nohighlight">\(\sigma_i^2 = \frac{\sigma_0^2}{n_i + 1} \approx \frac{\sigma_0^2}{n_i}\)</span>$</p>
+<p>However, in TACTICS, the posterior standard deviation <span class="math notranslate nohighlight">\(\sigma_i\)</span> is computed via Bayesian updates that may not perfectly track <span class="math notranslate nohighlight">\(1/\sqrt{n}\)</span> behavior (especially during warmup or with heterogeneous observation variance). The additional <span class="math notranslate nohighlight">\(1/\sqrt{n_i}\)</span> factor serves as:</p>
+<ol class="arabic simple">
+<li><p><strong>Conservative shrinkage</strong>: Ensures exploration bonus decreases appropriately with sample size</p></li>
+<li><p><strong>Finite-sample correction</strong>: Accounts for potential overconfidence in small-sample posteriors</p></li>
+<li><p><strong>Empirical effectiveness</strong>: Matches the classical UCB form that has proven regret bounds</p></li>
+</ol>
+<p>This design choice prioritizes <strong>empirical robustness</strong> over strict Bayesian purity. In practice, it prevents over-exploitation of reagents that happen to have artificially low posterior variance.</p>
+</section>
+</section>
+<section id="properties-of-the-bayes-ucb-index">
+<h3>2.4 Properties of the Bayes-UCB Index<a class="headerlink" href="#properties-of-the-bayes-ucb-index" title="Link to this heading">#</a></h3>
+<p><strong>Property 2.1 (Monotonicity in <span class="math notranslate nohighlight">\(n\)</span>)</strong>: For fixed <span class="math notranslate nohighlight">\(\mu\)</span>, <span class="math notranslate nohighlight">\(\sigma\)</span>, and <span class="math notranslate nohighlight">\(p &gt; 0.5\)</span>:
+$<span class="math notranslate nohighlight">\(\frac{\partial \text{UCB}}{\partial n} &lt; 0\)</span>$</p>
+<p>The UCB decreases as more observations are collected.</p>
+<p><strong>Property 2.2 (Limiting Behavior)</strong>:
+$<span class="math notranslate nohighlight">\(\lim_{n \to \infty} t_{\nu}(p) = z_p\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(z_p\)</span> is the standard normal quantile. Thus Bayes-UCB approaches classical UCB as <span class="math notranslate nohighlight">\(n \to \infty\)</span>.</p>
+<p><strong>Property 2.3 (Heavy Tails for Small <span class="math notranslate nohighlight">\(n\)</span>)</strong>:
+$<span class="math notranslate nohighlight">\(t_{\nu}(p) &gt; z_p \quad \text{for all } \nu &lt; \infty, \, p &gt; 0.5\)</span>$</p>
+<p>The Student-t has heavier tails, providing more exploration bonus for under-sampled arms.</p>
+</section>
+<section id="under-explored-reagent-handling">
+<h3>2.5 Under-Explored Reagent Handling<a class="headerlink" href="#under-explored-reagent-handling" title="Link to this heading">#</a></h3>
+<p><strong>Problem</strong>: For <span class="math notranslate nohighlight">\(n_i &lt; 2\)</span>, the degrees of freedom <span class="math notranslate nohighlight">\(\nu_i \leq 0\)</span>, making the t-distribution undefined.</p>
+<p><strong>Solution</strong>: Use a conservative exploration bonus:
+$<span class="math notranslate nohighlight">\(\text{UCB}_i = \mu_i + 3 \cdot \max(\sigma_i, 10^{-6})\)</span>$</p>
+<p><strong>Justification</strong>: The factor of 3 corresponds approximately to the 99.9th percentile of a standard normal, encouraging exploration of under-sampled reagents while maintaining numerical stability.</p>
+</section>
+</section>
+<section id="student-t-distribution-in-bayesian-inference">
+<h2>3. Student-t Distribution in Bayesian Inference<a class="headerlink" href="#student-t-distribution-in-bayesian-inference" title="Link to this heading">#</a></h2>
+<section id="definition-and-properties">
+<h3>3.1 Definition and Properties<a class="headerlink" href="#definition-and-properties" title="Link to this heading">#</a></h3>
+<p><strong>Definition 3.1 (Student-t Distribution)</strong>: A random variable <span class="math notranslate nohighlight">\(T\)</span> has a Student-t distribution with <span class="math notranslate nohighlight">\(\nu\)</span> degrees of freedom if:
+$<span class="math notranslate nohighlight">\(f_T(t; \nu) = \frac{\Gamma\left(\frac{\nu+1}{2}\right)}{\sqrt{\nu\pi}\,\Gamma\left(\frac{\nu}{2}\right)} \left(1 + \frac{t^2}{\nu}\right)^{-\frac{\nu+1}{2}}\)</span>$</p>
+<p><strong>Properties</strong>:</p>
+<ul class="simple">
+<li><p>Symmetric about zero</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbb{E}[T] = 0\)</span> for <span class="math notranslate nohighlight">\(\nu &gt; 1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{Var}(T) = \frac{\nu}{\nu - 2}\)</span> for <span class="math notranslate nohighlight">\(\nu &gt; 2\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(T \xrightarrow{d} \mathcal{N}(0, 1)\)</span> as <span class="math notranslate nohighlight">\(\nu \to \infty\)</span></p></li>
+</ul>
+</section>
+<section id="quantile-function">
+<h3>3.2 Quantile Function<a class="headerlink" href="#quantile-function" title="Link to this heading">#</a></h3>
+<p><strong>Definition 3.2 (t-Quantile)</strong>: The <span class="math notranslate nohighlight">\(p\)</span>-th quantile of <span class="math notranslate nohighlight">\(t_\nu\)</span> is the value <span class="math notranslate nohighlight">\(t_\nu(p)\)</span> such that:
+$<span class="math notranslate nohighlight">\(P(T \leq t_\nu(p)) = p\)</span>$</p>
+<p><strong>Numerical values</strong> for <span class="math notranslate nohighlight">\(p = 0.90\)</span>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><span class="math notranslate nohighlight">\(\nu\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(t_\nu(0.90)\)</span></p></th>
+<th class="head"><p>Ratio to <span class="math notranslate nohighlight">\(z_{0.90}\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>3.078</p></td>
+<td><p>2.40</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>1.886</p></td>
+<td><p>1.47</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>1.476</p></td>
+<td><p>1.15</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>1.372</p></td>
+<td><p>1.07</p></td>
+</tr>
+<tr class="row-even"><td><p>30</p></td>
+<td><p>1.310</p></td>
+<td><p>1.02</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\infty\)</span></p></td>
+<td><p>1.282</p></td>
+<td><p>1.00</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Observation</strong>: Small degrees of freedom (<span class="math notranslate nohighlight">\(\nu &lt; 5\)</span>) significantly increase the exploration bonus.</p>
+</section>
+<section id="why-student-t-matters-for-exploration">
+<h3>3.3 Why Student-t Matters for Exploration<a class="headerlink" href="#why-student-t-matters-for-exploration" title="Link to this heading">#</a></h3>
+<p><strong>Theorem 3.1 (Exploration Bonus Ratio)</strong>: For fixed percentile <span class="math notranslate nohighlight">\(p &gt; 0.5\)</span>, the ratio of Student-t to normal quantile satisfies:
+$<span class="math notranslate nohighlight">\(\frac{t_\nu(p)}{z_p} \geq 1\)</span>$</p>
+<p>with equality only as <span class="math notranslate nohighlight">\(\nu \to \infty\)</span>.</p>
+<p><strong>Implication</strong>: Under-explored arms (small <span class="math notranslate nohighlight">\(n\)</span>, hence small <span class="math notranslate nohighlight">\(\nu\)</span>) receive larger exploration bonuses than the normal approximation would suggest.</p>
+<p><strong>Derivation of Asymptotic Expansion</strong>: For large <span class="math notranslate nohighlight">\(\nu\)</span>:
+$<span class="math notranslate nohighlight">\(t_\nu(p) \approx z_p + \frac{z_p^3 + z_p}{4\nu} + O(\nu^{-2})\)</span>$</p>
+<p>The second term is always positive for <span class="math notranslate nohighlight">\(z_p &gt; 0\)</span>, confirming the heavier tails.</p>
+</section>
+</section>
+<section id="integration-with-cats">
+<h2>4. Integration with CATS<a class="headerlink" href="#integration-with-cats" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p><strong>📖 Reference</strong>: This section summarizes CATS integration for Bayes-UCB. For complete derivations of criticality, progressive weight, temperature multipliers, and the relationship between thermal cycling and CATS, see <strong><a class="reference internal" href="thompson_sampling_equations.html#component-aware-thompson-sampling-cats"><span class="std std-ref">thompson_sampling_equations.md, Sections 5.0-5.6</span></a></strong>.</p>
+</div></blockquote>
+<section id="component-criticality-in-bayes-ucb-context">
+<h3>4.1 Component Criticality in Bayes-UCB Context<a class="headerlink" href="#component-criticality-in-bayes-ucb-context" title="Link to this heading">#</a></h3>
+<p>CATS (Component-Aware Thompson Sampling) extends Bayes-UCB by modulating the percentile level based on component criticality.</p>
+<p><strong>Recall</strong>: Component criticality <span class="math notranslate nohighlight">\(\kappa_c\)</span> measures posterior concentration using z-score softmax with IPR (see <a class="reference internal" href="thompson_sampling_equations.html#component-criticality-via-z-score-softmax-with-ipr"><span class="std std-ref">thompson_sampling_equations.md, Section 5.1</span></a> for full derivation):</p>
+<div class="math notranslate nohighlight">
+\[z_{c,i} = \frac{\mu_{c,i} - \bar{\mu}_c}{\sigma_{\mu,c}} \cdot \lambda_c \cdot \text{sharpening}\]</div>
+<div class="math notranslate nohighlight">
+\[p_{c,i} = \text{softmax}(z_{c,i}), \qquad \text{IPR}_c = \sum_i p_{c,i}^2, \qquad \kappa_c = 1 - \frac{1/\text{IPR}_c}{n_c}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\lambda_c\)</span> is the SNR dampening factor and sharpening = <span class="math notranslate nohighlight">\(\sqrt{\ln n_c}\)</span> (IPR mode with N-adaptive sharpening).</p>
+</section>
+<section id="percentile-as-exploration-control">
+<h3>4.2 Percentile as Exploration Control<a class="headerlink" href="#percentile-as-exploration-control" title="Link to this heading">#</a></h3>
+<p>In RWS, temperature controls exploration. In Bayes-UCB, <strong>percentile</strong> serves the analogous role:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Effect on Exploration</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(p \to 1\)</span></p></td>
+<td><p>Wide confidence bounds → More exploration</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(p \to 0.5\)</span></p></td>
+<td><p>Tight confidence bounds → More exploitation</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Mathematical Relationship</strong>:
+$<span class="math notranslate nohighlight">\(\lim_{p \to 1} t_\nu(p) = +\infty \quad \text{(infinite exploration bonus)}\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(t_\nu(0.5) = 0 \quad \text{(no exploration bonus)}\)</span>$</p>
+</section>
+<section id="cats-multiplier-for-percentiles">
+<h3>4.3 CATS Multiplier for Percentiles<a class="headerlink" href="#cats-multiplier-for-percentiles" title="Link to this heading">#</a></h3>
+<p><strong>Definition 4.1 (CATS Percentile Multiplier)</strong>: Analogous to temperature multipliers:
+$<span class="math notranslate nohighlight">\(m_{\max} = \frac{p_{\text{high}}}{p_{\text{low}}}\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(m_{\min} = \frac{p_{\text{low}}}{p_{\text{high}}}\)</span>$</p>
+<p><strong>Relative Neutral-Point Mapping</strong> (see <a class="reference internal" href="thompson_sampling_equations.html#relative-neutral-point-multiplier"><span class="std std-ref">thompson_sampling_equations.md, Section 5.2.2</span></a>):</p>
+<p>Let <span class="math notranslate nohighlight">\(\bar{\kappa}\)</span> be the mean criticality across components:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}m_c = \begin{cases}
+m_{\max} + \frac{\kappa_c}{\bar{\kappa}} \cdot (1 - m_{\max}) &amp; \text{if } \kappa_c \leq \bar{\kappa} \\[6pt]
+1 + \frac{\kappa_c - \bar{\kappa}}{1 - \bar{\kappa}} \cdot (m_{\min} - 1) &amp; \text{if } \kappa_c &gt; \bar{\kappa}
+\end{cases}\end{split}\]</div>
+<p><strong>Behavior</strong>:</p>
+<ul class="simple">
+<li><p>Flexible component (<span class="math notranslate nohighlight">\(\kappa_c &lt; \bar{\kappa}\)</span>): <span class="math notranslate nohighlight">\(m_c &gt; 1\)</span> → Higher percentile → More exploration</p></li>
+<li><p>Mean component (<span class="math notranslate nohighlight">\(\kappa_c = \bar{\kappa}\)</span>): <span class="math notranslate nohighlight">\(m_c = 1\)</span> → No adjustment (neutral)</p></li>
+<li><p>Critical component (<span class="math notranslate nohighlight">\(\kappa_c &gt; \bar{\kappa}\)</span>): <span class="math notranslate nohighlight">\(m_c &lt; 1\)</span> → Lower percentile → More exploitation</p></li>
+</ul>
+</section>
+<section id="progressive-blending">
+<h3>4.4 Progressive Blending<a class="headerlink" href="#progressive-blending" title="Link to this heading">#</a></h3>
+<p><strong>Definition 4.2 (Effective Multiplier)</strong>:
+$<span class="math notranslate nohighlight">\(m_c^{\text{eff}} = 1 + w(\gamma) \cdot (m_c - 1)\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(w(\gamma)\)</span> is the three-phase progressive weight:
+$<span class="math notranslate nohighlight">\(w(\gamma) = \begin{cases}
+0 &amp; \gamma &lt; 0.20 \\
+\frac{\gamma - 0.20}{0.40} &amp; 0.20 \leq \gamma &lt; 0.60 \\
+1 &amp; \gamma \geq 0.60
+\end{cases}\)</span>$</p>
+<p><strong>Derivation of Effective Percentile</strong>:
+$<span class="math notranslate nohighlight">\(p_c^{\text{eff}} = \min\left(p_c^{\text{base}} \cdot m_c^{\text{eff}}, 1\right)\)</span>$</p>
+<p>The clipping to 1 ensures valid percentile values.</p>
+</section>
+</section>
+<section id="percentile-based-thermal-cycling">
+<h2>5. Percentile-Based Thermal Cycling<a class="headerlink" href="#percentile-based-thermal-cycling" title="Link to this heading">#</a></h2>
+<section id="base-percentile-assignment">
+<h3>5.1 Base Percentile Assignment<a class="headerlink" href="#base-percentile-assignment" title="Link to this heading">#</a></h3>
+<p><strong>Definition 5.1 (Thermal Cycling Percentile)</strong>:
+$<span class="math notranslate nohighlight">\(p_c^{\text{base}} = \begin{cases}
+p_{\text{high}} &amp; \text{if } c = c_{\text{hot}} \\
+p_{\text{low}} &amp; \text{otherwise}
+\end{cases}\)</span>$</p>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(p_{\text{high}} = 0.90\)</span> (default): Heated component gets wider bounds</p></li>
+<li><p><span class="math notranslate nohighlight">\(p_{\text{low}} = 0.60\)</span> (default): Cooled components get tighter bounds</p></li>
+</ul>
+</section>
+<section id="component-rotation">
+<h3>5.2 Component Rotation<a class="headerlink" href="#component-rotation" title="Link to this heading">#</a></h3>
+<p>After each selection cycle, the heated component is selected using criticality-weighted probabilities (see <a class="reference internal" href="thompson_sampling_equations.html#criticality-weighted-component-rotation"><span class="std std-ref">thompson_sampling_equations.md, Section 5.4</span></a>):</p>
+<div class="math notranslate nohighlight">
+\[f_c = \max(1 - \kappa_c, 0.1), \qquad P(\text{heat } c) = \frac{f_c}{\sum_{c'} f_{c'}}, \qquad c_{\text{hot}} \sim \text{Categorical}(P)\]</div>
+<p>Flexible components receive the exploration bonus more frequently than critical ones.</p>
+</section>
+<section id="complete-effective-percentile-formula">
+<h3>5.3 Complete Effective Percentile Formula<a class="headerlink" href="#complete-effective-percentile-formula" title="Link to this heading">#</a></h3>
+<p>Combining all elements:</p>
+<p><strong>Theorem 5.1 (Effective Percentile)</strong>: The effective percentile for component <span class="math notranslate nohighlight">\(c\)</span> at iteration <span class="math notranslate nohighlight">\(t\)</span> is:
+$<span class="math notranslate nohighlight">\(p_c^{\text{eff}}(t) = \min\left(p_c^{\text{base}} \cdot \left[1 + w\left(\frac{t}{T}\right) \cdot (m_c - 1)\right], 1\right)\)</span>$</p>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(p_c^{\text{base}}\)</span> comes from thermal cycling</p></li>
+<li><p><span class="math notranslate nohighlight">\(w(\gamma)\)</span> is the progressive weight</p></li>
+<li><p><span class="math notranslate nohighlight">\(m_c\)</span> is the CATS multiplier based on criticality</p></li>
+</ul>
+</section>
+<section id="worked-example">
+<h3>5.4 Worked Example<a class="headerlink" href="#worked-example" title="Link to this heading">#</a></h3>
+<p><strong>Setup</strong>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(p_{\text{high}} = 0.90\)</span>, <span class="math notranslate nohighlight">\(p_{\text{low}} = 0.60\)</span></p></li>
+<li><p>Iteration <span class="math notranslate nohighlight">\(t = 4000\)</span>, <span class="math notranslate nohighlight">\(T = 10000\)</span> (<span class="math notranslate nohighlight">\(\gamma = 0.4\)</span>)</p></li>
+<li><p>Component 1 (acids): <span class="math notranslate nohighlight">\(\kappa_1 = 0.8\)</span> (critical), currently heated</p></li>
+<li><p>Component 2 (amines): <span class="math notranslate nohighlight">\(\kappa_2 = 0.2\)</span> (flexible), cooled</p></li>
+</ul>
+<p><strong>Derived parameters</strong>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(m_{\max} = 0.90/0.60 = 1.5\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(m_{\min} = 0.60/0.90 \approx 0.667\)</span></p></li>
+</ul>
+<p><strong>Progressive weight</strong>: <span class="math notranslate nohighlight">\(w(0.4) = (0.4 - 0.2)/0.4 = 0.5\)</span></p>
+<p><strong>For acids</strong> (heated, critical):</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(m_1 = 0.667 + (1.5 - 0.667)(1 - 0.8) = 0.667 + 0.167 = 0.833\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(m_1^{\text{eff}} = 1 + 0.5 \cdot (0.833 - 1) = 0.917\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(p_1^{\text{eff}} = 0.90 \times 0.917 = 0.825\)</span></p></li>
+</ul>
+<p><strong>For amines</strong> (cooled, flexible):</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(m_2 = 0.667 + (1.5 - 0.667)(1 - 0.2) = 0.667 + 0.667 = 1.333\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(m_2^{\text{eff}} = 1 + 0.5 \cdot (1.333 - 1) = 1.167\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(p_2^{\text{eff}} = 0.60 \times 1.167 = 0.70\)</span></p></li>
+</ul>
+<p><strong>Result</strong>:</p>
+<ul class="simple">
+<li><p>Acids: <span class="math notranslate nohighlight">\(p = 0.825\)</span> (reduced from 0.90 due to criticality)</p></li>
+<li><p>Amines: <span class="math notranslate nohighlight">\(p = 0.70\)</span> (increased from 0.60 due to flexibility)</p></li>
+</ul>
+</section>
+</section>
+<section id="complete-algorithm-specification">
+<h2>6. Complete Algorithm Specification<a class="headerlink" href="#complete-algorithm-specification" title="Link to this heading">#</a></h2>
+<section id="bayes-ucb-selection-algorithm">
+<h3>6.1 Bayes-UCB Selection Algorithm<a class="headerlink" href="#bayes-ucb-selection-algorithm" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Algorithm: BAYES-UCB WITH CATS
+─────────────────────────────────────────────────────────────────────
+Input: reagent_list, component_idx, current_cycle, total_cycles
+Output: selected_reagent_index
+
+1. BASE PERCENTILE (Thermal Cycling)
+   if component_idx == current_heated_component:
+       p_base ← p_high
+   else:
+       p_base ← p_low
+
+2. COMPONENT CRITICALITY (z-score softmax with IPR)
+   active ← [r for r in reagent_list if r.n_samples &gt; 0]
+   p25_obs ← percentile([r.n_samples for r in active], 25)
+   if p25_obs &lt; N_min:
+       κ ← 0.5  // neutral
+   else:
+       means ← [r.mean for r in active]
+       if mode == "minimize": means ← -means
+       z ← (means - mean(means)) / std(means)
+       z ← z * SNR_dampening(active)     // suppress noise-dominated
+       z ← z * sqrt(log(len(active)))    // N-adaptive sharpening (IPR)
+       probs ← softmax(z)
+       IPR ← sum(probs²)
+       κ ← 1 - (1/IPR) / len(active)
+
+3. PROGRESSIVE WEIGHT
+   γ ← current_cycle / total_cycles
+   if γ &lt; 0.20:      w ← 0
+   elif γ &lt; 0.60:    w ← (γ - 0.20) / 0.40
+   else:             w ← 1
+
+4. CATS MULTIPLIER (relative neutral-point)
+   κ̄ ← mean_criticality  // cached from weighted rotation
+   if κ ≤ κ̄:
+       m ← m_max + (κ / κ̄) * (1 - m_max)
+   else:
+       m ← 1 + ((κ - κ̄) / (1 - κ̄)) * (m_min - 1)
+   m_eff ← 1 + w * (m - 1)
+
+5. EFFECTIVE PERCENTILE
+   p_eff ← clip(p_base * m_eff, 0, 1)
+
+6. COMPUTE UCB INDICES
+   for each reagent i:
+       μ_i, σ_i, n_i ← reagent_list[i].mean, .std, .n_samples
+       if n_i &lt; 2:
+           UCB_i ← μ_i + 3 * max(σ_i, 1e-6)  // conservative bonus
+       else:
+           ν_i ← n_i - 1
+           t_quantile ← StudentT.ppf(p_eff, ν_i)
+           UCB_i ← μ_i + σ_i * t_quantile / sqrt(n_i)
+
+7. APPLY DISALLOW MASK
+   if mode == "maximize":
+       UCB[disallowed] ← -∞
+   else:
+       UCB[disallowed] ← +∞
+
+8. SELECT
+   if mode == "maximize":
+       return argmax(UCB)
+   else:
+       return argmin(UCB)
+─────────────────────────────────────────────────────────────────────
+</pre></div>
+</div>
+</section>
+<section id="pseudocode-for-key-functions">
+<h3>6.2 Pseudocode for Key Functions<a class="headerlink" href="#pseudocode-for-key-functions" title="Link to this heading">#</a></h3>
+<p><strong>Criticality Calculation</strong> (z-score softmax with IPR):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">calculate_criticality</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">min_observations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                          <span class="n">criticality_metric</span><span class="o">=</span><span class="s2">"ipr"</span><span class="p">,</span> <span class="n">n_adaptive_sharpening</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Calculate component criticality using z-score softmax with</span>
+<span class="sd">    SNR dampening and IPR (or the earlier Shannon-entropy metric).</span>
+
+<span class="sd">    Returns criticality κ ∈ [0, 1]:</span>
+<span class="sd">        κ ≈ 0: Flexible (uniform posterior) → Explore</span>
+<span class="sd">        κ ≈ 1: Critical (peaked posterior) → Exploit</span>
+<span class="sd">    """</span>
+    <span class="n">active</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reagent_list</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">active</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.5</span>
+
+    <span class="c1"># p25 observation gating</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_observations</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.5</span>
+
+    <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"minimize"</span><span class="p">:</span>
+        <span class="n">means</span> <span class="o">=</span> <span class="o">-</span><span class="n">means</span>
+
+    <span class="c1"># Z-score normalization (scale-invariant)</span>
+    <span class="n">mean_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mean_std</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="n">z_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">means</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">means</span><span class="p">))</span> <span class="o">/</span> <span class="n">mean_std</span>
+
+    <span class="c1"># SNR dampening</span>
+    <span class="n">se_sq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active</span><span class="p">])</span>
+    <span class="n">noise_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">se_sq</span><span class="p">))</span>
+    <span class="n">snr</span> <span class="o">=</span> <span class="n">mean_std</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">noise_std</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">)</span>
+    <span class="n">z_scores</span> <span class="o">*=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="nb">max</span><span class="p">(</span><span class="n">snr</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+
+    <span class="c1"># N-adaptive sharpening (IPR mode only)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">active</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">criticality_metric</span> <span class="o">==</span> <span class="s2">"ipr"</span> <span class="ow">and</span> <span class="n">n_adaptive_sharpening</span> <span class="ow">and</span> <span class="n">N</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">z_scores</span> <span class="o">*=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)))</span>
+
+    <span class="c1"># Softmax with numerical stability</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z_scores</span> <span class="o">-</span> <span class="n">z_scores</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">probs</span> <span class="o">/=</span> <span class="n">probs</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">criticality_metric</span> <span class="o">==</span> <span class="s2">"ipr"</span><span class="p">:</span>
+        <span class="n">ipr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">ipr</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># shannon</span>
+        <span class="n">entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">probs</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">))</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">entropy</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>UCB Index Computation</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_ucb_indices</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">,</span> <span class="n">percentile</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"maximize"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Compute Bayes-UCB indices using Student-t quantiles.</span>
+
+<span class="sd">    UCB_i = μ_i + σ_i * t_{ν_i}(p) / √n_i</span>
+<span class="sd">    """</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">)</span>
+    <span class="n">ucb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Conservative bonus for under-explored</span>
+            <span class="n">bonus</span> <span class="o">=</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">)</span>
+            <span class="n">ucb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="o">+</span> <span class="n">bonus</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"maximize"</span> <span class="k">else</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="o">-</span> <span class="n">bonus</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">t_quantile</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">percentile</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+            <span class="n">bonus</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">std</span> <span class="o">*</span> <span class="n">t_quantile</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">n_samples</span><span class="p">)</span>
+            <span class="n">ucb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="o">+</span> <span class="n">bonus</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"maximize"</span> <span class="k">else</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="o">-</span> <span class="n">bonus</span>
+
+    <span class="k">return</span> <span class="n">ucb</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="regret-analysis">
+<h2>7. Regret Analysis<a class="headerlink" href="#regret-analysis" title="Link to this heading">#</a></h2>
+<section id="bayes-ucb-regret-bounds">
+<h3>7.1 Bayes-UCB Regret Bounds<a class="headerlink" href="#bayes-ucb-regret-bounds" title="Link to this heading">#</a></h3>
+<p><strong>Theorem 7.1 (Kaufmann et al., 2012)</strong>: Under appropriate conditions on the prior, Bayes-UCB achieves asymptotically optimal regret:
+$<span class="math notranslate nohighlight">\(R_T \sim \sum_{i: \Delta_i &gt; 0} \frac{\Delta_i}{\text{KL}(\mu_i, \mu^*)} \ln T\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(\text{KL}(\mu_i, \mu^*)\)</span> is the Kullback-Leibler divergence between the reward distributions.</p>
+</section>
+<section id="comparison-of-regret-bounds">
+<h3>7.2 Comparison of Regret Bounds<a class="headerlink" href="#comparison-of-regret-bounds" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Algorithm</p></th>
+<th class="head"><p>Regret Bound</p></th>
+<th class="head"><p>Optimality</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>UCB1</p></td>
+<td><p><span class="math notranslate nohighlight">\(O\left(\sum_i \frac{\ln T}{\Delta_i}\right)\)</span></p></td>
+<td><p>Order-optimal</p></td>
+</tr>
+<tr class="row-odd"><td><p>KL-UCB</p></td>
+<td><p><span class="math notranslate nohighlight">\(\sum_i \frac{\Delta_i}{\text{KL}(\mu_i, \mu^*)} \ln T + o(\ln T)\)</span></p></td>
+<td><p>Asymptotically optimal</p></td>
+</tr>
+<tr class="row-even"><td><p>Bayes-UCB</p></td>
+<td><p>Same as KL-UCB</p></td>
+<td><p>Asymptotically optimal</p></td>
+</tr>
+<tr class="row-odd"><td><p>Thompson Sampling</p></td>
+<td><p>Same as KL-UCB</p></td>
+<td><p>Asymptotically optimal</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Key Result</strong>: Bayes-UCB matches the theoretical optimality of Thompson Sampling while providing deterministic selection.</p>
+</section>
+<section id="finite-time-analysis">
+<h3>7.3 Finite-Time Analysis<a class="headerlink" href="#finite-time-analysis" title="Link to this heading">#</a></h3>
+<p><strong>Theorem 7.2</strong>: For Gaussian rewards with known variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>, Bayes-UCB with quantile <span class="math notranslate nohighlight">\(1 - 1/t\)</span> achieves:
+$<span class="math notranslate nohighlight">\(\mathbb{E}[R_T] \leq O\left(\sqrt{KT \ln T}\right)\)</span>$</p>
+<p>This matches the minimax lower bound up to logarithmic factors.</p>
+</section>
+</section>
+<section id="comparison-with-alternative-strategies">
+<h2>8. Comparison with Alternative Strategies<a class="headerlink" href="#comparison-with-alternative-strategies" title="Link to this heading">#</a></h2>
+<section id="bayes-ucb-vs-roulette-wheel-selection">
+<h3>8.1 Bayes-UCB vs Roulette Wheel Selection<a class="headerlink" href="#bayes-ucb-vs-roulette-wheel-selection" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Aspect</p></th>
+<th class="head"><p>Bayes-UCB</p></th>
+<th class="head"><p>RWS</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Selection mechanism</strong></p></td>
+<td><p>Argmax on UCB indices</p></td>
+<td><p>Probabilistic (roulette)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Exploration control</strong></p></td>
+<td><p>Percentile level</p></td>
+<td><p>Temperature</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Stochasticity</strong></p></td>
+<td><p>Deterministic</p></td>
+<td><p>Stochastic</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Theoretical guarantees</strong></p></td>
+<td><p>Regret bounds</p></td>
+<td><p>Empirical</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>CATS integration</strong></p></td>
+<td><p>Percentile multiplier</p></td>
+<td><p>Temperature multiplier</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Computational cost</strong></p></td>
+<td><p>Higher (t-quantiles)</p></td>
+<td><p>Lower (exponentials)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Mathematical Relationship</strong>:</p>
+<p>RWS selection probability:
+$<span class="math notranslate nohighlight">\(P_{\text{RWS}}(i) = \frac{\exp(s_i / T)}{\sum_j \exp(s_j / T)}\)</span>$</p>
+<p>Bayes-UCB implicit probability (via argmax):
+$<span class="math notranslate nohighlight">\(P_{\text{UCB}}(i) = \mathbb{1}\left[i = \arg\max_j \text{UCB}_j\right]\)</span>$</p>
+</section>
+<section id="bayes-ucb-vs-standard-ucb">
+<h3>8.2 Bayes-UCB vs Standard UCB<a class="headerlink" href="#bayes-ucb-vs-standard-ucb" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Aspect</p></th>
+<th class="head"><p>Bayes-UCB</p></th>
+<th class="head"><p>Standard UCB</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Uncertainty model</strong></p></td>
+<td><p>Posterior distribution</p></td>
+<td><p>Concentration inequality</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Exploration bonus</strong></p></td>
+<td><p><span class="math notranslate nohighlight">\(\sigma_i t_\nu(p) / \sqrt{n_i}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(c\sqrt{\ln(t)/n_i}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Small sample handling</strong></p></td>
+<td><p>Heavy-tailed (Student-t)</p></td>
+<td><p>May over-exploit</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Variance treatment</strong></p></td>
+<td><p>Estimated from data</p></td>
+<td><p>Assumed bounded</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Prior incorporation</strong></p></td>
+<td><p>Natural</p></td>
+<td><p>Difficult</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>When Bayes-UCB is Preferred</strong>:</p>
+<ol class="arabic simple">
+<li><p>Variance differs across arms</p></li>
+<li><p>Prior information is available</p></li>
+<li><p>Small sample sizes are common</p></li>
+<li><p>Deterministic selection is desired</p></li>
+</ol>
+</section>
+<section id="bayes-ucb-vs-thompson-sampling">
+<h3>8.3 Bayes-UCB vs Thompson Sampling<a class="headerlink" href="#bayes-ucb-vs-thompson-sampling" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Aspect</p></th>
+<th class="head"><p>Bayes-UCB</p></th>
+<th class="head"><p>Thompson Sampling</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Core idea</strong></p></td>
+<td><p>Optimism (upper bound)</p></td>
+<td><p>Probability matching</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Selection</strong></p></td>
+<td><p>Argmax on UCB</p></td>
+<td><p>Argmax on samples</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Exploration source</strong></p></td>
+<td><p>Explicit (percentile)</p></td>
+<td><p>Implicit (posterior)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Reproducibility</strong></p></td>
+<td><p>Deterministic</p></td>
+<td><p>Stochastic</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Computational cost</strong></p></td>
+<td><p>Similar</p></td>
+<td><p>Similar</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Theoretical guarantees</strong></p></td>
+<td><p>Both asymptotically optimal</p></td>
+<td><p>Both asymptotically optimal</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Theorem 8.1 (Equivalence in Limit)</strong>: As the percentile <span class="math notranslate nohighlight">\(p \to 1\)</span> and sample size <span class="math notranslate nohighlight">\(n \to \infty\)</span>, Bayes-UCB and Thompson Sampling become equivalent in their selection probabilities.</p>
+</section>
+</section>
+<section id="practical-considerations">
+<h2>9. Practical Considerations<a class="headerlink" href="#practical-considerations" title="Link to this heading">#</a></h2>
+<section id="parameter-selection-guidelines">
+<h3>9.1 Parameter Selection Guidelines<a class="headerlink" href="#parameter-selection-guidelines" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Range</p></th>
+<th class="head"><p>Guidance</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(p_{\text{high}}\)</span></p></td>
+<td><p>0.90</p></td>
+<td><p>[0.7, 0.99]</p></td>
+<td><p>Higher = more exploration when heated</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(p_{\text{low}}\)</span></p></td>
+<td><p>0.60</p></td>
+<td><p>[0.5, 0.85]</p></td>
+<td><p>Higher = more exploration when cooled</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(N_{\min}\)</span></p></td>
+<td><p>5</p></td>
+<td><p>[3, 10]</p></td>
+<td><p>Minimum observations for criticality</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\gamma_1\)</span></p></td>
+<td><p>0.20</p></td>
+<td><p>[0.10, 0.30]</p></td>
+<td><p>End of pure exploration</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\gamma_2\)</span></p></td>
+<td><p>0.60</p></td>
+<td><p>[0.40, 0.80]</p></td>
+<td><p>End of transition</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="computational-efficiency">
+<h3>9.2 Computational Efficiency<a class="headerlink" href="#computational-efficiency" title="Link to this heading">#</a></h3>
+<p><strong>Student-t quantile computation</strong>:</p>
+<ul class="simple">
+<li><p>For unique degrees of freedom, cache ppf values</p></li>
+<li><p>Group reagents by <span class="math notranslate nohighlight">\(n_i\)</span> to minimize ppf calls</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Efficient batch computation</span>
+<span class="n">unique_dfs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">n_samples</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">t_quantiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">unique_dfs</span><span class="p">:</span>
+    <span class="n">t_quantiles</span><span class="p">[</span><span class="n">df</span><span class="p">]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">percentile</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+
+<span class="c1"># Apply cached values</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">):</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">ucb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">std</span> <span class="o">*</span> <span class="n">t_quantiles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">n_samples</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="numerical-stability">
+<h3>9.3 Numerical Stability<a class="headerlink" href="#numerical-stability" title="Link to this heading">#</a></h3>
+<p><strong>Issue</strong>: Very small or very large posteriors can cause numerical issues.</p>
+<p><strong>Solutions</strong>:</p>
+<ol class="arabic simple">
+<li><p>Clamp standard deviation: <span class="math notranslate nohighlight">\(\sigma_i \geq 10^{-6}\)</span></p></li>
+<li><p>Clamp percentile: <span class="math notranslate nohighlight">\(p \in [0.01, 0.99]\)</span></p></li>
+<li><p>Use log-space for extreme values</p></li>
+</ol>
+</section>
+<section id="batch-selection">
+<h3>9.4 Batch Selection<a class="headerlink" href="#batch-selection" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>⚠️ CRITICAL WARNING: Bayes-UCB Batch Selection is DETERMINISTIC</strong></p>
+<p>Unlike Roulette Wheel Selection (which samples probabilistically), Bayes-UCB uses <code class="docutils literal notranslate"><span class="pre">argmax</span></code> and will return <strong>the same reagent every time</strong> given identical posteriors and CATS state.</p>
+<p><strong>Implications</strong>:</p>
+<ul class="simple">
+<li><p>Calling <code class="docutils literal notranslate"><span class="pre">select_reagent()</span></code> <span class="math notranslate nohighlight">\(B\)</span> times returns the <strong>same reagent</strong> <span class="math notranslate nohighlight">\(B\)</span> times</p></li>
+<li><p>For diverse batch selection, you <strong>MUST</strong> use <code class="docutils literal notranslate"><span class="pre">DisallowTracker</span></code> to exclude already-selected reagents</p></li>
+<li><p>Alternatively, consider using RWS for batch mode if diversity without tracking is desired</p></li>
+</ul>
+</div></blockquote>
+<p>For batch selection (selecting <span class="math notranslate nohighlight">\(B\)</span> reagents simultaneously):</p>
+<p><strong>Correct approach with DisallowTracker</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">selected</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+    <span class="c1"># DisallowTracker updates mask after each selection</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">strategy</span><span class="o">.</span><span class="n">select_reagent</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">,</span> <span class="n">disallow_mask</span><span class="o">=</span><span class="n">tracker</span><span class="o">.</span><span class="n">get_mask</span><span class="p">())</span>
+    <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+    <span class="n">tracker</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>  <span class="c1"># Prevents re-selection</span>
+<span class="k">return</span> <span class="n">selected</span>
+</pre></div>
+</div>
+<p><strong>Simple approach (only for ranking, not diverse selection)</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">ucb_indices</span><span class="p">)[</span><span class="o">-</span><span class="n">B</span><span class="p">:]</span>  <span class="c1"># Top B for maximize - BUT may have duplicates in meaning</span>
+</pre></div>
+</div>
+<p><strong>When to use which strategy for batches</strong>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Recommended Strategy</p></th>
+<th class="head"><p>Reason</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Diverse batch needed</p></td>
+<td><p>RWS or Bayes-UCB + DisallowTracker</p></td>
+<td><p>Determinism requires explicit exclusion</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ranking top reagents</p></td>
+<td><p>Bayes-UCB without DisallowTracker</p></td>
+<td><p>Determinism is actually desirable</p></td>
+</tr>
+<tr class="row-even"><td><p>Parallel evaluation</p></td>
+<td><p>RWS with batch sampling</p></td>
+<td><p>Natural diversity from stochasticity</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="tunable-parameters-reference">
+<h2>10. Tunable Parameters Reference<a class="headerlink" href="#tunable-parameters-reference" title="Link to this heading">#</a></h2>
+<p>This section provides a complete reference for all tunable parameters specific to the Bayes-UCB selection strategy.</p>
+<section id="bayes-ucb-configuration">
+<h3>10.1 Bayes-UCB Configuration<a class="headerlink" href="#bayes-ucb-configuration" title="Link to this heading">#</a></h3>
+<p><strong>Class</strong>: <code class="docutils literal notranslate"><span class="pre">BayesUCBConfig</span></code></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Range</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mode</span></code></p></td>
+<td><p>str</p></td>
+<td><p>“maximize”</p></td>
+<td><p>“maximize”, “minimize”</p></td>
+<td><p>Optimization direction</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">initial_p_high</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.90</p></td>
+<td><p>[0.5, 0.999]</p></td>
+<td><p>Base percentile for <strong>heated</strong> component (wider bounds)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">initial_p_low</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.60</p></td>
+<td><p>[0.5, 0.999]</p></td>
+<td><p>Base percentile for <strong>cooled</strong> components (tighter bounds)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cats_exploration_fraction</span></code></p></td>
+<td><p>float</p></td>
+<td><p>0.3</p></td>
+<td><p>[0, 1] or None</p></td>
+<td><p>Fraction of cycles during which CATS acts at full strength; afterwards its influence decays linearly while criticality stays low. <code class="docutils literal notranslate"><span class="pre">None</span></code> disables the decay</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">min_observations</span></code></p></td>
+<td><p>int</p></td>
+<td><p>5</p></td>
+<td><p>&gt; 0</p></td>
+<td><p>Minimum observations per reagent before trusting criticality</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">criticality_metric</span></code></p></td>
+<td><p>str</p></td>
+<td><p>“ipr”</p></td>
+<td><p>“ipr”, “shannon”</p></td>
+<td><p>Criticality metric: IPR (default, recommended) or the earlier Shannon entropy</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">n_adaptive_sharpening</span></code></p></td>
+<td><p>bool</p></td>
+<td><p>True</p></td>
+<td><p>True/False</p></td>
+<td><p>Apply <span class="math notranslate nohighlight">\(\sqrt{\ln N}\)</span> sharpening to z-scores before softmax (IPR mode only)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="percentile-vs-temperature-analogy">
+<h3>10.2 Percentile vs Temperature Analogy<a class="headerlink" href="#percentile-vs-temperature-analogy" title="Link to this heading">#</a></h3>
+<p>In Bayes-UCB, <strong>percentile</strong> plays the role that <strong>temperature</strong> plays in RWS:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>RWS Parameter</p></th>
+<th class="head"><p>Bayes-UCB Equivalent</p></th>
+<th class="head"><p>Effect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code> (high temp)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">initial_p_high</span></code></p></td>
+<td><p>More exploration when heated</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">beta</span></code> (low temp)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">initial_p_low</span></code></p></td>
+<td><p>Less exploration when cooled</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">alpha/beta</span></code> ratio</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">p_high/p_low</span></code> ratio</p></td>
+<td><p>CATS multiplier range</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Key Difference</strong>:</p>
+<ul class="simple">
+<li><p>RWS temperature affects the <strong>softmax distribution</strong> (stochastic selection)</p></li>
+<li><p>Bayes-UCB percentile affects the <strong>UCB index</strong> (deterministic argmax selection)</p></li>
+</ul>
+</section>
+<section id="parameter-effects">
+<h3>10.3 Parameter Effects<a class="headerlink" href="#parameter-effects" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Increase Effect</p></th>
+<th class="head"><p>Decrease Effect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">initial_p_high</span></code></p></td>
+<td><p>Wider confidence bounds when heated → more exploration</p></td>
+<td><p>Tighter bounds → less exploration</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">initial_p_low</span></code></p></td>
+<td><p>More exploration even when cooled</p></td>
+<td><p>Stronger exploitation when cooled</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">p_high/p_low</span></code> ratio</p></td>
+<td><p>Larger CATS adjustment range</p></td>
+<td><p>Smaller CATS adjustment range</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cats_exploration_fraction</span></code></p></td>
+<td><p>CATS acts at full strength for longer</p></td>
+<td><p>CATS influence starts decaying earlier</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">min_observations</span></code></p></td>
+<td><p>More conservative criticality estimates</p></td>
+<td><p>Earlier (potentially noisier) criticality</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="recommended-configurations">
+<h3>10.4 Recommended Configurations<a class="headerlink" href="#recommended-configurations" title="Link to this heading">#</a></h3>
+<p><strong>Default (Balanced)</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesUCBConfig</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">BayesUCBConfig</span><span class="p">(</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">"minimize"</span><span class="p">,</span>               <span class="c1"># For docking scores</span>
+    <span class="n">initial_p_high</span><span class="o">=</span><span class="mf">0.90</span><span class="p">,</span>           <span class="c1"># 90th percentile when heated</span>
+    <span class="n">initial_p_low</span><span class="o">=</span><span class="mf">0.60</span><span class="p">,</span>            <span class="c1"># 60th percentile when cooled</span>
+    <span class="n">cats_exploration_fraction</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="c1"># full-strength CATS for the first 30% of cycles</span>
+    <span class="n">min_observations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Aggressive Exploration</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">BayesUCBConfig</span><span class="p">(</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">"minimize"</span><span class="p">,</span>
+    <span class="n">initial_p_high</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>           <span class="c1"># Very wide bounds when heated</span>
+    <span class="n">initial_p_low</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span>            <span class="c1"># Still some exploration when cooled</span>
+    <span class="n">cats_exploration_fraction</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="c1"># full-strength CATS for longer</span>
+    <span class="n">min_observations</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Fast Convergence</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">BayesUCBConfig</span><span class="p">(</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">"minimize"</span><span class="p">,</span>
+    <span class="n">initial_p_high</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span>           <span class="c1"># Moderate exploration</span>
+    <span class="n">initial_p_low</span><span class="o">=</span><span class="mf">0.55</span><span class="p">,</span>            <span class="c1"># Exploitation-focused</span>
+    <span class="n">cats_exploration_fraction</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="c1"># let CATS influence decay early</span>
+    <span class="n">min_observations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="cats-multiplier-range-computation">
+<h3>10.5 CATS Multiplier Range Computation<a class="headerlink" href="#cats-multiplier-range-computation" title="Link to this heading">#</a></h3>
+<p>The CATS multiplier range is derived from the percentile ratio:</p>
+<div class="math notranslate nohighlight">
+\[m_{\max} = \frac{p_{\text{high}}}{p_{\text{low}}}\]</div>
+<div class="math notranslate nohighlight">
+\[m_{\min} = \frac{p_{\text{low}}}{p_{\text{high}}}\]</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>p_high</p></th>
+<th class="head"><p>p_low</p></th>
+<th class="head"><p>m_max</p></th>
+<th class="head"><p>m_min</p></th>
+<th class="head"><p>Range</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.90</p></td>
+<td><p>0.60</p></td>
+<td><p>1.50</p></td>
+<td><p>0.67</p></td>
+<td><p>0.83</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.95</p></td>
+<td><p>0.55</p></td>
+<td><p>1.73</p></td>
+<td><p>0.58</p></td>
+<td><p>1.15</p></td>
+</tr>
+<tr class="row-even"><td><p>0.85</p></td>
+<td><p>0.65</p></td>
+<td><p>1.31</p></td>
+<td><p>0.76</p></td>
+<td><p>0.55</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.99</p></td>
+<td><p>0.50</p></td>
+<td><p>1.98</p></td>
+<td><p>0.51</p></td>
+<td><p>1.47</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Interpretation</strong>: Larger range = CATS has more ability to adjust exploration based on criticality.</p>
+</section>
+<section id="comparison-with-rws-parameters">
+<h3>10.6 Comparison with RWS Parameters<a class="headerlink" href="#comparison-with-rws-parameters" title="Link to this heading">#</a></h3>
+<p>If you’re familiar with RWS and want equivalent Bayes-UCB settings:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>RWS Setting</p></th>
+<th class="head"><p>Equivalent Bayes-UCB</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">alpha=0.10,</span> <span class="pre">beta=0.05</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">p_high=0.90,</span> <span class="pre">p_low=0.60</span></code> (default)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">alpha=0.15,</span> <span class="pre">beta=0.05</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">p_high=0.95,</span> <span class="pre">p_low=0.55</span></code> (more exploration)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">alpha=0.08,</span> <span class="pre">beta=0.04</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">p_high=0.85,</span> <span class="pre">p_low=0.65</span></code> (less exploration)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="when-to-choose-bayes-ucb-vs-rws">
+<h3>10.7 When to Choose Bayes-UCB vs RWS<a class="headerlink" href="#when-to-choose-bayes-ucb-vs-rws" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Recommended Strategy</p></th>
+<th class="head"><p>Reason</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Deterministic results needed</p></td>
+<td><p>Bayes-UCB</p></td>
+<td><p>Argmax is reproducible</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parallel batch evaluation</p></td>
+<td><p>RWS</p></td>
+<td><p>Natural diversity from stochasticity</p></td>
+</tr>
+<tr class="row-even"><td><p>Small sample sizes</p></td>
+<td><p>Bayes-UCB</p></td>
+<td><p>Student-t handles uncertainty better</p></td>
+</tr>
+<tr class="row-odd"><td><p>Fast screening</p></td>
+<td><p>RWS</p></td>
+<td><p>Slightly faster computation</p></td>
+</tr>
+<tr class="row-even"><td><p>Theoretical guarantees needed</p></td>
+<td><p>Bayes-UCB</p></td>
+<td><p>Has regret bounds</p></td>
+</tr>
+<tr class="row-odd"><td><p>Large batches without DisallowTracker</p></td>
+<td><p>RWS</p></td>
+<td><p>Bayes-UCB would pick same reagent repeatedly</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="references">
+<h2>11. References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Kaufmann, E., Cappé, O., &amp; Garivier, A. (2012). On Bayesian Upper Confidence Bounds for Bandit Problems. <em>AISTATS 2012</em>.</p></li>
+<li><p>Auer, P., Cesa-Bianchi, N., &amp; Fischer, P. (2002). Finite-time Analysis of the Multiarmed Bandit Problem. <em>Machine Learning</em>, 47(2-3), 235-256.</p></li>
+<li><p>Russo, D. J., Van Roy, B., Kazerouni, A., Osband, I., &amp; Wen, Z. (2018). A Tutorial on Thompson Sampling. <em>Foundations and Trends in Machine Learning</em>, 11(1), 1-96.</p></li>
+<li><p>Agrawal, S., &amp; Goyal, N. (2012). Analysis of Thompson Sampling for the Multi-armed Bandit Problem. <em>COLT 2012</em>.</p></li>
+<li><p>Chapelle, O., &amp; Li, L. (2011). An Empirical Evaluation of Thompson Sampling. <em>NeurIPS 2011</em>.</p></li>
+<li><p>Zhao, H., Nittinger, E., &amp; Tyrchan, C. (2024). Enhanced Thompson Sampling by Roulette Wheel Selection for Screening Ultra-Large Combinatorial Libraries. <em>bioRxiv</em> 2024.05.16.594622.</p></li>
+<li><p>Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., &amp; Rubin, D. B. (2013). <em>Bayesian Data Analysis</em> (3rd ed.). CRC Press.</p></li>
+</ol>
+<p><em>Document Version: 3.0</em>
+<em>Last Updated: March 2026</em>
+<em>Authors: TACTICS Development Team</em></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="thompson_sampling_equations.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Mathematical Foundations of Thompson Sampling in TACTICS</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="search_performance_metrics.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Search Performance Metrics for TACTICS</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#abstract">Abstract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-background">1. Theoretical Background</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-multi-armed-bandit-framework">1.1 The Multi-Armed Bandit Framework</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-frequentist-to-bayesian-ucb">1.2 From Frequentist to Bayesian UCB</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#classical-ucb1-auer-et-al-2002">Classical UCB1 (Auer et al., 2002)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations-of-classical-ucb">Limitations of Classical UCB</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayesian-perspective">1.3 Bayesian Perspective</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derivation-of-bayes-ucb">2. Derivation of Bayes-UCB</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#normal-normal-model-with-unknown-variance">2.1 Normal-Normal Model with Unknown Variance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-distribution">2.2 Posterior Distribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-ucb-index-definition">2.3 Bayes-UCB Index Definition</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#note-on-the-sqrt-n-i-scaling-factor">2.3.1 Note on the <span class="math notranslate nohighlight">\(\sqrt{n_i}\)</span> Scaling Factor</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#properties-of-the-bayes-ucb-index">2.4 Properties of the Bayes-UCB Index</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#under-explored-reagent-handling">2.5 Under-Explored Reagent Handling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#student-t-distribution-in-bayesian-inference">3. Student-t Distribution in Bayesian Inference</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definition-and-properties">3.1 Definition and Properties</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quantile-function">3.2 Quantile Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-student-t-matters-for-exploration">3.3 Why Student-t Matters for Exploration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integration-with-cats">4. Integration with CATS</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#component-criticality-in-bayes-ucb-context">4.1 Component Criticality in Bayes-UCB Context</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#percentile-as-exploration-control">4.2 Percentile as Exploration Control</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cats-multiplier-for-percentiles">4.3 CATS Multiplier for Percentiles</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#progressive-blending">4.4 Progressive Blending</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#percentile-based-thermal-cycling">5. Percentile-Based Thermal Cycling</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#base-percentile-assignment">5.1 Base Percentile Assignment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#component-rotation">5.2 Component Rotation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-effective-percentile-formula">5.3 Complete Effective Percentile Formula</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#worked-example">5.4 Worked Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-algorithm-specification">6. Complete Algorithm Specification</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-ucb-selection-algorithm">6.1 Bayes-UCB Selection Algorithm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pseudocode-for-key-functions">6.2 Pseudocode for Key Functions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#regret-analysis">7. Regret Analysis</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-ucb-regret-bounds">7.1 Bayes-UCB Regret Bounds</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-of-regret-bounds">7.2 Comparison of Regret Bounds</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#finite-time-analysis">7.3 Finite-Time Analysis</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-with-alternative-strategies">8. Comparison with Alternative Strategies</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-ucb-vs-roulette-wheel-selection">8.1 Bayes-UCB vs Roulette Wheel Selection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-ucb-vs-standard-ucb">8.2 Bayes-UCB vs Standard UCB</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-ucb-vs-thompson-sampling">8.3 Bayes-UCB vs Thompson Sampling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-considerations">9. Practical Considerations</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-selection-guidelines">9.1 Parameter Selection Guidelines</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computational-efficiency">9.2 Computational Efficiency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-stability">9.3 Numerical Stability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-selection">9.4 Batch Selection</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tunable-parameters-reference">10. Tunable Parameters Reference</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-ucb-configuration">10.1 Bayes-UCB Configuration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#percentile-vs-temperature-analogy">10.2 Percentile vs Temperature Analogy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-effects">10.3 Parameter Effects</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recommended-configurations">10.4 Recommended Configurations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cats-multiplier-range-computation">10.5 CATS Multiplier Range Computation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-with-rws-parameters">10.6 Comparison with RWS Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-choose-bayes-ucb-vs-rws">10.7 When to Choose Bayes-UCB vs RWS</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">11. References</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/aakankschit/TACTICS/edit/main/docs/source/theory/bayesian_ucb_equations.md">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

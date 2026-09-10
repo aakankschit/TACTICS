@@ -1,0 +1,1514 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TACTICS.library_analysis.visualization &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/TACTICS/library_analysis/visualization';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../../../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">TACTICS.library_analysis.visualization</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for TACTICS.library_analysis.visualization</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Altair benchmark visualisations for Thompson Sampling recovery runs.</span>
+
+<span class="sd">Requires the optional ``viz`` extra (``pip install chem-tactics[viz]``).</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">altair</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">alt</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">"altair is required for TS_Benchmarks: pip install 'chem-tactics[viz]'"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+
+<div class="viewcode-block" id="TS_Benchmarks">
+<a class="viewcode-back" href="../../../reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TS_Benchmarks</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    A class to generate visualizations of TS results. The goal here is to compare different cycles of TS runs with the same search strategy.</span>
+<span class="sd">    This is mainly used to compare different search strategies to ground truth values.</span>
+<span class="sd">    Each search strategy is used a no of times equal to the number of cycles.</span>
+<span class="sd">    It is recommended that random baseline data and brute-force (exhaustive search) data be included for comparison.</span>
+<span class="sd">    Reference data is optional, but is required for generating the barplots. A strip plot can be generated without reference data for comparison of methods.</span>
+<span class="sd">    </span>
+<span class="sd">    All required data (TS runs data, bar plot data, line plot data, and grouped statistics) is automatically generated during initialization.</span>
+<span class="sd">    After creating an instance, you can directly call the plotting methods without additional data generation steps.</span>
+<span class="sd">    """</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">no_of_cycles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">methods_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">TS_runs_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> 
+                 <span class="n">reference_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> 
+                 <span class="n">sort_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"minimize"</span><span class="p">,</span> <span class="n">top_ns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize the TS_Benchmarks class and automatically generate all required data.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        no_of_cycles: int</span>
+<span class="sd">            Number of cycles to run</span>
+<span class="sd">        methods_list: List[str]</span>
+<span class="sd">            List of method names (Names of the search strategies used for TS runs)</span>
+<span class="sd">        TS_runs_data: Dict[str, list]</span>
+<span class="sd">            Dictionary of TS runs, where the keys are the method names and the values are lists of different TS instances</span>
+<span class="sd">        reference_data: Optional[pl.DataFrame]</span>
+<span class="sd">            Reference data to compare against, this is the ground truth data</span>
+<span class="sd">        top_n: int</span>
+<span class="sd">            Number of top products to consider for bar plot analysis (default: 100)</span>
+<span class="sd">        sort_type: str</span>
+<span class="sd">            Type of sorting to perform ("minimize" or "maximize", default: "minimize")</span>
+<span class="sd">        top_ns: Optional[List[int]]</span>
+<span class="sd">            List of top N values for line plot analysis (default: [50, 100, 200, 300, 400, 500])</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_of_cycles</span> <span class="o">=</span> <span class="n">no_of_cycles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span> <span class="o">=</span> <span class="n">methods_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TS_runs_data</span> <span class="o">=</span> <span class="n">TS_runs_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span> <span class="o">=</span> <span class="n">reference_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_n</span> <span class="o">=</span> <span class="n">top_n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sort_type</span> <span class="o">=</span> <span class="n">sort_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_ns</span> <span class="o">=</span> <span class="n">top_ns</span> <span class="k">if</span> <span class="n">top_ns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">]</span>
+        
+        <span class="c1"># Automatically generate all required data during initialization</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"🔄 Initializing TS_Benchmarks and generating data..."</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generate_all_data</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_all_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Generate all required data for plotting during initialization.</span>
+<span class="sd">        This includes TS runs data, barplot data, and line plot performance data.</span>
+<span class="sd">        """</span>
+        <span class="c1"># Generate basic TS runs data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">combined_df_top_n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_df_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_TS_runs_data</span><span class="p">(</span>
+            <span class="n">top_n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">top_n</span><span class="p">,</span> <span class="n">sort_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sort_type</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># Generate barplot data if reference data is available</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bar_plot_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_barplot_TS_results_data</span><span class="p">(</span><span class="n">top_n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">top_n</span><span class="p">)</span>
+            
+            <span class="c1"># Generate line plot performance data and grouped statistics</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">line_plot_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_line_plot_performance_data</span><span class="p">(</span><span class="n">top_ns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">top_ns</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generate_line_plot_grouped_stats</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"⚠️  Reference data not provided - barplot and line plot data will not be generated"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bar_plot_df</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">line_plot_df</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grouped_stats</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Data generation completed! All plotting methods are now ready to use."</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_line_plot_grouped_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Generate grouped statistics for line plot with error bars.</span>
+<span class="sd">        This calculates mean, std, upper, and lower bounds across cycles for each method and top_n.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_plot_df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"⚠️  Line plot data not available - skipping grouped statistics generation"</span><span class="p">)</span>
+            <span class="k">return</span>
+        
+        <span class="c1"># Calculate mean and std across cycles for error bars</span>
+        <span class="n">grouped_stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_plot_df</span><span class="o">.</span><span class="n">group_by</span><span class="p">([</span><span class="s2">"method"</span><span class="p">,</span> <span class="s2">"top_n"</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"frac_top_n"</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"mean"</span><span class="p">),</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"frac_top_n"</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"std"</span><span class="p">),</span>  <span class="c1"># Use sample std with ddof=1</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"frac_top_n"</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"n_cycles"</span><span class="p">)</span>
+        <span class="p">])</span>
+        
+        <span class="c1"># Handle cases where we might have only 1 cycle (std would be null)</span>
+        <span class="n">grouped_stats</span> <span class="o">=</span> <span class="n">grouped_stats</span><span class="o">.</span><span class="n">with_columns</span><span class="p">([</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"std"</span><span class="p">)</span><span class="o">.</span><span class="n">fill_null</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="p">])</span>
+        
+        <span class="c1"># Add calculated upper and lower bounds for error bars</span>
+        <span class="n">grouped_stats</span> <span class="o">=</span> <span class="n">grouped_stats</span><span class="o">.</span><span class="n">with_columns</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"mean"</span><span class="p">)</span> <span class="o">+</span> <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"std"</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"upper"</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"mean"</span><span class="p">)</span> <span class="o">-</span> <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"std"</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"lower"</span><span class="p">)</span>
+        <span class="p">])</span>
+        
+        <span class="c1"># Store the grouped statistics and related data in the class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grouped_stats</span> <span class="o">=</span> <span class="n">grouped_stats</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unique_top_ns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">grouped_stats</span><span class="p">[</span><span class="s2">"top_n"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actual_methods</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">grouped_stats</span><span class="p">[</span><span class="s2">"method"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+        
+        <span class="c1"># Create cap data for error bars</span>
+        <span class="n">cap_width</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_top_ns</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_top_ns</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.015</span>  <span class="c1"># 1.5% of x-axis range</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grouped_stats_caps</span> <span class="o">=</span> <span class="n">grouped_stats</span><span class="o">.</span><span class="n">with_columns</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"top_n"</span><span class="p">)</span> <span class="o">-</span> <span class="n">cap_width</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"cap_left"</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"top_n"</span><span class="p">)</span> <span class="o">+</span> <span class="n">cap_width</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"cap_right"</span><span class="p">)</span>
+        <span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cap_width</span> <span class="o">=</span> <span class="n">cap_width</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"📊 Generated grouped statistics: </span><span class="si">{</span><span class="n">grouped_stats</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (mean, std, upper, lower)"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_color_scheme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_ref</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Generate a consistent color scheme for all plots.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        include_ref : bool</span>
+<span class="sd">            Whether to include 'ref' in the domain for reference data</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        alt.Scale</span>
+<span class="sd">            Altair color scale with consistent colors across all plots</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">include_ref</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">domain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span> <span class="o">+</span> <span class="p">[</span><span class="s2">"ref"</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">domain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span>
+            
+        <span class="k">return</span> <span class="n">alt</span><span class="o">.</span><span class="n">Scale</span><span class="p">(</span>
+            <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span>
+            <span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="s2">"#1f77b4"</span><span class="p">,</span> <span class="s2">"#ff7f0e"</span><span class="p">,</span> <span class="s2">"#2ca02c"</span><span class="p">,</span> <span class="s2">"#d62728"</span><span class="p">,</span> <span class="s2">"#9467bd"</span><span class="p">,</span> 
+                   <span class="s2">"#8c564b"</span><span class="p">,</span> <span class="s2">"#e377c2"</span><span class="p">,</span> <span class="s2">"#7f7f7f"</span><span class="p">,</span> <span class="s2">"#bcbd22"</span><span class="p">,</span> <span class="s2">"#17becf"</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">domain</span><span class="p">)]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="TS_Benchmarks.gen_TS_runs_data">
+<a class="viewcode-back" href="../../../reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.gen_TS_runs_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gen_TS_runs_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">sort_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"minimize"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Generates a single dataframe with all the TS runs data. This is a concatenated polars dataframe for each method</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        top_n: int</span>
+<span class="sd">            Number of top products to consider for each method</span>
+<span class="sd">        sort_type: str</span>
+<span class="sd">            Type of sorting to perform on the data</span>
+<span class="sd">            "minimize" - sorts the data in ascending order</span>
+<span class="sd">            "maximize" - sorts the data in descending order</span>
+
+<span class="sd">        """</span>
+        <span class="c1"># Initialize dictionary of dataframes</span>
+        <span class="n">all_ts_runs_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">all_ts_runs_data_top_n</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span><span class="p">:</span>
+            <span class="n">ts_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TS_runs_data</span><span class="p">[</span><span class="n">method</span><span class="p">]</span> <span class="c1"># Extract list of dataframes for each method</span>
+            <span class="n">method_dfs</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># List to collect dataframes for this method</span>
+            <span class="k">for</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_cycles</span><span class="p">):</span>
+                <span class="c1"># Use cycle-1 as index since Python lists are 0-indexed but cycles are 1-indexed</span>
+                <span class="n">ts_data_temp</span> <span class="o">=</span> <span class="n">ts_data</span><span class="p">[</span><span class="n">cycle</span><span class="p">]</span> <span class="c1"># Extract dataframe for each cycle</span>
+                <span class="c1"># Add cycle and method columns</span>
+                <span class="n">ts_data_temp</span> <span class="o">=</span> <span class="n">ts_data_temp</span><span class="o">.</span><span class="n">with_columns</span><span class="p">([</span>
+                    <span class="n">pl</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="n">method</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"method"</span><span class="p">),</span>
+                    <span class="n">pl</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cycle</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"cycle"</span><span class="p">)</span>
+                <span class="p">])</span>
+                <span class="c1"># Only drop SMILES if it exists</span>
+                <span class="k">if</span> <span class="s2">"SMILES"</span> <span class="ow">in</span> <span class="n">ts_data_temp</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="n">ts_data_temp</span> <span class="o">=</span> <span class="n">ts_data_temp</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"SMILES"</span><span class="p">)</span>
+                <span class="n">method_dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ts_data_temp</span><span class="p">)</span>
+                
+            <span class="c1"># Apply top_n filtering to each cycle separately - get top_n from EACH cycle</span>
+            <span class="k">if</span> <span class="n">sort_type</span> <span class="o">==</span> <span class="s2">"minimize"</span><span class="p">:</span>
+                <span class="c1"># This for the top n compounds found by each method</span>
+                <span class="n">method_dfs_filtered_top_n</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_n</span><span class="p">)</span> <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">method_dfs</span><span class="p">]</span>
+                <span class="c1"># This for all the compounds found by each method in each cycle</span>
+                <span class="n">method_dfs_filtered_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">method_dfs</span><span class="p">]</span>
+                <span class="c1"># Extract the top n compounds from the reference data</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ref_df_top_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_n</span><span class="p">)</span>
+                    <span class="n">ref_df_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># Use all reference data</span>
+            <span class="k">elif</span> <span class="n">sort_type</span> <span class="o">==</span> <span class="s2">"maximize"</span><span class="p">:</span>
+                <span class="c1"># This for the top n compounds found by each method</span>
+                <span class="n">method_dfs_filtered_top_n</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_n</span><span class="p">)</span> <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">method_dfs</span><span class="p">]</span>
+                <span class="c1"># This for all the compounds found by each method in each cycle</span>
+                <span class="n">method_dfs_filtered_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">method_dfs</span><span class="p">]</span>
+                <span class="c1"># Extract the top n compounds from the reference data</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ref_df_top_n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_n</span><span class="p">)</span>
+                    <span class="n">ref_df_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># Use all reference data</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid sort_type: </span><span class="si">{</span><span class="n">sort_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            
+            <span class="c1"># Concatenate the filtered cycles for this method</span>
+            <span class="n">ts_data_concat_top_n</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">method_dfs_filtered_top_n</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"vertical"</span><span class="p">)</span>
+            <span class="n">ts_data_concat_all</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">method_dfs_filtered_all</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"vertical"</span><span class="p">)</span>
+            <span class="n">all_ts_runs_data</span><span class="p">[</span><span class="n">method</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts_data_concat_all</span> <span class="c1"># Add to dictionary</span>
+            <span class="n">all_ts_runs_data_top_n</span><span class="p">[</span><span class="n">method</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts_data_concat_top_n</span> <span class="c1"># Add to dictionary</span>
+            
+            <span class="c1"># Track method statistics</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ts_data_concat_all</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">method_min</span> <span class="o">=</span> <span class="n">ts_data_concat_all</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+                <span class="n">method_max</span> <span class="o">=</span> <span class="n">ts_data_concat_all</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ts_data_concat_all</span><span class="p">)</span><span class="si">}</span><span class="s2"> compounds, score range: </span><span class="si">{</span><span class="n">method_min</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">method_max</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_ts_runs_data</span> <span class="o">=</span> <span class="n">all_ts_runs_data</span> <span class="c1"># Contains all the concatenated dataframes (by cycle) for each method</span>
+        
+        <span class="c1"># Combine all the dataframes into a single dataframe</span>
+        <span class="n">combined_df_top_n</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">all_ts_runs_data_top_n</span><span class="p">[</span><span class="n">method</span><span class="p">]</span> <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">"vertical"</span><span class="p">)</span>
+        <span class="n">combined_df_all</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">all_ts_runs_data</span><span class="p">[</span><span class="n">method</span><span class="p">]</span> <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">"vertical"</span><span class="p">)</span>
+        
+        <span class="c1"># Add reference data if provided</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Ensure reference data has proper cycle and method columns</span>
+            <span class="n">ref_df_top_n</span> <span class="o">=</span> <span class="n">ref_df_top_n</span><span class="o">.</span><span class="n">with_columns</span><span class="p">([</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="s2">"ref"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"method"</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="s2">"ref"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"cycle"</span><span class="p">)</span>  <span class="c1"># Reference data gets "ref" as cycle</span>
+            <span class="p">])</span>
+            <span class="c1"># Only drop SMILES if it exists</span>
+            <span class="k">if</span> <span class="s2">"SMILES"</span> <span class="ow">in</span> <span class="n">ref_df_top_n</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">ref_df_top_n</span> <span class="o">=</span> <span class="n">ref_df_top_n</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"SMILES"</span><span class="p">)</span>
+            
+            <span class="c1"># Process ref_df_all the same way as ref_df_top_n</span>
+            <span class="n">ref_df_all</span> <span class="o">=</span> <span class="n">ref_df_all</span><span class="o">.</span><span class="n">with_columns</span><span class="p">([</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="s2">"ref"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"method"</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="s2">"ref"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"cycle"</span><span class="p">)</span>  <span class="c1"># Reference data gets "ref" as cycle</span>
+            <span class="p">])</span>
+            <span class="c1"># Only drop SMILES if it exists</span>
+            <span class="k">if</span> <span class="s2">"SMILES"</span> <span class="ow">in</span> <span class="n">ref_df_all</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">ref_df_all</span> <span class="o">=</span> <span class="n">ref_df_all</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"SMILES"</span><span class="p">)</span>
+            
+            <span class="n">combined_df_top_n</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">combined_df_top_n</span><span class="p">,</span> <span class="n">ref_df_top_n</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">"vertical"</span><span class="p">)</span>
+            <span class="n">combined_df_all</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">combined_df_all</span><span class="p">,</span> <span class="n">ref_df_all</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">"vertical"</span><span class="p">)</span>
+        
+        <span class="c1"># Filter out any invalid cycles (should only be 1-10 or "ref")</span>
+        <span class="n">valid_cycles</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_cycles</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">"ref"</span><span class="p">]</span>
+        <span class="n">combined_df_top_n</span> <span class="o">=</span> <span class="n">combined_df_top_n</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"cycle"</span><span class="p">)</span><span class="o">.</span><span class="n">is_in</span><span class="p">(</span><span class="n">valid_cycles</span><span class="p">))</span>
+        <span class="n">combined_df_all</span> <span class="o">=</span> <span class="n">combined_df_all</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"cycle"</span><span class="p">)</span><span class="o">.</span><span class="n">is_in</span><span class="p">(</span><span class="n">valid_cycles</span><span class="p">))</span>
+        
+        <span class="c1"># Convert method to categorical</span>
+        <span class="n">combined_df_top_n</span> <span class="o">=</span> <span class="n">combined_df_top_n</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"method"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Categorical</span><span class="p">))</span>
+        <span class="n">combined_df_all</span> <span class="o">=</span> <span class="n">combined_df_all</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"method"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Categorical</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">combined_df_top_n</span> <span class="o">=</span> <span class="n">combined_df_top_n</span> <span class="c1"># Store the combined dataframe in the class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">combined_df_all</span> <span class="o">=</span> <span class="n">combined_df_all</span> <span class="c1"># Store the combined dataframe in the class</span>
+        
+        <span class="c1"># Print comprehensive summary</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">📊 Data Generation Summary:"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Top-N dataset: </span><span class="si">{</span><span class="n">combined_df_top_n</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (rows × columns)"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Complete dataset: </span><span class="si">{</span><span class="n">combined_df_all</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (rows × columns)"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Cycles analyzed: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">([</span><span class="n">c</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">combined_df_top_n</span><span class="p">[</span><span class="s1">'cycle'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">'ref'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Methods: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">([</span><span class="n">m</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">combined_df_top_n</span><span class="p">[</span><span class="s1">'method'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">'ref'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ref_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">combined_df_top_n</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"method"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"ref"</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Reference compounds included: </span><span class="si">{</span><span class="n">ref_count</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">combined_df_top_n</span><span class="p">,</span> <span class="n">combined_df_all</span></div>
+
+    
+<div class="viewcode-block" id="TS_Benchmarks.stripplot_TS_results">
+<a class="viewcode-back" href="../../../reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.stripplot_TS_results">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stripplot_TS_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="n">save_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                         <span class="n">legend_position</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"right"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Generate a stripplot for TS results using altair.</span>
+<span class="sd">        This visualizes the distribution of scores across cycles and methods.</span>
+<span class="sd">        Data is automatically generated during class initialization.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        width: Optional[int]</span>
+<span class="sd">            Width of the plot</span>
+<span class="sd">        height: Optional[int]</span>
+<span class="sd">            Height of the plot</span>
+<span class="sd">        save_path: Optional[str]</span>
+<span class="sd">            Path to save the plot</span>
+<span class="sd">        show_plot: bool</span>
+<span class="sd">            If True, shows the plot in Jupyter</span>
+<span class="sd">        legend_position: str</span>
+<span class="sd">            Position of the legend. "right" (default) or "bottom" for horizontal legend below plot.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        altair.Chart or None</span>
+<span class="sd">            The altair chart if show_plot is True, None otherwise</span>
+<span class="sd">        """</span>
+
+         <span class="c1"># Calculate dynamic dimensions if not provided</span>
+        <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="mi">400</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="mi">300</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span><span class="p">)</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+        
+        <span class="c1"># Calculate automatic y-axis scale based on data distribution</span>
+        <span class="n">score_min</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_df_top_n</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">score_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_df_top_n</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">score_range</span> <span class="o">=</span> <span class="n">score_max</span> <span class="o">-</span> <span class="n">score_min</span>
+        
+        <span class="c1"># Add 10% padding to both ends for better visualization</span>
+        <span class="n">y_min</span> <span class="o">=</span> <span class="n">score_min</span> <span class="o">-</span> <span class="p">(</span><span class="n">score_range</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">y_max</span> <span class="o">=</span> <span class="n">score_max</span> <span class="o">+</span> <span class="p">(</span><span class="n">score_range</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">)</span>
+        
+        <span class="c1"># Use the standardized color scheme for consistency across all plots</span>
+        <span class="n">color_scheme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_color_scheme</span><span class="p">(</span><span class="n">include_ref</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Generate proper sort order for cycles (1, 2, 3, ..., 10, ref) instead of lexicographic (1, 10, 2, ...)</span>
+        <span class="n">cycle_order</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_cycles</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cycle_order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"ref"</span><span class="p">)</span>
+
+        <span class="c1"># Build legend config based on position</span>
+        <span class="k">if</span> <span class="n">legend_position</span> <span class="o">==</span> <span class="s2">"bottom"</span><span class="p">:</span>
+            <span class="n">legend_config</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Legend</span><span class="p">(</span>
+                <span class="n">orient</span><span class="o">=</span><span class="s2">"bottom"</span><span class="p">,</span>
+                <span class="n">direction</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">,</span>
+                <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+                <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="mi">0</span>  <span class="c1"># Auto-wrap</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">legend_config</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Legend</span><span class="p">(</span>
+                <span class="n">orient</span><span class="o">=</span><span class="s2">"right"</span><span class="p">,</span>
+                <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+                <span class="n">titlePadding</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                <span class="n">symbolSize</span><span class="o">=</span><span class="mi">100</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Create a stripplot for TS results using altair</span>
+        <span class="c1"># Single plot with methods grouped within each cycle using x-axis positioning</span>
+        <span class="n">stripplot</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">combined_df_top_n</span><span class="p">)</span><span class="o">.</span><span class="n">mark_circle</span><span class="p">(</span>
+            <span class="n">size</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+            <span class="n">opacity</span><span class="o">=</span><span class="mf">0.7</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="s2">"cycle:O"</span><span class="p">,</span>
+                   <span class="n">title</span><span class="o">=</span><span class="s2">"Cycle"</span><span class="p">,</span>
+                   <span class="n">sort</span><span class="o">=</span><span class="n">cycle_order</span><span class="p">,</span>
+                   <span class="n">axis</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Axis</span><span class="p">(</span>
+                       <span class="n">labelAngle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                       <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+                       <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+                       <span class="n">titlePadding</span><span class="o">=</span><span class="mi">10</span>
+                   <span class="p">)),</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Y</span><span class="p">(</span><span class="s2">"score:Q"</span><span class="p">,</span>
+                   <span class="n">title</span><span class="o">=</span><span class="s2">"Score"</span><span class="p">,</span>
+                   <span class="n">scale</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Scale</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="p">[</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">]),</span>
+                   <span class="n">axis</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Axis</span><span class="p">(</span>
+                       <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+                       <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+                       <span class="n">titlePadding</span><span class="o">=</span><span class="mi">10</span>
+                   <span class="p">)),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="s2">"method:N"</span><span class="p">,</span>
+                           <span class="n">title</span><span class="o">=</span><span class="s2">"Method"</span><span class="p">,</span>
+                           <span class="n">scale</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">,</span>
+                           <span class="n">legend</span><span class="o">=</span><span class="n">legend_config</span><span class="p">),</span>
+            <span class="c1"># Use xOffset to separate methods horizontally within each cycle</span>
+            <span class="n">xOffset</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">XOffset</span><span class="p">(</span><span class="s2">"method:N"</span><span class="p">,</span> 
+                               <span class="n">scale</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Scale</span><span class="p">(</span>
+                                   <span class="nb">type</span><span class="o">=</span><span class="s2">"band"</span><span class="p">,</span> 
+                                   <span class="n">paddingInner</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+                                   <span class="n">paddingOuter</span><span class="o">=</span><span class="mf">0.1</span>
+                               <span class="p">)),</span>
+            <span class="c1"># Add small vertical jitter to separate overlapping points within each method</span>
+            <span class="n">yOffset</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">YOffset</span><span class="p">(</span><span class="s2">"jitter:Q"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Scale</span><span class="p">(</span><span class="nb">range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">transform_calculate</span><span class="p">(</span>
+            <span class="c1"># Generate small random jitter for y-axis to separate overlapping points</span>
+            <span class="n">jitter</span><span class="o">=</span><span class="s2">"random()"</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">properties</span><span class="p">(</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">height</span>
+        <span class="p">)</span>
+        <span class="c1"># Save the plot if save_path is provided</span>
+        <span class="k">if</span> <span class="n">save_path</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">save_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'.html'</span><span class="p">):</span>
+                <span class="n">stripplot</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">save_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'.png'</span><span class="p">)</span> <span class="ow">or</span> <span class="n">save_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'.svg'</span><span class="p">):</span>
+                <span class="n">stripplot</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>  <span class="c1"># Higher resolution for images</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Default to HTML if no extension specified</span>
+                <span class="n">stripplot</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span> <span class="o">+</span> <span class="s1">'.html'</span><span class="p">)</span>
+        
+        <span class="c1"># Display in Jupyter if requested</span>
+        <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">stripplot</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+        
+<div class="viewcode-block" id="TS_Benchmarks.get_barplot_TS_results_data">
+<a class="viewcode-back" href="../../../reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.get_barplot_TS_results_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_barplot_TS_results_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Generate data for bar plot, for checking the number of hits recovered by each search strategy.</span>
+<span class="sd">        To use this plot, you must have the reference compounds that serve as the ground truth.</span>
+<span class="sd">        This shows what fraction of the top N reference compounds each method finds.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        top_n : int</span>
+<span class="sd">            Number of top reference products to count as hits. Use the same</span>
+<span class="sd">            ``top_n`` for every method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        polars.DataFrame</span>
+<span class="sd">            Hits found by each method in each cycle against the reference set.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Please ensure that reference_data is provided"</span><span class="p">)</span>
+
+        <span class="c1"># Get top N reference compounds (sorted by score to get the actual top compounds)</span>
+        <span class="c1"># Use sort_type to determine sort direction: "minimize" = ascending, "maximize" = descending</span>
+        <span class="n">_descending</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_type</span> <span class="o">==</span> <span class="s2">"maximize"</span>
+        <span class="n">top_ref_compounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="n">_descending</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_n</span><span class="p">)[</span><span class="s2">"Name"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+        
+        <span class="c1"># Filter combined data to exclude the reference method itself (to avoid duplication)</span>
+        <span class="c1"># Only look at TS methods to see how many reference compounds they found</span>
+        <span class="n">ts_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_df_top_n</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"Name"</span><span class="p">)</span><span class="o">.</span><span class="n">is_in</span><span class="p">(</span><span class="n">top_ref_compounds</span><span class="p">))</span> <span class="o">&amp;</span>
+            <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"method"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"ref"</span><span class="p">)</span>  <span class="c1"># Exclude reference data to avoid duplication</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Count the number of hits found by each TS method in each cycle</span>
+        <span class="n">cycle_counts</span> <span class="o">=</span> <span class="n">ts_data</span><span class="o">.</span><span class="n">group_by</span><span class="p">([</span><span class="s2">"cycle"</span><span class="p">,</span> <span class="s2">"method"</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"found"</span><span class="p">)</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># Count unique hits per method across all cycles (for "concat" bars)</span>
+        <span class="n">method_totals</span> <span class="o">=</span> <span class="n">ts_data</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="s2">"method"</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"Name"</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"found"</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="s2">"concat"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"cycle"</span><span class="p">))</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s2">"cycle"</span><span class="p">,</span> <span class="s2">"method"</span><span class="p">,</span> <span class="s2">"found"</span><span class="p">])</span>
+        
+        <span class="c1"># Add reference baseline showing the total top N compounds as the benchmark</span>
+        <span class="n">ref_baseline</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+            <span class="s2">"cycle"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"ref"</span><span class="p">],</span> 
+            <span class="s2">"method"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"ref"</span><span class="p">],</span> 
+            <span class="s2">"found"</span><span class="p">:</span> <span class="p">[</span><span class="n">top_n</span><span class="p">]</span>  <span class="c1"># This represents the total available top compounds</span>
+        <span class="p">})</span>
+        
+        <span class="c1"># Combine all data - ensure consistent data types</span>
+        <span class="n">cycle_counts_str</span> <span class="o">=</span> <span class="n">cycle_counts</span><span class="o">.</span><span class="n">with_columns</span><span class="p">([</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"method"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">String</span><span class="p">),</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"found"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">)</span>
+        <span class="p">])</span>
+        <span class="n">method_totals_str</span> <span class="o">=</span> <span class="n">method_totals</span><span class="o">.</span><span class="n">with_columns</span><span class="p">([</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"method"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">String</span><span class="p">),</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"found"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">)</span>
+        <span class="p">])</span>
+        <span class="n">ref_baseline_typed</span> <span class="o">=</span> <span class="n">ref_baseline</span><span class="o">.</span><span class="n">with_columns</span><span class="p">([</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"method"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">String</span><span class="p">),</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"found"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">)</span>
+        <span class="p">])</span>
+        
+        <span class="n">bar_plot_df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">cycle_counts_str</span><span class="p">,</span> <span class="n">method_totals_str</span><span class="p">,</span> <span class="n">ref_baseline_typed</span><span class="p">])</span>
+        
+        <span class="c1"># Convert method to categorical with specific order</span>
+        <span class="c1"># Note: Using pl.Enum instead of pl.Categorical.cat.set_ordering for polars compatibility</span>
+        <span class="n">all_methods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span> <span class="o">+</span> <span class="p">[</span><span class="s2">"ref"</span><span class="p">]</span> <span class="k">if</span> <span class="s2">"ref"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span>
+        <span class="n">bar_plot_df</span> <span class="o">=</span> <span class="n">bar_plot_df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"method"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Enum</span><span class="p">(</span><span class="n">all_methods</span><span class="p">))</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># Print summary of barplot data generation</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">📊 Barplot Data Summary:"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Reference baseline: Top </span><span class="si">{</span><span class="n">top_n</span><span class="si">}</span><span class="s2"> compounds from reference data"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Analysis: How many reference compounds each method found"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Data shape: </span><span class="si">{</span><span class="n">bar_plot_df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (rows × columns)"</span><span class="p">)</span>
+        <span class="n">cycle_counts</span> <span class="o">=</span> <span class="n">bar_plot_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"cycle"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"concat"</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"cycle"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"ref"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycle_counts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">avg_found</span> <span class="o">=</span> <span class="n">cycle_counts</span><span class="p">[</span><span class="s2">"found"</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Average compounds found per cycle: </span><span class="si">{</span><span class="n">avg_found</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">bar_plot_df</span> <span class="o">=</span> <span class="n">bar_plot_df</span>  <span class="c1"># Store the dataframe in the class</span>
+        <span class="k">return</span> <span class="n">bar_plot_df</span></div>
+
+        
+
+<div class="viewcode-block" id="TS_Benchmarks.plot_barplot_TS_results">
+<a class="viewcode-back" href="../../../reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.plot_barplot_TS_results">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_barplot_TS_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">save_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                            <span class="n">legend_position</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"right"</span><span class="p">,</span> <span class="n">dark_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Generate a barplot for TS results using altair.</span>
+<span class="sd">        This visualizes the number of reference hits recovered by each search strategy.</span>
+<span class="sd">        Data is automatically generated during class initialization.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        width : Optional[int]</span>
+<span class="sd">            Width of the plot in pixels</span>
+<span class="sd">        height : Optional[int]</span>
+<span class="sd">            Height of the plot in pixels</span>
+<span class="sd">        save_path : Optional[str]</span>
+<span class="sd">            Path to save the plot</span>
+<span class="sd">        show_plot : bool</span>
+<span class="sd">            If True, shows the plot in Jupyter</span>
+<span class="sd">        legend_position : str</span>
+<span class="sd">            Position of the legend. "right" (default) or "bottom" for horizontal legend below plot.</span>
+<span class="sd">        dark_mode : bool</span>
+<span class="sd">            If True, uses white text for bar labels (for dark backgrounds). Default is False (black text).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        altair.Chart or None</span>
+<span class="sd">            The altair chart if show_plot is True, None otherwise</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bar_plot_df</span><span class="p">[</span><span class="s2">"cycle"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">*</span> <span class="mi">120</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="mi">400</span>
+
+        <span class="c1"># Use the standardized color scheme for consistency across all plots</span>
+        <span class="n">color_scheme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_color_scheme</span><span class="p">(</span><span class="n">include_ref</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Generate proper sort order for cycles (1, 2, 3, ..., 10, ref) instead of lexicographic (1, 10, 2, ...)</span>
+        <span class="n">cycle_order</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_cycles</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cycle_order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"ref"</span><span class="p">)</span>
+
+        <span class="c1"># Build legend config based on position</span>
+        <span class="k">if</span> <span class="n">legend_position</span> <span class="o">==</span> <span class="s2">"bottom"</span><span class="p">:</span>
+            <span class="n">legend_config</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Legend</span><span class="p">(</span>
+                <span class="n">orient</span><span class="o">=</span><span class="s2">"bottom"</span><span class="p">,</span>
+                <span class="n">direction</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">,</span>
+                <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+                <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="mi">0</span>  <span class="c1"># Auto-wrap</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">legend_config</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Legend</span><span class="p">(</span>
+                <span class="n">orient</span><span class="o">=</span><span class="s2">"right"</span><span class="p">,</span>
+                <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+                <span class="n">symbolSize</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                <span class="n">padding</span><span class="o">=</span><span class="mi">10</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Create grouped barplot (not stacked) for better readability</span>
+        <span class="n">barplot</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bar_plot_df</span><span class="p">)</span><span class="o">.</span><span class="n">mark_bar</span><span class="p">(</span>
+            <span class="n">stroke</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span>
+            <span class="n">strokeWidth</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="s2">"cycle:O"</span><span class="p">,</span>
+                   <span class="n">title</span><span class="o">=</span><span class="s2">"Cycle"</span><span class="p">,</span>
+                   <span class="n">sort</span><span class="o">=</span><span class="n">cycle_order</span><span class="p">,</span>
+                   <span class="n">axis</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Axis</span><span class="p">(</span>
+                       <span class="n">labelAngle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                       <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+                       <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">20</span>
+                   <span class="p">)),</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Y</span><span class="p">(</span><span class="s2">"found:Q"</span><span class="p">,</span>
+                   <span class="n">title</span><span class="o">=</span><span class="s2">"Number of Top Reference Compounds Found"</span><span class="p">,</span>
+                   <span class="n">axis</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Axis</span><span class="p">(</span>
+                       <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+                       <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">20</span>
+                   <span class="p">)),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="s2">"method:N"</span><span class="p">,</span>
+                           <span class="n">title</span><span class="o">=</span><span class="s2">"Method"</span><span class="p">,</span>
+                           <span class="n">scale</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">,</span>
+                           <span class="n">legend</span><span class="o">=</span><span class="n">legend_config</span><span class="p">),</span>
+            <span class="n">xOffset</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">XOffset</span><span class="p">(</span><span class="s2">"method:N"</span><span class="p">),</span>
+            <span class="n">tooltip</span><span class="o">=</span><span class="p">[</span><span class="s2">"cycle:O"</span><span class="p">,</span> <span class="s2">"method:N"</span><span class="p">,</span> <span class="s2">"found:Q"</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">properties</span><span class="p">(</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">height</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Text color based on dark mode</span>
+        <span class="n">text_color</span> <span class="o">=</span> <span class="s1">'white'</span> <span class="k">if</span> <span class="n">dark_mode</span> <span class="k">else</span> <span class="s1">'black'</span>
+
+        <span class="c1"># Add text labels positioned correctly on top of each bar</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bar_plot_df</span><span class="p">)</span><span class="o">.</span><span class="n">mark_text</span><span class="p">(</span>
+            <span class="n">align</span><span class="o">=</span><span class="s1">'center'</span><span class="p">,</span>
+            <span class="n">baseline</span><span class="o">=</span><span class="s1">'bottom'</span><span class="p">,</span>
+            <span class="n">fontSize</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+            <span class="n">fontWeight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">,</span>
+            <span class="n">dy</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">text_color</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="s2">"cycle:O"</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="n">cycle_order</span><span class="p">),</span>
+            <span class="n">xOffset</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">XOffset</span><span class="p">(</span><span class="s2">"method:N"</span><span class="p">),</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Y</span><span class="p">(</span><span class="s2">"found:Q"</span><span class="p">),</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span>
+                <span class="n">alt</span><span class="o">.</span><span class="n">datum</span><span class="o">.</span><span class="n">found</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Only show text if found &gt; 0</span>
+                <span class="n">alt</span><span class="o">.</span><span class="n">Text</span><span class="p">(</span><span class="s2">"found:Q"</span><span class="p">),</span>
+                <span class="n">alt</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># Combine bar chart and text labels</span>
+        <span class="n">final_chart</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span><span class="n">barplot</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">resolve_scale</span><span class="p">(</span>
+            <span class="n">y</span><span class="o">=</span><span class="s1">'shared'</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># Save the plot if save_path is provided</span>
+        <span class="k">if</span> <span class="n">save_path</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">save_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'.html'</span><span class="p">):</span>
+                <span class="n">final_chart</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">save_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'.png'</span><span class="p">)</span> <span class="ow">or</span> <span class="n">save_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'.svg'</span><span class="p">):</span>
+                <span class="n">final_chart</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">final_chart</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span> <span class="o">+</span> <span class="s1">'.html'</span><span class="p">)</span>
+        
+        <span class="c1"># Display in Jupyter if requested</span>
+        <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">final_chart</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="TS_Benchmarks.gen_line_plot_performance_data">
+<a class="viewcode-back" href="../../../reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.gen_line_plot_performance_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gen_line_plot_performance_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_ns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Generate data for line plot, for checking the performance of each method.</span>
+<span class="sd">        The plot looks at how the performance of the methods changes with comparison to the top N compounds found by the reference method.</span>
+<span class="sd">        Efficiently calculates fraction of hits found for each top_n cutoff.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        top_ns : List[int], optional</span>
+<span class="sd">            List of top N values to test (e.g., [50, 100, 200, 300, 400, 500])</span>
+<span class="sd">            If None, defaults to [50, 100, 200, 300, 400, 500]</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        line_plot_df : polars DataFrame</span>
+<span class="sd">            DataFrame with columns: ['cycle', 'top_n', 'method', 'frac_top_n']</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Please ensure that reference_data is provided for performance analysis"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">top_ns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">top_ns</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">📈 Generating Line Plot Performance Data..."</span><span class="p">)</span>
+
+        <span class="c1"># Pre-calculate reference compound sets for each top_n cutoff</span>
+        <span class="c1"># Use sort_type to determine sort direction: "minimize" = ascending, "maximize" = descending</span>
+        <span class="n">_descending</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_type</span> <span class="o">==</span> <span class="s2">"maximize"</span>
+        <span class="n">ref_sorted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference_data</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="n">_descending</span><span class="p">)</span>
+        <span class="n">ref_sets</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">top_ns</span><span class="p">:</span>
+            <span class="n">ref_sets</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ref_sorted</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">n</span><span class="p">)[</span><span class="s2">"Name"</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+        
+        <span class="n">performance_data</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># Process each method</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Processing method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            
+            <span class="c1"># Get all compounds found by this method across all cycles - once per method</span>
+            <span class="n">method_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combined_df_all</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"method"</span><span class="p">)</span> <span class="o">==</span> <span class="n">method</span><span class="p">)</span>
+            
+            <span class="c1"># Process individual cycles</span>
+            <span class="k">for</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_cycles</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">cycle_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cycle</span><span class="p">)</span>
+                
+                <span class="c1"># Get compounds found by this method in this specific cycle</span>
+                <span class="n">cycle_compounds</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                    <span class="n">method_data</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"cycle"</span><span class="p">)</span> <span class="o">==</span> <span class="n">cycle_id</span><span class="p">)[</span><span class="s2">"Name"</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+                <span class="p">)</span>
+                
+                <span class="c1"># Calculate fraction for each top_n value using set intersection</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">top_ns</span><span class="p">:</span>
+                    <span class="n">ref_set</span> <span class="o">=</span> <span class="n">ref_sets</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+                    <span class="n">hits_found</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycle_compounds</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">ref_set</span><span class="p">))</span>
+                    <span class="n">frac_top_n</span> <span class="o">=</span> <span class="n">hits_found</span> <span class="o">/</span> <span class="n">n</span>
+                    
+                    <span class="n">performance_data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                        <span class="s2">"cycle"</span><span class="p">:</span> <span class="n">cycle_id</span><span class="p">,</span>
+                        <span class="s2">"top_n"</span><span class="p">:</span> <span class="n">n</span><span class="p">,</span>
+                        <span class="s2">"method"</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span>
+                        <span class="s2">"frac_top_n"</span><span class="p">:</span> <span class="n">frac_top_n</span>
+                    <span class="p">})</span>
+        
+        <span class="c1"># Convert to polars DataFrame</span>
+        <span class="n">line_plot_df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">performance_data</span><span class="p">)</span>
+        
+        <span class="c1"># Ensure consistent data types</span>
+        <span class="n">line_plot_df</span> <span class="o">=</span> <span class="n">line_plot_df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">([</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"cycle"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">String</span><span class="p">),</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"top_n"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">),</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"method"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">String</span><span class="p">),</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"frac_top_n"</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">)</span>
+        <span class="p">])</span>
+        
+        <span class="c1"># Print comprehensive summary</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">📊 Line Plot Data Summary:"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Data shape: </span><span class="si">{</span><span class="n">line_plot_df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (rows × columns)"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Top-N values tested: </span><span class="si">{</span><span class="n">top_ns</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Methods analyzed: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">methods_list</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Cycles per method: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">no_of_cycles</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        
+        <span class="c1"># Show performance range</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_plot_df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">min_frac</span> <span class="o">=</span> <span class="n">line_plot_df</span><span class="p">[</span><span class="s2">"frac_top_n"</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="n">max_frac</span> <span class="o">=</span> <span class="n">line_plot_df</span><span class="p">[</span><span class="s2">"frac_top_n"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Performance range: </span><span class="si">{</span><span class="n">min_frac</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">max_frac</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (fraction found)"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Line plot data generation completed successfully!"</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_plot_df</span> <span class="o">=</span> <span class="n">line_plot_df</span>  <span class="c1"># Store in the class</span>
+        <span class="k">return</span> <span class="n">line_plot_df</span></div>
+
+    
+<div class="viewcode-block" id="TS_Benchmarks.plot_line_performance_with_error_bars">
+<a class="viewcode-back" href="../../../reference/visualise.html#TACTICS.library_analysis.visualization.TS_Benchmarks.plot_line_performance_with_error_bars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_line_performance_with_error_bars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                            <span class="n">save_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show_plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                            <span class="n">legend_position</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"right"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Generate a line plot with error bars for method performance using altair.</span>
+<span class="sd">        Shows mean fraction of reference compounds found across cycles with standard deviation error bars.</span>
+<span class="sd">        Data and grouped statistics are automatically generated during class initialization.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        width : Optional[int]</span>
+<span class="sd">            Width of the plot in pixels</span>
+<span class="sd">        height : Optional[int]</span>
+<span class="sd">            Height of the plot in pixels</span>
+<span class="sd">        save_path : Optional[str]</span>
+<span class="sd">            Path to save the plot</span>
+<span class="sd">        show_plot : bool</span>
+<span class="sd">            If True, shows the plot in Jupyter</span>
+<span class="sd">        legend_position : str</span>
+<span class="sd">            Position of the legend. "right" (default) or "bottom" for horizontal legend below plot.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        altair.Chart or None</span>
+<span class="sd">            The altair chart if show_plot is True, None otherwise</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'grouped_stats'</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">grouped_stats</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Grouped statistics not available. This should have been generated during initialization."</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="mi">800</span>
+        
+        <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="mi">500</span>
+        
+        <span class="c1"># Use pre-generated grouped statistics</span>
+        <span class="n">grouped_stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grouped_stats</span>
+
+        <span class="c1"># Use the standardized color scheme for consistency across all plots</span>
+        <span class="c1"># Line plot doesn't include reference data, so set include_ref=False</span>
+        <span class="n">color_scheme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_color_scheme</span><span class="p">(</span><span class="n">include_ref</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Build legend config based on position</span>
+        <span class="k">if</span> <span class="n">legend_position</span> <span class="o">==</span> <span class="s2">"bottom"</span><span class="p">:</span>
+            <span class="n">legend_config</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Legend</span><span class="p">(</span>
+                <span class="n">orient</span><span class="o">=</span><span class="s2">"bottom"</span><span class="p">,</span>
+                <span class="n">direction</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">,</span>
+                <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+                <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="mi">0</span>  <span class="c1"># Auto-wrap</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">legend_config</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Legend</span><span class="p">(</span>
+                <span class="n">orient</span><span class="o">=</span><span class="s2">"right"</span><span class="p">,</span>
+                <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+                <span class="n">symbolSize</span><span class="o">=</span><span class="mi">100</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Create the base chart</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">grouped_stats</span><span class="p">)</span>
+
+        <span class="c1"># Main line plot with thicker lines and larger points</span>
+        <span class="n">line_plot</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">mark_line</span><span class="p">(</span>
+            <span class="n">point</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">OverlayMarkDef</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">filled</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">strokeWidth</span><span class="o">=</span><span class="mi">4</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="s2">"top_n:Q"</span><span class="p">,</span>
+                   <span class="n">title</span><span class="o">=</span><span class="s2">"Top N Compounds"</span><span class="p">,</span>
+                   <span class="n">scale</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Scale</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_top_ns</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_top_ns</span><span class="p">)]),</span>
+                   <span class="n">axis</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Axis</span><span class="p">(</span>
+                       <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+                       <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span>
+                       <span class="n">labelAngle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                       <span class="n">values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_top_ns</span><span class="p">,</span>  <span class="c1"># Explicitly set tick values</span>
+                       <span class="nb">format</span><span class="o">=</span><span class="s2">"d"</span>  <span class="c1"># Format as integers</span>
+                   <span class="p">)),</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Y</span><span class="p">(</span><span class="s2">"mean:Q"</span><span class="p">,</span>
+                   <span class="n">title</span><span class="o">=</span><span class="s2">"Mean Fraction Found"</span><span class="p">,</span>
+                   <span class="n">scale</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Scale</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+                   <span class="n">axis</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Axis</span><span class="p">(</span>
+                       <span class="n">labelFontSize</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+                       <span class="n">titleFontSize</span><span class="o">=</span><span class="mi">28</span><span class="p">,</span>
+                       <span class="nb">format</span><span class="o">=</span><span class="s2">".1%"</span>
+                   <span class="p">)),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="s2">"method:N"</span><span class="p">,</span>
+                           <span class="n">title</span><span class="o">=</span><span class="s2">"Method"</span><span class="p">,</span>
+                           <span class="n">scale</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">,</span>
+                           <span class="n">legend</span><span class="o">=</span><span class="n">legend_config</span><span class="p">),</span>
+            <span class="n">order</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Order</span><span class="p">(</span><span class="s2">"top_n:Q"</span><span class="p">),</span>  <span class="c1"># Ensures lines connect in ascending x order</span>
+            <span class="n">tooltip</span><span class="o">=</span><span class="p">[</span><span class="s2">"method:N"</span><span class="p">,</span> <span class="s2">"top_n:O"</span><span class="p">,</span> <span class="s2">"mean:Q"</span><span class="p">,</span> <span class="s2">"std:Q"</span><span class="p">,</span> <span class="s2">"n_cycles:O"</span><span class="p">]</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># Error bars using mark_rule for vertical lines</span>
+        <span class="n">error_bars</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">mark_rule</span><span class="p">(</span>
+            <span class="n">strokeWidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">opacity</span><span class="o">=</span><span class="mf">0.8</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="s2">"top_n:Q"</span><span class="p">),</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Y</span><span class="p">(</span><span class="s2">"lower:Q"</span><span class="p">),</span>
+            <span class="n">y2</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Y2</span><span class="p">(</span><span class="s2">"upper:Q"</span><span class="p">),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="s2">"method:N"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># Error bar caps (horizontal lines at top and bottom) using mark_rule with x2 for horizontal lines</span>
+        <span class="c1"># Use pre-generated cap data</span>
+        <span class="n">grouped_stats_caps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grouped_stats_caps</span>
+        <span class="n">base_caps</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">Chart</span><span class="p">(</span><span class="n">grouped_stats_caps</span><span class="p">)</span>
+        
+        <span class="n">error_caps_top</span> <span class="o">=</span> <span class="n">base_caps</span><span class="o">.</span><span class="n">mark_rule</span><span class="p">(</span>
+            <span class="n">strokeWidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">opacity</span><span class="o">=</span><span class="mf">0.8</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="s2">"cap_left:Q"</span><span class="p">),</span>
+            <span class="n">x2</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">X2</span><span class="p">(</span><span class="s2">"cap_right:Q"</span><span class="p">),</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Y</span><span class="p">(</span><span class="s2">"upper:Q"</span><span class="p">),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="s2">"method:N"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="p">)</span>
+        
+        <span class="n">error_caps_bottom</span> <span class="o">=</span> <span class="n">base_caps</span><span class="o">.</span><span class="n">mark_rule</span><span class="p">(</span>
+            <span class="n">strokeWidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">opacity</span><span class="o">=</span><span class="mf">0.8</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="s2">"cap_left:Q"</span><span class="p">),</span>
+            <span class="n">x2</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">X2</span><span class="p">(</span><span class="s2">"cap_right:Q"</span><span class="p">),</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Y</span><span class="p">(</span><span class="s2">"lower:Q"</span><span class="p">),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">Color</span><span class="p">(</span><span class="s2">"method:N"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">color_scheme</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># Create line plot separately to ensure legend shows</span>
+        <span class="n">line_only</span> <span class="o">=</span> <span class="n">line_plot</span><span class="o">.</span><span class="n">properties</span><span class="p">(</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">"Line Plot Only (Testing Legend)"</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># Create the full chart with error bars</span>
+        <span class="n">final_chart</span> <span class="o">=</span> <span class="n">alt</span><span class="o">.</span><span class="n">layer</span><span class="p">(</span>
+            <span class="n">error_bars</span><span class="p">,</span> 
+            <span class="n">error_caps_top</span><span class="p">,</span> 
+            <span class="n">error_caps_bottom</span><span class="p">,</span> 
+            <span class="n">line_plot</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">resolve_scale</span><span class="p">(</span>
+            <span class="n">color</span><span class="o">=</span><span class="s1">'independent'</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">properties</span><span class="p">(</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">alt</span><span class="o">.</span><span class="n">TitleParams</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Mean Top N Fraction Found Across </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">no_of_cycles</span><span class="si">}</span><span class="s2"> Cycles"</span><span class="p">,</span>
+                <span class="n">fontSize</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span>
+                <span class="n">anchor</span><span class="o">=</span><span class="s2">"start"</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># Store chart components for potential later access</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_only_chart</span> <span class="o">=</span> <span class="n">line_only</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_chart</span> <span class="o">=</span> <span class="n">final_chart</span>
+        
+        <span class="c1"># Save the plot if save_path is provided</span>
+        <span class="k">if</span> <span class="n">save_path</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">save_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'.html'</span><span class="p">):</span>
+                <span class="n">final_chart</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">save_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'.png'</span><span class="p">)</span> <span class="ow">or</span> <span class="n">save_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'.svg'</span><span class="p">):</span>
+                <span class="n">final_chart</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">final_chart</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span> <span class="o">+</span> <span class="s1">'.html'</span><span class="p">)</span>
+        
+        <span class="c1"># Display in Jupyter if requested</span>
+        <span class="k">if</span> <span class="n">show_plot</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">final_chart</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">grouped_stats</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

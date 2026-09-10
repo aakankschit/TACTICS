@@ -1,0 +1,871 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TACTICS.thompson_sampling.presets &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/TACTICS/thompson_sampling/presets';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../../../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">TACTICS.thompson_sampling.presets</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for TACTICS.thompson_sampling.presets</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Configuration presets for common Thompson Sampling use cases.</span>
+
+<span class="sd">Presets map directly to the method configurations validated in large-scale</span>
+<span class="sd">benchmarking (114,450+ trials, 21 libraries). Users who call ``get_preset()``</span>
+<span class="sd">with no arguments get the best-performing method.</span>
+
+<span class="sd">Preset hierarchy:</span>
+<span class="sd">    ``"recommended"``</span>
+<span class="sd">        Enhanced warmup + Top-Two TS + Boltzmann weighting.</span>
+<span class="sd">        Best overall method (86.1% mean top-100 recovery).</span>
+<span class="sd">    ``"recommended_rws"``</span>
+<span class="sd">        Enhanced warmup + Roulette Wheel Selection (CATS) + Boltzmann weighting.</span>
+<span class="sd">        Close second (85.5%). The original TACTICS method.</span>
+<span class="sd">    ``"baseline"``</span>
+<span class="sd">        Balanced warmup + Greedy selection. Isolates the framework's warmup</span>
+<span class="sd">        contribution (+1.5 pts on 2-component libraries via warmup alone).</span>
+
+<span class="sd">The original Zhao et al. (2025) RWS reproduction (``legacy_rws``) was removed</span>
+<span class="sd">in 2.0; use chem-tactics 1.2.0 to reproduce those numbers.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThompsonSamplingConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.strategies.config</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GreedyConfig</span><span class="p">,</span>
+    <span class="n">RouletteWheelConfig</span><span class="p">,</span>
+    <span class="n">TopTwoConfig</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.warmup.config</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BalancedWarmupConfig</span><span class="p">,</span>
+    <span class="n">EnhancedWarmupConfig</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.core.evaluator_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LookupEvaluatorConfig</span><span class="p">,</span> <span class="n">DBEvaluatorConfig</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Log-file path inside ``output_dir`` (created if needed), or None."""</span>
+    <span class="k">if</span> <span class="n">output_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">output_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">.log"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ConfigPresets">
+<a class="viewcode-back" href="../../../reference/search.html#TACTICS.thompson_sampling.presets.ConfigPresets">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigPresets</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Pre-configured Thompson Sampling configurations validated by benchmarking.</span>
+
+<span class="sd">    Each preset corresponds to a method configuration tested across 21</span>
+<span class="sd">    combinatorial libraries (114,450+ trials). All presets support both</span>
+<span class="sd">    ``"maximize"`` and ``"minimize"`` modes.</span>
+
+<span class="sd">    Recommended (use for new work):</span>
+<span class="sd">        - ``recommended``: Enhanced + TT-TS + Boltzmann (best overall)</span>
+<span class="sd">        - ``recommended_rws``: Enhanced + RWS/CATS + Boltzmann (close second)</span>
+
+<span class="sd">    Baseline:</span>
+<span class="sd">        - ``baseline``: Balanced + Greedy (isolates warmup contribution)</span>
+<span class="sd">    """</span>
+
+<div class="viewcode-block" id="ConfigPresets.recommended">
+<a class="viewcode-back" href="../../../reference/search.html#TACTICS.thompson_sampling.presets.ConfigPresets.recommended">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recommended</span><span class="p">(</span>
+        <span class="n">synthesis_pipeline</span><span class="p">:</span> <span class="s2">"SynthesisPipeline"</span><span class="p">,</span>
+        <span class="n">evaluator_config</span><span class="p">,</span>
+        <span class="n">num_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"maximize"</span><span class="p">,</span> <span class="s2">"minimize"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"maximize"</span><span class="p">,</span>
+        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ThompsonSamplingConfig</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Best-performing method from large-scale benchmarking.</span>
+
+<span class="sd">        Uses Top-Two Thompson Sampling with Enhanced warmup, Boltzmann</span>
+<span class="sd">        weighting, and GMIC-weighted component rotation. Adaptive</span>
+<span class="sd">        per-component thermal cycling auto-tunes exploration on both</span>
+<span class="sd">        balanced and imbalanced libraries.</span>
+
+<span class="sd">        Performance: 86.1% mean top-100 recovery (114,450 trials, 21 libraries).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            synthesis_pipeline: SynthesisPipeline with reaction config and reagent files</span>
+<span class="sd">            evaluator_config: Evaluator configuration</span>
+<span class="sd">            num_iterations: Number of Thompson sampling iterations</span>
+<span class="sd">            batch_size: Number of compounds to sample per cycle (default: 100)</span>
+<span class="sd">            mode: "maximize" for highest scores, "minimize" for lowest (e.g., docking)</span>
+<span class="sd">            output_dir: Directory for the run log (created if needed). Results are</span>
+<span class="sd">                returned as a DataFrame; write them yourself, e.g. ``results.write_parquet(...)``.</span>
+<span class="sd">        """</span>
+        <span class="n">log_filename</span> <span class="o">=</span> <span class="n">_log_path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">"recommended"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ThompsonSamplingConfig</span><span class="p">(</span>
+            <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">synthesis_pipeline</span><span class="p">,</span>
+            <span class="n">num_ts_iterations</span><span class="o">=</span><span class="n">num_iterations</span><span class="p">,</span>
+            <span class="n">num_warmup_trials</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">strategy_config</span><span class="o">=</span><span class="n">TopTwoConfig</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">),</span>
+            <span class="n">warmup_config</span><span class="o">=</span><span class="n">EnhancedWarmupConfig</span><span class="p">(),</span>
+            <span class="n">evaluator_config</span><span class="o">=</span><span class="n">evaluator_config</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">use_boltzmann_weighting</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">log_filename</span><span class="o">=</span><span class="n">log_filename</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConfigPresets.recommended_rws">
+<a class="viewcode-back" href="../../../reference/search.html#TACTICS.thompson_sampling.presets.ConfigPresets.recommended_rws">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recommended_rws</span><span class="p">(</span>
+        <span class="n">synthesis_pipeline</span><span class="p">:</span> <span class="s2">"SynthesisPipeline"</span><span class="p">,</span>
+        <span class="n">evaluator_config</span><span class="p">,</span>
+        <span class="n">num_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"maximize"</span><span class="p">,</span> <span class="s2">"minimize"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"maximize"</span><span class="p">,</span>
+        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ThompsonSamplingConfig</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Roulette Wheel Selection with Enhanced warmup and Boltzmann weighting.</span>
+
+<span class="sd">        The original TACTICS method (CATS + GMIC-weighted rotation). Close</span>
+<span class="sd">        second to TT-TS (85.5% vs 86.1% mean recovery). Preferred when</span>
+<span class="sd">        thermal cycling behavior is well-understood for the target library.</span>
+
+<span class="sd">        Performance: 85.5% mean top-100 recovery (114,450 trials, 21 libraries).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            synthesis_pipeline: SynthesisPipeline with reaction config and reagent files</span>
+<span class="sd">            evaluator_config: Evaluator configuration</span>
+<span class="sd">            num_iterations: Number of Thompson sampling iterations</span>
+<span class="sd">            batch_size: Number of compounds to sample per cycle (default: 100)</span>
+<span class="sd">            mode: "maximize" for highest scores, "minimize" for lowest (e.g., docking)</span>
+<span class="sd">            output_dir: Directory for the run log (created if needed). Results are</span>
+<span class="sd">                returned as a DataFrame; write them yourself, e.g. ``results.write_parquet(...)``.</span>
+<span class="sd">        """</span>
+        <span class="n">log_filename</span> <span class="o">=</span> <span class="n">_log_path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">"recommended_rws"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ThompsonSamplingConfig</span><span class="p">(</span>
+            <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">synthesis_pipeline</span><span class="p">,</span>
+            <span class="n">num_ts_iterations</span><span class="o">=</span><span class="n">num_iterations</span><span class="p">,</span>
+            <span class="n">num_warmup_trials</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">strategy_config</span><span class="o">=</span><span class="n">RouletteWheelConfig</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.05</span><span class="p">),</span>
+            <span class="n">warmup_config</span><span class="o">=</span><span class="n">EnhancedWarmupConfig</span><span class="p">(),</span>
+            <span class="n">evaluator_config</span><span class="o">=</span><span class="n">evaluator_config</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">use_boltzmann_weighting</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">log_filename</span><span class="o">=</span><span class="n">log_filename</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConfigPresets.baseline">
+<a class="viewcode-back" href="../../../reference/search.html#TACTICS.thompson_sampling.presets.ConfigPresets.baseline">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">baseline</span><span class="p">(</span>
+        <span class="n">synthesis_pipeline</span><span class="p">:</span> <span class="s2">"SynthesisPipeline"</span><span class="p">,</span>
+        <span class="n">evaluator_config</span><span class="p">,</span>
+        <span class="n">num_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"maximize"</span><span class="p">,</span> <span class="s2">"minimize"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"maximize"</span><span class="p">,</span>
+        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ThompsonSamplingConfig</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Baseline method: Balanced warmup + Greedy selection.</span>
+
+<span class="sd">        Isolates the contribution of TACTICS' stratified warmup without any</span>
+<span class="sd">        advanced selection strategy. Useful as a reference point — the gap</span>
+<span class="sd">        between this baseline and ``recommended`` measures the value added</span>
+<span class="sd">        by TT-TS and GMIC-weighted rotation.</span>
+
+<span class="sd">        Performance: Balanced warmup + Greedy gives +1.5 pts over random warmup + Greedy (the 1.x baseline)</span>
+<span class="sd">        on 2-component libraries via warmup alone (significant on 10/11).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            synthesis_pipeline: SynthesisPipeline with reaction config and reagent files</span>
+<span class="sd">            evaluator_config: Evaluator configuration</span>
+<span class="sd">            num_iterations: Number of Thompson sampling iterations</span>
+<span class="sd">            mode: "maximize" for highest scores, "minimize" for lowest (e.g., docking)</span>
+<span class="sd">            output_dir: Directory for the run log (created if needed). Results are</span>
+<span class="sd">                returned as a DataFrame; write them yourself, e.g. ``results.write_parquet(...)``.</span>
+<span class="sd">        """</span>
+        <span class="n">log_filename</span> <span class="o">=</span> <span class="n">_log_path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">"baseline"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ThompsonSamplingConfig</span><span class="p">(</span>
+            <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">synthesis_pipeline</span><span class="p">,</span>
+            <span class="n">num_ts_iterations</span><span class="o">=</span><span class="n">num_iterations</span><span class="p">,</span>
+            <span class="n">num_warmup_trials</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">strategy_config</span><span class="o">=</span><span class="n">GreedyConfig</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">),</span>
+            <span class="n">warmup_config</span><span class="o">=</span><span class="n">BalancedWarmupConfig</span><span class="p">(</span><span class="n">observations_per_reagent</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+            <span class="n">evaluator_config</span><span class="o">=</span><span class="n">evaluator_config</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">log_filename</span><span class="o">=</span><span class="n">log_filename</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_preset">
+<a class="viewcode-back" href="../../../reference/search.html#TACTICS.thompson_sampling.presets.get_preset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_preset</span><span class="p">(</span>
+    <span class="n">preset_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"recommended"</span><span class="p">,</span>
+    <span class="n">synthesis_pipeline</span><span class="p">:</span> <span class="s2">"SynthesisPipeline"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">evaluator_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ThompsonSamplingConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Get a configuration preset by name.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        preset_name: Name of preset (default: ``"recommended"``). Available:</span>
+
+<span class="sd">            - ``"recommended"``: Enhanced + TT-TS + Boltzmann (best overall, 86.1%)</span>
+<span class="sd">            - ``"recommended_rws"``: Enhanced + RWS/CATS + Boltzmann (85.5%)</span>
+<span class="sd">            - ``"baseline"``: Balanced + Greedy (isolates warmup contribution)</span>
+
+<span class="sd">        synthesis_pipeline: SynthesisPipeline with reaction config and reagent files</span>
+<span class="sd">        evaluator_config: Evaluator configuration</span>
+<span class="sd">        **kwargs: Additional arguments passed to preset function, including:</span>
+<span class="sd">            - mode: "maximize" or "minimize"</span>
+<span class="sd">            - num_iterations: Number of iterations</span>
+<span class="sd">            - batch_size: Compounds per cycle (recommended/recommended_rws, default 100)</span>
+<span class="sd">            - output_dir: Directory for the run log (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ThompsonSamplingConfig: Configured preset</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from TACTICS.library_enumeration import SynthesisPipeline</span>
+<span class="sd">        &gt;&gt;&gt; from TACTICS.library_enumeration.smarts_toolkit import ReactionConfig, ReactionDef</span>
+<span class="sd">        &gt;&gt;&gt; from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; pipeline = SynthesisPipeline(ReactionConfig(</span>
+<span class="sd">        ...     reactions=[ReactionDef(reaction_smarts="...", step_index=0)],</span>
+<span class="sd">        ...     reagent_file_list=["acids.smi", "amines.smi"]</span>
+<span class="sd">        ... ))</span>
+<span class="sd">        &gt;&gt;&gt; evaluator = LookupEvaluatorConfig(ref_filename="scores.csv")</span>
+<span class="sd">        &gt;&gt;&gt; ts_config = get_preset(</span>
+<span class="sd">        ...     synthesis_pipeline=pipeline,</span>
+<span class="sd">        ...     evaluator_config=evaluator</span>
+<span class="sd">        ... )</span>
+<span class="sd">    """</span>
+    <span class="n">presets</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"recommended"</span><span class="p">:</span> <span class="n">ConfigPresets</span><span class="o">.</span><span class="n">recommended</span><span class="p">,</span>
+        <span class="s2">"recommended_rws"</span><span class="p">:</span> <span class="n">ConfigPresets</span><span class="o">.</span><span class="n">recommended_rws</span><span class="p">,</span>
+        <span class="s2">"baseline"</span><span class="p">:</span> <span class="n">ConfigPresets</span><span class="o">.</span><span class="n">baseline</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">preset_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">presets</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Unknown preset: </span><span class="si">{</span><span class="n">preset_name</span><span class="si">}</span><span class="s2">. "</span>
+            <span class="sa">f</span><span class="s2">"Available presets: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">presets</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">presets</span><span class="p">[</span><span class="n">preset_name</span><span class="p">](</span>
+        <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">synthesis_pipeline</span><span class="p">,</span>
+        <span class="n">evaluator_config</span><span class="o">=</span><span class="n">evaluator_config</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

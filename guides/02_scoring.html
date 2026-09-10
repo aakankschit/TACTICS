@@ -1,0 +1,868 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2. Scoring &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guides/02_scoring';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. Search" href="03_search.html" />
+    <link rel="prev" title="1. Library" href="01_library.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">2. Scoring</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="scoring">
+<span id="guide-scoring"></span><h1>2. Scoring<a class="headerlink" href="#scoring" title="Link to this heading">#</a></h1>
+<p><strong>What this block is.</strong> A product goes in, a number comes out. The sampler
+only ever sees that number; it never knows whether it came from a docking
+run, a lookup table or a line of Python. You describe the scorer with a
+small config object, and the sampler builds (and, in parallel runs,
+rebuilds) the evaluator from it.</p>
+<section id="core">
+<h2>Core<a class="headerlink" href="#core" title="Link to this heading">#</a></h2>
+<p>The quickest scorer is a table of precomputed values keyed by product name.
+The bundled dataset ships one — docking scores for all 500 k thrombin
+amides:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">LookupEvaluatorConfig</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">LookupEvaluatorConfig</span><span class="p">(</span>
+    <span class="n">ref_filename</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">data</span> <span class="o">/</span> <span class="s2">"product_scores.parquet"</span><span class="p">),</span>   <span class="c1"># .csv or .parquet</span>
+    <span class="n">compound_col</span><span class="o">=</span><span class="s2">"Product_Code"</span><span class="p">,</span>                          <span class="c1"># default</span>
+    <span class="n">score_col</span><span class="o">=</span><span class="s2">"Scores"</span><span class="p">,</span>                                   <span class="c1"># default</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Two decisions travel with every scorer:</p>
+<ul class="simple">
+<li><p><strong>Direction.</strong> <code class="docutils literal notranslate"><span class="pre">mode=&quot;minimize&quot;</span></code> for docking scores and free energies
+(lower is better); <code class="docutils literal notranslate"><span class="pre">mode=&quot;maximize&quot;</span></code> for probabilities, similarities,
+read counts. It is set on the <em>strategy</em> — via <code class="docutils literal notranslate"><span class="pre">get_preset(mode=...)</span></code> or
+<code class="docutils literal notranslate"><span class="pre">TopTwoConfig(mode=...)</span></code> — because it is the search that needs to know.</p></li>
+<li><p><strong>What “missing” means.</strong> A product the table does not contain scores
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> and is skipped. For sparse DEL-style tables where absence means
+<em>not a binder</em>, set <code class="docutils literal notranslate"><span class="pre">default_score=0.0</span></code> so absence is a real observation.</p></li>
+</ul>
+<p><strong>What it produces:</strong> an <code class="docutils literal notranslate"><span class="pre">*EvaluatorConfig</span></code> that you pass as
+<code class="docutils literal notranslate"><span class="pre">evaluator_config=</span></code> in Block 3.</p>
+</section>
+<section id="build-on-it">
+<h2>Build on it<a class="headerlink" href="#build-on-it" title="Link to this heading">#</a></h2>
+<section id="your-own-python-function">
+<h3>Your own Python function<a class="headerlink" href="#your-own-python-function" title="Link to this heading">#</a></h3>
+<p>Most real screens score with code you already have. Wrap any callable that
+takes an RDKit <code class="docutils literal notranslate"><span class="pre">Mol</span></code> and returns a <code class="docutils literal notranslate"><span class="pre">float</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rdkit.Chem</span><span class="w"> </span><span class="kn">import</span> <span class="n">Descriptors</span><span class="p">,</span> <span class="n">QED</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">drug_likeness</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Any callable taking an RDKit Mol and returning a float will do."""</span>
+    <span class="k">return</span> <span class="n">QED</span><span class="o">.</span><span class="n">qed</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Descriptors</span><span class="o">.</span><span class="n">MolWt</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="o">-</span> <span class="mi">500</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">CustomEvaluatorConfig</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_preset</span><span class="p">(</span>
+    <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">evaluator_config</span><span class="o">=</span><span class="n">CustomEvaluatorConfig</span><span class="p">(</span><span class="n">scoring_function</span><span class="o">=</span><span class="n">drug_likeness</span><span class="p">),</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">"maximize"</span><span class="p">,</span>
+    <span class="n">num_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">ThompsonSampler</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">sampler</span><span class="o">.</span><span class="n">warm_up</span><span class="p">(</span><span class="n">num_warmup_trials</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">num_warmup_trials</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">num_cycles</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">num_ts_iterations</span><span class="p">)</span>
+<span class="n">sampler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Scores are cached by canonical SMILES; an exception inside your function
+yields <code class="docutils literal notranslate"><span class="pre">NaN</span></code> for that product and the run continues. Two rules:</p>
+<ul class="simple">
+<li><p>Define the function at <strong>module level</strong> (not a lambda, not inside another
+function). With <code class="docutils literal notranslate"><span class="pre">processes</span> <span class="pre">&gt;</span> <span class="pre">1</span></code> each worker rebuilds the evaluator from
+the config, which means pickling a reference to your function.</p></li>
+<li><p>Expensive setup (loading a model, reading a receptor) belongs in a
+module-level cache, not in the function body — it runs once per product.</p></li>
+</ul>
+</section>
+<section id="the-other-built-in-scorers">
+<h3>The other built-in scorers<a class="headerlink" href="#the-other-built-in-scorers" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 40.0%" />
+<col style="width: 10.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Config</p></th>
+<th class="head"><p>Scores</p></th>
+<th class="head"><p>Cost</p></th>
+<th class="head"><p>Needs</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.LookupEvaluatorConfig" title="TACTICS.thompson_sampling.core.evaluator_config.LookupEvaluatorConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">LookupEvaluatorConfig</span></code></a></p></td>
+<td><p>value from a CSV/Parquet table, by product name</p></td>
+<td><p>instant</p></td>
+<td><p>the table</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.DBEvaluatorConfig" title="TACTICS.thompson_sampling.core.evaluator_config.DBEvaluatorConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">DBEvaluatorConfig</span></code></a></p></td>
+<td><p>value from a <code class="docutils literal notranslate"><span class="pre">sqlitedict</span></code> database, by product name</p></td>
+<td><p>instant</p></td>
+<td><p>the <code class="docutils literal notranslate"><span class="pre">.db</span></code> file</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.CustomEvaluatorConfig" title="TACTICS.thompson_sampling.core.evaluator_config.CustomEvaluatorConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">CustomEvaluatorConfig</span></code></a></p></td>
+<td><p>your function</p></td>
+<td><p>yours</p></td>
+<td><p>a picklable callable</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.FPEvaluatorConfig" title="TACTICS.thompson_sampling.core.evaluator_config.FPEvaluatorConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">FPEvaluatorConfig</span></code></a></p></td>
+<td><p>Morgan-fingerprint Tanimoto to a query SMILES</p></td>
+<td><p>fast</p></td>
+<td><p>a query SMILES</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.MWEvaluatorConfig" title="TACTICS.thompson_sampling.core.evaluator_config.MWEvaluatorConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">MWEvaluatorConfig</span></code></a></p></td>
+<td><p>molecular weight (a smoke test)</p></td>
+<td><p>fast</p></td>
+<td><p>nothing</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.MLClassifierEvaluatorConfig" title="TACTICS.thompson_sampling.core.evaluator_config.MLClassifierEvaluatorConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">MLClassifierEvaluatorConfig</span></code></a></p></td>
+<td><p>positive-class probability from a pickled scikit-learn model on a Morgan FP</p></td>
+<td><p>fast</p></td>
+<td><p>the <code class="docutils literal notranslate"><span class="pre">.pkl</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.ROCSEvaluatorConfig" title="TACTICS.thompson_sampling.core.evaluator_config.ROCSEvaluatorConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ROCSEvaluatorConfig</span></code></a></p></td>
+<td><p>shape + colour overlay to a 3D query</p></td>
+<td><p>slow</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[openeye]</span></code>, licence</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.FredEvaluatorConfig" title="TACTICS.thompson_sampling.core.evaluator_config.FredEvaluatorConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">FredEvaluatorConfig</span></code></a></p></td>
+<td><p>FRED docking score into an <code class="docutils literal notranslate"><span class="pre">.oedu</span></code> receptor</p></td>
+<td><p>slow</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[openeye]</span></code>, licence</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The two lookup scorers key on the product <strong>name</strong> and skip synthesis
+altogether, so <code class="docutils literal notranslate"><span class="pre">SMILES</span></code> in the results reads <code class="docutils literal notranslate"><span class="pre">FAIL</span></code> for them; the others
+need the structure and populate it. For the slow ones, see <a class="reference internal" href="04_scale.html"><span class="doc">4. Scale</span></a>.</p>
+</section>
+<section id="using-an-evaluator-without-a-config">
+<h3>Using an evaluator without a config<a class="headerlink" href="#using-an-evaluator-without-a-config" title="Link to this heading">#</a></h3>
+<p>Every config has a class behind it (<code class="docutils literal notranslate"><span class="pre">LookupEvaluatorConfig</span></code> →
+<a class="reference internal" href="../reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.LookupEvaluator" title="TACTICS.thompson_sampling.core.evaluators.LookupEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">LookupEvaluator</span></code></a>) that
+takes the same keys as a dict. Construct one directly when driving the
+sampler by hand (see <a class="reference internal" href="03_search.html"><span class="doc">3. Search</span></a>) or when
+you just want to score a molecule:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS</span><span class="w"> </span><span class="kn">import</span> <span class="n">FPEvaluator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
+
+<span class="n">scorer</span> <span class="o">=</span> <span class="n">FPEvaluator</span><span class="p">({</span><span class="s2">"query_smiles"</span><span class="p">:</span> <span class="s2">"CC(=O)Nc1ccc(O)cc1"</span><span class="p">})</span>
+<span class="n">scorer</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="s2">"CC(=O)Nc1ccc(OC)cc1"</span><span class="p">))</span>   <span class="c1"># 0.593</span>
+</pre></div>
+</div>
+<div class="warning admonition">
+<p class="admonition-title">Gotchas</p>
+<ul class="simple">
+<li><p><strong>Direction lives on the strategy, not the evaluator.</strong> A docking table
+with the default <code class="docutils literal notranslate"><span class="pre">mode=&quot;maximize&quot;</span></code> will happily find you the <em>worst</em>
+binders.</p></li>
+<li><p><strong>Lookup tables are keyed by exact product name</strong> — <code class="docutils literal notranslate"><span class="pre">&lt;acid&gt;_&lt;amine&gt;</span></code>
+built from the reagent-file names. Rename a reagent and every score for
+it goes missing (→ <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, skipped; or <code class="docutils literal notranslate"><span class="pre">default_score</span></code>).</p></li>
+<li><p><strong>A lambda or nested function fails with</strong> <code class="docutils literal notranslate"><span class="pre">processes</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>. Module
+level only.</p></li>
+<li><p><strong>``FPEvaluatorConfig`` has no radius/bits knobs</strong> — it is fixed at
+radius 2, 2048 bits. Write a <code class="docutils literal notranslate"><span class="pre">CustomEvaluatorConfig</span></code> for anything else.</p></li>
+<li><p>Passing a key the config does not have is silently ignored for evaluator
+configs (they are permissive); check the field list in the reference.</p></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="../reference/scoring.html"><span class="doc">Scoring</span></a> — every config and evaluator class with its keys.</p>
+<p>Interactive: <code class="docutils literal notranslate"><span class="pre">marimo</span> <span class="pre">edit</span> <span class="pre">tutorials/custom_evaluator_tester.py</span></code> lets you
+paste a scoring function and run it against a live search.</p>
+<p><strong>Next:</strong> <a class="reference internal" href="03_search.html"><span class="doc">3. Search</span></a> — put the library and the scorer together and run.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01_library.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">1. Library</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="03_search.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">3. Search</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core">Core</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-on-it">Build on it</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#your-own-python-function">Your own Python function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-other-built-in-scorers">The other built-in scorers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-an-evaluator-without-a-config">Using an evaluator without a config</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference">Reference</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/aakankschit/TACTICS/edit/main/docs/source/guides/02_scoring.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,948 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Inspect &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/inspect';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Visualise" href="visualise.html" />
+    <link rel="prev" title="Scale" href="scale.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="library.html">Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scoring.html">Scoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scale.html">Scale</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Inspect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualise.html">Visualise</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extending.html">Extending</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">API Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Inspect</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="inspect">
+<h1>Inspect<a class="headerlink" href="#inspect" title="Link to this heading">#</a></h1>
+<p>Block 5 — what the search learned. See the <a class="reference internal" href="../guides/05_inspect.html"><span class="doc">guide</span></a>.</p>
+<section id="sampler-accessors">
+<h2>Sampler accessors<a class="headerlink" href="#sampler-accessors" title="Link to this heading">#</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_diagnostics">
+<span class="sig-prename descclassname"><span class="pre">ThompsonSampler.</span></span><span class="sig-name descname"><span class="pre">get_diagnostics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/thompson_sampling/core/sampler.html#ThompsonSampler.get_diagnostics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_diagnostics" title="Link to this definition">#</a></dt>
+<dd><p>Return per-cycle diagnostics trajectory as a DataFrame.</p>
+<p>Requires <code class="docutils literal notranslate"><span class="pre">track_diagnostics=True</span></code> in config.</p>
+<p>Returns strategy-specific schemas:</p>
+<ul class="simple">
+<li><p><strong>TopTwoSelection</strong>: 12-column TT-TS schema with disagreement EMA,
+adaptive heated_scale, and GMIC per component.</p></li>
+<li><p><strong>RouletteWheelSelection</strong>: 18-column GMIC schema with full
+temperature pipeline (base_temp, cats_multiplier, final_temperature).</p></li>
+<li><p><strong>BayesUCBSelection</strong>: 18-column IPR schema with participation ratio,
+SNR dampening, and observation-gated weights.</p></li>
+</ul>
+<p>All schemas share <code class="docutils literal notranslate"><span class="pre">current_cycle</span></code>, <code class="docutils literal notranslate"><span class="pre">component_idx</span></code> and
+<code class="docutils literal notranslate"><span class="pre">criticality</span></code> columns, so downstream analysis functions work
+across strategies. Strategies without component state (Greedy, UCB,
+EpsilonGreedy) record nothing.</p>
+<p>Returns an empty DataFrame with just those three shared columns if
+diagnostics were not tracked or the strategy records no state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>DataFrame</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_posterior_landscape">
+<span class="sig-prename descclassname"><span class="pre">ThompsonSampler.</span></span><span class="sig-name descname"><span class="pre">get_posterior_landscape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/thompson_sampling/core/sampler.html#ThompsonSampler.get_posterior_landscape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_posterior_landscape" title="Link to this definition">#</a></dt>
+<dd><p>Return per-reagent posterior state for all components.</p>
+<p>Each row contains:</p>
+<ul class="simple">
+<li><p><strong>component_idx</strong> – component index (0-based)</p></li>
+<li><p><strong>reagent_name</strong> – reagent identifier</p></li>
+<li><p><strong>mean</strong> – posterior mean</p></li>
+<li><p><strong>std</strong> – posterior standard deviation</p></li>
+<li><p><strong>n_samples</strong> – number of observations</p></li>
+</ul>
+<p>Works regardless of <code class="docutils literal notranslate"><span class="pre">track_diagnostics</span></code> setting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>DataFrame</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_sar_summary">
+<span class="sig-prename descclassname"><span class="pre">ThompsonSampler.</span></span><span class="sig-name descname"><span class="pre">get_sar_summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/thompson_sampling/core/sampler.html#ThompsonSampler.get_sar_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_sar_summary" title="Link to this definition">#</a></dt>
+<dd><p>Strategy-agnostic post-hoc SAR assessment from final posteriors.</p>
+<p>Works for ANY strategy — computes entropy-based concentration from
+the current posterior state.  Uses the same z-score softmax approach
+as CATS <code class="docutils literal notranslate"><span class="pre">_calculate_criticality()</span></code> so that the post-hoc concentration
+and CATS criticality are directly comparable.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">track_diagnostics=True</span></code> and the strategy supports
+<code class="docutils literal notranslate"><span class="pre">get_component_state()</span></code> (CATS strategies), convergence dynamics
+are also included.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">components</span></code> – list of per-component dicts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">landscape_type</span></code> – “structured_SAR” / “diffuse_SAR” /
+“mixed” / “insufficient_data”</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">summary_text</span></code> – human-readable 2-3 sentence assessment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">convergence_dynamics</span></code> – (only with CATS + track_diagnostics)
+per-component convergence info</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict with keys</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="analysis-functions">
+<h2>Analysis functions<a class="headerlink" href="#analysis-functions" title="Link to this heading">#</a></h2>
+<p>Pure Polars in, Polars out — usable on saved diagnostics without a sampler.</p>
+<p id="module-TACTICS.thompson_sampling.diagnostics">Pure analysis functions for CATS diagnostics.</p>
+<p>All functions operate on Polars DataFrames and have no dependency on the
+ThompsonSampler or strategy objects.  This makes them usable in notebooks,
+scripts, and post-hoc analysis pipelines.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.thompson_sampling.diagnostics.compute_posterior_entropy">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.thompson_sampling.diagnostics.</span></span><span class="sig-name descname"><span class="pre">compute_posterior_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">landscape_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'maximize'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criticality_metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ipr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_adaptive_sharpening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/thompson_sampling/diagnostics.html#compute_posterior_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.thompson_sampling.diagnostics.compute_posterior_entropy" title="Link to this definition">#</a></dt>
+<dd><p>Compute per-component entropy metrics from a posterior landscape.</p>
+<p>Uses z-score softmax (same as CATS <code class="docutils literal notranslate"><span class="pre">_calculate_criticality()</span></code>) to
+convert posterior means into a probability distribution, then measures
+concentration via IPR (default) or Shannon entropy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>landscape_df</strong> (<em>DataFrame</em>) – DataFrame from <code class="docutils literal notranslate"><span class="pre">sampler.get_posterior_landscape()</span></code>
+with columns <code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">reagent_name</span></code>, <code class="docutils literal notranslate"><span class="pre">mean</span></code>,
+<code class="docutils literal notranslate"><span class="pre">std</span></code>, <code class="docutils literal notranslate"><span class="pre">n_samples</span></code>.</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – “maximize” or “minimize” — determines sign convention.</p></li>
+<li><p><strong>criticality_metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – “ipr” or “shannon” — metric for concentration.</p></li>
+<li><p><strong>n_adaptive_sharpening</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Apply sqrt(log(N)) sharpening when using IPR.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">n_active</span></code>, <code class="docutils literal notranslate"><span class="pre">entropy</span></code>,
+<code class="docutils literal notranslate"><span class="pre">normalized_entropy</span></code>, <code class="docutils literal notranslate"><span class="pre">concentration</span></code>, <code class="docutils literal notranslate"><span class="pre">snr</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with one row per component</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.thompson_sampling.diagnostics.compute_convergence_point">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.thompson_sampling.diagnostics.</span></span><span class="sig-name descname"><span class="pre">compute_convergence_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagnostics_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stability_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/thompson_sampling/diagnostics.html#compute_convergence_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.thompson_sampling.diagnostics.compute_convergence_point" title="Link to this definition">#</a></dt>
+<dd><p>Find the cycle at which each component first reaches stable convergence.</p>
+<p>A component is considered converged at cycle <em>c</em> if criticality &gt; threshold
+for all cycles from <em>c</em> through <em>c + stability_window - 1</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diagnostics_df</strong> (<em>DataFrame</em>) – Enhanced diagnostics DataFrame (must have
+<code class="docutils literal notranslate"><span class="pre">current_cycle</span></code>, <code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">criticality</span></code> columns).</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Criticality threshold for “structured” (default 0.3).</p></li>
+<li><p><strong>stability_window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of consecutive cycles above threshold
+required for stability (default 5).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with <code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">cycle_first_above</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cycle_stable</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>DataFrame</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.thompson_sampling.diagnostics.compare_trajectory_vs_snapshot">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.thompson_sampling.diagnostics.</span></span><span class="sig-name descname"><span class="pre">compare_trajectory_vs_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagnostics_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">landscape_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'maximize'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/thompson_sampling/diagnostics.html#compare_trajectory_vs_snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.thompson_sampling.diagnostics.compare_trajectory_vs_snapshot" title="Link to this definition">#</a></dt>
+<dd><p>Compare CATS trajectory information with a post-hoc snapshot.</p>
+<p>Shows what the trajectory reveals that the static snapshot doesn’t:
+convergence timing, stability, and whether the final state was reached
+early or late.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diagnostics_df</strong> (<em>DataFrame</em>) – Enhanced diagnostics DataFrame from
+<code class="docutils literal notranslate"><span class="pre">sampler.get_diagnostics()</span></code>.</p></li>
+<li><p><strong>landscape_df</strong> (<em>DataFrame</em>) – Posterior landscape from
+<code class="docutils literal notranslate"><span class="pre">sampler.get_posterior_landscape()</span></code>.</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – “maximize” or “minimize”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">component_idx</span></code>,
+<code class="docutils literal notranslate"><span class="pre">snapshot_concentration</span></code>, <code class="docutils literal notranslate"><span class="pre">trajectory_final_criticality</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cycle_first_above</span></code>, <code class="docutils literal notranslate"><span class="pre">cycle_stable</span></code>,
+<code class="docutils literal notranslate"><span class="pre">trajectory_adds_info</span></code> (bool).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with per-component comparison</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.thompson_sampling.diagnostics.compute_disagreement_convergence">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.thompson_sampling.diagnostics.</span></span><span class="sig-name descname"><span class="pre">compute_disagreement_convergence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagnostics_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stability_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/thompson_sampling/diagnostics.html#compute_disagreement_convergence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.thompson_sampling.diagnostics.compute_disagreement_convergence" title="Link to this definition">#</a></dt>
+<dd><p>Analyze per-component disagreement EMA convergence from TT-TS diagnostics.</p>
+<p>Identifies when each component’s disagreement rate stabilizes, indicating
+that TT-TS has resolved uncertainty about reagent rankings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>diagnostics_df</strong> (<em>DataFrame</em>) – TT-TS diagnostics DataFrame (must have
+<code class="docutils literal notranslate"><span class="pre">current_cycle</span></code>, <code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">disagreement_ema</span></code>).</p></li>
+<li><p><strong>stability_window</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Consecutive cycles within threshold band for
+stability (default 10).</p></li>
+<li><p><strong>low_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Disagreement below this means component is
+well-resolved (default 0.3).</p></li>
+<li><p><strong>high_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Disagreement above this means component is
+saturated / exploration is random (default 0.8).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with <code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">final_disagreement</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cycle_below_low</span></code>, <code class="docutils literal notranslate"><span class="pre">cycle_stable_low</span></code>, <code class="docutils literal notranslate"><span class="pre">mean_disagreement</span></code>,
+<code class="docutils literal notranslate"><span class="pre">regime</span></code> (“resolved” / “saturated” / “exploring”).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>DataFrame</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.thompson_sampling.diagnostics.compute_scale_adaptation">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.thompson_sampling.diagnostics.</span></span><span class="sig-name descname"><span class="pre">compute_scale_adaptation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagnostics_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/thompson_sampling/diagnostics.html#compute_scale_adaptation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.thompson_sampling.diagnostics.compute_scale_adaptation" title="Link to this definition">#</a></dt>
+<dd><p>Summarize per-component adaptive heated_scale evolution from TT-TS diagnostics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>diagnostics_df</strong> (<em>DataFrame</em>) – TT-TS diagnostics DataFrame (must have
+<code class="docutils literal notranslate"><span class="pre">current_cycle</span></code>, <code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">heated_scale</span></code>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with <code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">initial_scale</span></code>, <code class="docutils literal notranslate"><span class="pre">final_scale</span></code>,
+<code class="docutils literal notranslate"><span class="pre">min_scale</span></code>, <code class="docutils literal notranslate"><span class="pre">max_scale</span></code>, <code class="docutils literal notranslate"><span class="pre">scale_range</span></code>, <code class="docutils literal notranslate"><span class="pre">adaptation_direction</span></code>
+(“decayed” / “grew” / “stable”).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>DataFrame</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TACTICS.thompson_sampling.diagnostics.format_sar_report">
+<span class="sig-prename descclassname"><span class="pre">TACTICS.thompson_sampling.diagnostics.</span></span><span class="sig-name descname"><span class="pre">format_sar_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/TACTICS/thompson_sampling/diagnostics.html#format_sar_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TACTICS.thompson_sampling.diagnostics.format_sar_report" title="Link to this definition">#</a></dt>
+<dd><p>Format a <code class="docutils literal notranslate"><span class="pre">get_sar_summary()</span></code> dict into a publication-ready text block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>summary</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><em>Dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><em>Any</em></a><em>]</em>) – Dict returned by <code class="docutils literal notranslate"><span class="pre">ThompsonSampler.get_sar_summary()</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Multi-line string suitable for inclusion in a manuscript or notebook.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="scale.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Scale</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="visualise.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Visualise</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampler-accessors">Sampler accessors</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_diagnostics"><code class="docutils literal notranslate"><span class="pre">ThompsonSampler.get_diagnostics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_posterior_landscape"><code class="docutils literal notranslate"><span class="pre">ThompsonSampler.get_posterior_landscape()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_sar_summary"><code class="docutils literal notranslate"><span class="pre">ThompsonSampler.get_sar_summary()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis-functions">Analysis functions</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.thompson_sampling.diagnostics.compute_posterior_entropy"><code class="docutils literal notranslate"><span class="pre">compute_posterior_entropy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.thompson_sampling.diagnostics.compute_convergence_point"><code class="docutils literal notranslate"><span class="pre">compute_convergence_point()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.thompson_sampling.diagnostics.compare_trajectory_vs_snapshot"><code class="docutils literal notranslate"><span class="pre">compare_trajectory_vs_snapshot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.thompson_sampling.diagnostics.compute_disagreement_convergence"><code class="docutils literal notranslate"><span class="pre">compute_disagreement_convergence()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.thompson_sampling.diagnostics.compute_scale_adaptation"><code class="docutils literal notranslate"><span class="pre">compute_scale_adaptation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#TACTICS.thompson_sampling.diagnostics.format_sar_report"><code class="docutils literal notranslate"><span class="pre">format_sar_report()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/aakankschit/TACTICS/edit/main/docs/source/reference/inspect.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

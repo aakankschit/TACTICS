@@ -1,0 +1,1423 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TACTICS.library_enumeration.smarts_toolkit.config &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/TACTICS/library_enumeration/smarts_toolkit/config';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../../../../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">TACTICS.library_enumeration.smarts_toolkit.config</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for TACTICS.library_enumeration.smarts_toolkit.config</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">Configuration classes for the SMARTS toolkit.</span>
+
+<span class="sd">This module provides validated Pydantic configuration for:</span>
+<span class="sd">- Single reaction definitions (ReactionDef)</span>
+<span class="sd">- Multi-step synthesis pipelines (ReactionConfig)</span>
+<span class="sd">- Deprotection specifications (DeprotectionSpec)</span>
+<span class="sd">- Step input mappings (StepInput)</span>
+
+<span class="sd">The configuration system supports three modes:</span>
+<span class="sd">1. Single SMARTS: One ReactionDef with step_index=0</span>
+<span class="sd">2. Alternative SMARTS: Multiple ReactionDef with same step_index, marked with step_modes</span>
+<span class="sd">3. Multi-step: Multiple ReactionDef with different step_index values</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">PrivateAttr</span><span class="p">,</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">model_validator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit.Chem</span><span class="w"> </span><span class="kn">import</span> <span class="n">AllChem</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">._validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationResult</span><span class="p">,</span> <span class="n">_SMARTSValidator</span>
+
+
+<div class="viewcode-block" id="InputSource">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.InputSource">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InputSource</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Source of input for a reaction step."""</span>
+
+    <span class="n">REAGENT_FILE</span> <span class="o">=</span> <span class="s2">"reagent_file"</span>  <span class="c1"># From original reagent files</span>
+    <span class="n">PREVIOUS_STEP</span> <span class="o">=</span> <span class="s2">"previous_step"</span>  <span class="c1"># From intermediate of a previous step</span></div>
+
+
+
+<div class="viewcode-block" id="ProtectingGroupInfo">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ProtectingGroupInfo">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProtectingGroupInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Definition of a protecting group for detection and optional removal.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        name: Human-readable name (e.g., "Boc", "Fmoc")</span>
+<span class="sd">        smarts: SMARTS pattern to detect the group</span>
+<span class="sd">        deprotection_smarts: Optional reaction SMARTS for removal</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; boc = ProtectingGroupInfo(</span>
+<span class="sd">        ...     name="Boc",</span>
+<span class="sd">        ...     smarts="[NX3][C](=O)OC(C)(C)C",</span>
+<span class="sd">        ...     deprotection_smarts="[N:1][C](=O)OC(C)(C)C&gt;&gt;[N:1]"</span>
+<span class="sd">        ... )</span>
+<span class="sd">    """</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">smarts</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">deprotection_smarts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Validate SMARTS patterns on creation."""</span>
+        <span class="c1"># Validate detection SMARTS</span>
+        <span class="k">if</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smarts</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid detection SMARTS for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">smarts</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="c1"># Validate deprotection SMARTS if provided</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deprotection_smarts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deprotection_smarts</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Invalid deprotection SMARTS for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">deprotection_smarts</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="StepInput">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.StepInput">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StepInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Configuration for one input to a reaction step.</span>
+
+<span class="sd">    Specifies where the input comes from:</span>
+<span class="sd">    - REAGENT_FILE: From one of the original reagent files</span>
+<span class="sd">    - PREVIOUS_STEP: From the output of a previous reaction step</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        source: Where input comes from (reagent_file or previous_step)</span>
+<span class="sd">        file_index: Index into reagent_file_list (for REAGENT_FILE source)</span>
+<span class="sd">        step_index: Index of previous step to use output from (for PREVIOUS_STEP source)</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # Input from first reagent file</span>
+<span class="sd">        &gt;&gt;&gt; input1 = StepInput(source=InputSource.REAGENT_FILE, file_index=0)</span>
+<span class="sd">        &gt;&gt;&gt; # Input from step 0's output</span>
+<span class="sd">        &gt;&gt;&gt; input2 = StepInput(source=InputSource.PREVIOUS_STEP, step_index=0)</span>
+<span class="sd">    """</span>
+
+    <span class="n">source</span><span class="p">:</span> <span class="n">InputSource</span>
+    <span class="n">file_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Index into reagent_file_list (for REAGENT_FILE source)"</span>
+    <span class="p">)</span>
+    <span class="n">step_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Index of previous step to use output from (for PREVIOUS_STEP source)"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="StepInput.validate_source_fields">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.StepInput.validate_source_fields">[docs]</a>
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_source_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Ensure correct fields are provided based on source type."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"file_index required for REAGENT_FILE source"</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="n">InputSource</span><span class="o">.</span><span class="n">PREVIOUS_STEP</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"step_index required for PREVIOUS_STEP source"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"frozen"</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="DeprotectionSpec">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.DeprotectionSpec">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DeprotectionSpec</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Deprotection to apply to a reactant or product.</span>
+
+<span class="sd">    Specifies which protecting group to remove and the target molecule.</span>
+<span class="sd">    The target can be:</span>
+<span class="sd">    - An integer (0, 1, 2, ...): Index of the reactant to deprotect BEFORE the reaction</span>
+<span class="sd">    - The string "product": Apply deprotection to the product AFTER the reaction</span>
+
+<span class="sd">    Multiple DeprotectionSpec can be applied to a single reaction.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        group: Name of protecting group to remove (e.g., "Boc", "Fmoc")</span>
+<span class="sd">        target: Either a reactant index (int &gt;= 0) or "product" for post-reaction deprotection</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; # Remove Boc from the first reactant (before reaction)</span>
+<span class="sd">        &gt;&gt;&gt; deprot = DeprotectionSpec(group="Boc", target=0)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Remove Fmoc from the product (after reaction)</span>
+<span class="sd">        &gt;&gt;&gt; deprot = DeprotectionSpec(group="Fmoc", target="product")</span>
+<span class="sd">    """</span>
+
+    <span class="n">group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Name of protecting group (e.g., 'Boc', 'Fmoc')"</span>
+    <span class="p">)</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"product"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Reactant index (int &gt;= 0) for pre-reaction deprotection, "</span>
+        <span class="s2">"or 'product' for post-reaction deprotection"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"target"</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_target</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Ensure target is valid: non-negative int or 'product'."""</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"target must be &gt;= 0 when specifying a reactant index"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">v</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_product_deprotection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return True if this deprotection targets the product."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">==</span> <span class="s2">"product"</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reactant_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return reactant index if targeting a reactant, else None."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"frozen"</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="ReactionDef">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReactionDef</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Definition of a single chemical reaction with built-in validation.</span>
+
+<span class="sd">    This is the fundamental building block for all synthesis configurations.</span>
+<span class="sd">    Every reaction must specify a step_index (0 for single-step reactions,</span>
+<span class="sd">    0/1/2... for sequences).</span>
+
+<span class="sd">    Validation is built-in: call validate() to check reagent compatibility.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        reaction_smarts: The reaction SMARTS string (required)</span>
+<span class="sd">        step_index: Which step in the sequence (0 = first step)</span>
+<span class="sd">        pattern_id: Identifier for alternatives (auto-generated if not provided)</span>
+<span class="sd">        description: Human-readable description</span>
+<span class="sd">        deprotections: List of deprotections to apply before this reaction</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; rxn = ReactionDef(</span>
+<span class="sd">        ...     reaction_smarts="[C:1](=O)O.[N:2]H2&gt;&gt;[C:1](=O)[N:2]",</span>
+<span class="sd">        ...     step_index=0,</span>
+<span class="sd">        ...     description="Amide coupling"</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; result = rxn.validate(reagent_files=["acids.smi", "amines.smi"])</span>
+<span class="sd">        &gt;&gt;&gt; print(rxn.coverage_stats)</span>
+<span class="sd">    """</span>
+
+    <span class="n">reaction_smarts</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Reaction SMARTS string"</span><span class="p">)</span>
+    <span class="n">step_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Step index (0 = first step)"</span><span class="p">)</span>
+    <span class="n">pattern_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Identifier for this pattern (for alternatives)"</span>
+    <span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Human-readable description"</span><span class="p">)</span>
+    <span class="n">deprotections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DeprotectionSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Deprotections to apply before this reaction executes"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Private attributes for internal state</span>
+    <span class="n">_reaction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_validator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_validation_result</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"reaction_smarts"</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_smarts</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Validate that reaction SMARTS is parseable."""</span>
+        <span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rxn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid reaction SMARTS: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">v</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize the RDKit reaction object."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reaction</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaction_smarts</span><span class="p">)</span>
+
+    <span class="c1"># === Validation Methods ===</span>
+
+<div class="viewcode-block" id="ReactionDef.validate_reaction">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.validate_reaction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_reaction</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">reagent_files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">reagent_smiles</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">protecting_groups</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ProtectingGroupInfo</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">deprotect</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">desalt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">test_reactions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"ValidationResult"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validate this reaction against reagent files or SMILES lists.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            reagent_files: Paths to reagent .smi files</span>
+<span class="sd">            reagent_smiles: Direct SMILES lists as [(smiles, name), ...] per position</span>
+<span class="sd">                           (useful for validating against intermediates)</span>
+<span class="sd">            protecting_groups: Custom protecting group definitions</span>
+<span class="sd">            deprotect: Remove protecting groups before checking compatibility</span>
+<span class="sd">            desalt: Remove salt fragments before checking compatibility</span>
+<span class="sd">            test_reactions: Actually run reaction on sample combinations</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ValidationResult with comprehensive compatibility information</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; rxn = ReactionDef(reaction_smarts="[C:1](=O)O.[N:2]&gt;&gt;[C:1](=O)[N:2]")</span>
+<span class="sd">            &gt;&gt;&gt; result = rxn.validate_reaction(reagent_files=["acids.smi", "amines.smi"])</span>
+<span class="sd">            &gt;&gt;&gt; print(f"Coverage: {result.coverage_stats}")</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">._validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SMARTSValidator</span>
+
+        <span class="c1"># Create validator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validator</span> <span class="o">=</span> <span class="n">_SMARTSValidator</span><span class="p">(</span>
+            <span class="n">reaction_smarts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reaction_smarts</span><span class="p">,</span>
+            <span class="n">reagent_files</span><span class="o">=</span><span class="n">reagent_files</span><span class="p">,</span>
+            <span class="n">reagent_smiles_lists</span><span class="o">=</span><span class="n">reagent_smiles</span><span class="p">,</span>
+            <span class="n">protecting_groups</span><span class="o">=</span><span class="n">protecting_groups</span><span class="p">,</span>
+            <span class="n">deprotect_on_import</span><span class="o">=</span><span class="n">deprotect</span><span class="p">,</span>
+            <span class="n">desalt_on_import</span><span class="o">=</span><span class="n">desalt</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Run validation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+            <span class="n">test_reactions</span><span class="o">=</span><span class="n">test_reactions</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span></div>
+
+
+<div class="viewcode-block" id="ReactionDef.get_compatible_reagents">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.get_compatible_reagents">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_compatible_reagents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get reagents compatible with template at position.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            position: Reagent position (0-indexed)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of (smiles, name) tuples</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If validate_reaction() hasn't been called</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Must call validate_reaction() before get_compatible_reagents()"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span><span class="o">.</span><span class="n">compatible_reagents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="p">[])</span></div>
+
+
+<div class="viewcode-block" id="ReactionDef.get_incompatible_reagents">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.get_incompatible_reagents">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_incompatible_reagents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get reagents that don't match template at position.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            position: Reagent position (0-indexed)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of (smiles, name) tuples</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If validate_reaction() hasn't been called</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Must call validate_reaction() before get_incompatible_reagents()"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span><span class="o">.</span><span class="n">incompatible_reagents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="p">[])</span></div>
+
+
+    <span class="c1"># === Visualization Methods ===</span>
+
+<div class="viewcode-block" id="ReactionDef.visualize_template_match">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.visualize_template_match">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visualize_template_match</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">highlight_color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="n">size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Visualize which atoms in a molecule match the reaction template.</span>
+
+<span class="sd">        This is the primary troubleshooting tool for understanding why a</span>
+<span class="sd">        reagent or intermediate doesn't work with the reaction.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            smiles: SMILES of molecule to visualize</span>
+<span class="sd">            position: Which reactant position to check against</span>
+<span class="sd">            highlight_color: RGB tuple for highlight color (default: green)</span>
+<span class="sd">            size: Image dimensions (width, height)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            IPython Image for Jupyter display, or PIL Image</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">rdkit.Chem</span><span class="w"> </span><span class="kn">import</span> <span class="n">Draw</span>
+
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_reactant_template</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="n">highlight_atoms</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">Draw</span><span class="o">.</span><span class="n">MolToImage</span><span class="p">(</span>
+                <span class="n">mol</span><span class="p">,</span>
+                <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
+                <span class="n">highlightAtoms</span><span class="o">=</span><span class="n">highlight_atoms</span><span class="p">,</span>
+                <span class="n">highlightColor</span><span class="o">=</span><span class="n">highlight_color</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">Draw</span><span class="o">.</span><span class="n">MolToImage</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">img</span></div>
+
+
+<div class="viewcode-block" id="ReactionDef.visualize_reaction">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.visualize_reaction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">visualize_reaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Visualize the reaction scheme.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            size: Image dimensions</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            IPython Image or PIL Image</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">rdkit.Chem</span><span class="w"> </span><span class="kn">import</span> <span class="n">Draw</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reaction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">img</span> <span class="o">=</span> <span class="n">Draw</span><span class="o">.</span><span class="n">ReactionToImage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reaction</span><span class="p">,</span> <span class="n">subImgSize</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">img</span></div>
+
+
+<div class="viewcode-block" id="ReactionDef.get_reactant_template">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.get_reactant_template">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_reactant_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get the RDKit mol template for a reactant position.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            position: Reactant position (0-indexed)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            RDKit Mol object representing the reactant pattern</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reaction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">position</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reaction</span><span class="o">.</span><span class="n">GetNumReactantTemplates</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reaction</span><span class="o">.</span><span class="n">GetReactantTemplate</span><span class="p">(</span><span class="n">position</span><span class="p">)</span></div>
+
+
+    <span class="c1"># === Properties ===</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_reactants</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Number of reactants in this reaction."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reaction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reaction</span><span class="o">.</span><span class="n">GetNumReactantTemplates</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_validated</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""True if validate() has been called."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coverage_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Coverage percentage per position.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict mapping position to coverage percentage (0-100)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If validate_reaction() hasn't been called</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Must call validate_reaction() before accessing coverage_stats"</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span><span class="o">.</span><span class="n">coverage_stats</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validation_result</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">"ValidationResult"</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Get the cached validation result."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span>
+
+    <span class="c1"># === Utility ===</span>
+
+<div class="viewcode-block" id="ReactionDef.summary">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionDef.summary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Human-readable validation summary.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Multi-line string with validation summary</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"ReactionDef(step=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_index</span><span class="si">}</span><span class="s2">, not validated)"</span>
+
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">"ReactionDef Summary (step=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_index</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
+            <span class="s2">"="</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"SMARTS: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reaction_smarts</span><span class="p">[:</span><span class="mi">60</span><span class="p">]</span><span class="si">}{</span><span class="s1">'...'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaction_smarts</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">""</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span><span class="o">.</span><span class="n">coverage_stats</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">coverage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span><span class="o">.</span><span class="n">coverage_stats</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+            <span class="n">compatible</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span><span class="o">.</span><span class="n">compatible_reagents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="p">[]))</span>
+            <span class="n">incompatible</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_validation_result</span><span class="o">.</span><span class="n">incompatible_reagents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Position </span><span class="si">{</span><span class="n">pos</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">compatible</span><span class="si">}</span><span class="s2"> compatible, </span><span class="si">{</span><span class="n">incompatible</span><span class="si">}</span><span class="s2"> incompatible (</span><span class="si">{</span><span class="n">coverage</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)"</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"frozen"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"arbitrary_types_allowed"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="ReactionConfig">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReactionConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Container for synthesis configuration.</span>
+
+<span class="sd">    Rules:</span>
+<span class="sd">    - Every ReactionDef must have a step_index</span>
+<span class="sd">    - step_inputs is REQUIRED when len(reactions) &gt; 1</span>
+<span class="sd">    - step_modes is only used to mark steps with alternative SMARTS patterns</span>
+<span class="sd">    - pattern_ids are auto-generated for alternatives if not provided</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        reactions: List of ReactionDef objects (one or more)</span>
+<span class="sd">        reagent_file_list: Paths to reagent files</span>
+<span class="sd">        step_inputs: Mapping of step_index to list of StepInput (required if multiple reactions)</span>
+<span class="sd">        step_modes: Mapping of step_index to "alternative" for steps with multiple SMARTS</span>
+<span class="sd">        protecting_groups: Custom protecting group definitions</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        # Single reaction (simplest case)</span>
+<span class="sd">        &gt;&gt;&gt; config = ReactionConfig(</span>
+<span class="sd">        ...     reactions=[ReactionDef(reaction_smarts="...", step_index=0)],</span>
+<span class="sd">        ...     reagent_file_list=["acids.smi", "amines.smi"]</span>
+<span class="sd">        ... )</span>
+
+<span class="sd">        # Alternatives at step 0</span>
+<span class="sd">        &gt;&gt;&gt; config = ReactionConfig(</span>
+<span class="sd">        ...     reactions=[</span>
+<span class="sd">        ...         ReactionDef(reaction_smarts="...", step_index=0, pattern_id="primary"),</span>
+<span class="sd">        ...         ReactionDef(reaction_smarts="...", step_index=0, pattern_id="secondary"),</span>
+<span class="sd">        ...     ],</span>
+<span class="sd">        ...     reagent_file_list=["amines.smi", "acids.smi"],</span>
+<span class="sd">        ...     step_inputs={0: [StepInput(...), StepInput(...)]},</span>
+<span class="sd">        ...     step_modes={0: "alternative"}</span>
+<span class="sd">        ... )</span>
+
+<span class="sd">        # Multi-step sequence</span>
+<span class="sd">        &gt;&gt;&gt; config = ReactionConfig(</span>
+<span class="sd">        ...     reactions=[</span>
+<span class="sd">        ...         ReactionDef(reaction_smarts="...", step_index=0),</span>
+<span class="sd">        ...         ReactionDef(reaction_smarts="...", step_index=1),</span>
+<span class="sd">        ...     ],</span>
+<span class="sd">        ...     reagent_file_list=["bb1.smi", "bb2.smi", "bb3.smi"],</span>
+<span class="sd">        ...     step_inputs={</span>
+<span class="sd">        ...         0: [StepInput(source=InputSource.REAGENT_FILE, file_index=0), ...],</span>
+<span class="sd">        ...         1: [StepInput(source=InputSource.PREVIOUS_STEP, step_index=0), ...],</span>
+<span class="sd">        ...     }</span>
+<span class="sd">        ... )</span>
+<span class="sd">    """</span>
+
+    <span class="n">reactions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ReactionDef</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">reagent_file_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">step_inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepInput</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Mapping of step_index to input sources (required if multiple reactions)"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">step_modes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"alternative"</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Mark steps with alternative SMARTS patterns"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">protecting_groups</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ProtectingGroupInfo</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Custom protecting group definitions"</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="ReactionConfig.validate_config">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.validate_config">[docs]</a>
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validate the configuration:</span>
+<span class="sd">        1. Require step_inputs when multiple reactions</span>
+<span class="sd">        2. Auto-generate pattern_ids for alternatives</span>
+<span class="sd">        3. Validate step_modes references valid step indices</span>
+<span class="sd">        4. Validate step_inputs references valid file/step indices</span>
+<span class="sd">        """</span>
+        <span class="c1"># Get unique step indices</span>
+        <span class="n">step_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">step_index</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span><span class="p">)</span>
+
+        <span class="c1"># 1. Require step_inputs when multiple reactions</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_inputs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"step_inputs is required when multiple reactions are defined. "</span>
+                <span class="s2">"Specify input sources for each step."</span>
+            <span class="p">)</span>
+
+        <span class="c1"># 2. Auto-generate pattern_ids for steps with alternatives</span>
+        <span class="n">reactions_by_step</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">ReactionDef</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">rxn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rxn</span><span class="o">.</span><span class="n">step_index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reactions_by_step</span><span class="p">:</span>
+                <span class="n">reactions_by_step</span><span class="p">[</span><span class="n">rxn</span><span class="o">.</span><span class="n">step_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">reactions_by_step</span><span class="p">[</span><span class="n">rxn</span><span class="o">.</span><span class="n">step_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rxn</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">step_idx</span><span class="p">,</span> <span class="n">rxns</span> <span class="ow">in</span> <span class="n">reactions_by_step</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rxns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Multiple reactions at same step - ensure pattern_ids</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rxn</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rxns</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">rxn</span><span class="o">.</span><span class="n">pattern_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">rxn</span><span class="o">.</span><span class="n">pattern_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"alt_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span>
+
+        <span class="c1"># 3. Validate step_modes references valid step indices</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_modes</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">step_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_modes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">step_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">step_indices</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"step_modes references non-existent step </span><span class="si">{</span><span class="n">step_idx</span><span class="si">}</span><span class="s2">. "</span>
+                        <span class="sa">f</span><span class="s2">"Valid steps: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">step_indices</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="p">)</span>
+                <span class="c1"># Check that step actually has alternatives</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reactions_by_step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">step_idx</span><span class="p">,</span> <span class="p">[]))</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"step_modes marks step </span><span class="si">{</span><span class="n">step_idx</span><span class="si">}</span><span class="s2"> as 'alternative' but "</span>
+                        <span class="sa">f</span><span class="s2">"it only has one reaction. Remove from step_modes or add alternatives."</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># 4. Validate step_inputs</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_inputs</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">step_idx</span><span class="p">,</span> <span class="n">inputs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">step_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">step_indices</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"step_inputs references non-existent step </span><span class="si">{</span><span class="n">step_idx</span><span class="si">}</span><span class="s2">. "</span>
+                        <span class="sa">f</span><span class="s2">"Valid steps: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">step_indices</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="p">)</span>
+                <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">file_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">inp</span><span class="o">.</span><span class="n">file_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reagent_file_list</span>
+                        <span class="p">):</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">"step_inputs for step </span><span class="si">{</span><span class="n">step_idx</span><span class="si">}</span><span class="s2"> references "</span>
+                                <span class="sa">f</span><span class="s2">"file_index </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">file_index</span><span class="si">}</span><span class="s2"> but only "</span>
+                                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_file_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> reagent files provided"</span>
+                            <span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">inp</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="n">InputSource</span><span class="o">.</span><span class="n">PREVIOUS_STEP</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">step_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">inp</span><span class="o">.</span><span class="n">step_index</span> <span class="o">&gt;=</span> <span class="n">step_idx</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">"step_inputs for step </span><span class="si">{</span><span class="n">step_idx</span><span class="si">}</span><span class="s2"> references "</span>
+                                <span class="sa">f</span><span class="s2">"step_index </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">step_index</span><span class="si">}</span><span class="s2"> which is not a previous step"</span>
+                            <span class="p">)</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="n">inp</span><span class="o">.</span><span class="n">step_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                            <span class="ow">and</span> <span class="n">inp</span><span class="o">.</span><span class="n">step_index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">step_indices</span>
+                        <span class="p">):</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">"step_inputs for step </span><span class="si">{</span><span class="n">step_idx</span><span class="si">}</span><span class="s2"> references "</span>
+                                <span class="sa">f</span><span class="s2">"non-existent step </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">step_index</span><span class="si">}</span><span class="s2">"</span>
+                            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+    <span class="c1"># === Properties ===</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Number of unique steps."""</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">step_index</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_multi_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""True if more than one step."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="o">&gt;</span> <span class="mi">1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">steps_with_alternatives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""List of step indices that have alternative SMARTS."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_modes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_modes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Sorted list of all step indices."""</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">step_index</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span><span class="p">))</span>
+
+    <span class="c1"># === Methods ===</span>
+
+<div class="viewcode-block" id="ReactionConfig.get_reactions_for_step">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.get_reactions_for_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_reactions_for_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ReactionDef</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get all ReactionDef objects for a step (including alternatives).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            step_index: The step index</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of ReactionDef objects for that step</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactions</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">step_index</span> <span class="o">==</span> <span class="n">step_index</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ReactionConfig.get_primary_reaction">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.get_primary_reaction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_primary_reaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ReactionDef</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get the primary reaction for a step.</span>
+
+<span class="sd">        Returns the reaction with pattern_id='primary', or the first one if not found.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            step_index: The step index</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The primary ReactionDef or None if step doesn't exist</span>
+<span class="sd">        """</span>
+        <span class="n">rxns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_reactions_for_step</span><span class="p">(</span><span class="n">step_index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rxns</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Look for pattern_id='primary'</span>
+        <span class="k">for</span> <span class="n">rxn</span> <span class="ow">in</span> <span class="n">rxns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rxn</span><span class="o">.</span><span class="n">pattern_id</span> <span class="o">==</span> <span class="s2">"primary"</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">rxn</span>
+
+        <span class="c1"># Return first one</span>
+        <span class="k">return</span> <span class="n">rxns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ReactionConfig.get_inputs_for_step">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.get_inputs_for_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_inputs_for_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">StepInput</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get the input configuration for a step.</span>
+
+<span class="sd">        For single-reaction configs without step_inputs, auto-generates</span>
+<span class="sd">        inputs from reagent_file_list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            step_index: The step index</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of StepInput objects for that step</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">step_index</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="c1"># Single reaction case - auto-generate from reagent files</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">step_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="n">StepInput</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span><span class="p">,</span> <span class="n">file_index</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_file_list</span><span class="p">))</span>
+            <span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="ReactionConfig.has_alternatives_at_step">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.has_alternatives_at_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_alternatives_at_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check if a step has alternative SMARTS patterns.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            step_index: The step index</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if step has alternatives marked in step_modes</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_modes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_modes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">step_index</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"alternative"</span></div>
+
+
+<div class="viewcode-block" id="ReactionConfig.validate_all">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit.config.ReactionConfig.validate_all">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_all</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">deprotect</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">desalt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">"ValidationResult"</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validate all reactions in the config.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            deprotect: Apply deprotection during validation</span>
+<span class="sd">            desalt: Apply desalting during validation</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Nested dict: {step_index: {pattern_id: ValidationResult}}</span>
+<span class="sd">        """</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">step_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_indices</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">step_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">rxns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_reactions_for_step</span><span class="p">(</span><span class="n">step_idx</span><span class="p">)</span>
+
+            <span class="c1"># Get reagent files for this step</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_inputs_for_step</span><span class="p">(</span><span class="n">step_idx</span><span class="p">)</span>
+            <span class="n">reagent_files</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reagent_file_list</span><span class="p">[</span><span class="n">inp</span><span class="o">.</span><span class="n">file_index</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">inputs</span>
+                <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="n">InputSource</span><span class="o">.</span><span class="n">REAGENT_FILE</span> <span class="ow">and</span> <span class="n">inp</span><span class="o">.</span><span class="n">file_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">rxn</span> <span class="ow">in</span> <span class="n">rxns</span><span class="p">:</span>
+                <span class="n">pattern_id</span> <span class="o">=</span> <span class="n">rxn</span><span class="o">.</span><span class="n">pattern_id</span> <span class="ow">or</span> <span class="s2">"primary"</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">rxn</span><span class="o">.</span><span class="n">validate_reaction</span><span class="p">(</span>
+                    <span class="n">reagent_files</span><span class="o">=</span><span class="n">reagent_files</span><span class="p">,</span>
+                    <span class="n">protecting_groups</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">protecting_groups</span><span class="p">,</span>
+                    <span class="n">deprotect</span><span class="o">=</span><span class="n">deprotect</span><span class="p">,</span>
+                    <span class="n">desalt</span><span class="o">=</span><span class="n">desalt</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">step_idx</span><span class="p">][</span><span class="n">pattern_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"frozen"</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

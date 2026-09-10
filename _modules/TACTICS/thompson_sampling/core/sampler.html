@@ -1,0 +1,1829 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TACTICS.thompson_sampling.core.sampler &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/TACTICS/thompson_sampling/core/sampler';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../../../../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">TACTICS.thompson_sampling.core.sampler</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for TACTICS.thompson_sampling.core.sampler</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..strategies.base_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">SelectionStrategy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.disallow_tracker</span><span class="w"> </span><span class="kn">import</span> <span class="n">DisallowTracker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.reagent</span><span class="w"> </span><span class="kn">import</span> <span class="n">Reagent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.ts_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.ts_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_reagents</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.evaluators</span><span class="w"> </span><span class="kn">import</span> <span class="n">DBEvaluator</span><span class="p">,</span> <span class="n">LookupEvaluator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.parallel_evaluator</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParallelEvaluator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..warmup</span><span class="w"> </span><span class="kn">import</span> <span class="n">WarmupStrategy</span><span class="p">,</span> <span class="n">EnhancedWarmup</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThompsonSamplingConfig</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">...library_enumeration</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthesisPipeline</span>
+
+
+<div class="viewcode-block" id="ThompsonSampler">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ThompsonSampler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Run a Thompson Sampling search over a combinatorial library.</span>
+
+<span class="sd">    The usual way to build one is :meth:`from_config`, which wires the strategy,</span>
+<span class="sd">    warmup, evaluator and reagents from a</span>
+<span class="sd">    :class:`~TACTICS.thompson_sampling.config.ThompsonSamplingConfig`. Direct</span>
+<span class="sd">    construction is for tests and custom pipelines: after ``__init__`` call</span>
+<span class="sd">    :meth:`read_reagents` and :meth:`set_evaluator`, then :meth:`warm_up`,</span>
+<span class="sd">    :meth:`search`, and :meth:`close`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    synthesis_pipeline : SynthesisPipeline</span>
+<span class="sd">        Reaction definition(s) and reagent files. The single source of truth</span>
+<span class="sd">        for how a product is made from a reagent tuple.</span>
+<span class="sd">    selection_strategy : SelectionStrategy</span>
+<span class="sd">        How reagents are chosen each cycle (e.g. ``TopTwoSelection``,</span>
+<span class="sd">        ``RouletteWheelSelection``).</span>
+<span class="sd">    warmup_strategy : WarmupStrategy, optional</span>
+<span class="sd">        How initial observations are collected before the posteriors exist.</span>
+<span class="sd">        Default ``EnhancedWarmup()``.</span>
+<span class="sd">    log_filename : str, optional</span>
+<span class="sd">        Write the run log to this file as well as the console.</span>
+<span class="sd">    batch_size : int, default 1</span>
+<span class="sd">        Compounds sampled per cycle (independent of parallel evaluation).</span>
+<span class="sd">    processes : int, default 1</span>
+<span class="sd">        Worker processes for evaluation. Worth it only for slow evaluators</span>
+<span class="sd">        (docking, ROCS, ML); for lookup evaluators the overhead exceeds the</span>
+<span class="sd">        lookup. With ``processes &gt; 1`` the evaluator must be set with its</span>
+<span class="sd">        config (see :meth:`set_evaluator`) so each worker can rebuild it.</span>
+<span class="sd">    min_cpds_per_core : int, default 10</span>
+<span class="sd">        Evaluation is triggered once ``processes * min_cpds_per_core``</span>
+<span class="sd">        compounds have accumulated (or at the last cycle).</span>
+<span class="sd">    product_library_file : str, optional</span>
+<span class="sd">        CSV with ``Product_Code`` and ``SMILES`` columns of pre-enumerated</span>
+<span class="sd">        products. Looked up before synthesis; misses fall back to synthesis.</span>
+<span class="sd">    use_boltzmann_weighting : bool, default False</span>
+<span class="sd">        Boltzmann-weighted posterior update (the update rule the recommended</span>
+<span class="sd">        presets use) instead of the uniform Bayesian update.</span>
+<span class="sd">    seed : int, optional</span>
+<span class="sd">        Seeds the sampler's random generator, which drives reagent selection</span>
+<span class="sd">        and component rotation. (Warmup pairing uses the ``seed`` on the</span>
+<span class="sd">        warmup strategy, where one exists.)</span>
+<span class="sd">    track_diagnostics : bool, default False</span>
+<span class="sd">        Record per-cycle component state so :meth:`get_diagnostics` returns a</span>
+<span class="sd">        trajectory. Small cost per cycle.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">synthesis_pipeline</span><span class="p">:</span> <span class="s2">"SynthesisPipeline"</span><span class="p">,</span>
+        <span class="n">selection_strategy</span><span class="p">:</span> <span class="n">SelectionStrategy</span><span class="p">,</span>
+        <span class="n">warmup_strategy</span><span class="p">:</span> <span class="n">WarmupStrategy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">log_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">min_cpds_per_core</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">product_library_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_boltzmann_weighting</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">track_diagnostics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synthesis_pipeline</span> <span class="o">=</span> <span class="n">synthesis_pipeline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span> <span class="o">=</span> <span class="n">selection_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warmup_strategy</span> <span class="o">=</span> <span class="n">warmup_strategy</span> <span class="ow">or</span> <span class="n">EnhancedWarmup</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Picklable recipe for self.evaluator, when known. Workers use this to</span>
+        <span class="c1"># build their own evaluator instead of receiving one over a pipe.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluator_config</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_filename</span> <span class="o">=</span> <span class="n">log_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">log_filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disallow_tracker</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hide_progress</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_prods</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">=</span> <span class="n">processes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_cpds_per_core</span> <span class="o">=</span> <span class="n">min_cpds_per_core</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parallel_evaluator</span> <span class="o">=</span> <span class="n">ParallelEvaluator</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">processes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">product_smiles_dict</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_boltzmann_weighting</span> <span class="o">=</span> <span class="n">use_boltzmann_weighting</span>
+
+        <span class="c1"># Master RNG for reproducibility</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="c1"># Diagnostics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_diagnostics</span> <span class="o">=</span> <span class="n">track_diagnostics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_records</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Load product library if provided</span>
+        <span class="k">if</span> <span class="n">product_library_file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_product_library</span><span class="p">(</span><span class="n">product_library_file</span><span class="p">)</span>
+
+        <span class="c1"># Log multiprocessing configuration</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Multiprocessing enabled: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">processes</span><span class="si">}</span><span class="s2"> processes, "</span>
+                <span class="sa">f</span><span class="s2">"min_cpds_per_core=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_cpds_per_core</span><span class="si">}</span><span class="s2">, "</span>
+                <span class="sa">f</span><span class="s2">"batch_threshold=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">processes</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">min_cpds_per_core</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Log Boltzmann weighting status</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_boltzmann_weighting</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">"Using Boltzmann-weighted Bayesian updates"</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Log pipeline info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Synthesis pipeline: </span><span class="si">{</span><span class="n">synthesis_pipeline</span><span class="o">.</span><span class="n">num_steps</span><span class="si">}</span><span class="s2"> step(s), "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">synthesis_pipeline</span><span class="o">.</span><span class="n">num_components</span><span class="si">}</span><span class="s2"> component(s)"</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ThompsonSampler.from_config">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.from_config">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="s2">"ThompsonSamplingConfig"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"ThompsonSampler"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Create a ThompsonSampler from a Pydantic configuration.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config: ThompsonSamplingConfig with synthesis_pipeline, strategy_config,</span>
+<span class="sd">                    warmup_config, and evaluator_config</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ThompsonSampler: Configured sampler instance</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; from TACTICS.library_enumeration import SynthesisPipeline</span>
+<span class="sd">            &gt;&gt;&gt; from TACTICS.library_enumeration.smarts_toolkit import ReactionDef, ReactionConfig</span>
+<span class="sd">            &gt;&gt;&gt; from TACTICS.thompson_sampling import ThompsonSamplingConfig</span>
+<span class="sd">            &gt;&gt;&gt; from TACTICS.thompson_sampling.strategies.config import GreedyConfig</span>
+<span class="sd">            &gt;&gt;&gt; from TACTICS.thompson_sampling.core.evaluator_config import LookupEvaluatorConfig</span>
+<span class="sd">            &gt;&gt;&gt;</span>
+<span class="sd">            &gt;&gt;&gt; # Create pipeline</span>
+<span class="sd">            &gt;&gt;&gt; rxn_config = ReactionConfig(</span>
+<span class="sd">            ...     reactions=[ReactionDef(reaction_smarts="...", step_index=0)],</span>
+<span class="sd">            ...     reagent_file_list=["acids.smi", "amines.smi"]</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; pipeline = SynthesisPipeline(rxn_config)</span>
+<span class="sd">            &gt;&gt;&gt;</span>
+<span class="sd">            &gt;&gt;&gt; # Create Thompson Sampling config</span>
+<span class="sd">            &gt;&gt;&gt; ts_config = ThompsonSamplingConfig(</span>
+<span class="sd">            ...     synthesis_pipeline=pipeline,</span>
+<span class="sd">            ...     num_ts_iterations=1000,</span>
+<span class="sd">            ...     strategy_config=GreedyConfig(mode="maximize"),</span>
+<span class="sd">            ...     evaluator_config=LookupEvaluatorConfig(ref_filename="scores.csv")</span>
+<span class="sd">            ... )</span>
+<span class="sd">            &gt;&gt;&gt; sampler = ThompsonSampler.from_config(ts_config)</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..factories</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_strategy</span><span class="p">,</span> <span class="n">create_warmup</span><span class="p">,</span> <span class="n">create_evaluator</span>
+
+        <span class="c1"># Create components from config</span>
+        <span class="n">strategy</span> <span class="o">=</span> <span class="n">create_strategy</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">strategy_config</span><span class="p">)</span>
+        <span class="n">warmup</span> <span class="o">=</span> <span class="n">create_warmup</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">warmup_config</span><span class="p">)</span>
+        <span class="n">evaluator</span> <span class="o">=</span> <span class="n">create_evaluator</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">evaluator_config</span><span class="p">)</span>
+
+        <span class="c1"># Get pipeline from config (single source of truth)</span>
+        <span class="n">pipeline</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">synthesis_pipeline</span>
+
+        <span class="c1"># Wire seed to warmup strategy if not already set</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="s2">"seed"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">warmup</span><span class="p">,</span> <span class="s2">"seed"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">warmup</span><span class="o">.</span><span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warmup</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+        <span class="c1"># Create sampler instance</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">synthesis_pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span>
+            <span class="n">selection_strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span>
+            <span class="n">warmup_strategy</span><span class="o">=</span><span class="n">warmup</span><span class="p">,</span>
+            <span class="n">log_filename</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">log_filename</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">processes</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">processes</span><span class="p">,</span>
+            <span class="n">min_cpds_per_core</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">min_cpds_per_core</span><span class="p">,</span>
+            <span class="n">product_library_file</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">product_library_file</span><span class="p">,</span>
+            <span class="n">use_boltzmann_weighting</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">use_boltzmann_weighting</span><span class="p">,</span>
+            <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+            <span class="n">track_diagnostics</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">track_diagnostics</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Set up sampler. The evaluator config is passed through so that, when</span>
+        <span class="c1"># processes &gt; 1, each worker can construct its own evaluator instead of</span>
+        <span class="c1"># receiving an unpicklable one over the pipe.</span>
+        <span class="n">sampler</span><span class="o">.</span><span class="n">set_evaluator</span><span class="p">(</span><span class="n">evaluator</span><span class="p">,</span> <span class="n">evaluator_config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">evaluator_config</span><span class="p">)</span>
+        <span class="n">sampler</span><span class="o">.</span><span class="n">read_reagents</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">reagent_file_list</span><span class="p">)</span>
+
+        <span class="c1"># Auto-detect SMARTS compatibility if enabled</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">auto_detect_smarts_compatibility</span><span class="p">:</span>
+            <span class="n">pipeline</span><span class="o">.</span><span class="n">auto_detect_compatibility</span><span class="p">(</span>
+                <span class="n">reagent_lists</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">,</span>
+                <span class="n">deprotect</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">deprotect_for_compatibility</span><span class="p">,</span>
+                <span class="n">desalt</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">desalt_for_compatibility</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">sampler</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">"Auto-detected SMARTS compatibility for synthesis pipeline"</span>
+            <span class="p">)</span>
+
+        <span class="n">sampler</span><span class="o">.</span><span class="n">set_hide_progress</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">hide_progress</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sampler</span></div>
+
+
+<div class="viewcode-block" id="ThompsonSampler.set_hide_progress">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.set_hide_progress">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_hide_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hide_progress</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Hide the progress bars"""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hide_progress</span> <span class="o">=</span> <span class="n">hide_progress</span></div>
+
+
+<div class="viewcode-block" id="ThompsonSampler.close">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Close the parallel evaluator and clean up resources.</span>
+
+<span class="sd">        Call this when done with the sampler to properly shut down</span>
+<span class="sd">        the multiprocessing pool.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_evaluator</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parallel_evaluator</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Cleanup: close parallel evaluator when sampler is garbage collected."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ThompsonSampler.load_product_library">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.load_product_library">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_product_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Load pre-enumerated product library for testing mode.</span>
+
+<span class="sd">        When a product library is provided, the sampler will skip reaction synthesis</span>
+<span class="sd">        and directly lookup product SMILES from the library using product codes.</span>
+<span class="sd">        This is useful for testing on pre-enumerated libraries where synthesis is redundant.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            library_file: Path to CSV file with 'Product_Code' and 'SMILES' columns</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            FileNotFoundError: If library file doesn't exist</span>
+<span class="sd">            ValueError: If required columns are missing</span>
+<span class="sd">        """</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">library_file</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Product library file not found: </span><span class="si">{</span><span class="n">library_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">library_file</span><span class="p">)</span>
+
+        <span class="c1"># Check for required columns</span>
+        <span class="k">if</span> <span class="s2">"Product_Code"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Product library must have 'Product_Code' column"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"SMILES"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Product library must have 'SMILES' column"</span><span class="p">)</span>
+
+        <span class="c1"># Create lookup dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">product_smiles_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"Product_Code"</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">df</span><span class="p">[</span><span class="s2">"SMILES"</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Loaded pre-enumerated product library with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">product_smiles_dict</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> products"</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">"Product synthesis will be skipped; using pre-enumerated SMILES"</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ThompsonSampler.read_reagents">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.read_reagents">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_reagents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_file_list</span><span class="p">,</span> <span class="n">num_to_select</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Read reagents from file list with optional Boltzmann weighting and mode"""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span> <span class="o">=</span> <span class="n">read_reagents</span><span class="p">(</span>
+            <span class="n">reagent_file_list</span><span class="p">,</span>
+            <span class="n">num_to_select</span><span class="o">=</span><span class="n">num_to_select</span><span class="p">,</span>
+            <span class="n">use_boltzmann_weighting</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_boltzmann_weighting</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_prods</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">prod</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_prods</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2"> possible products"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disallow_tracker</span> <span class="o">=</span> <span class="n">DisallowTracker</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="ThompsonSampler.get_num_prods">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_num_prods">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_num_prods</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get the total number of possible products"""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_prods</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Support pickling so workers can be initialized with this sampler.</span>
+
+<span class="sd">        Three attributes are dropped rather than pickled:</span>
+
+<span class="sd">        - ``evaluator``: may wrap a SWIG object (OpenEye ``OEDock``, ROCS shape</span>
+<span class="sd">          engine) that raises TypeError on pickle. Each worker rebuilds its own</span>
+<span class="sd">          from ``evaluator_config`` in ``parallel_evaluator._init_worker``.</span>
+<span class="sd">        - ``parallel_evaluator``: owns a ``multiprocessing.Pool``, which cannot</span>
+<span class="sd">          be pickled and must not be inherited by a worker (that would nest</span>
+<span class="sd">          pools recursively).</span>
+<span class="sd">        - ``logger``: a ``logging.Logger`` holding file handles and locks;</span>
+<span class="sd">          rebuilt from ``_log_filename`` in ``__setstate__``.</span>
+<span class="sd">        """</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">state</span><span class="p">[</span><span class="s2">"evaluator"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">state</span><span class="p">[</span><span class="s2">"parallel_evaluator"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">state</span><span class="p">[</span><span class="s2">"logger"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">state</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Restore a pickled sampler inside a worker process."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="c1"># Rebuild the dropped logger. The evaluator is installed separately by</span>
+        <span class="c1"># _init_worker; parallel_evaluator stays None because a worker never</span>
+        <span class="c1"># spawns its own pool.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span>
+                <span class="vm">__name__</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"_log_filename"</span><span class="p">)</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="ThompsonSampler.set_evaluator">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.set_evaluator">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_evaluator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evaluator</span><span class="p">,</span> <span class="n">evaluator_config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Define the evaluator.</span>
+
+<span class="sd">        Automatically disables multiprocessing for fast evaluators (LookupEvaluator, DBEvaluator)</span>
+<span class="sd">        where pickle overhead exceeds evaluation time.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            evaluator: The evaluator instance used to score compounds.</span>
+<span class="sd">            evaluator_config: Optional picklable config (Pydantic model) that can</span>
+<span class="sd">                recreate ``evaluator``. Required for ``processes &gt; 1`` with</span>
+<span class="sd">                OpenEye-backed evaluators, whose SWIG objects cannot be pickled:</span>
+<span class="sd">                each worker builds its own evaluator from this config instead of</span>
+<span class="sd">                receiving one over the pipe. ``from_config`` supplies it</span>
+<span class="sd">                automatically.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">evaluator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluator_config</span> <span class="o">=</span> <span class="n">evaluator_config</span>
+
+        <span class="c1"># Give workers the recipe they need to construct their own evaluator.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_evaluator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parallel_evaluator</span><span class="o">.</span><span class="n">bind_worker_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evaluator_config</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">evaluator_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"processes=</span><span class="si">%d</span><span class="s2"> but no evaluator_config was provided. Workers "</span>
+                <span class="s2">"cannot rebuild the evaluator, so it must be picklable. "</span>
+                <span class="s2">"OpenEye-backed evaluators (Fred, ROCS) will fail; use "</span>
+                <span class="s2">"ThompsonSampler.from_config() or pass evaluator_config=... "</span>
+                <span class="s2">"to set_evaluator()."</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">processes</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Auto-detect fast evaluators and warn about multiprocessing inefficiency</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">fast_evaluators</span> <span class="o">=</span> <span class="p">(</span><span class="n">LookupEvaluator</span><span class="p">,</span> <span class="n">DBEvaluator</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">evaluator</span><span class="p">,</span> <span class="n">fast_evaluators</span><span class="p">):</span>
+                <span class="n">evaluator_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">evaluator</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"⚠️  Multiprocessing with </span><span class="si">{</span><span class="n">evaluator_name</span><span class="si">}</span><span class="s2"> may be slower than sequential! "</span>
+                    <span class="sa">f</span><span class="s2">"These evaluators perform fast lookups where pickle overhead &gt;&gt; evaluation time. "</span>
+                    <span class="sa">f</span><span class="s2">"Consider setting processes=1 for better performance."</span>
+                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ThompsonSampler.evaluate">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.evaluate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Evaluate a single set of reagents.</span>
+
+<span class="sd">        NOTE: This method does NOT update reagent scores. Score updates must be done</span>
+<span class="sd">        by the caller after evaluation to ensure compatibility with multiprocessing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            choice_list: List of reagent indices for each component</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (product_smiles, product_name, score)</span>
+<span class="sd">        """</span>
+        <span class="n">selected_reagents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">choice</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">choice_list</span><span class="p">):</span>
+            <span class="n">component_reagent_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">selected_reagents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">component_reagent_list</span><span class="p">[</span><span class="n">choice</span><span class="p">])</span>
+
+        <span class="n">product_name</span> <span class="o">=</span> <span class="s2">"_"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">reagent</span><span class="o">.</span><span class="n">reagent_name</span> <span class="k">for</span> <span class="n">reagent</span> <span class="ow">in</span> <span class="n">selected_reagents</span><span class="p">])</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">product_smiles</span> <span class="o">=</span> <span class="s2">"FAIL"</span>
+        <span class="n">prod_mol</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># For LookupEvaluator and DBEvaluator, skip molecule generation entirely</span>
+        <span class="c1"># They only need product_name for lookup</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="p">,</span> <span class="p">(</span><span class="n">LookupEvaluator</span><span class="p">,</span> <span class="n">DBEvaluator</span><span class="p">)):</span>
+            <span class="c1"># Evaluate directly by product code</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="p">,</span> <span class="n">DBEvaluator</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">product_name</span><span class="p">)</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># LookupEvaluator</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">product_name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">product_smiles</span><span class="p">,</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">res</span>
+
+        <span class="c1"># For other evaluators, we need to generate the molecule</span>
+        <span class="c1"># Try to get product molecule: first from library, then from synthesis</span>
+        <span class="n">use_synthesis</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Check if using pre-enumerated product library</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_smiles_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Look up pre-computed SMILES from library</span>
+            <span class="n">product_smiles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_smiles_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">product_name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">product_smiles</span><span class="p">:</span>
+                <span class="c1"># Convert SMILES to mol object</span>
+                <span class="n">prod_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">product_smiles</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">prod_mol</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">prod_mol</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">"Failed to sanitize product </span><span class="si">{</span><span class="n">product_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+                        <span class="p">)</span>
+                        <span class="n">prod_mol</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Failed to parse SMILES for product </span><span class="si">{</span><span class="n">product_name</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Product not in library - fall back to synthesis</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Product </span><span class="si">{</span><span class="n">product_name</span><span class="si">}</span><span class="s2"> not in library, falling back to synthesis"</span>
+                <span class="p">)</span>
+                <span class="n">use_synthesis</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># No product library - must use synthesis</span>
+            <span class="n">use_synthesis</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Synthesize using the pipeline</span>
+        <span class="k">if</span> <span class="n">use_synthesis</span><span class="p">:</span>
+            <span class="n">reagent_mols</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">mol</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">selected_reagents</span><span class="p">]</span>
+            <span class="n">reagent_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reagent_name</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">selected_reagents</span><span class="p">]</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synthesis_pipeline</span><span class="o">.</span><span class="n">enumerate_single</span><span class="p">(</span>
+                <span class="n">reagent_mols</span><span class="p">,</span> <span class="n">reagent_keys</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+                <span class="n">prod_mol</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">product</span>
+                <span class="n">product_smiles</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">product_smiles</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Log enumeration error for debugging</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Enumeration failed for </span><span class="si">{</span><span class="n">product_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Evaluate if we have a valid molecule</span>
+        <span class="k">if</span> <span class="n">prod_mol</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">prod_mol</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">product_smiles</span><span class="p">,</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="ThompsonSampler.evaluate_batch">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.evaluate_batch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_batch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">choice_lists</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Evaluate a batch of reagent combinations in parallel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            choice_lists: List of choice_lists, where each choice_list is reagent indices</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of tuples (product_smiles, product_name, score) for each combination</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_evaluator</span><span class="o">.</span><span class="n">evaluate_batch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">,</span> <span class="n">choice_lists</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ThompsonSampler.warm_up">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.warm_up">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">warm_up</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_warmup_trials</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Warm-up phase using configured warmup strategy.</span>
+
+<span class="sd">        The warmup strategy determines how reagent combinations are generated</span>
+<span class="sd">        to initialize reagent posteriors before the main search begins.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            num_warmup_trials: Number of trials per reagent</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pl.DataFrame: Warmup results with columns ["score", "SMILES", "Name"]</span>
+<span class="sd">        """</span>
+        <span class="n">warmup_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Log warmup strategy information</span>
+        <span class="n">strategy_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_strategy</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+        <span class="n">expected_evals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_strategy</span><span class="o">.</span><span class="n">get_expected_evaluations</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">,</span> <span class="n">num_warmup_trials</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Warmup strategy: </span><span class="si">{</span><span class="n">strategy_name</span><span class="si">}</span><span class="s2">, "</span>
+            <span class="sa">f</span><span class="s2">"num_trials=</span><span class="si">{</span><span class="n">num_warmup_trials</span><span class="si">}</span><span class="s2">, "</span>
+            <span class="sa">f</span><span class="s2">"expected_evaluations=</span><span class="si">{</span><span class="n">expected_evals</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Generate warmup combinations using strategy</span>
+        <span class="n">warmup_combinations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_strategy</span><span class="o">.</span><span class="n">generate_warmup_combinations</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">,</span> <span class="n">num_warmup_trials</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disallow_tracker</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Generated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">warmup_combinations</span><span class="p">)</span><span class="si">}</span><span class="s2"> warmup combinations"</span><span class="p">)</span>
+
+        <span class="c1"># Evaluate all warmup combinations (in parallel if processes &gt; 1)</span>
+        <span class="k">if</span> <span class="n">warmup_combinations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Evaluating warmup combinations using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">processes</span><span class="si">}</span><span class="s2"> processes..."</span>
+                <span class="p">)</span>
+
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_batch</span><span class="p">(</span><span class="n">warmup_combinations</span><span class="p">)</span>
+
+            <span class="c1"># Update reagent scores in main process after parallel evaluation</span>
+            <span class="c1"># NOTE: Scores are NOT scaled here - strategies handle mode logic themselves</span>
+            <span class="k">for</span> <span class="n">combination</span><span class="p">,</span> <span class="p">(</span><span class="n">product_smiles</span><span class="p">,</span> <span class="n">product_name</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="n">warmup_combinations</span><span class="p">,</span> <span class="n">results</span>
+            <span class="p">):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">score</span><span class="p">):</span>
+                    <span class="n">warmup_results</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">score</span><span class="p">,</span> <span class="n">product_smiles</span><span class="p">,</span> <span class="n">product_name</span><span class="p">])</span>
+                    <span class="c1"># Add scores to reagents WITHOUT scaling</span>
+                    <span class="k">for</span> <span class="n">component_idx</span><span class="p">,</span> <span class="n">reagent_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">combination</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">[</span><span class="n">component_idx</span><span class="p">][</span><span class="n">reagent_idx</span><span class="p">]</span><span class="o">.</span><span class="n">add_score</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+
+        <span class="c1"># Calculate warmup statistics</span>
+        <span class="n">warmup_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">ws</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">ws</span> <span class="ow">in</span> <span class="n">warmup_results</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">warmup_scores</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"No valid warmup evaluations! Cannot initialize priors."</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Warmup score stats: "</span>
+            <span class="sa">f</span><span class="s2">"cnt=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">warmup_scores</span><span class="p">)</span><span class="si">}</span><span class="s2">, "</span>
+            <span class="sa">f</span><span class="s2">"mean=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">warmup_scores</span><span class="p">)</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">, "</span>
+            <span class="sa">f</span><span class="s2">"std=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">warmup_scores</span><span class="p">)</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">, "</span>
+            <span class="sa">f</span><span class="s2">"min=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">warmup_scores</span><span class="p">)</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">, "</span>
+            <span class="sa">f</span><span class="s2">"max=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">warmup_scores</span><span class="p">)</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Initialize priors for all reagents WITHOUT SCALING</span>
+        <span class="c1"># Strategies handle mode logic themselves</span>
+        <span class="n">prior_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">warmup_scores</span><span class="p">)</span>  <span class="c1"># No scaling</span>
+        <span class="n">prior_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">warmup_scores</span><span class="p">)</span>  <span class="c1"># No scaling to std</span>
+
+        <span class="c1"># Check if using per-reagent variance (from BalancedWarmup)</span>
+        <span class="n">use_per_reagent_variance</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warmup_strategy</span><span class="p">,</span> <span class="s2">"use_per_reagent_variance"</span><span class="p">,</span> <span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">shrinkage_strength</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warmup_strategy</span><span class="p">,</span> <span class="s2">"shrinkage_strength"</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">use_per_reagent_variance</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Using per-reagent variance with James-Stein shrinkage "</span>
+                <span class="sa">f</span><span class="s2">"(shrinkage_strength=</span><span class="si">{</span><span class="n">shrinkage_strength</span><span class="si">}</span><span class="s2">)"</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                <span class="n">reagent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">use_per_reagent_variance</span><span class="p">:</span>
+                        <span class="n">reagent</span><span class="o">.</span><span class="n">init_prior_per_reagent</span><span class="p">(</span>
+                            <span class="n">global_mean</span><span class="o">=</span><span class="n">prior_mean</span><span class="p">,</span>
+                            <span class="n">global_std</span><span class="o">=</span><span class="n">prior_std</span><span class="p">,</span>
+                            <span class="n">shrinkage_strength</span><span class="o">=</span><span class="n">shrinkage_strength</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">reagent</span><span class="o">.</span><span class="n">init_prior</span><span class="p">(</span><span class="n">prior_mean</span><span class="o">=</span><span class="n">prior_mean</span><span class="p">,</span> <span class="n">prior_std</span><span class="o">=</span><span class="n">prior_std</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Skipping reagent </span><span class="si">{</span><span class="n">reagent</span><span class="o">.</span><span class="n">reagent_name</span><span class="si">}</span><span class="s2"> - "</span>
+                        <span class="sa">f</span><span class="s2">"no successful evaluations during warmup"</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_disallow_tracker</span><span class="o">.</span><span class="n">retire_one_synthon</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+
+        <span class="c1"># Report best score based on mode</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"maximize"</span><span class="p">,</span> <span class="s2">"maximize_boltzmann"</span><span class="p">]:</span>
+            <span class="n">best_warmup_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">warmup_scores</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">best_warmup_score</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">warmup_scores</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Top score found during warmup: </span><span class="si">{</span><span class="n">best_warmup_score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="c1"># Convert to polars DataFrame</span>
+        <span class="n">warmup_df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">warmup_results</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="p">[</span><span class="s2">"score"</span><span class="p">,</span> <span class="s2">"SMILES"</span><span class="p">,</span> <span class="s2">"Name"</span><span class="p">],</span> <span class="n">orient</span><span class="o">=</span><span class="s2">"row"</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">warmup_df</span></div>
+
+
+<div class="viewcode-block" id="ThompsonSampler.search">
+<a class="viewcode-back" href="../../../../reference/search.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.search">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_cycles</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_evaluations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Unified search loop that works with any batch_size.</span>
+
+<span class="sd">        Supports batch_size=1 (single compound per cycle) or batch_size&gt;1 (multiple compounds per cycle).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            num_cycles: Maximum number of sampling cycles to run</span>
+<span class="sd">            max_evaluations: Maximum number of unique compounds to evaluate (optional)</span>
+<span class="sd">                            If specified, search stops after evaluating this many unique compounds</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pl.DataFrame: Search results with columns ["score", "SMILES", "Name"]</span>
+<span class="sd">        """</span>
+        <span class="c1"># Validation: warn if max_evaluations doesn't align with batch_size</span>
+        <span class="k">if</span> <span class="n">max_evaluations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_evaluations</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"max_evaluations (</span><span class="si">{</span><span class="n">max_evaluations</span><span class="si">}</span><span class="s2">) is not evenly divisible by batch_size (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="si">}</span><span class="s2">). "</span>
+                <span class="sa">f</span><span class="s2">"This may cause slightly more evaluations than expected. "</span>
+                <span class="sa">f</span><span class="s2">"Recommend using max_evaluations as a multiple of batch_size."</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Calculate total cycles for CATS progressive weighting</span>
+        <span class="k">if</span> <span class="n">max_evaluations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">total_cycles</span> <span class="o">=</span> <span class="n">max_evaluations</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">total_cycles</span> <span class="o">=</span> <span class="n">num_cycles</span>
+
+        <span class="n">out_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span>
+        <span class="n">n_components</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">)</span>
+
+        <span class="c1"># Accumulator for compounds to evaluate in parallel</span>
+        <span class="n">compounds_to_evaluate</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">min_cpds_per_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_cpds_per_core</span>
+
+        <span class="c1"># Use max_evaluations as progress bar total if specified</span>
+        <span class="n">pbar_total</span> <span class="o">=</span> <span class="n">max_evaluations</span> <span class="k">if</span> <span class="n">max_evaluations</span> <span class="k">else</span> <span class="n">num_cycles</span>
+        <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">pbar_total</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Search"</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hide_progress</span><span class="p">)</span>
+
+        <span class="n">cycle</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">cycle</span> <span class="o">&lt;</span> <span class="n">num_cycles</span><span class="p">:</span>
+            <span class="c1"># Check if we've reached the evaluation limit</span>
+            <span class="k">if</span> <span class="n">max_evaluations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_list</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">max_evaluations</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Reached max_evaluations limit: </span><span class="si">{</span><span class="n">max_evaluations</span><span class="si">}</span><span class="s2"> (evaluated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">out_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> compounds)"</span>
+                <span class="p">)</span>
+                <span class="k">break</span>
+
+            <span class="c1"># Generate batch_size unique combinations using DisallowTracker</span>
+            <span class="n">combinations</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">n_unique</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">):</span>
+                <span class="c1"># Build one combination iteratively, respecting DisallowTracker</span>
+                <span class="n">selected_reagents</span> <span class="o">=</span> <span class="p">[</span><span class="n">DisallowTracker</span><span class="o">.</span><span class="n">Empty</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_components</span>
+
+                <span class="c1"># Randomize component selection order to avoid bias</span>
+                <span class="n">selection_order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_components</span><span class="p">))</span>
+                <span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">selection_order</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">component_idx</span> <span class="ow">in</span> <span class="n">selection_order</span><span class="p">:</span>
+                    <span class="n">reagent_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">[</span><span class="n">component_idx</span><span class="p">]</span>
+                    <span class="n">selected_reagents</span><span class="p">[</span><span class="n">component_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">DisallowTracker</span><span class="o">.</span><span class="n">To_Fill</span>
+
+                    <span class="c1"># Get disallow mask from tracker</span>
+                    <span class="n">disallow_mask</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_disallow_tracker</span><span class="o">.</span><span class="n">get_disallowed_selection_mask</span><span class="p">(</span>
+                            <span class="n">selected_reagents</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># Select reagent with disallow constraint</span>
+                    <span class="c1"># Pass CATS context for progressive weighting</span>
+                    <span class="n">selected_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="o">.</span><span class="n">select_reagent</span><span class="p">(</span>
+                        <span class="n">reagent_list</span><span class="o">=</span><span class="n">reagent_list</span><span class="p">,</span>
+                        <span class="n">disallow_mask</span><span class="o">=</span><span class="n">disallow_mask</span><span class="p">,</span>
+                        <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">,</span>
+                        <span class="n">component_idx</span><span class="o">=</span><span class="n">component_idx</span><span class="p">,</span>
+                        <span class="n">iteration</span><span class="o">=</span><span class="n">cycle</span><span class="p">,</span>
+                        <span class="n">current_cycle</span><span class="o">=</span><span class="n">cycle</span><span class="p">,</span>
+                        <span class="n">total_cycles</span><span class="o">=</span><span class="n">total_cycles</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">selected_reagents</span><span class="p">[</span><span class="n">component_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">selected_idx</span>
+
+                <span class="c1"># Update DisallowTracker with this combination</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_disallow_tracker</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">selected_reagents</span><span class="p">)</span>
+                <span class="n">combinations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">selected_reagents</span><span class="p">)</span>
+                <span class="n">compounds_to_evaluate</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">selected_reagents</span><span class="p">)</span>
+                <span class="n">n_unique</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Trigger evaluation when we have enough compounds OR at end of cycles</span>
+            <span class="n">should_evaluate</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">compounds_to_evaluate</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_cpds_per_batch</span>
+                <span class="ow">or</span> <span class="n">cycle</span> <span class="o">==</span> <span class="n">num_cycles</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">should_evaluate</span> <span class="ow">and</span> <span class="n">compounds_to_evaluate</span><span class="p">:</span>
+                <span class="c1"># compounds_to_evaluate already contains lists</span>
+                <span class="n">choice_lists</span> <span class="o">=</span> <span class="n">compounds_to_evaluate</span>
+
+                <span class="c1"># Parallel evaluation</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">cycle</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Evaluating batch of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">choice_lists</span><span class="p">)</span><span class="si">}</span><span class="s2"> compounds "</span>
+                        <span class="sa">f</span><span class="s2">"using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">processes</span><span class="si">}</span><span class="s2"> processes"</span>
+                    <span class="p">)</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_batch</span><span class="p">(</span><span class="n">choice_lists</span><span class="p">)</span>
+
+                <span class="c1"># Process results WITHOUT scaling</span>
+                <span class="c1"># Strategies handle mode logic themselves</span>
+                <span class="n">valid_combs</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">valid_scores</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">comb</span><span class="p">,</span> <span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">compounds_to_evaluate</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">score</span><span class="p">):</span>
+                        <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">score</span><span class="p">,</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">])</span>
+                        <span class="n">valid_combs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comb</span><span class="p">)</span>
+                        <span class="n">valid_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+
+                        <span class="c1"># Update reagent posteriors WITHOUT scaling</span>
+                        <span class="k">for</span> <span class="n">comp_idx</span><span class="p">,</span> <span class="n">reagent_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">comb</span><span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">[</span><span class="n">comp_idx</span><span class="p">][</span><span class="n">reagent_idx</span><span class="p">]</span><span class="o">.</span><span class="n">add_score</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+
+                <span class="c1"># Collect diagnostics after posterior updates</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_diagnostics</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">comp_idx</span><span class="p">,</span> <span class="n">reagent_list</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">):</span>
+                        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="o">.</span><span class="n">get_component_state</span><span class="p">(</span>
+                            <span class="n">reagent_list</span><span class="p">,</span> <span class="n">comp_idx</span><span class="p">,</span> <span class="n">cycle</span><span class="p">,</span> <span class="n">total_cycles</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+                <span class="c1"># Clear accumulator</span>
+                <span class="n">compounds_to_evaluate</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># Rotate thermal cycling component AFTER evaluation so rotation</span>
+            <span class="c1"># uses freshly updated posteriors (not stale by one batch).</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="p">,</span> <span class="s2">"rotate_component_weighted"</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="o">.</span><span class="n">rotate_component_weighted</span><span class="p">(</span>
+                    <span class="n">n_components</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="p">,</span> <span class="s2">"rotate_component"</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="o">.</span><span class="n">rotate_component</span><span class="p">(</span><span class="n">n_components</span><span class="p">)</span>
+
+            <span class="c1"># Adaptive temperature: signal efficiency to strategy</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="p">,</span> <span class="s2">"adapt_temperatures"</span><span class="p">):</span>
+                <span class="c1"># With DisallowTracker all compounds are unique, so use</span>
+                <span class="c1"># library coverage as a proxy for sampling efficiency.</span>
+                <span class="c1"># As coverage grows, the strategy should increase temperatures.</span>
+                <span class="n">_total_evaluated</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_list</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">compounds_to_evaluate</span><span class="p">)</span>
+                <span class="n">_coverage</span> <span class="o">=</span> <span class="n">_total_evaluated</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_prods</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="c1"># Map coverage to efficiency: high coverage → low efficiency</span>
+                <span class="n">_proxy_attempted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+                <span class="n">_proxy_unique</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">_coverage</span><span class="p">)))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="o">.</span><span class="n">adapt_temperatures</span><span class="p">(</span><span class="n">_proxy_unique</span><span class="p">,</span> <span class="n">_proxy_attempted</span><span class="p">)</span>
+
+            <span class="c1"># Adaptive heated_scale: bidirectional disagreement adaptation</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="p">,</span> <span class="s2">"adapt_heated_scale"</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="o">.</span><span class="n">adapt_heated_scale</span><span class="p">()</span>
+
+            <span class="c1"># Logging</span>
+            <span class="k">if</span> <span class="n">cycle</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">out_list</span><span class="p">:</span>
+                <span class="n">best_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">out_list</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Cycle </span><span class="si">{</span><span class="n">cycle</span><span class="si">}</span><span class="s2">: Best=</span><span class="si">{</span><span class="n">best_score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, "</span>
+                    <span class="sa">f</span><span class="s2">"Unique this batch=</span><span class="si">{</span><span class="n">n_unique</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="si">}</span><span class="s2">, "</span>
+                    <span class="sa">f</span><span class="s2">"Processes=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">processes</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Update progress bar based on mode</span>
+            <span class="k">if</span> <span class="n">max_evaluations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Track evaluations progress</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_list</span><span class="p">)</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Track cycles progress</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">cycle</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="c1"># Convert to polars DataFrame</span>
+        <span class="n">search_df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">out_list</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="p">[</span><span class="s2">"score"</span><span class="p">,</span> <span class="s2">"SMILES"</span><span class="p">,</span> <span class="s2">"Name"</span><span class="p">],</span> <span class="n">orient</span><span class="o">=</span><span class="s2">"row"</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">search_df</span></div>
+
+
+    <span class="c1"># Schema for GMIC-based CATS diagnostics (RouletteWheel)</span>
+    <span class="n">_GMIC_DIAGNOSTICS_SCHEMA</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"current_cycle"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"total_cycles"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"gmic"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"criticality"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"signal_var"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"mean_noise_var"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"n_active_reagents"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"divergence"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"divergence_threshold"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"is_stable"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+        <span class="s2">"cats_mode"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Utf8</span><span class="p">,</span>
+        <span class="s2">"base_temp"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"is_heated"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+        <span class="s2">"cats_multiplier"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"effective_multiplier"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"final_temperature"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"ema_relative_gmic"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Schema for TT-TS diagnostics (TopTwoSelection)</span>
+    <span class="n">_TTTS_DIAGNOSTICS_SCHEMA</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"current_cycle"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"total_cycles"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"gmic"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"criticality"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"is_heated"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+        <span class="s2">"heated_scale"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"cooled_scale"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"effective_scale"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"disagreement_ema"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"disagreement_global"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"n_active_reagents"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Schema for IPR-based CATS diagnostics (BayesUCB)</span>
+    <span class="n">_IPR_DIAGNOSTICS_SCHEMA</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"current_cycle"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"total_cycles"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"criticality"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"snr"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"imbalance_strength"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"normalized_entropy"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"n_active_reagents"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"participation_ratio"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"effective_n"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"sharpening_factor"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"base_temp"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"is_heated"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span>
+        <span class="s2">"criticality_weight"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"decay"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"cats_multiplier"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"effective_multiplier"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+        <span class="s2">"final_temperature"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Minimal schema for the empty frame: the three columns every</span>
+    <span class="c1"># strategy-specific schema above shares.</span>
+    <span class="n">_EMPTY_DIAGNOSTICS_SCHEMA</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"current_cycle"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">,</span>
+        <span class="s2">"criticality"</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="ThompsonSampler.get_diagnostics">
+<a class="viewcode-back" href="../../../../reference/inspect.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_diagnostics">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_diagnostics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return per-cycle diagnostics trajectory as a DataFrame.</span>
+
+<span class="sd">        Requires ``track_diagnostics=True`` in config.</span>
+
+<span class="sd">        Returns strategy-specific schemas:</span>
+
+<span class="sd">        - **TopTwoSelection**: 12-column TT-TS schema with disagreement EMA,</span>
+<span class="sd">          adaptive heated_scale, and GMIC per component.</span>
+<span class="sd">        - **RouletteWheelSelection**: 18-column GMIC schema with full</span>
+<span class="sd">          temperature pipeline (base_temp, cats_multiplier, final_temperature).</span>
+<span class="sd">        - **BayesUCBSelection**: 18-column IPR schema with participation ratio,</span>
+<span class="sd">          SNR dampening, and observation-gated weights.</span>
+
+<span class="sd">        All schemas share ``current_cycle``, ``component_idx`` and</span>
+<span class="sd">        ``criticality`` columns, so downstream analysis functions work</span>
+<span class="sd">        across strategies. Strategies without component state (Greedy, UCB,</span>
+<span class="sd">        EpsilonGreedy) record nothing.</span>
+
+<span class="sd">        Returns an empty DataFrame with just those three shared columns if</span>
+<span class="sd">        diagnostics were not tracked or the strategy records no state.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_records</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_EMPTY_DIAGNOSTICS_SCHEMA</span><span class="p">)</span>
+
+        <span class="c1"># Detect schema from first record.</span>
+        <span class="c1"># Order matters: TT-TS check before GMIC (both have "gmic").</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_records</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">"disagreement_ema"</span> <span class="ow">in</span> <span class="n">first</span><span class="p">:</span>
+            <span class="c1"># TT-TS schema (TopTwoSelection)</span>
+            <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_records</span><span class="p">,</span>
+                <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_TTTS_DIAGNOSTICS_SCHEMA</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="s2">"gmic"</span> <span class="ow">in</span> <span class="n">first</span><span class="p">:</span>
+            <span class="c1"># GMIC schema (RouletteWheel)</span>
+            <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_records</span><span class="p">,</span>
+                <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_GMIC_DIAGNOSTICS_SCHEMA</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># IPR schema (BayesUCB)</span>
+            <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_records</span><span class="p">,</span>
+                <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_IPR_DIAGNOSTICS_SCHEMA</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ThompsonSampler.get_posterior_landscape">
+<a class="viewcode-back" href="../../../../reference/inspect.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_posterior_landscape">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_posterior_landscape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return per-reagent posterior state for all components.</span>
+
+<span class="sd">        Each row contains:</span>
+
+<span class="sd">        - **component_idx** – component index (0-based)</span>
+<span class="sd">        - **reagent_name** – reagent identifier</span>
+<span class="sd">        - **mean** – posterior mean</span>
+<span class="sd">        - **std** – posterior standard deviation</span>
+<span class="sd">        - **n_samples** – number of observations</span>
+
+<span class="sd">        Works regardless of ``track_diagnostics`` setting.</span>
+<span class="sd">        """</span>
+        <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">comp_idx</span><span class="p">,</span> <span class="n">reagent_list</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">reagent</span> <span class="ow">in</span> <span class="n">reagent_list</span><span class="p">:</span>
+                <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+                    <span class="s2">"reagent_name"</span><span class="p">:</span> <span class="n">reagent</span><span class="o">.</span><span class="n">reagent_name</span><span class="p">,</span>
+                    <span class="s2">"mean"</span><span class="p">:</span> <span class="n">reagent</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span>
+                    <span class="s2">"std"</span><span class="p">:</span> <span class="n">reagent</span><span class="o">.</span><span class="n">std</span><span class="p">,</span>
+                    <span class="s2">"n_samples"</span><span class="p">:</span> <span class="n">reagent</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span>
+                <span class="p">})</span>
+        <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ThompsonSampler.get_sar_summary">
+<a class="viewcode-back" href="../../../../reference/inspect.html#TACTICS.thompson_sampling.core.sampler.ThompsonSampler.get_sar_summary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sar_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Strategy-agnostic post-hoc SAR assessment from final posteriors.</span>
+
+<span class="sd">        Works for ANY strategy — computes entropy-based concentration from</span>
+<span class="sd">        the current posterior state.  Uses the same z-score softmax approach</span>
+<span class="sd">        as CATS ``_calculate_criticality()`` so that the post-hoc concentration</span>
+<span class="sd">        and CATS criticality are directly comparable.</span>
+
+<span class="sd">        When ``track_diagnostics=True`` and the strategy supports</span>
+<span class="sd">        ``get_component_state()`` (CATS strategies), convergence dynamics</span>
+<span class="sd">        are also included.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict with keys:</span>
+
+<span class="sd">            - ``components`` – list of per-component dicts</span>
+<span class="sd">            - ``landscape_type`` – "structured_SAR" / "diffuse_SAR" /</span>
+<span class="sd">              "mixed" / "insufficient_data"</span>
+<span class="sd">            - ``summary_text`` – human-readable 2-3 sentence assessment</span>
+<span class="sd">            - ``convergence_dynamics`` – (only with CATS + track_diagnostics)</span>
+<span class="sd">              per-component convergence info</span>
+<span class="sd">        """</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="o">.</span><span class="n">mode</span>
+        <span class="n">components</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">comp_idx</span><span class="p">,</span> <span class="n">reagent_list</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_lists</span><span class="p">):</span>
+            <span class="n">comp_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_component_sar</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">,</span> <span class="n">comp_idx</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+            <span class="n">components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comp_info</span><span class="p">)</span>
+
+        <span class="c1"># Classify landscape</span>
+        <span class="n">assessments</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s2">"convergence_assessment"</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">components</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="s2">"insufficient_data"</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">assessments</span><span class="p">):</span>
+            <span class="n">landscape_type</span> <span class="o">=</span> <span class="s2">"insufficient_data"</span>
+        <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="s2">"structured"</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">assessments</span><span class="p">):</span>
+            <span class="n">landscape_type</span> <span class="o">=</span> <span class="s2">"structured_SAR"</span>
+        <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="s2">"diffuse"</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">assessments</span><span class="p">):</span>
+            <span class="n">landscape_type</span> <span class="o">=</span> <span class="s2">"diffuse_SAR"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">landscape_type</span> <span class="o">=</span> <span class="s2">"mixed"</span>
+
+        <span class="c1"># Build summary text</span>
+        <span class="n">n_structured</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">assessments</span> <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="s2">"structured"</span><span class="p">)</span>
+        <span class="n">n_diffuse</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">assessments</span> <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="s2">"diffuse"</span><span class="p">)</span>
+        <span class="n">n_insufficient</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">assessments</span> <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="s2">"insufficient_data"</span><span class="p">)</span>
+        <span class="n">n_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">assessments</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">landscape_type</span> <span class="o">==</span> <span class="s2">"structured_SAR"</span><span class="p">:</span>
+            <span class="n">summary_text</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"All </span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2"> components show structured SAR — the search has "</span>
+                <span class="sa">f</span><span class="s2">"identified dominant reagents with concentrated posterior mass."</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">landscape_type</span> <span class="o">==</span> <span class="s2">"diffuse_SAR"</span><span class="p">:</span>
+            <span class="n">summary_text</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"All </span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2"> components show diffuse SAR — posterior mass is "</span>
+                <span class="sa">f</span><span class="s2">"spread across many reagents with no clear winners."</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">landscape_type</span> <span class="o">==</span> <span class="s2">"insufficient_data"</span><span class="p">:</span>
+            <span class="n">summary_text</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Insufficient data across all </span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2"> components to assess "</span>
+                <span class="sa">f</span><span class="s2">"SAR structure. More observations are needed."</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">summary_text</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Mixed SAR landscape: </span><span class="si">{</span><span class="n">n_structured</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2"> structured, "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n_diffuse</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2"> diffuse"</span>
+                <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">", </span><span class="si">{</span><span class="n">n_insufficient</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_total</span><span class="si">}</span><span class="s2"> insufficient data"</span> <span class="k">if</span> <span class="n">n_insufficient</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">". Components differ in how concentrated the activity is."</span>
+            <span class="p">)</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"components"</span><span class="p">:</span> <span class="n">components</span><span class="p">,</span>
+            <span class="s2">"landscape_type"</span><span class="p">:</span> <span class="n">landscape_type</span><span class="p">,</span>
+            <span class="s2">"summary_text"</span><span class="p">:</span> <span class="n">summary_text</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Add convergence dynamics if CATS diagnostics available</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_diagnostics</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_records</span><span class="p">:</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diagnostics_records</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">"current_cycle"</span> <span class="ow">in</span> <span class="n">first</span><span class="p">:</span>
+                <span class="n">diag_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_diagnostics</span><span class="p">()</span>
+                <span class="n">dynamics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_convergence_dynamics</span><span class="p">(</span><span class="n">diag_df</span><span class="p">)</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">"convergence_dynamics"</span><span class="p">]</span> <span class="o">=</span> <span class="n">dynamics</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_component_sar</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">comp_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Compute SAR metrics for a single component from posteriors."""</span>
+        <span class="n">active_reagents</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reagent_list</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_active</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">active_reagents</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n_active</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+                <span class="s2">"posterior_entropy"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"normalized_entropy"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"concentration"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"gini_coefficient"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"top1_share"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"top5_share"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"snr"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"effective_n"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"participation_ratio"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
+                <span class="s2">"dominant_reagent"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"convergence_assessment"</span><span class="p">:</span> <span class="s2">"insufficient_data"</span><span class="p">,</span>
+            <span class="p">}</span>
+
+        <span class="n">means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active_reagents</span><span class="p">])</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reagent_name</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active_reagents</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">means</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+                <span class="s2">"posterior_entropy"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_active</span><span class="p">),</span>
+                <span class="s2">"normalized_entropy"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                <span class="s2">"concentration"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s2">"gini_coefficient"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s2">"top1_share"</span><span class="p">:</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">n_active</span><span class="p">,</span>
+                <span class="s2">"top5_share"</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_active</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_active</span><span class="p">,</span>
+                <span class="s2">"snr"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s2">"effective_n"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_active</span><span class="p">),</span>
+                <span class="s2">"participation_ratio"</span><span class="p">:</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">n_active</span><span class="p">,</span>
+                <span class="s2">"dominant_reagent"</span><span class="p">:</span> <span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s2">"convergence_assessment"</span><span class="p">:</span> <span class="s2">"diffuse"</span><span class="p">,</span>
+            <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"minimize"</span><span class="p">:</span>
+            <span class="n">means</span> <span class="o">=</span> <span class="o">-</span><span class="n">means</span>
+
+        <span class="c1"># Z-score softmax (same as CATS _calculate_criticality)</span>
+        <span class="n">mean_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">means</span><span class="p">)</span>
+
+        <span class="c1"># SNR</span>
+        <span class="n">se_squared</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">std</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">active_reagents</span>
+        <span class="p">])</span>
+        <span class="n">noise_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">se_squared</span><span class="p">))</span>
+        <span class="n">snr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mean_std</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">noise_std</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">))</span>
+
+        <span class="n">imbalance_strength</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="nb">max</span><span class="p">(</span><span class="n">snr</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+
+        <span class="n">z_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">means</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">means</span><span class="p">))</span> <span class="o">/</span> <span class="n">mean_std</span>
+        <span class="n">z_scores</span> <span class="o">*=</span> <span class="n">imbalance_strength</span>
+
+        <span class="c1"># Read criticality metric from strategy if available</span>
+        <span class="n">criticality_metric</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="p">,</span> <span class="s2">"criticality_metric"</span><span class="p">,</span> <span class="s2">"ipr"</span><span class="p">)</span>
+        <span class="n">n_adaptive_sharpening</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_strategy</span><span class="p">,</span> <span class="s2">"n_adaptive_sharpening"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">criticality_metric</span> <span class="o">==</span> <span class="s2">"ipr"</span> <span class="ow">and</span> <span class="n">n_adaptive_sharpening</span> <span class="ow">and</span> <span class="n">n_active</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">sharpening</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_active</span><span class="p">)))</span>
+            <span class="n">z_scores</span> <span class="o">*=</span> <span class="n">sharpening</span>
+
+        <span class="n">exp_means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z_scores</span> <span class="o">-</span> <span class="n">z_scores</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>  <span class="c1"># numerical stability</span>
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="n">exp_means</span> <span class="o">/</span> <span class="n">exp_means</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="c1"># Shannon entropy</span>
+        <span class="n">entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">))</span>
+        <span class="n">max_entropy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_active</span><span class="p">)</span>
+        <span class="n">normalized_entropy</span> <span class="o">=</span> <span class="n">entropy</span> <span class="o">/</span> <span class="n">max_entropy</span> <span class="k">if</span> <span class="n">max_entropy</span> <span class="o">&gt;</span> <span class="mf">1e-10</span> <span class="k">else</span> <span class="mf">1.0</span>
+
+        <span class="c1"># IPR-based concentration</span>
+        <span class="n">ipr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probabilities</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">effective_n</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">ipr</span>
+
+        <span class="k">if</span> <span class="n">criticality_metric</span> <span class="o">==</span> <span class="s2">"ipr"</span><span class="p">:</span>
+            <span class="n">concentration</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">effective_n</span> <span class="o">/</span> <span class="n">n_active</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">concentration</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">normalized_entropy</span>
+
+        <span class="c1"># Gini coefficient</span>
+        <span class="n">sorted_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_probs</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">gini</span> <span class="o">=</span> <span class="nb">float</span><span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">index</span> <span class="o">*</span> <span class="n">sorted_probs</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sorted_probs</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sorted_probs</span><span class="p">)))</span>
+
+        <span class="c1"># Top-k shares</span>
+        <span class="n">sorted_desc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">top1_share</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sorted_desc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">top5_share</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sorted_desc</span><span class="p">[:</span><span class="nb">min</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">n</span><span class="p">)]))</span>
+
+        <span class="c1"># Dominant reagent</span>
+        <span class="n">best_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">probabilities</span><span class="p">))</span>
+        <span class="n">dominant_reagent</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">best_idx</span><span class="p">]</span>
+
+        <span class="c1"># Assessment</span>
+        <span class="k">if</span> <span class="n">n_active</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">assessment</span> <span class="o">=</span> <span class="s2">"insufficient_data"</span>
+        <span class="k">elif</span> <span class="n">concentration</span> <span class="o">&gt;</span> <span class="mf">0.3</span><span class="p">:</span>
+            <span class="n">assessment</span> <span class="o">=</span> <span class="s2">"structured"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">assessment</span> <span class="o">=</span> <span class="s2">"diffuse"</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+            <span class="s2">"posterior_entropy"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">entropy</span><span class="p">),</span>
+            <span class="s2">"normalized_entropy"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">normalized_entropy</span><span class="p">),</span>
+            <span class="s2">"concentration"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">concentration</span><span class="p">),</span>
+            <span class="s2">"gini_coefficient"</span><span class="p">:</span> <span class="n">gini</span><span class="p">,</span>
+            <span class="s2">"top1_share"</span><span class="p">:</span> <span class="n">top1_share</span><span class="p">,</span>
+            <span class="s2">"top5_share"</span><span class="p">:</span> <span class="n">top5_share</span><span class="p">,</span>
+            <span class="s2">"snr"</span><span class="p">:</span> <span class="n">snr</span><span class="p">,</span>
+            <span class="s2">"effective_n"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">effective_n</span><span class="p">),</span>
+            <span class="s2">"participation_ratio"</span><span class="p">:</span> <span class="n">ipr</span><span class="p">,</span>
+            <span class="s2">"dominant_reagent"</span><span class="p">:</span> <span class="n">dominant_reagent</span><span class="p">,</span>
+            <span class="s2">"convergence_assessment"</span><span class="p">:</span> <span class="n">assessment</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_convergence_dynamics</span><span class="p">(</span><span class="n">diag_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Extract convergence dynamics from enhanced diagnostics DataFrame."""</span>
+        <span class="n">dynamics</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">comp_idx</span> <span class="ow">in</span> <span class="n">diag_df</span><span class="p">[</span><span class="s2">"component_idx"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
+            <span class="n">comp_df</span> <span class="o">=</span> <span class="n">diag_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"component_idx"</span><span class="p">)</span> <span class="o">==</span> <span class="n">comp_idx</span><span class="p">)</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">"current_cycle"</span><span class="p">)</span>
+
+            <span class="n">crits</span> <span class="o">=</span> <span class="n">comp_df</span><span class="p">[</span><span class="s2">"criticality"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+            <span class="n">cycles</span> <span class="o">=</span> <span class="n">comp_df</span><span class="p">[</span><span class="s2">"current_cycle"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+            <span class="c1"># First cycle where criticality &gt; 0.3</span>
+            <span class="n">structured_mask</span> <span class="o">=</span> <span class="n">crits</span> <span class="o">&gt;</span> <span class="mf">0.3</span>
+            <span class="n">cycle_first</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cycles</span><span class="p">[</span><span class="n">structured_mask</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">structured_mask</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="c1"># Stable: first cycle after which criticality stays &gt; 0.3</span>
+            <span class="n">cycle_stable</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">structured_mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">crits</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">crits</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span> <span class="o">&gt;</span> <span class="mf">0.3</span><span class="p">):</span>
+                        <span class="n">cycle_stable</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cycles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                        <span class="k">break</span>
+
+            <span class="c1"># Signal trajectory slope (linear regression on SNR or GMIC)</span>
+            <span class="n">signal_col</span> <span class="o">=</span> <span class="s2">"snr"</span> <span class="k">if</span> <span class="s2">"snr"</span> <span class="ow">in</span> <span class="n">comp_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">else</span> <span class="s2">"gmic"</span>
+            <span class="n">signal_values</span> <span class="o">=</span> <span class="n">comp_df</span><span class="p">[</span><span class="n">signal_col</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+            <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">signal_values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">valid</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">valid_cycles</span> <span class="o">=</span> <span class="n">cycles</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                <span class="n">valid_vals</span> <span class="o">=</span> <span class="n">signal_values</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+                <span class="n">slope</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">valid_cycles</span><span class="p">,</span> <span class="n">valid_vals</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">slope</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">)</span>
+
+            <span class="n">dynamics</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">"component_idx"</span><span class="p">:</span> <span class="n">comp_idx</span><span class="p">,</span>
+                <span class="s2">"cycle_first_structured"</span><span class="p">:</span> <span class="n">cycle_first</span><span class="p">,</span>
+                <span class="s2">"cycle_stable"</span><span class="p">:</span> <span class="n">cycle_stable</span><span class="p">,</span>
+                <span class="s2">"signal_trajectory_slope"</span><span class="p">:</span> <span class="n">slope</span><span class="p">,</span>
+            <span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">dynamics</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

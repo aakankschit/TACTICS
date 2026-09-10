@@ -1,0 +1,1453 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Search Performance Metrics for TACTICS &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'theory/search_performance_metrics';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Changelog" href="../changelog.html" />
+    <link rel="prev" title="Bayesian Upper Confidence Bound Selection in TACTICS" href="bayesian_ucb_equations.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="thompson_sampling_equations.html">Mathematical Foundations of Thompson Sampling in TACTICS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_ucb_equations.html">Bayesian Upper Confidence Bound Selection in TACTICS</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Search Performance Metrics for TACTICS</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Theory</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Search Performance Metrics for TACTICS</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="search-performance-metrics-for-tactics">
+<h1>Search Performance Metrics for TACTICS<a class="headerlink" href="#search-performance-metrics-for-tactics" title="Link to this heading">#</a></h1>
+<p><em>Tracking, Visualization, and Improvement of Chemical Space Exploration</em></p>
+<section id="abstract">
+<h2>Abstract<a class="headerlink" href="#abstract" title="Link to this heading">#</a></h2>
+<p>This document defines a comprehensive set of metrics for tracking and evaluating the performance of TACTICS selection strategies during chemical space exploration. We categorize metrics into five dimensions: (1) exploration vs exploitation balance, (2) search efficiency, (3) component-level dynamics, (4) posterior quality, and (5) diversity measures. Each metric is formally defined with mathematical specifications, implementation guidance, and visualization recommendations. These metrics provide actionable insights for developers to improve search strategies in future releases and enable users to understand algorithm behavior during screening campaigns.</p>
+</section>
+<section id="motivation-and-design-goals">
+<h2>1. Motivation and Design Goals<a class="headerlink" href="#motivation-and-design-goals" title="Link to this heading">#</a></h2>
+<section id="why-metrics-matter">
+<h3>1.1 Why Metrics Matter<a class="headerlink" href="#why-metrics-matter" title="Link to this heading">#</a></h3>
+<p>Effective chemical space exploration requires understanding:</p>
+<ol class="arabic simple">
+<li><p><strong>Is the algorithm exploring enough?</strong> (avoiding local optima)</p></li>
+<li><p><strong>Is the algorithm exploiting enough?</strong> (not wasting budget on poor reagents)</p></li>
+<li><p><strong>Is criticality detection working?</strong> (CATS adaptation effectiveness)</p></li>
+<li><p><strong>How does TACTICS compare to the baselines?</strong> (improvement quantification)</p></li>
+<li><p><strong>Where are the bottlenecks?</strong> (reagent exhaustion, duplicate pressure)</p></li>
+</ol>
+</section>
+<section id="design-principles">
+<h3>1.2 Design Principles<a class="headerlink" href="#design-principles" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Interpretability</strong>: Metrics should have clear physical meaning</p></li>
+<li><p><strong>Actionability</strong>: Metrics should suggest improvements</p></li>
+<li><p><strong>Efficiency</strong>: Metrics should be computable online during search</p></li>
+<li><p><strong>Comparability</strong>: Metrics should enable apples-to-apples comparison across runs</p></li>
+</ol>
+</section>
+<section id="metric-categories">
+<h3>1.3 Metric Categories<a class="headerlink" href="#metric-categories" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Key Questions</p></th>
+<th class="head"><p>Ground Truth Required?</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Exploration/Exploitation</strong></p></td>
+<td><p>Balance assessment</p></td>
+<td><p>Are we stuck? Too random?</p></td>
+<td><p><strong>No</strong> - computable online</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Efficiency</strong></p></td>
+<td><p>Budget utilization</p></td>
+<td><p>How fast do we find top compounds?</p></td>
+<td><p><strong>Yes</strong> - needs true optima</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Component Dynamics</strong></p></td>
+<td><p>Per-component analysis</p></td>
+<td><p>Which components are critical?</p></td>
+<td><p><strong>No</strong> - computable online</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Posterior Quality</strong></p></td>
+<td><p>Uncertainty calibration</p></td>
+<td><p>Are posteriors reliable?</p></td>
+<td><p><strong>Partial</strong> - some metrics need truth</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Diversity</strong></p></td>
+<td><p>Chemical space coverage</p></td>
+<td><p>Are we seeing diverse chemistry?</p></td>
+<td><p><strong>No</strong> - computable online</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="ground-truth-requirements">
+<h3>1.4 Ground Truth Requirements<a class="headerlink" href="#ground-truth-requirements" title="Link to this heading">#</a></h3>
+<p>An important distinction for practical use:</p>
+<p><strong>Metrics computable during any search</strong> (no ground truth needed):</p>
+<ul class="simple">
+<li><p>Selection entropy, exploitation ratio, effective temperature</p></li>
+<li><p>Criticality time series, CATS multipliers</p></li>
+<li><p>Coverage, reagent entropy, scaffold diversity</p></li>
+<li><p>Best-so-far trajectory, unique compound rate</p></li>
+</ul>
+<p><strong>Metrics requiring ground truth</strong> (benchmark/retrospective analysis only):</p>
+<ul class="simple">
+<li><p>Top-K hit rate (needs to know true top-K)</p></li>
+<li><p>Cumulative regret (needs to know optimal score)</p></li>
+<li><p>Posterior mean correlation (needs true reagent means)</p></li>
+<li><p>Budget efficiency (needs to know when all top-K found)</p></li>
+</ul>
+<p><strong>Metrics with partial requirements</strong>:</p>
+<ul class="simple">
+<li><p>Uncertainty calibration: Can check internal consistency without truth, but full calibration needs true values</p></li>
+</ul>
+</section>
+</section>
+<section id="exploration-vs-exploitation-metrics">
+<h2>2. Exploration vs Exploitation Metrics<a class="headerlink" href="#exploration-vs-exploitation-metrics" title="Link to this heading">#</a></h2>
+<section id="effective-temperature-distribution">
+<h3>2.1 Effective Temperature Distribution<a class="headerlink" href="#effective-temperature-distribution" title="Link to this heading">#</a></h3>
+<p><strong>Definition 2.1 (Effective Temperature)</strong>: Track the distribution of effective temperatures across iterations.</p>
+<div class="math notranslate nohighlight">
+\[T_c^{\text{eff}}(t) = T_c^{\text{base}}(t) \cdot m_c^{\text{eff}}(t)\]</div>
+<p><strong>Metric</strong>: Temperature entropy over time:
+$<span class="math notranslate nohighlight">\(H_T(t) = -\sum_{c=1}^{C} \frac{T_c^{\text{eff}}(t)}{\sum_{c'} T_{c'}^{\text{eff}}(t)} \ln \frac{T_c^{\text{eff}}(t)}{\sum_{c'} T_{c'}^{\text{eff}}(t)}\)</span>$</p>
+<p><strong>Interpretation</strong>:</p>
+<ul class="simple">
+<li><p>Low <span class="math notranslate nohighlight">\(H_T\)</span>: Temperatures are concentrated (one component dominates)</p></li>
+<li><p>High <span class="math notranslate nohighlight">\(H_T\)</span>: Temperatures are uniform (balanced exploration)</p></li>
+</ul>
+<p><strong>Visualization</strong>: Time series of <span class="math notranslate nohighlight">\(T_c^{\text{eff}}\)</span> for each component, with shaded regions for phases.</p>
+</section>
+<section id="selection-entropy">
+<h3>2.2 Selection Entropy<a class="headerlink" href="#selection-entropy" title="Link to this heading">#</a></h3>
+<p><strong>Definition 2.2 (Selection Entropy)</strong>: Measure the entropy of reagent selections over a window.</p>
+<p>For a sliding window of <span class="math notranslate nohighlight">\(W\)</span> selections from component <span class="math notranslate nohighlight">\(c\)</span>:
+$<span class="math notranslate nohighlight">\(p_{c,i}^{(W)} = \frac{\#\{r_{c,i} \text{ selected in window}\}}{W}\)</span>$</p>
+<div class="math notranslate nohighlight">
+\[H_{\text{sel},c}^{(W)} = -\sum_{i=1}^{n_c} p_{c,i}^{(W)} \ln(p_{c,i}^{(W)} + \epsilon)\]</div>
+<p><strong>Normalized Selection Entropy</strong>:
+$<span class="math notranslate nohighlight">\(\hat{H}_{\text{sel},c}^{(W)} = \frac{H_{\text{sel},c}^{(W)}}{\ln(n_c)}\)</span>$</p>
+<p><strong>Interpretation</strong>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\hat{H}_{\text{sel}} \approx 1\)</span>: Uniform selection (maximum exploration)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{H}_{\text{sel}} \approx 0\)</span>: Concentrated selection (maximum exploitation)</p></li>
+</ul>
+<p><strong>Recommended Window</strong>: <span class="math notranslate nohighlight">\(W = 100\)</span> iterations</p>
+</section>
+<section id="exploitation-ratio">
+<h3>2.3 Exploitation Ratio<a class="headerlink" href="#exploitation-ratio" title="Link to this heading">#</a></h3>
+<p><strong>Definition 2.3 (Exploitation Ratio)</strong>: Fraction of selections from top-<span class="math notranslate nohighlight">\(k\)</span>% posterior reagents.</p>
+<p>Let <span class="math notranslate nohighlight">\(\mathcal{T}_c(k)\)</span> be the set of reagents in the top <span class="math notranslate nohighlight">\(k\)</span>% by posterior mean.</p>
+<div class="math notranslate nohighlight">
+\[\rho_{\text{exploit}}^{(k)}(t) = \frac{\#\{r_{c,i}(t) \in \mathcal{T}_c(k)\}}{C}\]</div>
+<p><strong>Interpretation</strong>:</p>
+<ul class="simple">
+<li><p>Early search: <span class="math notranslate nohighlight">\(\rho_{\text{exploit}}^{(10)} \approx 0.1\)</span> (random)</p></li>
+<li><p>Late search: <span class="math notranslate nohighlight">\(\rho_{\text{exploit}}^{(10)} \to 1\)</span> (exploitation dominates)</p></li>
+</ul>
+<p><strong>Recommendation</strong>: Track <span class="math notranslate nohighlight">\(k \in \{10, 25, 50\}\)</span> to see exploitation at different thresholds.</p>
+</section>
+<section id="effective-exploration-bonus">
+<h3>2.4 Effective Exploration Bonus<a class="headerlink" href="#effective-exploration-bonus" title="Link to this heading">#</a></h3>
+<p><strong>Definition 2.4</strong>: For Bayes-UCB, track the average exploration bonus:
+$<span class="math notranslate nohighlight">\(B_{\text{explore}}(t) = \frac{1}{|S_t|} \sum_{i \in S_t} \frac{\sigma_i \cdot t_{\nu_i}(p^{\text{eff}})}{\sqrt{n_i}}\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(S_t\)</span> is the set of selected reagents at iteration <span class="math notranslate nohighlight">\(t\)</span>.</p>
+<p><strong>For RWS</strong>, approximate via temperature effect:
+$<span class="math notranslate nohighlight">\(B_{\text{explore}}^{\text{RWS}}(t) = \frac{1}{C} \sum_{c=1}^{C} T_c^{\text{eff}}(t)\)</span>$</p>
+</section>
+</section>
+<section id="search-efficiency-metrics">
+<h2>3. Search Efficiency Metrics<a class="headerlink" href="#search-efficiency-metrics" title="Link to this heading">#</a></h2>
+<section id="top-k-hit-rate">
+<h3>3.1 Top-K Hit Rate<a class="headerlink" href="#top-k-hit-rate" title="Link to this heading">#</a></h3>
+<p><strong>Definition 3.1 (Top-K Hit Rate)</strong>: Fraction of true top-<span class="math notranslate nohighlight">\(K\)</span> compounds found by iteration <span class="math notranslate nohighlight">\(t\)</span>.</p>
+<p>Let <span class="math notranslate nohighlight">\(\mathcal{G}_K\)</span> be the global top-<span class="math notranslate nohighlight">\(K\)</span> compounds (if known from exhaustive evaluation).</p>
+<div class="math notranslate nohighlight">
+\[\text{HitRate}_K(t) = \frac{|\mathcal{E}_t \cap \mathcal{G}_K|}{K}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{E}_t\)</span> is the set of evaluated compounds up to iteration <span class="math notranslate nohighlight">\(t\)</span>.</p>
+<p><strong>Use Case</strong>: Benchmark comparison when ground truth is available.</p>
+</section>
+<section id="cumulative-regret">
+<h3>3.2 Cumulative Regret<a class="headerlink" href="#cumulative-regret" title="Link to this heading">#</a></h3>
+<p><strong>Definition 3.2 (Cumulative Regret)</strong>:
+$<span class="math notranslate nohighlight">\(R_t = \sum_{\tau=1}^{t} (f^* - f(\mathbf{r}^{(\tau)}))\)</span>$</p>
+<p>For minimization mode:
+$<span class="math notranslate nohighlight">\(R_t = \sum_{\tau=1}^{t} (f(\mathbf{r}^{(\tau)}) - f_{\min})\)</span>$</p>
+<p><strong>Visualization</strong>: Plot <span class="math notranslate nohighlight">\(R_t / t\)</span> (average regret) over time. Should decrease.</p>
+</section>
+<section id="best-so-far-trajectory">
+<h3>3.3 Best-So-Far Trajectory<a class="headerlink" href="#best-so-far-trajectory" title="Link to this heading">#</a></h3>
+<p><strong>Definition 3.3 (Best-So-Far)</strong>:
+$<span class="math notranslate nohighlight">\(f^{\text{best}}(t) = \begin{cases}
+\max_{\tau \leq t} f(\mathbf{r}^{(\tau)}) &amp; \text{maximize} \\
+\min_{\tau \leq t} f(\mathbf{r}^{(\tau)}) &amp; \text{minimize}
+\end{cases}\)</span>$</p>
+<p><strong>Metric</strong>: Time to reach <span class="math notranslate nohighlight">\(\alpha\)</span>% of optimal:
+$<span class="math notranslate nohighlight">\(T_\alpha = \min\{t : f^{\text{best}}(t) \geq \alpha \cdot f^*\}\)</span>$</p>
+</section>
+<section id="budget-efficiency">
+<h3>3.4 Budget Efficiency<a class="headerlink" href="#budget-efficiency" title="Link to this heading">#</a></h3>
+<p><strong>Definition 3.4 (Budget Efficiency)</strong>: Compounds evaluated to find top-<span class="math notranslate nohighlight">\(K\)</span>:
+$<span class="math notranslate nohighlight">\(\text{Efficiency}_K = \frac{K}{T_{\text{HitRate}_K = 1}}\)</span>$</p>
+<p><strong>Interpretation</strong>: Higher is better. Efficiency = 1 means perfect oracle.</p>
+</section>
+<section id="unique-compound-rate">
+<h3>3.5 Unique Compound Rate<a class="headerlink" href="#unique-compound-rate" title="Link to this heading">#</a></h3>
+<p><strong>Definition 3.5</strong>: Under DisallowTracker, this should be 100%. Track as sanity check:
+$<span class="math notranslate nohighlight">\(\text{UniqueRate}(t) = \frac{|\mathcal{E}_t|}{t}\)</span>$</p>
+<p>Without a DisallowTracker (published RWS):
+$<span class="math notranslate nohighlight">\(\text{DuplicateRate}(t) = 1 - \text{UniqueRate}(t)\)</span>$</p>
+</section>
+</section>
+<section id="component-level-dynamics">
+<h2>4. Component-Level Dynamics<a class="headerlink" href="#component-level-dynamics" title="Link to this heading">#</a></h2>
+<section id="criticality-time-series">
+<h3>4.1 Criticality Time Series<a class="headerlink" href="#criticality-time-series" title="Link to this heading">#</a></h3>
+<p><strong>Definition 4.1</strong>: Track component criticality over time using z-score softmax with IPR:
+$<span class="math notranslate nohighlight">\(\kappa_c(t) = 1 - \frac{1/\text{IPR}_c(t)}{n_c^{\text{active}}}\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(\text{IPR}_c = \sum_i p_{c,i}^2\)</span> and <span class="math notranslate nohighlight">\(p_{c,i} = \text{softmax}(z_{c,i})\)</span> are SNR-dampened, N-sharpened z-score probabilities. See <a class="reference internal" href="thompson_sampling_equations.html#component-criticality-via-z-score-softmax-with-ipr"><span class="std std-ref">thompson_sampling_equations.md, Section 5.1</span></a> for the full derivation.</p>
+<blockquote>
+<div><p><strong>Note: Dual Role of Criticality</strong></p>
+<p>Criticality (<span class="math notranslate nohighlight">\(\kappa_c\)</span>) serves two distinct purposes in TACTICS:</p>
+<ol class="arabic simple">
+<li><p><strong>Algorithm component</strong>: Drives CATS temperature/percentile modulation (see <a class="reference internal" href="thompson_sampling_equations.html"><span class="std std-doc">thompson_sampling_equations.md, Section 5.1</span></a>)</p></li>
+<li><p><strong>Diagnostic metric</strong>: Reveals component convergence dynamics for monitoring</p></li>
+</ol>
+<p>When tracking criticality as a metric, you are observing the same quantity that CATS uses internally to make decisions. This provides direct insight into <em>why</em> CATS is adjusting exploration for each component.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">track_diagnostics=True</span></code> config option enables automatic collection of criticality and all intermediate values (SNR, IPR, effective_n, multipliers) per cycle. Use <code class="docutils literal notranslate"><span class="pre">sampler.get_diagnostics()</span></code> to retrieve the collected data as a Polars DataFrame.</p>
+</div></blockquote>
+<p><strong>Visualization</strong>: Stacked area chart or multi-line plot of <span class="math notranslate nohighlight">\(\kappa_c(t)\)</span> for all components.</p>
+<p><strong>Interpretation</strong>:</p>
+<ul class="simple">
+<li><p>Rising <span class="math notranslate nohighlight">\(\kappa_c\)</span>: Component is converging (posterior sharpening) → CATS will reduce exploration</p></li>
+<li><p>Stable low <span class="math notranslate nohighlight">\(\kappa_c\)</span>: Component remains flexible → CATS will maintain/increase exploration</p></li>
+<li><p>Oscillating <span class="math notranslate nohighlight">\(\kappa_c\)</span>: Unstable criticality (may indicate insufficient data or CATS phase transitions)</p></li>
+</ul>
+</section>
+<section id="component-selection-frequency">
+<h3>4.2 Component Selection Frequency<a class="headerlink" href="#component-selection-frequency" title="Link to this heading">#</a></h3>
+<p><strong>Definition 4.2</strong>: Track how often each reagent is selected:
+$<span class="math notranslate nohighlight">\(f_{c,i}(t) = \#\{r_{c,i} \text{ selected in } [0, t]\}\)</span>$</p>
+<p><strong>Derived Metrics</strong>:</p>
+<ul class="simple">
+<li><p>Gini coefficient of <span class="math notranslate nohighlight">\(f_{c,i}(t)\)</span>: Measures selection inequality</p></li>
+<li><p>Top-1 concentration: <span class="math notranslate nohighlight">\(\max_i f_{c,i}(t) / t\)</span></p></li>
+</ul>
+</section>
+<section id="cats-multiplier-distribution">
+<h3>4.3 CATS Multiplier Distribution<a class="headerlink" href="#cats-multiplier-distribution" title="Link to this heading">#</a></h3>
+<p><strong>Definition 4.3</strong>: Distribution of CATS multipliers across components, using the relative neutral-point mapping (see <a class="reference internal" href="thompson_sampling_equations.html#relative-neutral-point-multiplier"><span class="std std-ref">thompson_sampling_equations.md, Section 5.2.2</span></a>):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}m_c(t) = \begin{cases}
+m_{\max} + \frac{\kappa_c}{\bar{\kappa}} \cdot (1 - m_{\max}) &amp; \text{if } \kappa_c \leq \bar{\kappa} \\[4pt]
+1 + \frac{\kappa_c - \bar{\kappa}}{1 - \bar{\kappa}} \cdot (m_{\min} - 1) &amp; \text{if } \kappa_c &gt; \bar{\kappa}
+\end{cases}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\bar{\kappa}\)</span> is the mean criticality across components.</p>
+<p><strong>Visualization</strong>: Violin plots of <span class="math notranslate nohighlight">\(m_c\)</span> distribution at different phases (warmup, early, mid, late).</p>
+</section>
+<section id="thermal-cycling-effectiveness">
+<h3>4.4 Thermal Cycling Effectiveness<a class="headerlink" href="#thermal-cycling-effectiveness" title="Link to this heading">#</a></h3>
+<p><strong>Definition 4.4</strong>: Measure the “surprise” when component is heated vs cooled:
+$<span class="math notranslate nohighlight">\(\Delta_c(t) = \mathbb{E}[\text{score} | c \text{ heated at } t] - \mathbb{E}[\text{score} | c \text{ cooled at } t]\)</span>$</p>
+<p><strong>Interpretation</strong>: Large <span class="math notranslate nohighlight">\(\Delta_c\)</span> indicates thermal cycling is finding better combinations when exploring component <span class="math notranslate nohighlight">\(c\)</span>.</p>
+</section>
+<section id="reagent-exhaustion-tracking">
+<h3>4.5 Reagent Exhaustion Tracking<a class="headerlink" href="#reagent-exhaustion-tracking" title="Link to this heading">#</a></h3>
+<p><strong>Definition 4.5</strong>: Track exhaustion progress:
+$<span class="math notranslate nohighlight">\(\text{ExhaustionProgress}_c(t) = \frac{\sum_i |D_{c,i}(t)|}{n_c \cdot E_c}\)</span>$</p>
+<p>where <span class="math notranslate nohighlight">\(D_{c,i}(t)\)</span> is the disallow set for reagent <span class="math notranslate nohighlight">\(i\)</span> at component <span class="math notranslate nohighlight">\(c\)</span>, and <span class="math notranslate nohighlight">\(E_c = \prod_{c' \neq c} n_{c'}\)</span>.</p>
+<p><strong>Visualization</strong>: Progress bars or time series showing approach to full coverage.</p>
+</section>
+</section>
+<section id="posterior-quality-metrics">
+<h2>5. Posterior Quality Metrics<a class="headerlink" href="#posterior-quality-metrics" title="Link to this heading">#</a></h2>
+<section id="posterior-mean-correlation">
+<h3>5.1 Posterior Mean Correlation<a class="headerlink" href="#posterior-mean-correlation" title="Link to this heading">#</a></h3>
+<p><strong>Definition 5.1</strong>: Compare posterior means to true means (if available):
+$<span class="math notranslate nohighlight">\(\rho_{\mu}(t) = \text{Corr}(\mu_{c,i}(t), \theta_{c,i}^*)\)</span>$</p>
+<p><strong>Use Case</strong>: Validation with synthetic data or retrospective analysis.</p>
+</section>
+<section id="uncertainty-calibration">
+<h3>5.2 Uncertainty Calibration<a class="headerlink" href="#uncertainty-calibration" title="Link to this heading">#</a></h3>
+<p><strong>Definition 5.2</strong>: Check if posterior uncertainty matches empirical variance.</p>
+<p>For reagent <span class="math notranslate nohighlight">\(i\)</span> with multiple observations:
+$<span class="math notranslate nohighlight">\(\text{Z-score}_{c,i} = \frac{\bar{x}_{c,i} - \mu_{c,i}}{\sigma_{c,i} / \sqrt{N_{c,i}}}\)</span>$</p>
+<p>If well-calibrated, Z-scores should follow <span class="math notranslate nohighlight">\(\mathcal{N}(0, 1)\)</span>.</p>
+<p><strong>Metric</strong>: Kolmogorov-Smirnov statistic against standard normal.</p>
+</section>
+<section id="posterior-variance-trajectory">
+<h3>5.3 Posterior Variance Trajectory<a class="headerlink" href="#posterior-variance-trajectory" title="Link to this heading">#</a></h3>
+<p><strong>Definition 5.3</strong>: Average posterior variance over time:
+$<span class="math notranslate nohighlight">\(\bar{\sigma}^2(t) = \frac{1}{\sum_c n_c} \sum_{c,i} \sigma_{c,i}^2(t)\)</span>$</p>
+<p><strong>Expected Behavior</strong>: <span class="math notranslate nohighlight">\(\bar{\sigma}^2(t) \propto 1/t\)</span> (variance decreases as observations accumulate).</p>
+</section>
+<section id="prior-posterior-kl-divergence">
+<h3>5.4 Prior-Posterior KL Divergence<a class="headerlink" href="#prior-posterior-kl-divergence" title="Link to this heading">#</a></h3>
+<p><strong>Definition 5.4</strong>: Measure information gain:
+$<span class="math notranslate nohighlight">\(D_{KL}(t) = \sum_{c,i} D_{KL}(\text{Prior} \| \text{Posterior}_{c,i}(t))\)</span>$</p>
+<p>For Gaussians:
+$<span class="math notranslate nohighlight">\(D_{KL} = \frac{1}{2}\left[\frac{\sigma_0^2}{\sigma_i^2} + \frac{(\mu_i - \mu_0)^2}{\sigma_i^2} - 1 + \ln\frac{\sigma_i^2}{\sigma_0^2}\right]\)</span>$</p>
+</section>
+</section>
+<section id="diversity-and-coverage-metrics">
+<h2>6. Diversity and Coverage Metrics<a class="headerlink" href="#diversity-and-coverage-metrics" title="Link to this heading">#</a></h2>
+<section id="chemical-space-coverage">
+<h3>6.1 Chemical Space Coverage<a class="headerlink" href="#chemical-space-coverage" title="Link to this heading">#</a></h3>
+<p><strong>Definition 6.1</strong>: Fraction of reagents sampled at least once:
+$<span class="math notranslate nohighlight">\(\text{Coverage}_c(t) = \frac{|\{i : N_{c,i}(t) &gt; 0\}|}{n_c}\)</span>$</p>
+<p><strong>Global Coverage</strong>:
+$<span class="math notranslate nohighlight">\(\text{Coverage}(t) = \frac{1}{C} \sum_{c=1}^{C} \text{Coverage}_c(t)\)</span>$</p>
+</section>
+<section id="pairwise-diversity-chemical-fingerprints">
+<h3>6.2 Pairwise Diversity (Chemical Fingerprints)<a class="headerlink" href="#pairwise-diversity-chemical-fingerprints" title="Link to this heading">#</a></h3>
+<p><strong>Definition 6.2</strong>: Average Tanimoto dissimilarity of selected compounds:
+$<span class="math notranslate nohighlight">\(\text{Diversity}(t) = 1 - \frac{2}{|\mathcal{E}_t|(|\mathcal{E}_t|-1)} \sum_{i &lt; j} \text{Tanimoto}(\mathbf{fp}_i, \mathbf{fp}_j)\)</span>$</p>
+<p><strong>Implementation</strong>: Use Morgan fingerprints (radius 2, 2048 bits).</p>
+</section>
+<section id="scaffold-diversity">
+<h3>6.3 Scaffold Diversity<a class="headerlink" href="#scaffold-diversity" title="Link to this heading">#</a></h3>
+<p><strong>Definition 6.3</strong>: Number of unique Murcko scaffolds in evaluated set:
+$<span class="math notranslate nohighlight">\(\text{ScaffoldDiversity}(t) = |\{\text{MurckoScaffold}(\mathbf{r}) : \mathbf{r} \in \mathcal{E}_t\}|\)</span>$</p>
+<p><strong>Normalized</strong>: Divide by <span class="math notranslate nohighlight">\(|\mathcal{E}_t|\)</span> for scaffold coverage ratio.</p>
+</section>
+<section id="reagent-entropy">
+<h3>6.4 Reagent Entropy<a class="headerlink" href="#reagent-entropy" title="Link to this heading">#</a></h3>
+<p><strong>Definition 6.4</strong>: Shannon entropy of reagent selection distribution:
+$<span class="math notranslate nohighlight">\(H_{\text{reagent}}(t) = -\sum_{c,i} \frac{N_{c,i}(t)}{\sum_{c',j} N_{c',j}(t)} \ln \frac{N_{c,i}(t)}{\sum_{c',j} N_{c',j}(t)}\)</span>$</p>
+<p><strong>Maximum</strong>: <span class="math notranslate nohighlight">\(H_{\max} = \ln(\sum_c n_c)\)</span> when all reagents sampled equally.</p>
+</section>
+</section>
+<section id="comparative-metrics-tactics-vs-baseline">
+<h2>7. Comparative Metrics (TACTICS vs Baseline)<a class="headerlink" href="#comparative-metrics-tactics-vs-baseline" title="Link to this heading">#</a></h2>
+<section id="cats-improvement-ratio">
+<h3>7.1 CATS Improvement Ratio<a class="headerlink" href="#cats-improvement-ratio" title="Link to this heading">#</a></h3>
+<p><strong>Definition 7.1</strong>: Compare CATS to baseline RWS:
+$<span class="math notranslate nohighlight">\(\text{ImprovementRatio} = \frac{\text{HitRate}_K^{\text{CATS}}(t)}{\text{HitRate}_K^{\text{RWS}}(t)}\)</span>$</p>
+<p><strong>Visualization</strong>: Plot over iterations to show when CATS advantage emerges.</p>
+</section>
+<section id="adaptation-quantification">
+<h3>7.2 Adaptation Quantification<a class="headerlink" href="#adaptation-quantification" title="Link to this heading">#</a></h3>
+<p><strong>Definition 7.2</strong>: Measure how much CATS adapts compared to fixed temperature:
+$<span class="math notranslate nohighlight">\(\text{AdaptationRange}(t) = \max_c T_c^{\text{eff}}(t) - \min_c T_c^{\text{eff}}(t)\)</span>$</p>
+<p>For published RWS: <span class="math notranslate nohighlight">\(\text{AdaptationRange} = \alpha - \beta\)</span> (constant).
+For CATS: <span class="math notranslate nohighlight">\(\text{AdaptationRange}\)</span> varies based on criticality.</p>
+</section>
+<section id="duplicate-avoidance-efficiency">
+<h3>7.3 Duplicate Avoidance Efficiency<a class="headerlink" href="#duplicate-avoidance-efficiency" title="Link to this heading">#</a></h3>
+<p><strong>Definition 7.3</strong>: Compare duplicate rates:
+$<span class="math notranslate nohighlight">\(\text{DuplicateReduction} = \frac{\text{DuplicateRate}^{\text{Baseline}}(t) - \text{DuplicateRate}^{\text{TACTICS}}(t)}{\text{DuplicateRate}^{\text{Baseline}}(t)}\)</span>$</p>
+<p>With DisallowTracker: <span class="math notranslate nohighlight">\(\text{DuplicateRate}^{\text{TACTICS}} = 0\)</span>, so reduction = 100%.</p>
+</section>
+<section id="convergence-speed">
+<h3>7.4 Convergence Speed<a class="headerlink" href="#convergence-speed" title="Link to this heading">#</a></h3>
+<p><strong>Definition 7.4</strong>: Time to reach convergence threshold:
+$<span class="math notranslate nohighlight">\(T_{\text{converge}}^\theta = \min\left\{t : \frac{d f^{\text{best}}}{dt} &lt; \theta\right\}\)</span>$</p>
+<p><strong>Speedup</strong>: <span class="math notranslate nohighlight">\(\text{Speedup} = T_{\text{converge}}^{\text{Baseline}} / T_{\text{converge}}^{\text{TACTICS}}\)</span></p>
+</section>
+<section id="regret-comparison">
+<h3>7.5 Regret Comparison<a class="headerlink" href="#regret-comparison" title="Link to this heading">#</a></h3>
+<p><strong>Definition 7.5</strong>: Relative regret reduction:
+$<span class="math notranslate nohighlight">\(\text{RegretReduction}(t) = \frac{R_t^{\text{Baseline}} - R_t^{\text{TACTICS}}}{R_t^{\text{Baseline}}}\)</span>$</p>
+</section>
+</section>
+<section id="visualization-recommendations">
+<h2>8. Visualization Recommendations<a class="headerlink" href="#visualization-recommendations" title="Link to this heading">#</a></h2>
+<section id="real-time-dashboard-components">
+<h3>8.1 Real-Time Dashboard Components<a class="headerlink" href="#real-time-dashboard-components" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head"><p>Visualization Type</p></th>
+<th class="head"><p>Update Frequency</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Best-So-Far</p></td>
+<td><p>Line chart</p></td>
+<td><p>Every iteration</p></td>
+</tr>
+<tr class="row-odd"><td><p>Selection Entropy</p></td>
+<td><p>Line chart (per component)</p></td>
+<td><p>Every 10 iterations</p></td>
+</tr>
+<tr class="row-even"><td><p>Criticality</p></td>
+<td><p>Stacked area chart</p></td>
+<td><p>Every 10 iterations</p></td>
+</tr>
+<tr class="row-odd"><td><p>Effective Temperature</p></td>
+<td><p>Multi-line chart</p></td>
+<td><p>Every iteration</p></td>
+</tr>
+<tr class="row-even"><td><p>Coverage</p></td>
+<td><p>Progress bars</p></td>
+<td><p>Every 100 iterations</p></td>
+</tr>
+<tr class="row-odd"><td><p>Posterior Means</p></td>
+<td><p>Histogram</p></td>
+<td><p>Every 100 iterations</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="post-run-analysis-plots">
+<h3>8.2 Post-Run Analysis Plots<a class="headerlink" href="#post-run-analysis-plots" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Phase Diagram</strong>: 2D plot with X = exploitation ratio, Y = selection entropy. Color by iteration.</p></li>
+<li><p><strong>Criticality Heatmap</strong>: Component × Iteration heatmap of <span class="math notranslate nohighlight">\(\kappa_c(t)\)</span>.</p></li>
+<li><p><strong>Cumulative Regret Curves</strong>: Compare multiple strategies on same axes.</p></li>
+<li><p><strong>Fingerprint PCA</strong>: 2D projection of selected compounds, colored by iteration.</p></li>
+<li><p><strong>Reagent Selection Heatmap</strong>: Reagent × Iteration heatmap of selection frequency.</p></li>
+</ol>
+</section>
+<section id="diagnostic-alerts">
+<h3>8.3 Diagnostic Alerts<a class="headerlink" href="#diagnostic-alerts" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Alert</p></th>
+<th class="head"><p>Trigger Condition</p></th>
+<th class="head"><p>Suggested Action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Stalled Exploration</p></td>
+<td><p><span class="math notranslate nohighlight">\(\hat{H}_{\text{sel}} &lt; 0.1\)</span> for 500 iterations</p></td>
+<td><p>Increase <span class="math notranslate nohighlight">\(\alpha\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Over-Exploration</p></td>
+<td><p><span class="math notranslate nohighlight">\(\rho_{\text{exploit}}^{(25)} &lt; 0.3\)</span> in late phase</p></td>
+<td><p>Decrease <span class="math notranslate nohighlight">\(\alpha/\beta\)</span> ratio</p></td>
+</tr>
+<tr class="row-even"><td><p>Unbalanced Criticality</p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_c\)</span> variance &gt; 0.2</p></td>
+<td><p>Check warmup balance</p></td>
+</tr>
+<tr class="row-odd"><td><p>Rapid Exhaustion</p></td>
+<td><p>ExhaustionProgress &gt; 0.5</p></td>
+<td><p>Consider larger library</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="implementation-guide">
+<h2>9. Implementation Guide<a class="headerlink" href="#implementation-guide" title="Link to this heading">#</a></h2>
+<section id="data-collection-schema">
+<h3>9.1 Data Collection Schema<a class="headerlink" href="#data-collection-schema" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IterationMetrics</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Metrics collected at each iteration."""</span>
+    <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="c1"># Selection</span>
+    <span class="n">selected_reagents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>  <span class="c1"># indices per component</span>
+    <span class="n">score</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">is_best</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="c1"># Component state</span>
+    <span class="n">criticalities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>  <span class="c1"># per component</span>
+    <span class="n">effective_temperatures</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>  <span class="c1"># per component (or percentiles for Bayes-UCB)</span>
+    <span class="n">cats_multipliers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>  <span class="c1"># per component</span>
+
+    <span class="c1"># Posterior state (sampled)</span>
+    <span class="n">mean_posterior_mean</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">mean_posterior_std</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="c1"># Exploration/exploitation</span>
+    <span class="n">selection_from_top_10pct</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span>  <span class="c1"># per component</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WindowMetrics</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Metrics computed over sliding windows."""</span>
+    <span class="n">window_start</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">window_end</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="c1"># Selection entropy per component</span>
+    <span class="n">selection_entropies</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+
+    <span class="c1"># Coverage</span>
+    <span class="n">new_reagents_covered</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">cumulative_coverage</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="c1"># Performance</span>
+    <span class="n">best_in_window</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">mean_in_window</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">std_in_window</span><span class="p">:</span> <span class="nb">float</span>
+</pre></div>
+</div>
+</section>
+<section id="efficient-computation">
+<h3>9.2 Efficient Computation<a class="headerlink" href="#efficient-computation" title="Link to this heading">#</a></h3>
+<p><strong>Online Algorithms</strong>:</p>
+<ul class="simple">
+<li><p>Selection entropy: Use reservoir sampling for window</p></li>
+<li><p>Coverage: Use bitset for reagent tracking</p></li>
+<li><p>Best-so-far: Simple max/min update</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">OnlineMetricsTracker</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_components</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reagent_counts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reagent_counts</span> <span class="o">=</span> <span class="n">reagent_counts</span>
+
+        <span class="c1"># Coverage tracking</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reagent_seen</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">reagent_counts</span><span class="p">]</span>
+
+        <span class="c1"># Best-so-far</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>  <span class="c1"># or +np.inf for minimize</span>
+
+        <span class="c1"># Selection history (circular buffer for entropy)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selection_buffer</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected_reagents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">score</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="c1"># Update coverage</span>
+        <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">selected_reagents</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reagent_seen</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Update best</span>
+        <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span><span class="p">:</span>  <span class="c1"># or &lt; for minimize</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="n">score</span>
+
+        <span class="c1"># Update selection buffer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selection_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">selected_reagents</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_selection_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selection_buffer</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_size</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_counts</span><span class="p">[</span><span class="n">component</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">selection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">selection_buffer</span><span class="p">:</span>
+            <span class="n">counts</span><span class="p">[</span><span class="n">selection</span><span class="p">[</span><span class="n">component</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">counts</span> <span class="o">/</span> <span class="n">counts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">probs</span><span class="p">[</span><span class="n">probs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># filter zeros</span>
+        <span class="n">entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">probs</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">entropy</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_counts</span><span class="p">[</span><span class="n">component</span><span class="p">])</span>  <span class="c1"># normalize</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reagent_seen</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">reagent_counts</span><span class="p">[</span><span class="n">component</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="storage-and-export">
+<h3>9.3 Storage and Export<a class="headerlink" href="#storage-and-export" title="Link to this heading">#</a></h3>
+<p><strong>Recommended Format</strong>: Parquet for large runs, JSON for metadata.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">export_run_metrics</span><span class="p">(</span>
+    <span class="n">iteration_metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IterationMetrics</span><span class="p">],</span>
+    <span class="n">window_metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">WindowMetrics</span><span class="p">],</span>
+    <span class="n">run_config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span>
+<span class="p">):</span>
+    <span class="c1"># Convert to DataFrames</span>
+    <span class="n">df_iter</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">asdict</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">iteration_metrics</span><span class="p">])</span>
+    <span class="n">df_window</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">asdict</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">window_metrics</span><span class="p">])</span>
+
+    <span class="c1"># Save</span>
+    <span class="n">df_iter</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="s2">"iteration_metrics.parquet"</span><span class="p">)</span>
+    <span class="n">df_window</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="s2">"window_metrics.parquet"</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="s2">"config.json"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">run_config</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="diagnostic-dashboards">
+<h2>10. Diagnostic Dashboards<a class="headerlink" href="#diagnostic-dashboards" title="Link to this heading">#</a></h2>
+<section id="live-monitoring-dashboard-marimo-panel">
+<h3>10.1 Live Monitoring Dashboard (Marimo/Panel)<a class="headerlink" href="#live-monitoring-dashboard-marimo-panel" title="Link to this heading">#</a></h3>
+<p><strong>Layout</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│  [Header: Run ID, Elapsed Time, Iterations, Best Score]     │
+├─────────────────────┬───────────────────────────────────────┤
+│  Best-So-Far Plot   │  Selection Entropy (per component)    │
+│  (Line chart)       │  (Multi-line chart)                   │
+├─────────────────────┼───────────────────────────────────────┤
+│  Criticality        │  Effective Temperature                │
+│  (Stacked area)     │  (Multi-line chart)                   │
+├─────────────────────┼───────────────────────────────────────┤
+│  Coverage Progress  │  Exploitation Ratio                   │
+│  (Progress bars)    │  (Gauge charts)                       │
+├─────────────────────┴───────────────────────────────────────┤
+│  [Alerts Panel: Warnings and Recommendations]                │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+</section>
+<section id="post-run-analysis-dashboard">
+<h3>10.2 Post-Run Analysis Dashboard<a class="headerlink" href="#post-run-analysis-dashboard" title="Link to this heading">#</a></h3>
+<p><strong>Tabs</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Summary</strong>: Key statistics, comparison to baselines</p></li>
+<li><p><strong>Exploration</strong>: Selection entropy, coverage, diversity</p></li>
+<li><p><strong>Exploitation</strong>: Hit rates, regret, best trajectory</p></li>
+<li><p><strong>Components</strong>: Per-component criticality, selection frequency</p></li>
+<li><p><strong>Posteriors</strong>: Calibration, mean trajectories, uncertainty</p></li>
+<li><p><strong>Comparison</strong>: Side-by-side with baseline or other runs</p></li>
+</ol>
+</section>
+<section id="comparative-analysis-tools">
+<h3>10.3 Comparative Analysis Tools<a class="headerlink" href="#comparative-analysis-tools" title="Link to this heading">#</a></h3>
+<p><strong>Multi-Run Comparison</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compare_runs</span><span class="p">(</span>
+    <span class="n">run_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"hit_rate_100"</span><span class="p">,</span> <span class="s2">"regret"</span><span class="p">,</span> <span class="s2">"coverage"</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Load and compare multiple runs.</span>
+
+<span class="sd">    Returns DataFrame with columns: run_label, iteration, metric_name, metric_value</span>
+<span class="sd">    """</span>
+    <span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">run_paths</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">path</span> <span class="o">/</span> <span class="s2">"iteration_metrics.parquet"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="n">all_data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">"run_label"</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
+                <span class="s2">"iteration"</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">"iteration"</span><span class="p">],</span>
+                <span class="s2">"metric"</span><span class="p">:</span> <span class="n">metric</span><span class="p">,</span>
+                <span class="s2">"value"</span><span class="p">:</span> <span class="n">compute_metric</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">metric</span><span class="p">)</span>
+            <span class="p">})</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="appendix-a-quick-reference-for-developers">
+<h2>Appendix A: Quick Reference for Developers<a class="headerlink" href="#appendix-a-quick-reference-for-developers" title="Link to this heading">#</a></h2>
+<section id="a-1-metrics-to-add-to-new-strategies">
+<h3>A.1 Metrics to Add to New Strategies<a class="headerlink" href="#a-1-metrics-to-add-to-new-strategies" title="Link to this heading">#</a></h3>
+<p>When implementing a new selection strategy, track:</p>
+<ol class="arabic simple">
+<li><p>Selection probabilities (for debugging)</p></li>
+<li><p>Exploration bonus magnitude</p></li>
+<li><p>Any strategy-specific internal state</p></li>
+</ol>
+</section>
+<section id="a-2-suggested-improvements-based-on-metrics">
+<h3>A.2 Suggested Improvements Based on Metrics<a class="headerlink" href="#a-2-suggested-improvements-based-on-metrics" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Observed Pattern</p></th>
+<th class="head"><p>Likely Issue</p></th>
+<th class="head"><p>Suggested Fix</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Low coverage, high exploitation</p></td>
+<td><p>Too exploitative</p></td>
+<td><p>Increase temperature/percentile</p></td>
+</tr>
+<tr class="row-odd"><td><p>High coverage, low hit rate</p></td>
+<td><p>Too explorative</p></td>
+<td><p>Decrease temperature/percentile</p></td>
+</tr>
+<tr class="row-even"><td><p>Uneven criticality</p></td>
+<td><p>Warmup imbalance</p></td>
+<td><p>Use balanced warmup</p></td>
+</tr>
+<tr class="row-odd"><td><p>Rapid exhaustion</p></td>
+<td><p>Small library</p></td>
+<td><p>Increase library size</p></td>
+</tr>
+<tr class="row-even"><td><p>Oscillating criticality</p></td>
+<td><p>Unstable posteriors</p></td>
+<td><p>Increase <code class="docutils literal notranslate"><span class="pre">min_observations</span></code> (Bayes-UCB) or <code class="docutils literal notranslate"><span class="pre">divergence_threshold</span></code> (RWS)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="a-3-metric-computation-frequency">
+<h3>A.3 Metric Computation Frequency<a class="headerlink" href="#a-3-metric-computation-frequency" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric Type</p></th>
+<th class="head"><p>Recommended Frequency</p></th>
+<th class="head"><p>Reason</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Per-iteration</p></td>
+<td><p>Every 1 iteration</p></td>
+<td><p>Real-time tracking</p></td>
+</tr>
+<tr class="row-odd"><td><p>Windowed</p></td>
+<td><p>Every 10-100 iterations</p></td>
+<td><p>Noise reduction</p></td>
+</tr>
+<tr class="row-even"><td><p>Expensive (fingerprints)</p></td>
+<td><p>Every 100-1000 iterations</p></td>
+<td><p>Computational cost</p></td>
+</tr>
+<tr class="row-odd"><td><p>Post-run only</p></td>
+<td><p>End of run</p></td>
+<td><p>Requires full data</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><em>Document Version: 2.0</em>
+<em>Last Updated: March 2026</em>
+<em>Authors: TACTICS Development Team</em></p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="bayesian_ucb_equations.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Bayesian Upper Confidence Bound Selection in TACTICS</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../changelog.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Changelog</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#abstract">Abstract</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation-and-design-goals">1. Motivation and Design Goals</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-metrics-matter">1.1 Why Metrics Matter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#design-principles">1.2 Design Principles</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metric-categories">1.3 Metric Categories</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ground-truth-requirements">1.4 Ground Truth Requirements</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploration-vs-exploitation-metrics">2. Exploration vs Exploitation Metrics</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#effective-temperature-distribution">2.1 Effective Temperature Distribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#selection-entropy">2.2 Selection Entropy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploitation-ratio">2.3 Exploitation Ratio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#effective-exploration-bonus">2.4 Effective Exploration Bonus</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#search-efficiency-metrics">3. Search Efficiency Metrics</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#top-k-hit-rate">3.1 Top-K Hit Rate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cumulative-regret">3.2 Cumulative Regret</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#best-so-far-trajectory">3.3 Best-So-Far Trajectory</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#budget-efficiency">3.4 Budget Efficiency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unique-compound-rate">3.5 Unique Compound Rate</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#component-level-dynamics">4. Component-Level Dynamics</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#criticality-time-series">4.1 Criticality Time Series</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#component-selection-frequency">4.2 Component Selection Frequency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cats-multiplier-distribution">4.3 CATS Multiplier Distribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thermal-cycling-effectiveness">4.4 Thermal Cycling Effectiveness</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reagent-exhaustion-tracking">4.5 Reagent Exhaustion Tracking</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-quality-metrics">5. Posterior Quality Metrics</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-mean-correlation">5.1 Posterior Mean Correlation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uncertainty-calibration">5.2 Uncertainty Calibration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-variance-trajectory">5.3 Posterior Variance Trajectory</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prior-posterior-kl-divergence">5.4 Prior-Posterior KL Divergence</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diversity-and-coverage-metrics">6. Diversity and Coverage Metrics</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chemical-space-coverage">6.1 Chemical Space Coverage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pairwise-diversity-chemical-fingerprints">6.2 Pairwise Diversity (Chemical Fingerprints)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scaffold-diversity">6.3 Scaffold Diversity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reagent-entropy">6.4 Reagent Entropy</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparative-metrics-tactics-vs-baseline">7. Comparative Metrics (TACTICS vs Baseline)</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cats-improvement-ratio">7.1 CATS Improvement Ratio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptation-quantification">7.2 Adaptation Quantification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#duplicate-avoidance-efficiency">7.3 Duplicate Avoidance Efficiency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence-speed">7.4 Convergence Speed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regret-comparison">7.5 Regret Comparison</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-recommendations">8. Visualization Recommendations</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#real-time-dashboard-components">8.1 Real-Time Dashboard Components</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-run-analysis-plots">8.2 Post-Run Analysis Plots</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostic-alerts">8.3 Diagnostic Alerts</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-guide">9. Implementation Guide</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-collection-schema">9.1 Data Collection Schema</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#efficient-computation">9.2 Efficient Computation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#storage-and-export">9.3 Storage and Export</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostic-dashboards">10. Diagnostic Dashboards</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#live-monitoring-dashboard-marimo-panel">10.1 Live Monitoring Dashboard (Marimo/Panel)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-run-analysis-dashboard">10.2 Post-Run Analysis Dashboard</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparative-analysis-tools">10.3 Comparative Analysis Tools</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-a-quick-reference-for-developers">Appendix A: Quick Reference for Developers</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-1-metrics-to-add-to-new-strategies">A.1 Metrics to Add to New Strategies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-2-suggested-improvements-based-on-metrics">A.2 Suggested Improvements Based on Metrics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-3-metric-computation-frequency">A.3 Metric Computation Frequency</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/aakankschit/TACTICS/edit/main/docs/source/theory/search_performance_metrics.md">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

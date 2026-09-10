@@ -1,0 +1,1524 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TACTICS.library_enumeration.smarts_toolkit._validator &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js?v=b8b12719"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/TACTICS/library_enumeration/smarts_toolkit/_validator';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="../../../../_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../extending.html">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">TACTICS.library_enumeration.smarts_toolkit._validator</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for TACTICS.library_enumeration.smarts_toolkit._validator</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">Internal SMARTS pattern validation module.</span>
+
+<span class="sd">This module provides the internal _SMARTSValidator class used by ReactionDef</span>
+<span class="sd">for validation. Users should interact with validation through ReactionDef.validate_reaction()</span>
+<span class="sd">rather than using this class directly.</span>
+
+<span class="sd">The ValidationResult dataclass is public and returned by validation methods.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span> <span class="k">as</span> <span class="n">itertools_product</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit.Chem</span><span class="w"> </span><span class="kn">import</span> <span class="n">AllChem</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProtectingGroupInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_PROTECTING_GROUPS</span><span class="p">,</span> <span class="n">DEFAULT_SALT_FRAGMENTS</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ValidationResult">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit._validator.ValidationResult">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ValidationResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Comprehensive results from SMARTS validation.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        compatible_reagents: {position: [(smiles, name), ...]} - Reagents that match template</span>
+<span class="sd">        incompatible_reagents: {position: [(smiles, name), ...]} - Reagents that don't match</span>
+<span class="sd">        invalid_smiles: {position: [(smiles, name), ...]} - Unparseable SMILES</span>
+<span class="sd">        duplicate_smiles: {position: [(smiles, name), ...]} - Duplicate entries</span>
+<span class="sd">        protected_reagents: {position: [(smiles, name, [groups]), ...]} - With protecting groups</span>
+<span class="sd">        multi_fragment_reagents: {position: [(smiles, name, [fragments]), ...]} - With salts</span>
+<span class="sd">        coverage_stats: {position: float} - Percent compatible per position (0-100)</span>
+<span class="sd">        reaction_success_rate: float - Percent of test reactions that succeeded</span>
+<span class="sd">        error_messages: List[str] - Critical errors</span>
+<span class="sd">        warnings: List[str] - Non-critical warnings</span>
+<span class="sd">    """</span>
+
+    <span class="n">compatible_reagents</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">incompatible_reagents</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
+    <span class="n">invalid_smiles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">duplicate_smiles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">protected_reagents</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
+    <span class="n">multi_fragment_reagents</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
+    <span class="n">coverage_stats</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">reaction_success_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">error_messages</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">warnings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ValidationResult.is_valid">
+<a class="viewcode-back" href="../../../../reference/library.html#TACTICS.library_enumeration.smarts_toolkit._validator.ValidationResult.is_valid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""True if all positions have &gt;0% coverage and no critical errors."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_messages</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">cov</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">cov</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage_stats</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_compatible</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Total number of compatible reagents across all positions."""</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">compatible_reagents</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_incompatible</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Total number of incompatible reagents across all positions."""</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">incompatible_reagents</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_SMARTSValidator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Internal validator class used by ReactionDef.</span>
+
+<span class="sd">    Users should use ReactionDef.validate_reaction() instead of this class directly.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">reaction_smarts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">reagent_files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">reagent_smiles_lists</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">reagent_dataframes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">protecting_groups</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ProtectingGroupInfo</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">salt_fragments</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">deprotect_on_import</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">deprotect_groups</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">desalt_on_import</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initialize validator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            reaction_smarts: Reaction SMARTS pattern to validate against</span>
+<span class="sd">            reagent_files: List of paths to reagent .smi files</span>
+<span class="sd">            reagent_smiles_lists: Direct SMILES lists as [(smiles, name), ...] per position</span>
+<span class="sd">                                  (useful for validating against intermediates)</span>
+<span class="sd">            reagent_dataframes: Alternative: pre-loaded DataFrames with 'smiles', 'name' columns</span>
+<span class="sd">            protecting_groups: Custom protecting groups (replaces defaults if provided)</span>
+<span class="sd">            salt_fragments: Custom salt fragments (replaces defaults if provided)</span>
+<span class="sd">            deprotect_on_import: If True, remove protecting groups when loading reagents</span>
+<span class="sd">            deprotect_groups: Specific groups to remove (None = all)</span>
+<span class="sd">            desalt_on_import: If True, remove salts when loading reagents</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reaction_smarts</span> <span class="o">=</span> <span class="n">reaction_smarts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reagent_files</span> <span class="o">=</span> <span class="n">reagent_files</span> <span class="ow">or</span> <span class="p">[]</span>
+
+        <span class="c1"># Import-time processing options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deprotect_on_import</span> <span class="o">=</span> <span class="n">deprotect_on_import</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deprotect_groups</span> <span class="o">=</span> <span class="n">deprotect_groups</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desalt_on_import</span> <span class="o">=</span> <span class="n">desalt_on_import</span>
+
+        <span class="c1"># Protecting groups configuration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">protecting_groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ProtectingGroupInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">protecting_groups</span>
+            <span class="k">if</span> <span class="n">protecting_groups</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">DEFAULT_PROTECTING_GROUPS</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Salt fragments configuration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">salt_fragments</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">salt_fragments</span>
+            <span class="k">if</span> <span class="n">salt_fragments</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">DEFAULT_SALT_FRAGMENTS</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Internal state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># RDKit ChemicalReaction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Preprocessing results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_original_names</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">invalid_smiles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">duplicate_smiles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">protected_reagents</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multi_fragment_reagents</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deprotected_on_import</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span>
+            <span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">desalted_on_import</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Cached validation result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ValidationResult</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Load reaction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_reaction</span><span class="p">()</span>
+
+        <span class="c1"># Load reagents from various sources (priority order)</span>
+        <span class="k">if</span> <span class="n">reagent_smiles_lists</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_load_reagents_from_smiles_lists</span><span class="p">(</span><span class="n">reagent_smiles_lists</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">reagent_dataframes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_load_reagents_from_dataframes</span><span class="p">(</span><span class="n">reagent_dataframes</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">reagent_files</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_load_reagents</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_reaction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Load and validate the reaction SMARTS."""</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaction_smarts</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid reaction SMARTS"</span><span class="p">)</span>
+
+            <span class="n">num_reactants</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span><span class="o">.</span><span class="n">GetNumReactantTemplates</span><span class="p">()</span>
+            <span class="n">num_products</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span><span class="o">.</span><span class="n">GetNumProductTemplates</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">num_reactants</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"No reactant templates found in reaction SMARTS"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">num_products</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"No product templates found in reaction SMARTS"</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Loaded reaction with </span><span class="si">{</span><span class="n">num_reactants</span><span class="si">}</span><span class="s2"> reactants and </span><span class="si">{</span><span class="n">num_products</span><span class="si">}</span><span class="s2"> products"</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to parse reaction SMARTS: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Reaction loading failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_reagents_from_smiles_lists</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">smiles_lists</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Load reagents from direct SMILES lists."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reagents</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">smiles_list</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">smiles_lists</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">has_original_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">smiles_list</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">smiles_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> reagents from SMILES list </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess_reagents</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_reagents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Load reagents from files and preprocess them."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reagents</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_files</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Reagent file </span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2"> not found"</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">has_original_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">continue</span>
+
+            <span class="n">reagent_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">has_names</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".smi"</span><span class="p">:</span>
+                <span class="n">reagent_list</span><span class="p">,</span> <span class="n">has_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_smi_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".csv"</span><span class="p">:</span>
+                <span class="n">reagent_list</span><span class="p">,</span> <span class="n">has_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_csv_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown file format: </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">has_original_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">has_names</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> reagents from </span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess_reagents</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_reagents_from_dataframes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Load reagents from pre-loaded Polars DataFrames."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reagents</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataframes</span><span class="p">):</span>
+            <span class="c1"># Find SMILES and name columns</span>
+            <span class="n">smiles_col</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">name_col</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">col_upper</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s2">"SMILES"</span> <span class="ow">in</span> <span class="n">col_upper</span><span class="p">:</span>
+                    <span class="n">smiles_col</span> <span class="o">=</span> <span class="n">col</span>
+                <span class="k">elif</span> <span class="s2">"NAME"</span> <span class="ow">in</span> <span class="n">col_upper</span> <span class="ow">or</span> <span class="s2">"ID"</span> <span class="ow">in</span> <span class="n">col_upper</span><span class="p">:</span>
+                    <span class="n">name_col</span> <span class="o">=</span> <span class="n">col</span>
+
+            <span class="k">if</span> <span class="n">smiles_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No SMILES column found in DataFrame </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">has_original_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">continue</span>
+
+            <span class="n">has_names</span> <span class="o">=</span> <span class="n">name_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">has_original_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">has_names</span>
+
+            <span class="n">reagent_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iter_rows</span><span class="p">(</span><span class="n">named</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="n">smiles</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">smiles_col</span><span class="p">]</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">name_col</span><span class="p">]</span> <span class="k">if</span> <span class="n">name_col</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"R</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+                <span class="n">reagent_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> reagents from DataFrame </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess_reagents</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_smi_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Load SMILES from .smi file."""</span>
+        <span class="n">reagents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">has_original_names</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">smiles</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">has_original_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">has_original_names</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"R</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">reagents</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+                        <span class="k">if</span> <span class="n">has_original_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">has_original_names</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">reagents</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">reagents</span><span class="p">,</span> <span class="n">has_original_names</span> <span class="k">if</span> <span class="n">has_original_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_csv_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Load SMILES from CSV file."""</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="n">smiles_col</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">name_col</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"SMILES"</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span>
+                <span class="n">smiles_col</span> <span class="o">=</span> <span class="n">col</span>
+            <span class="k">elif</span> <span class="s2">"NAME"</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">"ID"</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span>
+                <span class="n">name_col</span> <span class="o">=</span> <span class="n">col</span>
+
+        <span class="k">if</span> <span class="n">smiles_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No SMILES column found in </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[],</span> <span class="kc">False</span>
+
+        <span class="n">has_original_names</span> <span class="o">=</span> <span class="n">name_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="n">reagents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iter_rows</span><span class="p">(</span><span class="n">named</span><span class="o">=</span><span class="kc">True</span><span class="p">)):</span>
+            <span class="n">smiles</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">smiles_col</span><span class="p">]</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">name_col</span><span class="p">]</span> <span class="k">if</span> <span class="n">name_col</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"R</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">reagents</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">reagents</span><span class="p">,</span> <span class="n">has_original_names</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_preprocess_reagents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Validate SMILES, apply transformations, and remove duplicates."""</span>
+        <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">reagent_list</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">):</span>
+            <span class="n">valid_reagents</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">seen_smiles</span><span class="p">:</span> <span class="nb">set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">invalid_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">duplicate_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">desalted_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">deprotected_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">reagent_list</span><span class="p">:</span>
+                <span class="n">original_smiles</span> <span class="o">=</span> <span class="n">smiles</span>
+
+                <span class="c1"># Check for valid SMILES</span>
+                <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">invalid_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Invalid SMILES at position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">smiles</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">)"</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Apply desalting if requested</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">desalt_on_import</span> <span class="ow">and</span> <span class="s2">"."</span> <span class="ow">in</span> <span class="n">smiles</span><span class="p">:</span>
+                    <span class="n">desalted_smiles</span><span class="p">,</span> <span class="n">removed_salts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">desalt_smiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">removed_salts</span><span class="p">:</span>
+                        <span class="n">desalted_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="n">desalted_smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">removed_salts</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">smiles</span> <span class="o">=</span> <span class="n">desalted_smiles</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">"Position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">: Desalted </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">original_smiles</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">smiles</span><span class="si">}</span><span class="s2">"</span>
+                        <span class="p">)</span>
+
+                <span class="c1"># Apply deprotection if requested</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deprotect_on_import</span><span class="p">:</span>
+                    <span class="n">deprotected_smiles</span><span class="p">,</span> <span class="n">removed_groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deprotect_smiles</span><span class="p">(</span>
+                        <span class="n">smiles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">deprotect_groups</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">removed_groups</span><span class="p">:</span>
+                        <span class="n">deprotected_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="n">deprotected_smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">removed_groups</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="n">smiles</span> <span class="o">=</span> <span class="n">deprotected_smiles</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">"Position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">: Deprotected </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: removed </span><span class="si">{</span><span class="n">removed_groups</span><span class="si">}</span><span class="s2">"</span>
+                        <span class="p">)</span>
+
+                <span class="c1"># Check for duplicates</span>
+                <span class="k">if</span> <span class="n">smiles</span> <span class="ow">in</span> <span class="n">seen_smiles</span><span class="p">:</span>
+                    <span class="n">duplicate_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+                    <span class="k">continue</span>
+
+                <span class="n">seen_smiles</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+                <span class="n">valid_reagents</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+            <span class="c1"># Store preprocessing results</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">invalid_smiles</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="n">invalid_list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">duplicate_smiles</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="n">duplicate_list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">desalted_on_import</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="n">desalted_list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deprotected_on_import</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="n">deprotected_list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="n">valid_reagents</span>
+
+            <span class="c1"># Log summary</span>
+            <span class="k">if</span> <span class="n">invalid_list</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">: Removed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">invalid_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> invalid SMILES"</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">duplicate_list</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">: Removed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">duplicate_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> duplicate SMILES"</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Detect protecting groups and multi-fragment reagents</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_detect_protecting_groups</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_detect_multi_fragment_reagents</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_detect_protecting_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Detect protecting groups in all reagents."""</span>
+        <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">reagent_list</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">):</span>
+            <span class="n">protected_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">reagent_list</span><span class="p">:</span>
+                <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">found_groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">pg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">protecting_groups</span><span class="p">:</span>
+                    <span class="n">pattern</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">smarts</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">pattern</span> <span class="ow">and</span> <span class="n">mol</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+                        <span class="n">found_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">found_groups</span><span class="p">:</span>
+                    <span class="n">protected_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">found_groups</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">protected_reagents</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="n">protected_list</span>
+
+            <span class="k">if</span> <span class="n">protected_list</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">: Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">protected_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> reagents "</span>
+                    <span class="sa">f</span><span class="s2">"with protecting groups"</span>
+                <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_detect_multi_fragment_reagents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Detect reagents containing multiple fragments (salts, counterions)."""</span>
+        <span class="c1"># Build canonical lookup for salt fragments</span>
+        <span class="n">salt_canonical_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">salt_smiles</span><span class="p">,</span> <span class="n">salt_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">salt_fragments</span><span class="p">:</span>
+            <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">salt_smiles</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mol</span><span class="p">:</span>
+                <span class="n">canonical</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+                <span class="n">salt_canonical_lookup</span><span class="p">[</span><span class="n">canonical</span><span class="p">]</span> <span class="o">=</span> <span class="n">salt_name</span>
+
+        <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">reagent_list</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">):</span>
+            <span class="n">multi_frag_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">reagent_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">"."</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">smiles</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">fragments</span> <span class="o">=</span> <span class="n">smiles</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+                <span class="n">detected_salts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">for</span> <span class="n">frag</span> <span class="ow">in</span> <span class="n">fragments</span><span class="p">:</span>
+                    <span class="n">frag_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">frag</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">frag_mol</span><span class="p">:</span>
+                        <span class="n">frag_canonical</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">frag_mol</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">frag_canonical</span> <span class="ow">in</span> <span class="n">salt_canonical_lookup</span><span class="p">:</span>
+                            <span class="n">detected_salts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">salt_canonical_lookup</span><span class="p">[</span><span class="n">frag_canonical</span><span class="p">])</span>
+
+                <span class="n">multi_frag_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">detected_salts</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">multi_fragment_reagents</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="n">multi_frag_list</span>
+
+            <span class="k">if</span> <span class="n">multi_frag_list</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">: Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">multi_frag_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> reagents "</span>
+                    <span class="sa">f</span><span class="s2">"with multiple fragments"</span>
+                <span class="p">)</span>
+
+    <span class="c1"># ===== Core Validation =====</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">test_reactions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Run full validation of reagents against reaction template.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            test_reactions: If True, test actual reaction execution on sample combinations</span>
+<span class="sd">            sample_size: Number of random combinations to test (default: 100)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ValidationResult with comprehensive compatibility information</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ValidationResult</span><span class="p">(</span>
+                <span class="n">compatible_reagents</span><span class="o">=</span><span class="p">{},</span>
+                <span class="n">incompatible_reagents</span><span class="o">=</span><span class="p">{},</span>
+                <span class="n">invalid_smiles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">invalid_smiles</span><span class="p">,</span>
+                <span class="n">duplicate_smiles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">duplicate_smiles</span><span class="p">,</span>
+                <span class="n">protected_reagents</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">protected_reagents</span><span class="p">,</span>
+                <span class="n">multi_fragment_reagents</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">multi_fragment_reagents</span><span class="p">,</span>
+                <span class="n">coverage_stats</span><span class="o">=</span><span class="p">{},</span>
+                <span class="n">reaction_success_rate</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">error_messages</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span>
+                <span class="n">warnings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Check template matching</span>
+        <span class="n">compatible</span><span class="p">,</span> <span class="n">incompatible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_template_matching</span><span class="p">()</span>
+
+        <span class="c1"># Calculate coverage statistics</span>
+        <span class="n">coverage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_coverage</span><span class="p">(</span><span class="n">compatible</span><span class="p">)</span>
+
+        <span class="c1"># Test reactions if requested</span>
+        <span class="n">success_rate</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="n">test_reactions</span><span class="p">:</span>
+            <span class="n">success_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_reaction_combinations</span><span class="p">(</span><span class="n">compatible</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">ValidationResult</span><span class="p">(</span>
+            <span class="n">compatible_reagents</span><span class="o">=</span><span class="n">compatible</span><span class="p">,</span>
+            <span class="n">incompatible_reagents</span><span class="o">=</span><span class="n">incompatible</span><span class="p">,</span>
+            <span class="n">invalid_smiles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">invalid_smiles</span><span class="p">,</span>
+            <span class="n">duplicate_smiles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">duplicate_smiles</span><span class="p">,</span>
+            <span class="n">protected_reagents</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">protected_reagents</span><span class="p">,</span>
+            <span class="n">multi_fragment_reagents</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">multi_fragment_reagents</span><span class="p">,</span>
+            <span class="n">coverage_stats</span><span class="o">=</span><span class="n">coverage</span><span class="p">,</span>
+            <span class="n">reaction_success_rate</span><span class="o">=</span><span class="n">success_rate</span><span class="p">,</span>
+            <span class="n">error_messages</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span>
+            <span class="n">warnings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_template_matching</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Check which reagents match reaction templates."""</span>
+        <span class="n">compatible</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">incompatible</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">compatible</span><span class="p">,</span> <span class="n">incompatible</span>
+
+        <span class="n">num_templates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span><span class="o">.</span><span class="n">GetNumReactantTemplates</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_templates</span><span class="p">):</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span><span class="o">.</span><span class="n">GetReactantTemplate</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">compatible</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">incompatible</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No reagents provided for position </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">mol</span> <span class="ow">and</span> <span class="n">mol</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
+                    <span class="n">compatible</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">incompatible</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">compatible</span><span class="p">,</span> <span class="n">incompatible</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compatible</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Calculate coverage statistics."""</span>
+        <span class="n">coverage</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">reagent_list</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">compatible</span><span class="p">:</span>
+                <span class="n">num_compatible</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">compatible</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">)</span>
+                <span class="n">coverage</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">num_compatible</span> <span class="o">/</span> <span class="n">total</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">coverage</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">return</span> <span class="n">coverage</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_test_reaction_combinations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">compatible</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Test actual reaction combinations."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">compatible</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">))):</span>
+            <span class="n">reagent_lists</span> <span class="o">=</span> <span class="p">[</span><span class="n">compatible</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">))]</span>
+
+            <span class="c1"># Calculate total combinations</span>
+            <span class="n">total_combinations</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">rlist</span> <span class="ow">in</span> <span class="n">reagent_lists</span><span class="p">:</span>
+                <span class="n">total_combinations</span> <span class="o">*=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rlist</span><span class="p">)</span>
+
+            <span class="c1"># Sample if needed</span>
+            <span class="k">if</span> <span class="n">sample_size</span> <span class="ow">and</span> <span class="n">sample_size</span> <span class="o">&lt;</span> <span class="n">total_combinations</span><span class="p">:</span>
+                <span class="n">combinations</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sample_size</span><span class="p">):</span>
+                    <span class="n">combo</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">rlist</span><span class="p">)</span> <span class="k">for</span> <span class="n">rlist</span> <span class="ow">in</span> <span class="n">reagent_lists</span><span class="p">]</span>
+                    <span class="n">combinations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">combo</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">combinations</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools_product</span><span class="p">(</span><span class="o">*</span><span class="n">reagent_lists</span><span class="p">))</span>
+
+            <span class="c1"># Test reactions</span>
+            <span class="n">successful</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">combinations</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">combo</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">:</span>
+                <span class="n">reagent_mols</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">combo</span><span class="p">:</span>
+                    <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">mol</span><span class="p">:</span>
+                        <span class="n">reagent_mols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reagent_mols</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">combo</span><span class="p">):</span>
+                    <span class="n">products</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">reagent_mols</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">products</span><span class="p">:</span>
+                        <span class="n">successful</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="n">successful</span> <span class="o">/</span> <span class="n">total</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_compatible_reagents</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">deprotect</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">desalt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get reagents compatible with template at a position.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            position: Reagent position (0-indexed)</span>
+<span class="sd">            deprotect: If True, return deprotected SMILES</span>
+<span class="sd">            desalt: If True, return desalted SMILES</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of (smiles, name) tuples</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">test_reactions</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">compatible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">compatible_reagents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">deprotect</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">desalt</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">compatible</span>
+
+        <span class="c1"># Apply transformations</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">compatible</span><span class="p">:</span>
+            <span class="n">output_smiles</span> <span class="o">=</span> <span class="n">smiles</span>
+
+            <span class="k">if</span> <span class="n">desalt</span> <span class="ow">and</span> <span class="s2">"."</span> <span class="ow">in</span> <span class="n">output_smiles</span><span class="p">:</span>
+                <span class="n">output_smiles</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">desalt_smiles</span><span class="p">(</span><span class="n">output_smiles</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">deprotect</span><span class="p">:</span>
+                <span class="n">output_smiles</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deprotect_smiles</span><span class="p">(</span><span class="n">output_smiles</span><span class="p">)</span>
+
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">output_smiles</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_incompatible_reagents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Get reagents that don't match template at a position."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">test_reactions</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">incompatible_reagents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_reactant_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get the reactant template molecule for a position.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            RDKit Mol object representing the reactant pattern</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">position</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span><span class="o">.</span><span class="n">GetNumReactantTemplates</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaction</span><span class="o">.</span><span class="n">GetReactantTemplate</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+
+    <span class="c1"># ===== Deprotection / Desalting =====</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">deprotect_smiles</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">groups_to_remove</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Remove protecting groups from a SMILES.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            smiles: Input SMILES</span>
+<span class="sd">            groups_to_remove: Specific groups to remove (default: all detected)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (cleaned_smiles, list_of_removed_group_names)</span>
+<span class="sd">        """</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">smiles</span><span class="p">,</span> <span class="p">[]</span>
+
+        <span class="n">removed_groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">pg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">protecting_groups</span><span class="p">:</span>
+            <span class="c1"># Skip if not in the list to remove</span>
+            <span class="k">if</span> <span class="n">groups_to_remove</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pg</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">groups_to_remove</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Skip if no deprotection SMARTS available</span>
+            <span class="k">if</span> <span class="n">pg</span><span class="o">.</span><span class="n">deprotection_smarts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Check if this protecting group is present</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">smarts</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pattern</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">mol</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Apply deprotection reaction</span>
+            <span class="n">rxn</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ReactionFromSmarts</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">deprotection_smarts</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rxn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Run reaction (may need multiple iterations)</span>
+            <span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">10</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">mol</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+                    <span class="k">break</span>
+
+                <span class="n">products</span> <span class="o">=</span> <span class="n">rxn</span><span class="o">.</span><span class="n">RunReactants</span><span class="p">((</span><span class="n">mol</span><span class="p">,))</span>
+                <span class="k">if</span> <span class="n">products</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">products</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">mol</span> <span class="o">=</span> <span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="k">break</span>
+                    <span class="k">if</span> <span class="n">pg</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">removed_groups</span><span class="p">:</span>
+                        <span class="n">removed_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+        <span class="k">return</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">mol</span><span class="p">),</span> <span class="n">removed_groups</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">desalt_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Remove salt fragments from a multi-fragment SMILES.</span>
+
+<span class="sd">        Returns the largest organic fragment.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            smiles: Input SMILES (may contain "." separators)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (cleaned_smiles, list_of_removed_fragments)</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="s2">"."</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">smiles</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">smiles</span><span class="p">,</span> <span class="p">[]</span>
+
+        <span class="c1"># Build canonical lookup for salt fragments</span>
+        <span class="n">salt_canonical_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">salt_smiles</span><span class="p">,</span> <span class="n">salt_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">salt_fragments</span><span class="p">:</span>
+            <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">salt_smiles</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mol</span><span class="p">:</span>
+                <span class="n">canonical</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+                <span class="n">salt_canonical_lookup</span><span class="p">[</span><span class="n">canonical</span><span class="p">]</span> <span class="o">=</span> <span class="n">salt_name</span>
+
+        <span class="n">fragments</span> <span class="o">=</span> <span class="n">smiles</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+        <span class="n">kept_fragments</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">removed_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">frag</span> <span class="ow">in</span> <span class="n">fragments</span><span class="p">:</span>
+            <span class="n">frag_mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">frag</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">frag_mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">frag_canonical</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">frag_mol</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">frag_canonical</span> <span class="ow">in</span> <span class="n">salt_canonical_lookup</span><span class="p">:</span>
+                <span class="n">removed_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">salt_canonical_lookup</span><span class="p">[</span><span class="n">frag_canonical</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kept_fragments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frag</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">kept_fragments</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">smiles</span><span class="p">,</span> <span class="p">[]</span>
+
+        <span class="c1"># Keep largest fragment by heavy atom count</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kept_fragments</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">frag_sizes</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">frag</span> <span class="ow">in</span> <span class="n">kept_fragments</span><span class="p">:</span>
+                <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">frag</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">mol</span><span class="p">:</span>
+                    <span class="n">frag_sizes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">frag</span><span class="p">,</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumHeavyAtoms</span><span class="p">()))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">frag_sizes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">frag</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">frag_sizes</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">kept_fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">frag_sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">for</span> <span class="n">frag</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">frag_sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">removed_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"fragment (</span><span class="si">{</span><span class="n">frag</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">kept_fragments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">removed_names</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect_protecting_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Detect protecting groups in a molecule.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            smiles: SMILES string</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of (group_name, matched_smarts) tuples</span>
+<span class="sd">        """</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">found</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">protecting_groups</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmarts</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">smarts</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pattern</span> <span class="ow">and</span> <span class="n">mol</span><span class="o">.</span><span class="n">HasSubstructMatch</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+                <span class="n">found</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pg</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">pg</span><span class="o">.</span><span class="n">smarts</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">found</span>
+
+    <span class="c1"># ===== Reports =====</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compatibility_report</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Tabular report of validation results.</span>
+
+<span class="sd">        Columns: Position, Total_Reagents, Compatible, Incompatible, Coverage_Percent</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">test_reactions</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="n">report_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">)):</span>
+            <span class="n">compatible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">compatible_reagents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">incompatible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">incompatible_reagents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="p">[])</span>
+
+            <span class="n">report_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"Position"</span><span class="p">:</span> <span class="n">position</span><span class="p">,</span>
+                    <span class="s2">"Total_Reagents"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">[</span><span class="n">position</span><span class="p">]),</span>
+                    <span class="s2">"Compatible"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">compatible</span><span class="p">),</span>
+                    <span class="s2">"Incompatible"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">incompatible</span><span class="p">),</span>
+                    <span class="s2">"Coverage_Percent"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">coverage_stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">position</span><span class="p">,</span> <span class="mf">0.0</span>
+                    <span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">report_data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Human-readable summary of validation results.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Multi-line string with validation summary</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">test_reactions</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"Validation failed - check errors"</span>
+
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">"SMARTS Validation Summary"</span><span class="p">,</span>
+            <span class="s2">"="</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"Reaction: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reaction_smarts</span><span class="p">[:</span><span class="mi">60</span><span class="p">]</span><span class="si">}{</span><span class="s1">'...'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaction_smarts</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">""</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">)):</span>
+            <span class="n">compatible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">compatible_reagents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">incompatible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">incompatible_reagents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">[</span><span class="n">position</span><span class="p">])</span>
+            <span class="n">coverage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">coverage_stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="n">file_name</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_files</span><span class="p">[</span><span class="n">position</span><span class="p">])</span><span class="o">.</span><span class="n">name</span>
+                <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagent_files</span><span class="p">)</span>
+                <span class="k">else</span> <span class="sa">f</span><span class="s2">"Position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Position </span><span class="si">{</span><span class="n">position</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">):"</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Compatible: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">compatible</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">coverage</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)"</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Incompatible: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">incompatible</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+            <span class="c1"># Show protecting groups if any</span>
+            <span class="n">protected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">protected_reagents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">if</span> <span class="n">protected</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Protected: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">protected</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+
+        <span class="c1"># Overall stats</span>
+        <span class="n">total_compatible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">total_compatible</span>
+        <span class="n">total_incompatible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">total_incompatible</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="n">total_compatible</span> <span class="o">+</span> <span class="n">total_incompatible</span>
+        <span class="n">overall_pct</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_compatible</span> <span class="o">/</span> <span class="n">total</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Overall: </span><span class="si">{</span><span class="n">overall_pct</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">% compatible"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">reaction_success_rate</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Reaction success rate: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">reaction_success_rate</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%"</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">error_messages</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Errors:"</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_result</span><span class="o">.</span><span class="n">error_messages</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"_SMARTSValidator(reaction='</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reaction_smarts</span><span class="p">[:</span><span class="mi">40</span><span class="p">]</span><span class="si">}</span><span class="s2">...', "</span>
+            <span class="sa">f</span><span class="s2">"positions=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reagents</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

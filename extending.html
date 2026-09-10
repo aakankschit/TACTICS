@@ -1,0 +1,890 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Extending TACTICS &#8212; TACTICS 2.0.0</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=49b8251b" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="_static/documentation_options.js?v=51b770b3"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=b8b12719"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'extending';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorials" href="tutorials.html" />
+    <link rel="prev" title="6. Visualise" href="guides/06_visualise.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.0" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="auto">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/TACTICS_logo.png" class="logo__image only-light" alt="TACTICS - Home"/>
+    <img src="_static/TACTICS_logo.png" class="logo__image only-dark pst-js-only" alt="TACTICS - Home"/>
+  
+  
+    <p class="title logo__title">TACTICS</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/01_library.html">
+    1. Library
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/02_scoring.html">
+    2. Scoring
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/03_search.html">
+    3. Search
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/04_scale.html">
+    4. Scale
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/05_inspect.html">
+    5. Inspect
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/06_visualise.html">
+    6. Visualise
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Extending TACTICS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="theory/index.html">
+    Theory
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="changelog.html">
+    Changelog
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/aakankschit/TACTICS">
+    GitHub
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/aakankschit/TACTICS" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/chem-tactics/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Extending TACTICS</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="extending-tactics">
+<span id="guide-extending"></span><h1>Extending TACTICS<a class="headerlink" href="#extending-tactics" title="Link to this heading">#</a></h1>
+<p>The blocks are built on three abstract classes. Each is small; a working
+implementation is a page of code. This page shows the contract the sampler
+relies on for each, and what to reuse.</p>
+<section id="a-scoring-function-no-subclass-needed">
+<h2>A scoring function (no subclass needed)<a class="headerlink" href="#a-scoring-function-no-subclass-needed" title="Link to this heading">#</a></h2>
+<p>Most custom scoring needs no new class:
+<a class="reference internal" href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluator_config.CustomEvaluatorConfig" title="TACTICS.thompson_sampling.core.evaluator_config.CustomEvaluatorConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">CustomEvaluatorConfig</span></code></a>
+wraps any <code class="docutils literal notranslate"><span class="pre">Callable[[Mol],</span> <span class="pre">float]</span></code> (see <a class="reference internal" href="guides/02_scoring.html"><span class="doc">2. Scoring</span></a>). Write
+an evaluator class when the scorer holds state that must be built once per
+worker — a loaded model, a receptor, a database handle.</p>
+</section>
+<section id="a-new-evaluator-class">
+<h2>A new evaluator class<a class="headerlink" href="#a-new-evaluator-class" title="Link to this heading">#</a></h2>
+<p>Subclass <a class="reference internal" href="reference/scoring.html#TACTICS.thompson_sampling.core.evaluators.Evaluator" title="TACTICS.thompson_sampling.core.evaluators.Evaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Evaluator</span></code></a>;
+implement <code class="docutils literal notranslate"><span class="pre">evaluate(mol)</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code> and the <code class="docutils literal notranslate"><span class="pre">counter</span></code> property. Return
+<code class="docutils literal notranslate"><span class="pre">NaN</span></code> for “could not score” — the sampler skips it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS</span><span class="w"> </span><span class="kn">import</span> <span class="n">Evaluator</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelEvaluator</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dict</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">input_dict</span><span class="p">[</span><span class="s2">"model_path"</span><span class="p">])</span>   <span class="c1"># once per process</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_evaluations</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_evaluations</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mol</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_evaluations</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict_one</span><span class="p">(</span><span class="n">mol</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+</pre></div>
+</div>
+<p>To use it with <code class="docutils literal notranslate"><span class="pre">processes</span> <span class="pre">&gt;</span> <span class="pre">1</span></code> it needs a picklable config the workers
+can rebuild from. Add a Pydantic model next to the others in
+<code class="docutils literal notranslate"><span class="pre">core/evaluator_config.py</span></code> with an <code class="docutils literal notranslate"><span class="pre">evaluator_type</span></code> discriminator, add
+it to <code class="docutils literal notranslate"><span class="pre">EvaluatorConfigType</span></code> in <code class="docutils literal notranslate"><span class="pre">thompson_sampling/config.py</span></code>, and add
+an <code class="docutils literal notranslate"><span class="pre">isinstance</span></code> branch in
+<a class="reference internal" href="reference/search.html#TACTICS.thompson_sampling.factories.create_evaluator" title="TACTICS.thompson_sampling.factories.create_evaluator"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_evaluator()</span></code></a>. For a
+single-process run, <code class="docutils literal notranslate"><span class="pre">sampler.set_evaluator(ModelEvaluator({...}))</span></code> on a
+directly-constructed sampler is enough.</p>
+</section>
+<section id="a-selection-strategy">
+<h2>A selection strategy<a class="headerlink" href="#a-selection-strategy" title="Link to this heading">#</a></h2>
+<p>Subclass <a class="reference internal" href="reference/extending.html#TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy" title="TACTICS.thompson_sampling.strategies.base_strategy.SelectionStrategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectionStrategy</span></code></a>.
+The one abstract method is</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">select_reagent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">,</span> <span class="n">disallow_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>The sampler calls it once per component per cycle with, in <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>:
+<code class="docutils literal notranslate"><span class="pre">rng</span></code> (a <code class="docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code> — use it, never the global RNG, or
+<code class="docutils literal notranslate"><span class="pre">seed</span></code> stops working), <code class="docutils literal notranslate"><span class="pre">component_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">iteration</span></code>,
+<code class="docutils literal notranslate"><span class="pre">current_cycle</span></code> and <code class="docutils literal notranslate"><span class="pre">total_cycles</span></code>. <code class="docutils literal notranslate"><span class="pre">reagent_list</span></code> holds
+<a class="reference internal" href="reference/search.html#TACTICS.thompson_sampling.core.reagent.Reagent" title="TACTICS.thompson_sampling.core.reagent.Reagent"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reagent</span></code></a> objects with
+<code class="docutils literal notranslate"><span class="pre">mean</span></code>, <code class="docutils literal notranslate"><span class="pre">std</span></code>, <code class="docutils literal notranslate"><span class="pre">n_samples</span></code> and <code class="docutils literal notranslate"><span class="pre">sample(rng)</span></code>. <code class="docutils literal notranslate"><span class="pre">disallow_mask</span></code> is
+a set of indices that must not be returned. <code class="docutils literal notranslate"><span class="pre">self.mode</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;maximize&quot;</span></code>
+or <code class="docutils literal notranslate"><span class="pre">&quot;minimize&quot;</span></code>.</p>
+<p>That is a complete strategy. Greedy is nine lines:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">GreedySelection</span><span class="p">(</span><span class="n">SelectionStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Standard greedy selection: sample posteriors, pick argmax (or argmin)."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"maximize"</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">select_reagent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">,</span> <span class="n">disallow_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Select the reagent with the best sampled posterior value."""</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'rng'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
+
+        <span class="n">stds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">std</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reagent_list</span><span class="p">])</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reagent_list</span><span class="p">])</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">reagent_list</span><span class="p">))</span> <span class="o">*</span> <span class="n">stds</span> <span class="o">+</span> <span class="n">mu</span>
+
+        <span class="k">if</span> <span class="n">disallow_mask</span><span class="p">:</span>
+            <span class="n">scores</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">disallow_mask</span><span class="p">))]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"maximize"</span><span class="p">,</span> <span class="s2">"maximize_boltzmann"</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nanargmax</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nanargmin</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Optional hooks.</strong> The sampler probes for these with <code class="docutils literal notranslate"><span class="pre">hasattr</span></code> after each
+cycle, so a strategy opts in by defining them:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rotate_component_weighted(n_components,</span> <span class="pre">reagent_lists,</span> <span class="pre">rng)</span></code></p></td>
+<td><p>Choose the next heated component. Preferred over
+<code class="docutils literal notranslate"><span class="pre">rotate_component(n_components)</span></code> (round-robin) when both exist.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">adapt_temperatures(n_unique,</span> <span class="pre">n_attempted)</span></code></p></td>
+<td><p>React to sampling efficiency (duplicates rising → heat up).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">adapt_heated_scale()</span></code></p></td>
+<td><p>Per-cycle self-tuning (TT-TS uses it for the disagreement EMA).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_component_state(reagent_list,</span> <span class="pre">component_idx,</span> <span class="pre">current_cycle,</span> <span class="pre">total_cycles)</span> <span class="pre">-&gt;</span> <span class="pre">dict</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>What <code class="docutils literal notranslate"><span class="pre">get_diagnostics()</span></code> records each cycle. Return a flat dict;
+include <code class="docutils literal notranslate"><span class="pre">current_cycle</span></code>, <code class="docutils literal notranslate"><span class="pre">component_idx</span></code> and <code class="docutils literal notranslate"><span class="pre">criticality</span></code> so
+the analysis functions work. Return <code class="docutils literal notranslate"><span class="pre">None</span></code> to record nothing.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">get_component_criticality(reagent_list)</span> <span class="pre">-&gt;</span> <span class="pre">float</span> <span class="pre">|</span> <span class="pre">None</span></code></p></td>
+<td><p>A scalar “how solved is this component”; used by the diagnostics.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Reuse the thermal-cycling machinery.</strong> Two mixins in
+<code class="docutils literal notranslate"><span class="pre">strategies/_thermal.py</span></code> implement the heated-component index, both
+rotation methods, and GMIC:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.strategies.base_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">SelectionStrategy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">TACTICS.thompson_sampling.strategies._thermal</span><span class="w"> </span><span class="kn">import</span> <span class="n">GMICCriticalityMixin</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">HeatedArgmax</span><span class="p">(</span><span class="n">GMICCriticalityMixin</span><span class="p">,</span> <span class="n">SelectionStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Argmax of posterior draws, with the heated component's std inflated."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"maximize"</span><span class="p">,</span> <span class="n">heat</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_gmic_state</span><span class="p">()</span>      <span class="c1"># current_component_idx, _cached_gmics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heat</span> <span class="o">=</span> <span class="n">heat</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">select_reagent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_list</span><span class="p">,</span> <span class="n">disallow_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"rng"</span><span class="p">]</span>                                   <span class="c1"># never the global RNG</span>
+        <span class="n">heated</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"component_idx"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_component_idx</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">heat</span> <span class="k">if</span> <span class="n">heated</span> <span class="k">else</span> <span class="mf">1.0</span>
+        <span class="n">draws</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span> <span class="o">+</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">std</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reagent_list</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">disallow_mask</span><span class="p">:</span>
+            <span class="n">draws</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">disallow_mask</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">"maximize"</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">draws</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">"maximize"</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">draws</span><span class="p">))</span>
+    <span class="c1"># rotate_component_weighted (GMIC-weighted) and get_component_criticality</span>
+    <span class="c1"># are inherited from the mixin; the sampler finds them with hasattr.</span>
+</pre></div>
+</div>
+<p>With the mixin, <code class="docutils literal notranslate"><span class="pre">rotate_component_weighted</span></code> (GMIC-weighted),
+<code class="docutils literal notranslate"><span class="pre">rotate_component</span></code> and <code class="docutils literal notranslate"><span class="pre">get_component_criticality</span></code> come for free.
+<a class="reference internal" href="reference/extending.html#TACTICS.thompson_sampling.strategies._thermal.ThermalCyclingMixin" title="TACTICS.thompson_sampling.strategies._thermal.ThermalCyclingMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThermalCyclingMixin</span></code></a>
+alone gives the rotation scaffold with a <code class="docutils literal notranslate"><span class="pre">_rotation_flexibility</span></code> hook for
+a different weighting.</p>
+<p>To make it configurable, add a Pydantic model in <code class="docutils literal notranslate"><span class="pre">strategies/config.py</span></code>
+(subclass <code class="docutils literal notranslate"><span class="pre">_StrictModel</span></code> so typos raise), add it to <code class="docutils literal notranslate"><span class="pre">StrategyConfigType</span></code>,
+and add a branch to
+<a class="reference internal" href="reference/search.html#TACTICS.thompson_sampling.factories.create_strategy" title="TACTICS.thompson_sampling.factories.create_strategy"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_strategy()</span></code></a>.</p>
+</section>
+<section id="a-warmup-strategy">
+<h2>A warmup strategy<a class="headerlink" href="#a-warmup-strategy" title="Link to this heading">#</a></h2>
+<p>Subclass <a class="reference internal" href="reference/extending.html#TACTICS.thompson_sampling.warmup.base.WarmupStrategy" title="TACTICS.thompson_sampling.warmup.base.WarmupStrategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">WarmupStrategy</span></code></a>
+and implement</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_warmup_combinations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reagent_lists</span><span class="p">,</span> <span class="n">num_warmup_trials</span><span class="p">,</span> <span class="n">disallow_tracker</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</pre></div>
+</div>
+<p>returning a list of reagent-index tuples (one index per component) to
+evaluate before the search. Override <code class="docutils literal notranslate"><span class="pre">get_expected_evaluations</span></code> if the
+count is not <code class="docutils literal notranslate"><span class="pre">sum(len(rl))</span> <span class="pre">*</span> <span class="pre">num_warmup_trials</span></code>, so the progress bar is
+right. The sampler also reads two optional attributes:
+<code class="docutils literal notranslate"><span class="pre">use_per_reagent_variance</span></code> (default off) and <code class="docutils literal notranslate"><span class="pre">shrinkage_strength</span></code>
+(default 3.0) — set them to opt into the James–Stein per-reagent variance
+that <a class="reference internal" href="reference/search.html#TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup" title="TACTICS.thompson_sampling.warmup.balanced.BalancedWarmup"><code class="xref py py-class docutils literal notranslate"><span class="pre">BalancedWarmup</span></code></a>
+uses. Draw randomness from a generator you own (<code class="docutils literal notranslate"><span class="pre">seed</span></code> attribute) so runs
+are reproducible.</p>
+<p>Wire it into <code class="docutils literal notranslate"><span class="pre">warmup/config.py</span></code> → <code class="docutils literal notranslate"><span class="pre">WarmupConfigType</span></code> →
+<a class="reference internal" href="reference/search.html#TACTICS.thompson_sampling.factories.create_warmup" title="TACTICS.thompson_sampling.factories.create_warmup"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_warmup()</span></code></a> the same way.</p>
+</section>
+<section id="how-the-package-is-laid-out">
+<h2>How the package is laid out<a class="headerlink" href="#how-the-package-is-laid-out" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">library_enumeration/</span></code> — Block 1. <code class="docutils literal notranslate"><span class="pre">SynthesisPipeline</span></code> wraps the
+Pydantic <code class="docutils literal notranslate"><span class="pre">ReactionConfig</span></code>; <code class="docutils literal notranslate"><span class="pre">smarts_toolkit/_validator.py</span></code> is the
+chemistry checker.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thompson_sampling/core/</span></code> — the sampler, reagent posteriors, evaluators,
+the disallow tracker and the parallel evaluator.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thompson_sampling/strategies/</span></code>, <code class="docutils literal notranslate"><span class="pre">warmup/</span></code> — one file per class plus a
+<code class="docutils literal notranslate"><span class="pre">config.py</span></code> of Pydantic models; <code class="docutils literal notranslate"><span class="pre">factories.py</span></code> maps config → object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">library_analysis/</span></code> — Block 6, behind the <code class="docutils literal notranslate"><span class="pre">viz</span></code> extra.</p></li>
+</ul>
+<p>The package <code class="docutils literal notranslate"><span class="pre">__init__</span></code> files re-export names <strong>lazily</strong> (PEP 562, via
+<a class="reference internal" href="reference/extending.html#TACTICS._lazy.install" title="TACTICS._lazy.install"><code class="xref py py-func docutils literal notranslate"><span class="pre">TACTICS._lazy.install()</span></code></a>): <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">TACTICS</span></code> costs ~40 ms and nothing
+heavy loads until a name is used. Every re-export in a hub is a
+<code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">submodule}</span></code> entry; add yours there and to the <code class="docutils literal notranslate"><span class="pre">TYPE_CHECKING</span></code>
+block beside it. <code class="docutils literal notranslate"><span class="pre">tests/test_import_time.py</span></code> fails the suite if a
+config-only import starts pulling in RDKit, SciPy or the plotting stack —
+so import heavy things inside the function that needs them, as
+<code class="docutils literal notranslate"><span class="pre">evaluators.py</span></code> does for OpenEye.</p>
+<p>Tests live in <code class="docutils literal notranslate"><span class="pre">tests/</span></code>; <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">tests/</span></code> runs in under a minute on the
+bundled data. The docs’ code examples are files under
+<code class="docutils literal notranslate"><span class="pre">docs/source/snippets/</span></code> executed by <code class="docutils literal notranslate"><span class="pre">tests/test_doc_snippets.py</span></code>, so a
+new feature’s example is also its test.</p>
+</section>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="reference/extending.html"><span class="doc">Extending</span></a> — the three base classes and the mixins.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="guides/06_visualise.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">6. Visualise</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="tutorials.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Tutorials</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-scoring-function-no-subclass-needed">A scoring function (no subclass needed)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-new-evaluator-class">A new evaluator class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-selection-strategy">A selection strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-warmup-strategy">A warmup strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-the-package-is-laid-out">How the package is laid out</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference">Reference</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/aakankschit/TACTICS/edit/main/docs/source/extending.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, Aakankschit Nandkeolyar.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
