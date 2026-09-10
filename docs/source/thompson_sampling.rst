@@ -230,12 +230,12 @@ warmup strategies, and evaluators to efficiently explore combinatorial chemical 
 
    Requires these components:
 
-   - :ref:`SynthesisPipeline <synthesis-pipeline>` - single source of truth for reactions and reagents
+   - :class:`~TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline` - single source of truth for reactions and reagents
    - :ref:`SelectionStrategy <selection-strategy>` - for reagent selection during search
    - :ref:`WarmupStrategy <warmup-strategy>` - for initializing priors (optional, defaults to EnhancedWarmup)
    - :ref:`Evaluator <evaluator-base>` - for scoring compounds (set via ``set_evaluator()``)
 
-**Depends on:** :ref:`SynthesisPipeline <synthesis-pipeline>`, :ref:`SelectionStrategy <selection-strategy>`, :ref:`WarmupStrategy <warmup-strategy>`, :ref:`Evaluator <evaluator-base>`
+**Depends on:** :class:`~TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline`, :ref:`SelectionStrategy <selection-strategy>`, :ref:`WarmupStrategy <warmup-strategy>`, :ref:`Evaluator <evaluator-base>`
 
 Constructor
 ~~~~~~~~~~~

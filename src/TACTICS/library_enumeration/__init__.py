@@ -50,6 +50,7 @@ from .synthesis_pipeline import SynthesisPipeline
 
 # Result dataclasses and analysis utilities
 from .enumeration_utils import (
+    read_reagent_file,
     EnumerationResult,
     EnumerationError,
     AutoDetectionResult,
@@ -83,6 +84,7 @@ from .smarts_toolkit import (
 )
 
 __all__ = [
+    "read_reagent_file",
     # Main class
     "SynthesisPipeline",
     # Results

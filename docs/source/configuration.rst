@@ -170,7 +170,7 @@ The main configuration class for Thompson Sampling optimization.
 
    Accepts these nested config objects:
 
-   - :ref:`SynthesisPipeline <synthesis-pipeline>` - via ``synthesis_pipeline`` (required)
+   - :class:`~TACTICS.library_enumeration.synthesis_pipeline.SynthesisPipeline` - via ``synthesis_pipeline`` (required)
    - :ref:`Strategy Configs <strategy-configs>` - via ``strategy_config``
    - :ref:`Warmup Configs <warmup-configs>` - via ``warmup_config``
    - :ref:`Evaluator Configs <evaluator-configs>` - via ``evaluator_config``

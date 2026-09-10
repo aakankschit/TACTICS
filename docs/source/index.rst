@@ -181,7 +181,6 @@ Optional dependencies:
 
    thompson_sampling
    configuration
-   library_enumeration
    library_analysis
 
 Indices and tables
